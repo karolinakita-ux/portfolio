@@ -43,6 +43,10 @@ Karolina Kita's portfolio (karolina.kita.company). React 19 + TypeScript (strict
 - Tests sit next to the code (`*.test.ts(x)`); query by role and accessible name. jsdom gaps are polyfilled in `src/test/setup.ts`.
 - Line endings are LF (`.gitattributes`). Netlify builds on Linux, so file names are case-sensitive.
 
+## Versioning
+
+Every commit bumps `version` in `package.json` (major / minor / patch, rules at the top of `CHANGELOG.md`) and adds a matching `CHANGELOG.md` entry in the same commit.
+
 ## Deploy
 
 Push to `main`: Netlify runs `yarn test:run && yarn build` and publishes `dist/` (see `netlify.toml`). Pull requests get deploy previews. Hashed bundles go to `/static/` (cached for a year by `public/_headers`).
