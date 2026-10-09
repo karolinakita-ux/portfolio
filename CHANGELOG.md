@@ -6,6 +6,19 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 1.1.0 - 2026-10-09
+
+#### Added
+
+- Zoom in the image viewer on screens 768 px and wider: Zoom out / Zoom in buttons and the + / - / 0 keys, from Fit to 400%. Phones keep their own pinch-zoom.
+- Zoomed images move by mouse drag, scrolling, or the arrow keys when the image has focus. The middle of the view stays put when zooming or resizing the window.
+- Below 768 px a zoomed image goes back to Fit, since the zoom controls hide there.
+- `playwright` dev dependency, for checking the site in a real browser.
+
+#### Changed
+
+- Icon buttons have a greyed-out style for limits such as maximum zoom, and keep keyboard focus there.
+
 ### 1.0.4 - 2026-10-09
 
 #### Added
