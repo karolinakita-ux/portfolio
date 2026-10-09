@@ -1,0 +1,142 @@
+/* ==========================================================================
+   KitaBranding - semantic tokens as CSS custom properties
+   Source: KitaBranding-tokens.json → kitaBranding.light / .dark
+   camelCase token → kebab-case variable (bgCanvas → --bg-canvas).
+
+   Theme: the `dark` class sits on <html>. An inline script in index.html sets
+   it before the first paint (stored choice, else the system setting), and
+   src/hooks/useTheme.js keeps it in sync afterwards.
+
+   Scopes:
+   - .kb-theme-light re-declares the light values on a subtree, so a document
+     surface (the CV sheet) stays light while the site is in dark mode.
+   - Dark values are screen-only: printing always uses the light values.
+
+   Elevation tokens are named --elevation-* so they do not collide with
+   Tailwind's own --shadow-* theme variables (shadow-sm → --elevation-sm).
+   ========================================================================== */
+
+:root,
+.kb-theme-light {
+  color-scheme: light;
+  --bg-canvas: #ffffff;
+  --bg-canvas-translucent: #ffffffd9;          /* bgCanvas @ 85% - sticky header under backdrop blur */
+  --bg-surface-default: #f8f9fa;
+  --bg-surface-raised: #ffffff;
+  --bg-surface-subtle: #fef8e6;
+  --bg-overlay: #1a1a1a7f;
+  --bg-footer: #fef8e6;
+  --bg-accent-brand: #f5cc56;
+  --bg-accent-brand-subtle: #fef8e6;           /* goldGold100 */
+  --bg-badge-default: #fdf0c2;
+  --bg-interactive-primary-default: #f5cc56;
+  --bg-interactive-primary-hover: #dbb64d;
+  --bg-interactive-primary-active: #c1a044;
+  --bg-interactive-secondary-default: #ffffff00;
+  --bg-interactive-secondary-hover: #fef8e6;
+  --bg-interactive-secondary-active: #fdf0c2;
+  --bg-interactive-subtle-default: #fef8e6;
+  --bg-interactive-subtle-hover: #fdf0c2;
+  --bg-interactive-subtle-active: #f9e391;
+  --bg-interactive-disabled: #eaeaea;
+  --bg-avatar-base: #f4f1ea;                   /* bgBgAvatarBase */
+  --bg-avatar-glow-warm: #f973162d;            /* bgBgAvatarGlowWarm */
+  --bg-avatar-glow-cold: #38bdf823;            /* bgBgAvatarColdGlow */
+  --text-primary: #1a1a1a;
+  --text-secondary: #4a4a4a;
+  --text-muted: #adb5bd;
+  --text-on-accent: #1a1a1a;
+  --text-brand-accent: #c1a044;
+  --text-link-default: #3f51b5;
+  --text-link-hover: #303f9f;
+  --text-interactive-primary: #1a1a1a;
+  --text-interactive-secondary: #2b2b2b;
+  --text-interactive-disabled: #adb5bd;
+  --border-subtle: #eaeaea;
+  --border-default: #adb5bd;
+  --border-focus: #f5cc56;
+  --border-interactive-default: #adb5bd;
+  --border-interactive-hover: #4a4a4a;
+  --border-interactive-focus: #3f51b5;
+  --border-interactive-disabled: #dee2e6;
+  /* Status */
+  --status-success-surface: #f0f9f4;
+  --status-success-text: #358c5e;
+  --status-success-border: #a2dfbf;
+  --status-error-surface: #fff0f0;
+  --status-error-text: #cc3434;
+  --status-error-border: #ff4b4b;
+  --status-warning-surface: #fff5f0;
+  --status-warning-text: #ad4f28;
+  --status-warning-border: #f5b698;
+  --status-info-surface: #f0f5fa;
+  --status-info-text: #2e5f8c;
+  --status-info-border: #a3c2e0;
+  /* Elevation (shadow-sm … shadow-xl) */
+  --elevation-sm: 0 1px 3px rgba(26, 26, 26, 0.08);
+  --elevation-md: 0 4px 6px -1px rgba(26, 26, 26, 0.10), 0 10px 15px -3px rgba(26, 26, 26, 0.12);
+  --elevation-lg: 0 8px 10px -3px rgba(26, 26, 26, 0.10), 0 20px 25px -5px rgba(26, 26, 26, 0.15);
+  --elevation-xl: 0 12px 16px -4px rgba(26, 26, 26, 0.10), 0 30px 40px -6px rgba(26, 26, 26, 0.20);
+}
+
+@media not print {
+  :root.dark {
+    color-scheme: dark;
+    --bg-canvas: #1a1a1a;
+    --bg-canvas-translucent: #1a1a1ad9;
+    --bg-surface-default: #2b2b2b;
+    --bg-surface-raised: #2b2b2b;
+    --bg-surface-subtle: #6c757d;
+    --bg-overlay: #1a1a1ab2;
+    --bg-footer: #2b2b2b;
+    --bg-accent-brand: #f5cc56;
+    --bg-accent-brand-subtle: #f5cc5626;
+    --bg-badge-default: #4a4a4a;
+    --bg-interactive-primary-default: #f5cc56;
+    --bg-interactive-primary-hover: #f7d76e;
+    --bg-interactive-primary-active: #f9e391;
+    --bg-interactive-secondary-default: #ffffff00;
+    --bg-interactive-secondary-hover: #a78a3b;
+    --bg-interactive-secondary-active: #c1a044;
+    --bg-interactive-subtle-default: #a78a3b;
+    --bg-interactive-subtle-hover: #c1a044;
+    --bg-interactive-subtle-active: #dbb64d;
+    --bg-interactive-disabled: #4a4a4a;
+    --bg-avatar-base: #16171b;
+    --bg-avatar-glow-warm: #ef444459;
+    --bg-avatar-glow-cold: #0ea5e94c;
+    --text-primary: #f8f9fa;
+    --text-secondary: #dee2e6;
+    --text-muted: #c1c8ce;
+    --text-on-accent: #1a1a1a;
+    --text-brand-accent: #f7d76e;
+    --text-link-default: #9fa8da;
+    --text-link-hover: #c5cae9;
+    --text-interactive-primary: #1a1a1a;
+    --text-interactive-secondary: #f1f3f5;
+    --text-interactive-disabled: #6c757d;
+    --border-subtle: #4a4a4a;
+    --border-default: #6c757d;
+    --border-focus: #f5cc56;
+    --border-interactive-default: #adb5bd;
+    --border-interactive-hover: #dee2e6;
+    --border-interactive-focus: #5c6bc0;
+    --border-interactive-disabled: #4a4a4a;
+    --status-success-surface: #4eba8126;
+    --status-success-text: #d1efe0;
+    --status-success-border: #42a671;
+    --status-error-surface: #ff4b4b26;
+    --status-error-text: #ffd1d1;
+    --status-error-border: #ff7575;
+    --status-warning-surface: #d6704326;
+    --status-warning-text: #ffe3d6;
+    --status-warning-border: #c25e34;
+    --status-info-surface: #4d88c226;
+    --status-info-text: #d1e0f0;
+    --status-info-border: #3d75aa;
+    --elevation-sm: 0 2px 4px rgba(0, 0, 0, 0.40);
+    --elevation-md: 0 4px 8px -2px rgba(0, 0, 0, 0.40), 0 12px 20px -4px rgba(0, 0, 0, 0.50);
+    --elevation-lg: 0 8px 12px -3px rgba(0, 0, 0, 0.40), 0 24px 32px -6px rgba(0, 0, 0, 0.60);
+    --elevation-xl: 0 12px 18px -4px rgba(0, 0, 0, 0.40), 0 36px 50px -8px rgba(0, 0, 0, 0.75);
+  }
+}

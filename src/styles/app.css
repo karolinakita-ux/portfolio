@@ -1,0 +1,279 @@
+@import "tailwindcss";
+@import "./tokens.css";
+@import "./print.css";
+
+/* ==========================================================================
+   KitaBranding → Tailwind bridge (Tailwind v4, CSS-first config).
+   Scales that the design system owns are reset with `initial`, so only
+   tokenised values compile. Colour utilities mirror token names 1:1:
+   bgCanvas → bg-bg-canvas · textSecondary → text-text-secondary ·
+   borderSubtle → border-border-subtle · statusInfoText → text-status-info-text.
+   `inline` makes each utility reference the token variable directly, so it
+   follows the light/dark values of the element it is used on.
+   ========================================================================== */
+@theme inline {
+  /* Breakpoints */
+  --breakpoint-*: initial;
+  --breakpoint-sm: 480px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+
+  /* Colours (semantic tokens only) */
+  --color-*: initial;
+  --color-bg-canvas: var(--bg-canvas);
+  --color-bg-canvas-translucent: var(--bg-canvas-translucent);
+  --color-bg-surface-default: var(--bg-surface-default);
+  --color-bg-surface-raised: var(--bg-surface-raised);
+  --color-bg-surface-subtle: var(--bg-surface-subtle);
+  --color-bg-overlay: var(--bg-overlay);
+  --color-bg-footer: var(--bg-footer);
+  --color-bg-accent-brand: var(--bg-accent-brand);
+  --color-bg-accent-brand-subtle: var(--bg-accent-brand-subtle);
+  --color-bg-badge-default: var(--bg-badge-default);
+  --color-bg-interactive-primary-default: var(--bg-interactive-primary-default);
+  --color-bg-interactive-primary-hover: var(--bg-interactive-primary-hover);
+  --color-bg-interactive-primary-active: var(--bg-interactive-primary-active);
+  --color-bg-interactive-secondary-default: var(--bg-interactive-secondary-default);
+  --color-bg-interactive-secondary-hover: var(--bg-interactive-secondary-hover);
+  --color-bg-interactive-secondary-active: var(--bg-interactive-secondary-active);
+  --color-bg-interactive-subtle-default: var(--bg-interactive-subtle-default);
+  --color-bg-interactive-subtle-hover: var(--bg-interactive-subtle-hover);
+  --color-bg-interactive-subtle-active: var(--bg-interactive-subtle-active);
+  --color-bg-interactive-disabled: var(--bg-interactive-disabled);
+  --color-bg-avatar-base: var(--bg-avatar-base);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-on-accent: var(--text-on-accent);
+  --color-text-brand-accent: var(--text-brand-accent);
+  --color-text-link-default: var(--text-link-default);
+  --color-text-link-hover: var(--text-link-hover);
+  --color-text-interactive-primary: var(--text-interactive-primary);
+  --color-text-interactive-secondary: var(--text-interactive-secondary);
+  --color-text-interactive-disabled: var(--text-interactive-disabled);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-default: var(--border-default);
+  --color-border-focus: var(--border-focus);
+  --color-border-interactive-default: var(--border-interactive-default);
+  --color-border-interactive-hover: var(--border-interactive-hover);
+  --color-border-interactive-focus: var(--border-interactive-focus);
+  --color-border-interactive-disabled: var(--border-interactive-disabled);
+  --color-status-success-surface: var(--status-success-surface);
+  --color-status-success-text: var(--status-success-text);
+  --color-status-success-border: var(--status-success-border);
+  --color-status-error-surface: var(--status-error-surface);
+  --color-status-error-text: var(--status-error-text);
+  --color-status-error-border: var(--status-error-border);
+  --color-status-warning-surface: var(--status-warning-surface);
+  --color-status-warning-text: var(--status-warning-text);
+  --color-status-warning-border: var(--status-warning-border);
+  --color-status-info-surface: var(--status-info-surface);
+  --color-status-info-text: var(--status-info-text);
+  --color-status-info-border: var(--status-info-border);
+
+  /* Spacing (spacing3xs … spacing4xl) */
+  --spacing-3xs: 2px;
+  --spacing-2xs: 4px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+  --spacing-4xl: 96px;
+
+  /* Radius (radiusNone … radiusFull) */
+  --radius-*: initial;
+  --radius-none: 0px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* Elevation */
+  --shadow-*: initial;
+  --shadow-sm: var(--elevation-sm);
+  --shadow-md: var(--elevation-md);
+  --shadow-lg: var(--elevation-lg);
+  --shadow-xl: var(--elevation-xl);
+
+  /* Type families */
+  --font-*: initial;
+  --font-display: "Zilla Slab", Georgia, serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* Type scale */
+  --text-*: initial;
+  --text-display-lg: 57px;
+  --text-display-lg--line-height: 68px;
+  --text-display-lg--letter-spacing: 0px;
+  --text-display-md: 45px;
+  --text-display-md--line-height: 54px;
+  --text-display-md--letter-spacing: 0px;
+  --text-display-sm: 36px;
+  --text-display-sm--line-height: 44px;
+  --text-display-sm--letter-spacing: 0px;
+  --text-headline-lg: 32px;
+  --text-headline-lg--line-height: 40px;
+  --text-headline-lg--letter-spacing: 0px;
+  --text-headline-md: 28px;
+  --text-headline-md--line-height: 36px;
+  --text-headline-md--letter-spacing: 0px;
+  --text-headline-sm: 24px;
+  --text-headline-sm--line-height: 32px;
+  --text-headline-sm--letter-spacing: 0px;
+  --text-title-lg: 22px;
+  --text-title-lg--line-height: 28px;
+  --text-title-lg--letter-spacing: 0px;
+  --text-title-lg--font-weight: 500;
+  --text-title-md: 16px;
+  --text-title-md--line-height: 24px;
+  --text-title-md--letter-spacing: 0.1px;
+  --text-title-md--font-weight: 500;
+  --text-title-sm: 14px;
+  --text-title-sm--line-height: 20px;
+  --text-title-sm--letter-spacing: 0.1px;
+  --text-title-sm--font-weight: 500;
+  --text-label-lg: 14px;
+  --text-label-lg--line-height: 20px;
+  --text-label-lg--letter-spacing: 0.1px;
+  --text-label-lg--font-weight: 500;
+  --text-label-md: 12px;
+  --text-label-md--line-height: 16px;
+  --text-label-md--letter-spacing: 0.5px;
+  --text-label-md--font-weight: 500;
+  --text-label-sm: 11px;
+  --text-label-sm--line-height: 16px;
+  --text-label-sm--letter-spacing: 0.5px;
+  --text-label-sm--font-weight: 500;
+  --text-body-lg: 16px;
+  --text-body-lg--line-height: 24px;
+  --text-body-lg--letter-spacing: 0.15px;
+  --text-body-md: 14px;
+  --text-body-md--line-height: 20px;
+  --text-body-md--letter-spacing: 0.25px;
+  --text-body-sm: 12px;
+  --text-body-sm--line-height: 16px;
+  --text-body-sm--letter-spacing: 0.4px;
+
+  /* Layout widths */
+  --container-content: 1120px;
+  --container-header: 1248px;
+  --container-footer: 608px;
+
+  /* Aspect ratios */
+  --aspect-thumb: 4 / 3;
+  --aspect-portrait: 3 / 5;
+
+  /* Motion */
+  --animate-view-in: view-in 240ms cubic-bezier(0.2, 0, 0, 1) both;
+  @keyframes view-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* Named layout utilities */
+@utility grid-cols-case-md {
+  grid-template-columns: 224px minmax(0, 1fr);
+}
+@utility grid-cols-case-lg {
+  grid-template-columns: 300px minmax(0, 1fr);
+}
+@utility grid-cols-about-lg {
+  grid-template-columns: minmax(0, 1fr) 376px;
+}
+@utility grid-cols-showcase {
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+}
+@utility grid-cols-term {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+/* Accordion: animating grid rows 0fr → 1fr gives a smooth auto-height expand */
+@utility grid-rows-collapsed {
+  grid-template-rows: 0fr;
+}
+@utility grid-rows-expanded {
+  grid-template-rows: 1fr;
+}
+@utility z-header {
+  z-index: 50;
+}
+@utility z-skip {
+  z-index: 60;
+}
+@utility bg-avatar-glow {
+  background-image:
+    radial-gradient(circle at 28% 24%, var(--bg-avatar-glow-warm), transparent 62%),
+    radial-gradient(circle at 76% 80%, var(--bg-avatar-glow-cold), transparent 58%);
+}
+@utility bg-portrait-glow {
+  background-image:
+    radial-gradient(120% 70% at 50% 0%, var(--bg-avatar-glow-cold), transparent 70%),
+    radial-gradient(120% 70% at 50% 100%, var(--bg-avatar-glow-warm), transparent 72%);
+}
+
+@layer base {
+  html {
+    background: var(--bg-canvas);
+    color: var(--text-primary);
+    /* Reserve the scrollbar so locking scroll (image viewer) does not shift the layout. */
+    scrollbar-gutter: stable;
+    /* In-page anchors land below the sticky header (height measured at runtime). */
+    scroll-padding-top: calc(env(safe-area-inset-top, 0px) + var(--kb-header-h, 0px) + 16px);
+  }
+  body {
+    margin: 0;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: var(--bg-canvas);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* Tailwind v4 resets buttons to the default cursor; keep the pointer. */
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  /* Scroll lock while the image viewer is open. */
+  html.kb-scroll-locked {
+    overflow: hidden;
+  }
+}
+
+/* Image viewer backdrop. ::backdrop does not reliably inherit custom
+   properties, so the bgOverlay token values are written out here. */
+.kb-lightbox::backdrop {
+  background: #1a1a1a7f; /* bgOverlay (light) */
+}
+:root.dark .kb-lightbox::backdrop {
+  background: #1a1a1ab2; /* bgOverlay (dark) */
+}
+/* Keep the full image inside the viewport, leaving room for the panel chrome
+   (title row, controls and paddings). */
+.kb-lightbox-image {
+  max-height: calc(100vh - 208px);
+  max-height: calc(100dvh - 208px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
