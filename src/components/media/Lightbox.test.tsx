@@ -167,6 +167,18 @@ describe("Lightbox swipe", () => {
     expect(title(dialog)).toHaveTextContent("Wide");
   });
 
+  it("slides the new image in from the side it came from", async () => {
+    const { user, dialog } = await openViewer();
+    const image = () => within(dialog).getByRole("img");
+    expect(image()).toHaveClass("motion-safe:animate-view-in");
+
+    swipe(dialog, [300, 200], [100, 200]);
+    expect(image()).toHaveClass("motion-safe:animate-slide-in-next");
+
+    await user.click(within(dialog).getByRole("button", { name: "Previous image" }));
+    expect(image()).toHaveClass("motion-safe:animate-slide-in-prev");
+  });
+
   it("does not browse while the page is pinch-zoomed", async () => {
     vi.stubGlobal("visualViewport", { scale: 2 });
     const { dialog } = await openViewer();

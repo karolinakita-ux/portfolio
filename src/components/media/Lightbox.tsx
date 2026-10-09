@@ -73,7 +73,11 @@ const scrollToCenter = (pane: HTMLElement, center: ScrollCenter) => {
 interface LightboxState {
   items: ReadonlyArray<LightboxItem>;
   index: number;
+  /** Last move: 1 next, -1 previous, 0 just opened. Picks the image's entry animation. */
+  direction: 1 | -1 | 0;
 }
+
+const IMAGE_ENTRY = { 1: "motion-safe:animate-slide-in-next", [-1]: "motion-safe:animate-slide-in-prev", 0: "motion-safe:animate-view-in" } as const;
 
 export function LightboxProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<LightboxState | null>(null);
@@ -82,7 +86,7 @@ export function LightboxProvider({ children }: { children: ReactNode }) {
   const open = useCallback<OpenLightbox>((items, index, trigger) => {
     if (!items.length) return;
     triggerRef.current = trigger ?? null;
-    setState({ items, index: Math.min(Math.max(index, 0), items.length - 1) });
+    setState({ items, index: Math.min(Math.max(index, 0), items.length - 1), direction: 0 });
   }, []);
 
   const handleClosed = useCallback(() => {
@@ -94,7 +98,13 @@ export function LightboxProvider({ children }: { children: ReactNode }) {
 
   const step = useCallback((delta: number) => {
     setState((current) =>
-      current ? { ...current, index: (current.index + delta + current.items.length) % current.items.length } : current
+      current
+        ? {
+            ...current,
+            index: (current.index + delta + current.items.length) % current.items.length,
+            direction: delta > 0 ? 1 : -1,
+          }
+        : current
     );
   }, []);
 
@@ -313,7 +323,7 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
               if (zoom) centerRef.current = readCenter(event.currentTarget);
             }}
             className={cn(
-              "min-h-0 rounded-sm border border-border-subtle bg-bg-surface-default",
+              "kb-lightbox-pane min-h-0 rounded-sm border border-border-subtle bg-bg-surface-default",
               zoom
                 ? cn("kb-lightbox-viewport cursor-grab overflow-auto overscroll-contain select-none active:cursor-grabbing", FOCUS_RING)
                 : "flex items-center justify-center overflow-hidden"
@@ -343,7 +353,8 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
                     : undefined
                 }
                 className={cn(
-                  "block h-auto motion-safe:animate-view-in",
+                  "block h-auto",
+                  IMAGE_ENTRY[state.direction],
                   zoom ? "kb-lightbox-image-zoomed mx-auto max-w-none" : "kb-lightbox-image w-auto max-w-full object-contain"
                 )}
               />
