@@ -7,6 +7,19 @@ Versions follow [Semantic Versioning](https://semver.org/):
 - **Minor** - new visible content: a case study, page, section, component or new images.
 - **Patch** - fixes and small edits: copy, alt text, image swaps or optimisation, styling, dependencies, config, tests, docs.
 
+## 1.0.3 - 2026-10-09
+
+### Added
+
+- Structured data (JSON-LD) in `index.html`: Person, ProfilePage and WebSite, with education, credentials, skills and LinkedIn.
+- `robots.txt` and `sitemap.xml`.
+- `robots` meta allowing large image previews in search results.
+- Short summary and case-study names in the `<noscript>` fallback, for crawlers that do not run JavaScript.
+
+### Changed
+
+- Meta, Open Graph and X descriptions now name the role, 8+ years, B2B and enterprise focus, UX research, design systems and the MSc in Psychology.
+
 ## 1.0.2 - 2026-10-09
 
 ### Changed
