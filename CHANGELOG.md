@@ -4,6 +4,15 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Unreleased
+
+### 1.2.0 - 2026-10-09
+
+#### Added
+
+- Swipe left or right in the image viewer to go to the next or previous image on touch screens. Ignored while zoomed, while the page is pinch-zoomed, and for two-finger gestures.
+- The viewer hint reads "Swipe to browse" on touch screens, also on phones, instead of the arrow-key hint.
+
 ## Release v1.1.0 - 2026-10-09
 
 - Case-study screenshots can be zoomed up to 400% on computers and tablets, with buttons or the + and - keys, and moved around by dragging. Phones keep their own pinch-zoom.

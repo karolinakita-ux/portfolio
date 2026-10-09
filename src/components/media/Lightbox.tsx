@@ -10,6 +10,7 @@ import {
   type MouseEvent,
   type PointerEvent,
   type ReactNode,
+  type TouchEvent,
 } from "react";
 import { cn, FOCUS_RING } from "../../lib/ui.ts";
 import { ChevronLeft, ChevronRight, ImageOff, X, ZoomIn, ZoomOut } from "../icons.tsx";
@@ -25,7 +26,8 @@ import { LightboxContext, type LightboxItem, type OpenLightbox } from "./lightbo
  * Open it with useLightbox() from ./lightbox-context.ts.
  *
  * Controls: close button, Escape, click on the dimmed backdrop; with more than
- * one image, Previous / Next buttons and the ← / → keys (wrapping around).
+ * one image, Previous / Next buttons, the ← / → keys and, on touch screens,
+ * a swipe left / right (all wrapping around).
  *
  * Zoom (md and up; phones pinch-zoom natively): Zoom out / Zoom in buttons and
  * the + / - / 0 keys step through ZOOM_STEPS. Zoomed, the image pane scrolls:
@@ -40,6 +42,9 @@ const ZOOM_STEPS = [1, 1.5, 2, 3, 4] as const;
 
 /** Zoom is a desktop feature (the md breakpoint); below it the viewer always fits. */
 const ZOOM_QUERY = "(min-width: 768px)";
+/** Shortest horizontal finger travel, in px, that counts as a swipe. */
+const SWIPE_MIN_DISTANCE = 50;
+
 const canZoom = () => typeof window.matchMedia !== "function" || window.matchMedia(ZOOM_QUERY).matches;
 
 interface ZoomState {
@@ -117,6 +122,7 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
   // Point to keep in the middle of the pane: set on zoom, kept current by scrolling and dragging.
   const centerRef = useRef<ScrollCenter>({ x: 0.5, y: 0.5 });
   const dragRef = useRef<{ x: number; y: number; left: number; top: number } | null>(null);
+  const swipeRef = useRef<{ x: number; y: number } | null>(null);
   const isOpen = state !== null;
   const item = state ? state.items[state.index] : undefined;
   const count = state ? state.items.length : 0;
@@ -239,6 +245,24 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
     dragRef.current = null;
   };
 
+  // Swipe left / right on a touch screen to browse. Not while zoomed (the pane
+  // scrolls) or while the page is pinch-zoomed (the swipe pans the page).
+  const handleTouchStart = (event: TouchEvent<HTMLElement>) => {
+    const touch = event.touches[0];
+    swipeRef.current = event.touches.length === 1 && touch ? { x: touch.clientX, y: touch.clientY } : null;
+  };
+
+  const handleTouchEnd = (event: TouchEvent<HTMLElement>) => {
+    const start = swipeRef.current;
+    const touch = event.changedTouches[0];
+    swipeRef.current = null;
+    if (!start || !touch || count < 2 || zoom || (window.visualViewport?.scale ?? 1) > 1.01) return;
+    const dx = touch.clientX - start.x;
+    const dy = touch.clientY - start.y;
+    if (Math.abs(dx) < SWIPE_MIN_DISTANCE || Math.abs(dx) < Math.abs(dy) * 1.5) return; // Too short, or mostly vertical.
+    step(dx < 0 ? 1 : -1);
+  };
+
   // A click that lands on the dialog element itself (not its panel) is a backdrop click.
   const handleClick = (event: MouseEvent<HTMLDialogElement>) => {
     if (event.target === dialogRef.current) close();
@@ -254,7 +278,13 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
       className="kb-lightbox fixed inset-0 m-0 h-full max-h-none w-full max-w-none items-center justify-center bg-transparent p-md open:flex md:p-xl"
     >
       {state && item && (
-        <figure className="flex w-full max-w-header min-w-0 flex-col gap-sm rounded-lg border border-border-subtle bg-bg-surface-raised p-sm shadow-xl motion-safe:animate-view-in md:p-md">
+        <figure
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          onTouchCancel={() => {
+            swipeRef.current = null;
+          }}
+          className="flex w-full max-w-header min-w-0 flex-col gap-sm rounded-lg border border-border-subtle bg-bg-surface-raised p-sm shadow-xl motion-safe:animate-view-in md:p-md">
           <div className="flex items-start justify-between gap-md">
             <div className="flex min-w-0 flex-col gap-3xs">
               {count > 1 && (
@@ -345,7 +375,14 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
                   onClick={() => zoomTo(zoomStep + 1)}
                 />
               </div>
-              {count > 1 && <p className="hidden text-body-sm text-text-secondary sm:block">Use ← and → to browse</p>}
+              {count > 1 && (
+                <>
+                  <p className="hidden text-body-sm text-text-secondary sm:block pointer-coarse:hidden">
+                    Use ← and → to browse
+                  </p>
+                  <p className="hidden text-body-sm text-text-secondary pointer-coarse:block">Swipe to browse</p>
+                </>
+              )}
             </div>
             {count > 1 && <IconButton label="Next image" icon={ChevronRight} onClick={() => step(1)} />}
           </div>
