@@ -30,7 +30,7 @@ export default defineConfig([
     rules: { "react-refresh/only-export-components": "off" },
   },
   {
-    files: ["*.config.{js,ts}"],
+    files: ["*.config.{js,ts}", "scripts/**/*.ts"],
     languageOptions: { globals: globals.node },
   },
   // Last: turns off stylistic rules that would fight Prettier.
