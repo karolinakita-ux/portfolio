@@ -6,6 +6,20 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 1.2.2 - 2026-10-09
+
+#### Changed
+
+- Image viewer: the next image slides in from the right and the previous one from the left, and the dimmed backdrop fades in with the panel.
+- Icon buttons press in slightly when tapped or clicked, since touch screens show no tap highlight.
+- Thin scrollbars in the border colour in the zoomed image.
+
+#### Fixed
+
+- The image viewer kept moving its Previous / Next buttons as image heights changed (up to 167 px), so quick taps or clicks could hit the backdrop and close it. The image area now has a fixed height, which also stops the panel growing when zooming in.
+- Quick taps on buttons and links no longer zoom the page on touch screens (double-tap zoom). Pinch-zoom still works.
+- A downward swipe in the open image viewer no longer pulls to refresh the page behind it.
+
 ### 1.2.1 - 2026-10-09
 
 #### Added

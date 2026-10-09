@@ -180,6 +180,21 @@
       transform: translateY(0);
     }
   }
+  /* Image viewer: the next image comes in from the right, the previous from the left. */
+  --animate-slide-in-next: slide-in-next 240ms cubic-bezier(0.2, 0, 0, 1) both;
+  --animate-slide-in-prev: slide-in-prev 240ms cubic-bezier(0.2, 0, 0, 1) both;
+  @keyframes slide-in-next {
+    from {
+      opacity: 0;
+      transform: translateX(24px);
+    }
+  }
+  @keyframes slide-in-prev {
+    from {
+      opacity: 0;
+      transform: translateX(-24px);
+    }
+  }
 }
 
 /* Named layout utilities */
@@ -246,9 +261,19 @@
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
-  /* Scroll lock while the image viewer is open. */
+  /* Quick taps on controls (e.g. Next image) are not read as double-tap zoom on
+     touch screens. Pinch-zoom still works. */
+  a,
+  button,
+  summary,
+  [role="button"] {
+    touch-action: manipulation;
+  }
+  /* Scroll lock while the image viewer is open; overscroll off too, so a
+     downward swipe does not pull-to-refresh the page behind it. */
   html.kb-scroll-locked {
     overflow: hidden;
+    overscroll-behavior: none;
   }
 }
 
@@ -260,10 +285,32 @@
 :root.dark .kb-lightbox::backdrop {
   background: #1a1a1ab2; /* bgOverlay (dark) */
 }
-/* Keep the full image inside the viewport, leaving room for the panel chrome
-   (title row, controls and paddings). */
-.kb-lightbox-image,
+/* Backdrop fades in with the panel. The reduced-motion rule below does not
+   reach ::backdrop, hence the media query. */
+@media (prefers-reduced-motion: no-preference) {
+  .kb-lightbox[open]::backdrop {
+    animation: backdrop-in 240ms cubic-bezier(0.2, 0, 0, 1);
+  }
+}
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+/* Zoomed pane: thin scrollbars in the border colour instead of the heavy defaults. */
 .kb-lightbox-viewport {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-default) transparent;
+}
+/* Image pane: the window height minus the panel chrome (title row, controls and
+   paddings), fixed rather than following each image, so the panel and its
+   Previous / Next buttons stay in place from image to image and when zooming.
+   The fitted image stays inside it. */
+.kb-lightbox-pane {
+  height: calc(100vh - 208px);
+  height: calc(100dvh - 208px);
+}
+.kb-lightbox-image {
   max-height: calc(100vh - 208px);
   max-height: calc(100dvh - 208px);
 }
