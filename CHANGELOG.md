@@ -7,12 +7,17 @@ Versions follow [Semantic Versioning](https://semver.org/):
 - **Minor** - new visible content: a case study, page, section, component or new images.
 - **Patch** - fixes and small edits: copy, alt text, image swaps or optimisation, styling, dependencies, config, tests, docs.
 
+## 1.0.2 - 2026-10-09
+
+### Changed
+
+- Resized `automotive-hifi-screens-documentation.png` from 14370 px to 4000 px wide (2.9 MB to 0.8 MB). The 1.0.1 commit message listed this change, but the file was missing from that commit.
+
 ## 1.0.1 - 2026-10-09
 
 ### Changed
 
 - Resized `automotive-prototype-audit-tracker.png` from 20274 px to 3000 px wide (32 MB to 1.6 MB).
-- Resized `automotive-hifi-screens-documentation.png` from 14370 px to 4000 px wide (2.9 MB to 0.8 MB).
 
 ### Added
 
