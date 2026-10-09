@@ -1,6 +1,6 @@
 # kkita-portfolio
 
-Karolina Kita's portfolio (karolina.kita.company). React 19 + TypeScript (strict) + Tailwind v4 on Vite, tested with Vitest + Testing Library, deployed by Netlify from `main`. Package manager: **yarn** (v1). Dev machine: Windows 11, Node via fnm (`.node-version`).
+Karolina Kita's portfolio (karolina.kita.company). React 19 + TypeScript (strict) + Tailwind v4 on Vite, tested with Vitest + Testing Library, work on `develop`, deployed by Netlify from `main` on release. Package manager: **yarn** (v1). Dev machine: Windows 11, Node via fnm (`.node-version`).
 
 ## Commands
 
@@ -43,10 +43,24 @@ Karolina Kita's portfolio (karolina.kita.company). React 19 + TypeScript (strict
 - Tests sit next to the code (`*.test.ts(x)`); query by role and accessible name. jsdom gaps are polyfilled in `src/test/setup.ts`.
 - Line endings are LF (`.gitattributes`). Netlify builds on Linux, so file names are case-sensitive.
 
-## Versioning
+## Git workflow (full process: `CONTRIBUTING.md`)
 
-Every commit bumps `version` in `package.json` (major / minor / patch, rules at the top of `CHANGELOG.md`) and adds a matching `CHANGELOG.md` entry in the same commit.
+- Work on `develop`. Never commit or push to `main` except in a release the user asked for.
+- Every commit: `yarn verify`, bump `version` in `package.json` (semver rules in `CONTRIBUTING.md`), add a `###` entry under `## Unreleased` in `CHANGELOG.md`, all in the same commit. Put the version in the subject: `... (1.2.0)`.
+- Stage files by name, only the ones you changed. Never `git add -A` or `git commit -a`: the user often has unfinished edits in the tree. Check `git status` before committing and leave anything you did not write unstaged.
+
+### When the user asks for a release
+
+Follow "Releases" in `CONTRIBUTING.md` step by step:
+
+1. On `develop`: pull, `yarn verify`, and show the user `git log --oneline main..develop` plus the `## Unreleased` entries. Stop and ask if verify fails, if a commit has no changelog entry, or if `main` has commits that are not on `develop`.
+2. Write the release notes (rules in `CONTRIBUTING.md`) and rename `## Unreleased` to `## Release vX.Y.Z - YYYY-MM-DD`. No version bump for the release itself.
+3. Commit `CHANGELOG.md` only as `Release vX.Y.Z`, merge `develop` into `main` with `--no-ff`, tag `vX.Y.Z`, push `main` with tags, then fast-forward `develop` to `main` and push it.
+4. Use the Netlify MCP (project `karolina-kita`) to check that the production deploy of the release commit is ready. If it failed, read the deploy log and report.
+5. Reply with the version, the release notes as written, and the deploy result.
+
+Uncommitted user edits stay out of the release. If `git switch` refuses because of them, stop and ask; do not stash or discard them.
 
 ## Deploy
 
-Push to `main`: Netlify runs `yarn test:run && yarn build` and publishes `dist/` (see `netlify.toml`). Pull requests get deploy previews. Hashed bundles go to `/static/` (cached for a year by `public/_headers`).
+Netlify project `karolina-kita`. Production deploys from `main` (releases only); `develop` gets a branch deploy at `develop--karolina-kita.netlify.app`. Each build runs `yarn test:run && yarn build` and publishes `dist/` (see `netlify.toml`). Hashed bundles go to `/static/` (cached for a year by `public/_headers`).
