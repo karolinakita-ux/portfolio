@@ -99,3 +99,14 @@ export const Quote = createIcon("quote", [
   ["path", { d: "M5 3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2 1 1 0 0 1 1 1v1a2 2 0 0 1-2 2 1 1 0 0 0-1 1v2a1 1 0 0 0 1 1 6 6 0 0 0 6-6V5a2 2 0 0 0-2-2z" }],
 ]);
 export const X = createIcon("x", [["path", { d: "M18 6 6 18" }], ["path", { d: "m6 6 12 12" }]]);
+export const ZoomIn = createIcon("zoom-in", [
+  ["circle", { cx: 11, cy: 11, r: 8 }],
+  ["line", { x1: 21, x2: 16.65, y1: 21, y2: 16.65 }],
+  ["line", { x1: 11, x2: 11, y1: 8, y2: 14 }],
+  ["line", { x1: 8, x2: 14, y1: 11, y2: 11 }],
+]);
+export const ZoomOut = createIcon("zoom-out", [
+  ["circle", { cx: 11, cy: 11, r: 8 }],
+  ["line", { x1: 21, x2: 16.65, y1: 21, y2: 16.65 }],
+  ["line", { x1: 8, x2: 14, y1: 11, y2: 11 }],
+]);

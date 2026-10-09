@@ -1,6 +1,6 @@
 # K.Kita Portfolio - karolina.kita.company
 
-Karolina Kita's portfolio: React 19, TypeScript, Tailwind CSS v4 (KitaBranding design tokens), Vite, Vitest. Deployed on Netlify from the `main` branch.
+Karolina Kita's portfolio: React 19, TypeScript, Tailwind CSS v4 (KitaBranding design tokens), Vite, Vitest. Deployed on Netlify from the `main` branch (releases only; work happens on `develop`).
 
 ## Setup (Windows 11)
 
@@ -14,14 +14,14 @@ Copy Karolina's images into `public/assets/` once (case-study screenshots, thumb
 
 ## Scripts
 
-| Command | What it does |
-| --- | --- |
-| `yarn dev` | Dev server with hot reload |
-| `yarn verify` | Typecheck + lint + tests + production build (run before pushing) |
-| `yarn test` | Vitest watch mode (`yarn test:run` for a single run) |
-| `yarn build` | Typecheck and build to `dist/` |
-| `yarn preview` | Serve the production build locally |
-| `yarn format` | Prettier (sorts Tailwind classes too) |
+| Command        | What it does                                                     |
+| -------------- | ---------------------------------------------------------------- |
+| `yarn dev`     | Dev server with hot reload                                       |
+| `yarn verify`  | Typecheck + lint + tests + production build (run before pushing) |
+| `yarn test`    | Vitest watch mode (`yarn test:run` for a single run)             |
+| `yarn build`   | Typecheck and build to `dist/`                                   |
+| `yarn preview` | Serve the production build locally                               |
+| `yarn format`  | Prettier (sorts Tailwind classes too)                            |
 
 ## Where things live
 
@@ -61,6 +61,8 @@ If the close-up file is missing, the card shows the full screenshot.
 
 ## Deploy
 
-Netlify is linked to this repository: every push to `main` runs `yarn test:run && yarn build` and publishes `dist/`. A failing test blocks the deploy. Pull requests get preview URLs.
+Day-to-day work goes to `develop`; `main` is the live site and changes only in a release. Branches, versions, changelog and the release steps: [CONTRIBUTING.md](CONTRIBUTING.md).
+
+Netlify is linked to this repository: every push to `main` runs `yarn test:run && yarn build` and publishes `dist/`. A failing test blocks the deploy. `develop` and pull requests get preview URLs.
 
 Link previews are cached by apps: check LinkedIn at https://www.linkedin.com/post-inspector after changing `og-image.png`.

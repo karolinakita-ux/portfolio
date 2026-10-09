@@ -262,9 +262,16 @@
 }
 /* Keep the full image inside the viewport, leaving room for the panel chrome
    (title row, controls and paddings). */
-.kb-lightbox-image {
+.kb-lightbox-image,
+.kb-lightbox-viewport {
   max-height: calc(100vh - 208px);
   max-height: calc(100dvh - 208px);
+}
+/* Zoomed image: the fitted width (pane width, height limit or natural width,
+   whichever is smallest, as .kb-lightbox-image) times the zoom level. In CSS so
+   it follows window resizes. Variables are set inline by Lightbox.tsx. */
+.kb-lightbox-image-zoomed {
+  width: calc(min(100%, (100dvh - 208px) * var(--kb-aspect), var(--kb-natural-width)) * var(--kb-zoom));
 }
 
 @media (prefers-reduced-motion: reduce) {
