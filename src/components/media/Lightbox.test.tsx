@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { act } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -9,6 +9,7 @@ import { useLightbox, type LightboxItem } from "./lightbox-context.ts";
 const ITEMS: LightboxItem[] = [
   { src: "/assets/wide.png", alt: "Wide screen", title: "Wide" },
   { src: "/assets/tall.png", alt: "Tall screen", title: "Tall" },
+  { src: "/assets/square.png", alt: "Square screen", title: "Square" },
 ];
 
 function Opener() {
@@ -121,5 +122,56 @@ describe("Lightbox zoom", () => {
     await user.click(within(dialog).getByRole("button", { name: "Close image viewer" }));
     await user.click(screen.getByRole("button", { name: "Open" }));
     expect(readout()).toHaveTextContent("Fit");
+  });
+});
+
+/** One finger from `from` to `to` on the viewer panel; `fingers` > 1 starts a pinch instead. */
+const swipe = (dialog: HTMLElement, from: [number, number], to: [number, number], fingers = 1) => {
+  const panel = within(dialog).getByRole("figure");
+  const touch = ([clientX, clientY]: [number, number]) => ({ clientX, clientY });
+  fireEvent.touchStart(panel, { touches: Array.from({ length: fingers }, () => touch(from)) });
+  fireEvent.touchEnd(panel, { touches: [], changedTouches: [touch(to)] });
+};
+
+const title = (dialog: HTMLElement) => within(dialog).getByRole("heading", { level: 2 });
+
+describe("Lightbox swipe", () => {
+  it("swipes left to the next image and right to the previous one, wrapping around", async () => {
+    const { dialog } = await openViewer();
+    expect(title(dialog)).toHaveTextContent("Wide");
+
+    swipe(dialog, [300, 200], [180, 210]);
+    expect(title(dialog)).toHaveTextContent("Tall");
+
+    swipe(dialog, [100, 200], [260, 190]);
+    swipe(dialog, [100, 200], [260, 190]);
+    expect(title(dialog)).toHaveTextContent("Square");
+  });
+
+  it("ignores short, mostly vertical and two-finger swipes", async () => {
+    const { dialog } = await openViewer();
+
+    swipe(dialog, [300, 200], [260, 200]); // 40px: too short
+    swipe(dialog, [300, 100], [220, 300]); // mostly vertical
+    swipe(dialog, [300, 200], [100, 200], 2); // pinch
+    expect(title(dialog)).toHaveTextContent("Wide");
+  });
+
+  it("does not browse while zoomed", async () => {
+    vi.spyOn(HTMLImageElement.prototype, "naturalWidth", "get").mockReturnValue(4000);
+    vi.spyOn(HTMLImageElement.prototype, "naturalHeight", "get").mockReturnValue(1000);
+    const { user, dialog, zoomIn } = await openViewer();
+    await user.click(zoomIn);
+
+    swipe(dialog, [300, 200], [100, 200]);
+    expect(title(dialog)).toHaveTextContent("Wide");
+  });
+
+  it("does not browse while the page is pinch-zoomed", async () => {
+    vi.stubGlobal("visualViewport", { scale: 2 });
+    const { dialog } = await openViewer();
+
+    swipe(dialog, [300, 200], [100, 200]);
+    expect(title(dialog)).toHaveTextContent("Wide");
   });
 });
