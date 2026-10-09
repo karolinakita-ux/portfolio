@@ -10,11 +10,24 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+coverage
+.netlify
 *.local
+.env
+.env.*
+!.env.example
+
+# OS files (Windows Explorer drops these into image folders)
+Thumbs.db
+desktop.ini
+
+# Claude Code personal settings
+.claude/settings.local.json
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
 .idea
 .DS_Store
 *.suo

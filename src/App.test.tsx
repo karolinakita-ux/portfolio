@@ -1,0 +1,97 @@
+import { render, screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it } from "vitest";
+import { App } from "./App.tsx";
+
+const renderApp = (hash = "") => {
+  window.history.replaceState(null, "", "/" + hash);
+  const user = userEvent.setup();
+  render(<App />);
+  return { user };
+};
+
+const h1 = () => screen.getByRole("heading", { level: 1 });
+const primaryNav = () => screen.getByRole("navigation", { name: "Primary" });
+
+describe("App", () => {
+  it("opens on Work", () => {
+    renderApp();
+    expect(h1()).toHaveTextContent("Clarity for complex enterprise software");
+    expect(document.title).toBe("Karolina Kita - Senior Product Designer");
+    expect(within(primaryNav()).getByRole("link", { name: "Work" })).toHaveAttribute("aria-current", "page");
+  });
+
+  it.each([
+    ["#about", "Designing clarity for complex software"],
+    ["#contact", "Let’s connect"],
+    ["#cv", "Karolina Kita"],
+    ["#case-theming", "Multi-Tenant Theme Customizer"],
+  ])("deep-links %s", (hash, heading) => {
+    renderApp(hash);
+    expect(h1()).toHaveTextContent(heading);
+  });
+
+  it("navigates with the primary nav and updates URL, title and active pill", async () => {
+    const { user } = renderApp();
+
+    await user.click(within(primaryNav()).getByRole("link", { name: "About" }));
+
+    expect(h1()).toHaveTextContent("Designing clarity for complex software");
+    expect(window.location.hash).toBe("#about");
+    expect(document.title).toBe("About - Karolina Kita");
+    expect(within(primaryNav()).getByRole("link", { name: "About" })).toHaveAttribute("aria-current", "page");
+  });
+
+  it("walks the case studies from the Work page", async () => {
+    const { user } = renderApp();
+
+    await user.click(screen.getByRole("link", { name: "View Discovery Case" }));
+    expect(h1()).toHaveTextContent("Automotive B2B Marketplace: Research-Backed Redesign");
+    expect(within(primaryNav()).getByRole("link", { name: "Work" })).toHaveAttribute("aria-current", "page");
+
+    await user.click(screen.getByRole("link", { name: /Next Case Study: Project Planning/ }));
+    expect(h1()).toHaveTextContent("Project Planning");
+
+    await user.click(within(screen.getByRole("navigation", { name: "Breadcrumb" })).getByRole("link", { name: "Work" }));
+    expect(h1()).toHaveTextContent("Clarity for complex enterprise software");
+  });
+
+  it("switches and remembers the theme", async () => {
+    const { user } = renderApp();
+    const dark = screen.getByRole("button", { name: "Dark theme" });
+
+    await user.click(dark);
+
+    expect(dark).toHaveAttribute("aria-pressed", "true");
+    expect(document.documentElement).toHaveClass("dark");
+    expect(window.localStorage.getItem("kb-theme")).toBe("dark");
+  });
+
+  it("opens screenshots in the image viewer and browses with the arrow keys", async () => {
+    const { user } = renderApp("#case-automotive");
+    const [firstScreenshot] = screen.getAllByRole("button", { name: /View full size/ });
+    if (!firstScreenshot) throw new Error("no screenshots rendered");
+
+    await user.click(firstScreenshot);
+    const dialog = screen.getByRole("dialog");
+    expect(within(dialog).getByRole("heading", { name: "Multi-Market Survey Analysis" })).toBeInTheDocument();
+    expect(within(dialog).getByText(/^1 \/ \d+$/)).toBeInTheDocument();
+
+    await user.keyboard("{ArrowRight}");
+    expect(within(dialog).getByRole("heading", { name: "1-on-1 Customer Interviews" })).toBeInTheDocument();
+
+    await user.click(within(dialog).getByRole("button", { name: "Close image viewer" }));
+    expect(dialog).not.toHaveAttribute("open");
+    expect(firstScreenshot).toHaveFocus();
+  });
+
+  it("expands FAQ answers on the About page", async () => {
+    const { user } = renderApp("#about");
+    const question = screen.getByRole("button", { name: /How does a background in psychology/ });
+    expect(question).toHaveAttribute("aria-expanded", "false");
+
+    await user.click(question);
+
+    expect(question).toHaveAttribute("aria-expanded", "true");
+  });
+});

@@ -1,0 +1,5 @@
+# Netlify builds on every push to main (deploy previews for pull requests).
+# Node version comes from .node-version; yarn is detected from yarn.lock.
+[build]
+  command = "yarn test:run && yarn build"
+  publish = "dist"
