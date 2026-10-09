@@ -6,6 +6,13 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 1.2.1 - 2026-10-09
+
+#### Added
+
+- `yarn a11y`: accessibility audit in real Chromium for every page in light and dark mode, at phone and desktop width. Runs axe (WCAG 2.0 / 2.1 A and AA), an emulated screen reader transcript, Tab order with focus styles, a 320 px reflow check and image viewer focus checks. Report in `a11y-report/` (not committed).
+- `@axe-core/playwright` and `@guidepup/virtual-screen-reader` dev dependencies.
+
 ### 1.2.0 - 2026-10-09
 
 #### Added
