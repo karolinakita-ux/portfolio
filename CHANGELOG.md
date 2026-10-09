@@ -1,44 +1,64 @@
 # Changelog
 
-Every commit that changes `version` in `package.json` adds an entry here, newest first.
-Versions follow [Semantic Versioning](https://semver.org/):
+Newest first. Each `###` entry is one version (one commit on `develop`). Each `## Release` groups the versions that went live together on `main`, with short release notes on top. `## Unreleased` holds versions on `develop` that are not live yet.
 
-- **Major** - breaks old links or rebuilds the site: removed or renamed pages, changed URLs, a full redesign.
-- **Minor** - new visible content: a case study, page, section, component or new images.
-- **Patch** - fixes and small edits: copy, alt text, image swaps or optimisation, styling, dependencies, config, tests, docs.
+How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## 1.0.3 - 2026-10-09
+## Unreleased
 
-### Added
+### 1.0.4 - 2026-10-09
+
+#### Added
+
+- `develop` / `main` branch workflow, release process and release notes guide in `CONTRIBUTING.md`.
+
+#### Changed
+
+- Changelog groups versions into releases; versions waiting for a release sit under Unreleased.
+
+### 1.0.3 - 2026-10-09
+
+#### Added
 
 - Structured data (JSON-LD) in `index.html`: Person, ProfilePage and WebSite, with education, credentials, skills and LinkedIn.
 - `robots.txt` and `sitemap.xml`.
 - `robots` meta allowing large image previews in search results.
 - Short summary and case-study names in the `<noscript>` fallback, for crawlers that do not run JavaScript.
 
-### Changed
+#### Changed
 
 - Meta, Open Graph and X descriptions now name the role, 8+ years, B2B and enterprise focus, UX research, design systems and the MSc in Psychology.
 
-## 1.0.2 - 2026-10-09
+## Release v1.0.2 - 2026-10-09
 
-### Changed
+First release of the rebuilt portfolio.
+
+- The portfolio is rebuilt from scratch, with Work, About, Contact, CV and cover letter pages, light and dark mode.
+- Three case studies: Automotive B2B Marketplace Redesign, Project Planning and the Enterprise White-Label Theme Generator, each with its screenshots.
+- New favicon and link preview image for LinkedIn, Slack and other apps.
+- Large screenshots are resized so case studies load faster (the biggest went from 32 MB to 1.6 MB).
+
+Versions: 1.0.0 - 1.0.2.
+
+### 1.0.2 - 2026-10-09
+
+#### Changed
 
 - Resized `automotive-hifi-screens-documentation.png` from 14370 px to 4000 px wide (2.9 MB to 0.8 MB). The 1.0.1 commit message listed this change, but the file was missing from that commit.
 
-## 1.0.1 - 2026-10-09
+### 1.0.1 - 2026-10-09
 
-### Changed
+#### Changed
 
 - Resized `automotive-prototype-audit-tracker.png` from 20274 px to 3000 px wide (32 MB to 1.6 MB).
 
-### Added
+#### Added
 
 - This changelog.
 
-## 1.0.0 - 2026-10-09
+### 1.0.0 - 2026-10-09
 
-### Added
+#### Added
 
 - Portfolio rebuilt in React 19, TypeScript and Tailwind v4 on Vite, replacing the Vite starter.
 - Work, About and case-study pages for the theming system, Project Planning and automotive projects.
@@ -47,6 +67,6 @@ Versions follow [Semantic Versioning](https://semver.org/):
 - New favicon.
 - Netlify config: tests run before every build, hashed bundles cached for a year, security headers.
 
-### Changed
+#### Changed
 
 - The benchmarking card in the automotive case study uses `automotive-competitive-benchmarking-notes.png`.

@@ -1,4 +1,4 @@
-# Netlify builds on every push to main (deploy previews for pull requests).
+# Netlify builds `main` for production (releases only) and `develop` as a branch deploy; see CONTRIBUTING.md.
 # Node version comes from .node-version; yarn is detected from yarn.lock.
 [build]
   command = "yarn test:run && yarn build"
