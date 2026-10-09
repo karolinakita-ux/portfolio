@@ -4,7 +4,12 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v1.1.0 - 2026-10-09
+
+- Case-study screenshots can be zoomed up to 400% on computers and tablets, with buttons or the + and - keys, and moved around by dragging. Phones keep their own pinch-zoom.
+- Clearer search results and link previews: a better page description, and profile details that help Google show who Karolina is.
+
+Versions: 1.0.3 - 1.1.0.
 
 ### 1.1.0 - 2026-10-09
 
