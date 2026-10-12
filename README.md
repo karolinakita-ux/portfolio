@@ -29,7 +29,7 @@ Copy Karolina's images into `public/assets/` once (case-study screenshots, thumb
 index.html                     <head>: title, description, link-preview tags, theme script
 public/                        copied as-is: favicon.svg, _headers, assets/ (images)
 src/content/                   all copy (typed in types.ts) - most edits happen here
-src/views/                     the pages: Work, About, Contact, case studies, CV, cover letter
+src/views/                     the pages: Work, About, Contact, case studies, CV
 src/components/                ui/, layout/, media/, case/, icons.tsx
 src/hooks/                     theme, history routing, image loading, scroll position
 src/lib/                       routes, class helpers, dates, A4 page-fit maths

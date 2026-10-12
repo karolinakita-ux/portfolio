@@ -3,11 +3,14 @@ import userEvent from "@testing-library/user-event";
 import { act } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockMatchMedia } from "../../test/matchMedia.ts";
+import { preloadImages } from "../../lib/imagePreload.ts";
 import { LightboxProvider } from "./Lightbox.tsx";
 import { useLightbox, type LightboxItem } from "./lightbox-context.ts";
 
+vi.mock("../../lib/imagePreload.ts", () => ({ preloadImages: vi.fn() }));
+
 const ITEMS: LightboxItem[] = [
-  { src: "/assets/wide.png", alt: "Wide screen", title: "Wide" },
+  { src: "/assets/wide.png", alt: "Wide screen", title: "Wide", width: 4000, height: 1000 },
   { src: "/assets/tall.png", alt: "Tall screen", title: "Tall" },
   { src: "/assets/square.png", alt: "Square screen", title: "Square" },
 ];
@@ -26,7 +29,7 @@ const openViewer = async () => {
   render(
     <LightboxProvider>
       <Opener />
-    </LightboxProvider>
+    </LightboxProvider>,
   );
   await user.click(screen.getByRole("button", { name: "Open" }));
   const dialog = screen.getByRole("dialog");
@@ -41,11 +44,93 @@ const openViewer = async () => {
   };
 };
 
+describe("Lightbox loading", () => {
+  const skeleton = (dialog: HTMLElement) => dialog.querySelector(".kb-lightbox-skeleton");
+
+  it("shows a skeleton of the image's shape until the image is decoded", async () => {
+    const { dialog, zoomIn } = await openViewer();
+    const image = within(dialog).getByRole<HTMLImageElement>("img", { name: "Wide screen" });
+    expect(skeleton(dialog)).toHaveAttribute("aria-hidden", "true");
+    expect((skeleton(dialog) as HTMLElement).style.getPropertyValue("--kb-aspect")).toBe("4");
+    expect((skeleton(dialog) as HTMLElement).style.getPropertyValue("--kb-natural-width")).toBe("4000px");
+    expect(image).toHaveClass("opacity-0");
+    expect(zoomIn).toHaveAttribute("aria-disabled", "true");
+
+    let decoded = () => {};
+    image.decode = () => new Promise<void>((resolve) => (decoded = resolve));
+    fireEvent.load(image);
+    expect(skeleton(dialog)).toBeInTheDocument(); // loaded, not yet decoded
+    await act(async () => decoded());
+    expect(skeleton(dialog)).not.toBeInTheDocument();
+    expect(image).not.toHaveClass("opacity-0");
+    expect(zoomIn).toHaveAttribute("aria-disabled", "false");
+  });
+
+  it("fills the pane when the image size is unknown", async () => {
+    const { user, dialog } = await openViewer();
+    await user.click(within(dialog).getByRole("button", { name: "Next image" }));
+    expect(skeleton(dialog)).not.toBeInTheDocument();
+    expect(dialog.querySelector(".kb-lightbox-pane > [aria-hidden='true']")).toHaveClass("h-full", "w-full");
+  });
+
+  it("shows a cached image straight away", async () => {
+    vi.spyOn(HTMLImageElement.prototype, "complete", "get").mockReturnValue(true);
+    vi.spyOn(HTMLImageElement.prototype, "naturalWidth", "get").mockReturnValue(4000);
+    const { dialog } = await openViewer();
+    expect(skeleton(dialog)).not.toBeInTheDocument();
+    expect(within(dialog).getByRole("img", { name: "Wide screen" })).not.toHaveClass("opacity-0");
+  });
+
+  it("loads the images either side ahead", async () => {
+    const { user, dialog } = await openViewer();
+    expect(preloadImages).toHaveBeenLastCalledWith(["/assets/tall.png", "/assets/square.png"], { urgent: true });
+    await user.click(within(dialog).getByRole("button", { name: "Next image" }));
+    expect(preloadImages).toHaveBeenLastCalledWith(["/assets/square.png", "/assets/wide.png"], { urgent: true });
+  });
+
+  it("shows the image even when decoding fails", async () => {
+    const { dialog } = await openViewer();
+    const image = within(dialog).getByRole<HTMLImageElement>("img", { name: "Wide screen" });
+    image.decode = () => Promise.reject(new Error("EncodingError"));
+    await act(async () => fireEvent.load(image));
+    expect(skeleton(dialog)).not.toBeInTheDocument();
+    expect(image).not.toHaveClass("opacity-0");
+  });
+
+  it("does not let a previous image's late decode hide the current one", async () => {
+    const { user, dialog } = await openViewer();
+    const wide = within(dialog).getByRole<HTMLImageElement>("img", { name: "Wide screen" });
+    let wideDecoded = () => {};
+    wide.decode = () => new Promise<void>((resolve) => (wideDecoded = resolve));
+    fireEvent.load(wide);
+
+    await user.click(within(dialog).getByRole("button", { name: "Next image" }));
+    const tall = within(dialog).getByRole<HTMLImageElement>("img", { name: "Tall screen" });
+    tall.decode = () => Promise.resolve();
+    await act(async () => fireEvent.load(tall));
+    expect(tall).not.toHaveClass("opacity-0");
+
+    await act(async () => wideDecoded()); // the first image finishes decoding after the visitor moved on
+    expect(tall).not.toHaveClass("opacity-0");
+    expect(dialog.querySelector(".kb-lightbox-pane > [aria-hidden='true']")).not.toBeInTheDocument();
+  });
+
+  it("says when an image cannot load, with no skeleton and no zoom", async () => {
+    const { dialog, zoomIn } = await openViewer();
+    fireEvent.error(within(dialog).getByRole("img", { name: "Wide screen" }));
+    expect(within(dialog).getByText("Image unavailable")).toBeInTheDocument();
+    expect(within(dialog).queryByRole("img")).not.toBeInTheDocument();
+    expect(skeleton(dialog)).not.toBeInTheDocument();
+    expect(zoomIn).toHaveAttribute("aria-disabled", "true");
+  });
+});
+
 describe("Lightbox zoom", () => {
   // jsdom loads no images; zoom needs the intrinsic size.
   beforeEach(() => {
     vi.spyOn(HTMLImageElement.prototype, "naturalWidth", "get").mockReturnValue(4000);
     vi.spyOn(HTMLImageElement.prototype, "naturalHeight", "get").mockReturnValue(1000);
+    vi.spyOn(HTMLImageElement.prototype, "complete", "get").mockReturnValue(true); // as if cached
   });
 
   it("sizes the zoomed image from its intrinsic size, so it follows window resizes", async () => {
@@ -80,7 +165,10 @@ describe("Lightbox zoom", () => {
     await user.click(zoomIn);
     expect(readout()).toHaveTextContent("150%");
     expect(zoomOut).toHaveAttribute("aria-disabled", "false");
-    expect(within(dialog).getByRole("region", { name: "Zoomed image, scroll to pan" })).toHaveAttribute("tabindex", "0");
+    expect(within(dialog).getByRole("region", { name: "Zoomed image, scroll to pan" })).toHaveAttribute(
+      "tabindex",
+      "0",
+    );
 
     await user.click(zoomOut);
     expect(readout()).toHaveTextContent("Fit");
@@ -108,6 +196,33 @@ describe("Lightbox zoom", () => {
     expect(readout()).toHaveTextContent("400%");
     expect(zoomIn).toHaveAttribute("aria-disabled", "true");
     expect(zoomIn).toHaveFocus();
+  });
+
+  it.each([
+    ["0", "{0}"],
+    ["-", "-"],
+  ])("moves focus from the zoomed pane to Zoom in when %s returns to fit (WCAG 2.4.3)", async (_key, keys) => {
+    const { user, dialog, zoomIn, readout } = await openViewer();
+    await user.click(zoomIn);
+    const pane = within(dialog).getByRole("region", { name: "Zoomed image, scroll to pan" });
+    act(() => pane.focus());
+
+    await user.keyboard(keys);
+    expect(readout()).toHaveTextContent("Fit");
+    expect(zoomIn).toHaveFocus();
+
+    await user.keyboard("+"); // keys still reach the viewer
+    expect(readout()).toHaveTextContent("150%");
+  });
+
+  it("moves focus from the zoomed pane to Close when the window narrows below md", async () => {
+    const media = mockMatchMedia(true);
+    const { user, dialog, zoomIn } = await openViewer();
+    await user.click(zoomIn);
+    act(() => within(dialog).getByRole("region", { name: "Zoomed image, scroll to pan" }).focus());
+
+    act(() => media.change(false));
+    expect(within(dialog).getByRole("button", { name: "Close image viewer" })).toHaveFocus();
   });
 
   it("resets to fit when browsing to another image and after closing", async () => {
@@ -160,11 +275,24 @@ describe("Lightbox swipe", () => {
   it("does not browse while zoomed", async () => {
     vi.spyOn(HTMLImageElement.prototype, "naturalWidth", "get").mockReturnValue(4000);
     vi.spyOn(HTMLImageElement.prototype, "naturalHeight", "get").mockReturnValue(1000);
+    vi.spyOn(HTMLImageElement.prototype, "complete", "get").mockReturnValue(true); // as if cached
     const { user, dialog, zoomIn } = await openViewer();
     await user.click(zoomIn);
 
     swipe(dialog, [300, 200], [100, 200]);
     expect(title(dialog)).toHaveTextContent("Wide");
+  });
+
+  it("slides the new image in from the side it came from", async () => {
+    const { user, dialog } = await openViewer();
+    const image = () => within(dialog).getByRole("img");
+    expect(image()).toHaveClass("motion-safe:animate-view-in");
+
+    swipe(dialog, [300, 200], [100, 200]);
+    expect(image()).toHaveClass("motion-safe:animate-slide-in-next");
+
+    await user.click(within(dialog).getByRole("button", { name: "Previous image" }));
+    expect(image()).toHaveClass("motion-safe:animate-slide-in-prev");
   });
 
   it("does not browse while the page is pinch-zoomed", async () => {

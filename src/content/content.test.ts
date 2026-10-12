@@ -1,14 +1,13 @@
 import { isValidElement, type ReactElement, type ReactNode } from "react";
 import { describe, expect, it } from "vitest";
-import { Strong } from "../components/ui/text.tsx";
-import { formatLongDate, formatMonthYear } from "../lib/dates.ts";
+import { Lang, Strong } from "../components/ui/text.tsx";
+import { formatMonthYear } from "../lib/dates.ts";
 import { isView, VIEWS } from "../lib/routes.ts";
 import { ABOUT_INTRO, FAQ, MILESTONES, PRINCIPLES } from "./about.ts";
 import { AUTOMOTIVE_CASE } from "./cases/automotive.ts";
 import { MEETESTIM_CASE } from "./cases/meetestim.tsx";
 import { THEMING_CASE } from "./cases/theming.tsx";
 import { CONTACT } from "./contact.ts";
-import { COVER_LETTER } from "./cover-letter.ts";
 import { CV } from "./cv-data.ts";
 import { PROFILE } from "./profile.ts";
 import type { CaseStudy, ShowcaseCard, ThemingCaseStudy } from "./types.ts";
@@ -17,7 +16,7 @@ import { PROCESS_BANNER, TESTIMONIALS, WORK_CASES, WORK_INTRO } from "./work.ts"
 /**
  * Content rules for the portfolio copy, so they hold for every future edit:
  *   - Short hyphens with spaces ("word - word", "2019 - 2026"), never en or em dashes.
- *   - The CV and cover letter are plain text for ATS parsers: no curly quotes either.
+ *   - The CV is plain text for ATS parsers: no curly quotes either.
  *   - H1 headings never end with a trailing period.
  *   - Every case-study bullet opens with a bold lead-in term and a colon.
  *   - Navigation targets and image file names are valid on Netlify (Linux: case-sensitive).
@@ -39,8 +38,18 @@ const caseCards = (c: CaseStudy | ThemingCaseStudy): ShowcaseCard[] =>
   "sections" in c ? c.sections.flatMap((section) => [...section.cards]) : [...c.solution, ...c.safety];
 
 const ALL_CONTENT = {
-  ABOUT_INTRO, FAQ, MILESTONES, PRINCIPLES, CONTACT, COVER_LETTER, CV, PROFILE,
-  PROCESS_BANNER, TESTIMONIALS, WORK_CASES, WORK_INTRO, CASES,
+  ABOUT_INTRO,
+  FAQ,
+  MILESTONES,
+  PRINCIPLES,
+  CONTACT,
+  CV,
+  PROFILE,
+  PROCESS_BANNER,
+  TESTIMONIALS,
+  WORK_CASES,
+  WORK_INTRO,
+  CASES,
 };
 
 describe("copy style", () => {
@@ -49,8 +58,8 @@ describe("copy style", () => {
     expect(offending).toEqual([]);
   });
 
-  it("keeps the CV and cover letter ATS-safe (no curly quotes)", () => {
-    const offending = collectText({ CV, COVER_LETTER }).filter((text) => /[‘’“”]/.test(text));
+  it("keeps the CV ATS-safe (no curly quotes)", () => {
+    const offending = collectText({ CV }).filter((text) => /[‘’“”]/.test(text));
     expect(offending).toEqual([]);
   });
 
@@ -71,7 +80,10 @@ describe.each(CASE_TABLE)("case study: %s", (_name, c) => {
       expect(isValidElement(bullet), "bullet must be JSX (use lead())").toBe(true);
       const children = (bullet as ReactElement<{ children?: ReactNode }>).props.children;
       const first = Array.isArray(children) ? children[0] : children;
-      expect(isValidElement(first) && first.type === Strong, `first child must be <Strong>: ${collectText(bullet).join("")}`).toBe(true);
+      expect(
+        isValidElement(first) && first.type === Strong,
+        `first child must be <Strong>: ${collectText(bullet).join("")}`,
+      ).toBe(true);
       expect(collectText(first).join("")).toMatch(/\S:$/);
     }
   });
@@ -88,6 +100,22 @@ describe.each(CASE_TABLE)("case study: %s", (_name, c) => {
     unique(cards.map((card) => card.id));
     unique(c.meta.map((entry) => entry.label));
     unique(c.summary.map((paragraph) => paragraph.slice(0, 24)));
+  });
+
+  it("marks Polish phrases in case studies with lang=pl (WCAG 3.1.2)", () => {
+    const POLISH_LETTERS = /[ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/;
+    const unmarked: string[] = [];
+    const walk = (value: unknown, inPolish: boolean): void => {
+      if (typeof value === "string") {
+        if (!inPolish && POLISH_LETTERS.test(value)) unmarked.push(value.trim());
+      } else if (Array.isArray(value)) value.forEach((v) => walk(v, inPolish));
+      else if (isValidElement(value)) {
+        const props = value.props as { children?: ReactNode; lang?: string };
+        walk(props.children, inPolish || (value.type === Lang && props.lang === "pl"));
+      } else if (value !== null && typeof value === "object") Object.values(value).forEach((v) => walk(v, inPolish));
+    };
+    walk(c, false);
+    expect(unmarked).toEqual([]);
   });
 
   it("names screenshots in lowercase kebab-case (Netlify paths are case-sensitive)", () => {
@@ -112,7 +140,11 @@ describe("work page", () => {
 
   it("chains case studies in the same order as the Work page", () => {
     const order = WORK_CASES.map((item) => item.view);
-    const byView = { "case-automotive": AUTOMOTIVE_CASE, "case-meetestim": MEETESTIM_CASE, "case-theming": THEMING_CASE };
+    const byView = {
+      "case-automotive": AUTOMOTIVE_CASE,
+      "case-meetestim": MEETESTIM_CASE,
+      "case-theming": THEMING_CASE,
+    };
     order.forEach((view, index) => {
       const c = byView[view as keyof typeof byView];
       const next = order[index + 1];
@@ -121,23 +153,30 @@ describe("work page", () => {
   });
 });
 
-describe("CV and cover letter", () => {
+describe("CV", () => {
   it("uses valid ISO dates", () => {
     for (const role of [...CV.experience, ...CV.education]) {
       expect(() => formatMonthYear(role.start)).not.toThrow();
       if (role.end) expect(() => formatMonthYear(role.end ?? "")).not.toThrow();
     }
-    expect(() => formatLongDate(COVER_LETTER.date)).not.toThrow();
   });
 
   it("writes lead-ins without their own colon (the layout adds it)", () => {
-    const leads = [...CV.experience.flatMap((role) => role.bullets), ...COVER_LETTER.highlights].map((bullet) => bullet.lead);
+    const leads = CV.experience.flatMap((role) => role.bullets).map((bullet) => bullet.lead);
     for (const lead of leads) expect(lead).not.toMatch(/:\s*$/);
   });
 
   it("shares contact details with the profile", () => {
     expect(CV.header.email).toBe(PROFILE.email);
-    expect(COVER_LETTER.sender.email).toBe(PROFILE.email);
     expect(CV.header.linkedin.href).toBe(PROFILE.linkedinUrl);
+    expect(PROFILE.linkedinRecommendationsUrl.startsWith(PROFILE.linkedinUrl + "/")).toBe(true);
+  });
+
+  it("links every recommendation to LinkedIn pages of its author and company", () => {
+    for (const item of TESTIMONIALS) {
+      expect(item.profileUrl).toMatch(/^https:\/\/www\.linkedin\.com\/in\/[\w-]+\/$/);
+      expect(item.company.url).toMatch(/^https:\/\/www\.linkedin\.com\/company\/[\w-]+\/$/);
+      expect(item.role).not.toContain("|"); // the company is its own field
+    }
   });
 });

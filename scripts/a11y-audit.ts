@@ -102,6 +102,8 @@ async function loadScreenReader(page: Page, bundle: string): Promise<void> {
   await page.route("**/__vsr.js", (route) => route.fulfill({ contentType: "text/javascript", body: bundle }));
   await page.addScriptTag({ type: "module", content: "import { virtual } from '/__vsr.js'; window.__vsr = virtual;" });
   await page.waitForFunction(() => window.__vsr !== undefined);
+  // Real browsers with JavaScript on do not expose <noscript>; the emulated reader would read its raw HTML.
+  await page.evaluate(() => document.querySelectorAll("noscript").forEach((node) => node.remove()));
 }
 
 /** Walks the emulated screen reader from the start of `selector` to its end; returns the spoken phrases. */
@@ -127,6 +129,8 @@ async function screenReaderTranscript(page: Page, selector: string): Promise<str
 }
 
 async function tabOrder(page: Page): Promise<TabStop[]> {
+  // The app moves focus to <main> after a view loads (in an animation frame): let that settle first.
+  await page.waitForTimeout(400);
   await page.evaluate(() => {
     (document.activeElement as HTMLElement | null)?.blur();
     window.scrollTo(0, 0);
@@ -137,6 +141,8 @@ async function tabOrder(page: Page): Promise<TabStop[]> {
     const stop = await page.evaluate((index) => {
       const el = document.activeElement as HTMLElement | null;
       if (!el || el === document.body) return null;
+      // Focused by script, not by Tab (e.g. <main tabindex="-1"> after navigation): not a Tab stop.
+      if (el.getAttribute("tabindex") === "-1") return "skip" as const;
       if (el.dataset.a11yVisited) return "wrapped" as const;
       el.dataset.a11yVisited = "1";
       const style = getComputedStyle(el);
@@ -157,6 +163,7 @@ async function tabOrder(page: Page): Promise<TabStop[]> {
       };
     }, index);
     if (stop === "wrapped") break;
+    if (stop === "skip") continue;
     if (!stop) {
       if (index > 0) break; // focus left the page (back to the browser UI)
       continue;
