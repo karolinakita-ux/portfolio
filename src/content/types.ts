@@ -116,12 +116,18 @@ export interface WorkCase {
   view: View;
 }
 
+/** A LinkedIn recommendation quoted on the Work page. */
 export interface Testimonial {
   id: string;
   quote: string;
   name: string;
   initials: string;
+  /** The person's LinkedIn profile. */
+  profileUrl: string;
+  /** Job title, without the company. */
   role: string;
+  /** Company at the time, with its LinkedIn page. */
+  company: { name: string; url: string };
 }
 
 export interface Milestone {

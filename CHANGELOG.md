@@ -6,6 +6,16 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 1.5.0 - 2026-10-12
+
+#### Added
+
+- Recommendations on the Work page link to LinkedIn: each author's name opens their profile and the company name opens its company page (Stewart Wilson, Precisely; Gavin Harvey, Cox Automotive), with the external-link icon and a 24 px minimum tap height. A secondary button under the quotes, "Read the full recommendations on LinkedIn", opens Karolina's recommendations page. All open in a new tab and say so to screen readers.
+
+#### Changed
+
+- Testimonial content splits the job title and the company (`role`, `company: { name, url }`) and adds `profileUrl`; the page still shows "Role | Company". `PROFILE.linkedinRecommendationsUrl` holds the recommendations link.
+
 ### 1.4.3 - 2026-10-12
 
 #### Changed

@@ -9,6 +9,9 @@ export const HERO_ACTIONS = {
 export const WORK_INTRO =
   "A closer look at how I tackle complex B2B workflows, structure dense data, and collaborate with product teams to solve real business problems.";
 
+/** Link under the quotes: they are excerpts, the full texts are on LinkedIn. */
+export const RECOMMENDATIONS_LINK_LABEL = "Read the full recommendations on LinkedIn";
+
 export const TESTIMONIALS: ReadonlyArray<Testimonial> = [
   {
     id: "stewart-wilson",
@@ -16,7 +19,9 @@ export const TESTIMONIALS: ReadonlyArray<Testimonial> = [
       "Karolina has a strong, balanced skillset as a UX designer and was able to quickly build an understanding of our complex, enterprise product domain, delivering significant improvements through discovery, design, and design system standards.",
     name: "Stewart Wilson",
     initials: "SW",
-    role: "UX Director | Precisely",
+    profileUrl: "https://www.linkedin.com/in/stewart-wilson-ba92112a/",
+    role: "UX Director",
+    company: { name: "Precisely", url: "https://www.linkedin.com/company/preciselydata/" },
   },
   {
     id: "gavin-harvey",
@@ -24,7 +29,9 @@ export const TESTIMONIALS: ReadonlyArray<Testimonial> = [
       "One of Karolina’s biggest strengths is her ability to understand complex problems, break them down and develop solutions to a very high standard. Her documentation was consistently outstanding, clearly capturing research findings and design thinking.",
     name: "Gavin Harvey",
     initials: "GH",
-    role: "Lead Product Designer | Cox Automotive",
+    profileUrl: "https://www.linkedin.com/in/harveygavin/",
+    role: "Lead Product Designer",
+    company: { name: "Cox Automotive", url: "https://www.linkedin.com/company/coxautomotiveeurope/" },
   },
 ];
 

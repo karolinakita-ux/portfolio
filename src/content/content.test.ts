@@ -175,5 +175,14 @@ describe("CV and cover letter", () => {
     expect(CV.header.email).toBe(PROFILE.email);
     expect(COVER_LETTER.sender.email).toBe(PROFILE.email);
     expect(CV.header.linkedin.href).toBe(PROFILE.linkedinUrl);
+    expect(PROFILE.linkedinRecommendationsUrl.startsWith(PROFILE.linkedinUrl + "/")).toBe(true);
+  });
+
+  it("links every recommendation to LinkedIn pages of its author and company", () => {
+    for (const item of TESTIMONIALS) {
+      expect(item.profileUrl).toMatch(/^https:\/\/www\.linkedin\.com\/in\/[\w-]+\/$/);
+      expect(item.company.url).toMatch(/^https:\/\/www\.linkedin\.com\/company\/[\w-]+\/$/);
+      expect(item.role).not.toContain("|"); // the company is its own field
+    }
   });
 });
