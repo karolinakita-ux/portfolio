@@ -8,6 +8,7 @@ if (!root) throw new Error('Missing <div id="root"> in index.html');
 
 createRoot(root).render(
   <StrictMode>
-    <App assetBase="/assets" />
+    {/* Follows Vite's base: "/assets" on the site, "./assets" in a relative build (e.g. a claude.ai artifact). */}
+    <App assetBase={import.meta.env.BASE_URL + "assets"} />
   </StrictMode>
 );

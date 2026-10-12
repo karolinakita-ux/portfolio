@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 1.3.1 - 2026-10-12
+
+#### Fixed
+
+- Images load in a relative build (`vite build --base ./`, used for the claude.ai artifact copy): `main.tsx` builds the image path from Vite's base instead of a fixed `/assets`. The site build still uses `/assets`, so nothing changes on the live site.
+
 ### 1.3.0 - 2026-10-12
 
 #### Added
