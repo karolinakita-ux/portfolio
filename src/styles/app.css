@@ -316,6 +316,14 @@
   max-height: max(12rem, calc(100vh - 208px));
   max-height: max(12rem, calc(100dvh - 208px));
 }
+/* Loading skeleton: the size the fitted image will have (as .kb-lightbox-image:
+   pane width, height limit or natural width, whichever is smallest), from the
+   image's known size. Variables are set inline by Lightbox.tsx. */
+.kb-lightbox-skeleton {
+  width: min(100%, max(12rem, 100vh - 208px) * var(--kb-aspect), var(--kb-natural-width));
+  width: min(100%, max(12rem, 100dvh - 208px) * var(--kb-aspect), var(--kb-natural-width));
+  aspect-ratio: var(--kb-aspect);
+}
 /* Zoomed image: the fitted width (pane width, height limit or natural width,
    whichever is smallest, as .kb-lightbox-image) times the zoom level. In CSS so
    it follows window resizes. Variables are set inline by Lightbox.tsx. */

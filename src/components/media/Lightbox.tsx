@@ -10,11 +10,15 @@ import {
   type MouseEvent,
   type PointerEvent,
   type ReactNode,
+  type SyntheticEvent,
   type TouchEvent,
 } from "react";
+import { useImageStatus } from "../../hooks/useImageStatus.ts";
+import { preloadImages } from "../../lib/imagePreload.ts";
 import { cn, FOCUS_RING } from "../../lib/ui.ts";
 import { ChevronLeft, ChevronRight, ImageOff, X, ZoomIn, ZoomOut } from "../icons.tsx";
 import { IconButton } from "../ui/Button.tsx";
+import { ThumbnailScaffold } from "./images.tsx";
 import { LightboxContext, type LightboxItem, type OpenLightbox } from "./lightbox-context.ts";
 
 /**
@@ -28,6 +32,10 @@ import { LightboxContext, type LightboxItem, type OpenLightbox } from "./lightbo
  * Controls: close button, Escape, click on the dimmed backdrop; with more than
  * one image, Previous / Next buttons, the ← / → keys and, on touch screens,
  * a swipe left / right (all wrapping around).
+ *
+ * Loading: the neighbouring images load ahead (lib/imagePreload.ts). An image
+ * that is not in the cache yet shows a skeleton of its own size and shape
+ * (item.width / item.height) until it is decoded; zoom waits for it.
  *
  * Zoom (md and up; phones pinch-zoom natively): Zoom out / Zoom in buttons and
  * the + / - / 0 keys step through ZOOM_STEPS. Zoomed, the image pane scrolls:
@@ -136,7 +144,6 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
   const imageRef = useRef<HTMLImageElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const zoomInRef = useRef<HTMLButtonElement>(null);
-  const [failedSrc, setFailedSrc] = useState<string | null>(null);
   const [zoom, setZoom] = useState<ZoomState | null>(null);
   // Point to keep in the middle of the pane: set on zoom, kept current by scrolling and dragging.
   const centerRef = useRef<ScrollCenter>({ x: 0.5, y: 0.5 });
@@ -145,7 +152,9 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
   const isOpen = state !== null;
   const item = state ? state.items[state.index] : undefined;
   const count = state ? state.items.length : 0;
-  const failed = item !== undefined && failedSrc === item.src;
+  const { status: imageStatus, setStatus: setImageStatus, ref: imageStatusRef } = useImageStatus(item?.src ?? "");
+  const failed = item !== undefined && imageStatus === "error";
+  const loaded = imageStatus === "loaded";
   const zoomStep = zoom?.step ?? 0;
   const zoomLevel = ZOOM_STEPS[zoomStep] ?? 1;
   const maxZoomStep = ZOOM_STEPS.length - 1;
@@ -160,6 +169,36 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
       dialog.close();
     }
   }, [isOpen]);
+
+  // Load the images either side, so Previous / Next show them at once.
+  useEffect(() => {
+    if (!state || state.items.length < 2) return;
+    const { items, index } = state;
+    const near = new Set<string>();
+    for (const offset of [1, -1, 2]) {
+      const src = items[(index + offset + items.length) % items.length]?.src;
+      if (src !== undefined && src !== items[index]?.src) near.add(src);
+    }
+    preloadImages([...near], { urgent: true });
+  }, [state]);
+
+  const setImage = useCallback(
+    (image: HTMLImageElement | null) => {
+      imageRef.current = image;
+      imageStatusRef(image);
+    },
+    [imageStatusRef],
+  );
+
+  // Reveal the image once it is decoded, so the skeleton does not give way to an empty frame.
+  const handleImageLoad = (event: SyntheticEvent<HTMLImageElement>) => {
+    const image = event.currentTarget;
+    const reveal = () => {
+      if (imageRef.current === image) setImageStatus("loaded"); // Not if the visitor moved on meanwhile.
+    };
+    if (typeof image.decode === "function") image.decode().then(reveal, reveal);
+    else reveal();
+  };
 
   // Unlock scroll if the provider unmounts while open.
   useEffect(() => () => document.documentElement.classList.remove("kb-scroll-locked"), []);
@@ -214,7 +253,7 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
     const viewport = viewportRef.current;
     const image = imageRef.current;
     const next = Math.min(Math.max(target, 0), maxZoomStep);
-    if (!viewport || !image || failed || next === zoomStep) return;
+    if (!viewport || !image || !loaded || next === zoomStep) return;
     if (next === 0) {
       // Back to fit makes the pane unfocusable; move focus first so it does not drop to the page (WCAG 2.4.3).
       if (document.activeElement === viewport) zoomInRef.current?.focus();
@@ -338,7 +377,7 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
               if (zoom) centerRef.current = readCenter(event.currentTarget);
             }}
             className={cn(
-              "kb-lightbox-pane min-h-0 rounded-sm border border-border-subtle bg-bg-surface-default",
+              "kb-lightbox-pane relative min-h-0 rounded-sm border border-border-subtle bg-bg-surface-default",
               zoom
                 ? cn(
                     "kb-lightbox-viewport cursor-grab overflow-auto overscroll-contain select-none active:cursor-grabbing",
@@ -353,31 +392,39 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
                 Image unavailable
               </p>
             ) : (
-              <img
-                key={item.src}
-                ref={imageRef}
-                src={item.src}
-                alt={item.alt}
-                decoding="async"
-                draggable={false}
-                onError={() => setFailedSrc(item.src)}
-                style={
-                  zoom
-                    ? ({
-                        "--kb-zoom": zoomLevel,
-                        "--kb-aspect": zoom.aspect,
-                        "--kb-natural-width": zoom.naturalWidth + "px",
-                      } as CSSProperties)
-                    : undefined
-                }
-                className={cn(
-                  "block h-auto",
-                  IMAGE_ENTRY[state.direction],
-                  zoom
-                    ? "kb-lightbox-image-zoomed mx-auto max-w-none"
-                    : "kb-lightbox-image w-auto max-w-full object-contain",
+              <>
+                {!loaded && (
+                  <LoadingSkeleton key={item.src + "#skeleton"} item={item} className={IMAGE_ENTRY[state.direction]} />
                 )}
-              />
+                <img
+                  key={item.src}
+                  ref={setImage}
+                  src={item.src}
+                  alt={item.alt}
+                  decoding="async"
+                  draggable={false}
+                  onLoad={handleImageLoad}
+                  onError={() => setImageStatus("error")}
+                  style={
+                    zoom
+                      ? ({
+                          "--kb-zoom": zoomLevel,
+                          "--kb-aspect": zoom.aspect,
+                          "--kb-natural-width": zoom.naturalWidth + "px",
+                        } as CSSProperties)
+                      : undefined
+                  }
+                  className={cn(
+                    "block h-auto",
+                    IMAGE_ENTRY[state.direction],
+                    zoom
+                      ? "kb-lightbox-image-zoomed mx-auto max-w-none"
+                      : "kb-lightbox-image w-auto max-w-full object-contain",
+                    // Kept in the accessibility tree (its alt) but out of the layout until it can be shown.
+                    !loaded && "absolute opacity-0",
+                  )}
+                />
+              </>
             )}
           </div>
 
@@ -396,7 +443,7 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
                   title="Zoom out (-)"
                   aria-keyshortcuts="-"
                   icon={ZoomOut}
-                  aria-disabled={zoomStep === 0 || failed}
+                  aria-disabled={zoomStep === 0 || !loaded}
                   onClick={() => zoomTo(zoomStep - 1)}
                 />
                 <p aria-live="polite" className="w-2xl text-center text-label-md text-text-secondary tabular-nums">
@@ -408,7 +455,7 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
                   title="Zoom in (+)"
                   aria-keyshortcuts="+"
                   icon={ZoomIn}
-                  aria-disabled={zoomStep === maxZoomStep || failed}
+                  aria-disabled={zoomStep === maxZoomStep || !loaded}
                   onClick={() => zoomTo(zoomStep + 1)}
                 />
               </div>
@@ -430,5 +477,29 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
         </figure>
       )}
     </dialog>
+  );
+}
+
+/**
+ * Placeholder while an image loads: the size the fitted image will have
+ * (.kb-lightbox-skeleton in app.css), or the whole pane when the size is unknown.
+ */
+function LoadingSkeleton({ item, className }: { item: LightboxItem; className?: string }) {
+  const { width, height } = item;
+  const sized = width !== undefined && height !== undefined && width > 0 && height > 0;
+  return (
+    <div
+      aria-hidden="true"
+      style={
+        sized ? ({ "--kb-aspect": width / height, "--kb-natural-width": width + "px" } as CSSProperties) : undefined
+      }
+      className={cn(
+        "relative overflow-hidden rounded-sm border border-border-subtle bg-bg-surface-raised",
+        sized ? "kb-lightbox-skeleton" : "h-full w-full",
+        className,
+      )}
+    >
+      <ThumbnailScaffold />
+    </div>
   );
 }

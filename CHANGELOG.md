@@ -6,6 +6,13 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 1.4.0 - 2026-10-12
+
+#### Added
+
+- Case-study screenshots now open at once in the image viewer. After the first page has loaded and the browser is idle, every case study's full screenshots load in the background (two at a time, the open case study first). Opening the viewer also loads the images on either side first, so Previous / Next and swipes do not wait. Nothing preloads when the visitor has data saver on or a 2G connection.
+- Loading skeleton in the image viewer for an image that has not arrived yet: a box of the image's final size and shape with the pulsing wireframe used for page thumbnails, in light and dark. The image replaces it once decoded, and zoom waits until then. Image sizes come from a build-time manifest (`virtual:asset-sizes` in `vite.config.ts`, read from the PNG headers in `public/assets`).
+
 ### 1.3.1 - 2026-10-12
 
 #### Fixed
