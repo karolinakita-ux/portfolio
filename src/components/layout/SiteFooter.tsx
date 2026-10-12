@@ -68,9 +68,12 @@ export function SiteFooter({ onNavigate }: { onNavigate: Navigate }) {
           </section>
         </div>
 
-        <p className="mt-4xl text-center text-body-sm text-text-secondary">
-          © {CURRENT_YEAR} {PROFILE.name} | All Rights Reserved
-        </p>
+        <div className="mt-4xl flex flex-col gap-2xs text-center text-body-sm text-text-secondary">
+          <p>
+            © {CURRENT_YEAR} {PROFILE.name} | All Rights Reserved
+          </p>
+          <p>{PROFILE.builtWith}</p>
+        </div>
       </Container>
     </footer>
   );
