@@ -6,6 +6,14 @@ export function Strong({ children }: { children: ReactNode }) {
   return <strong className="font-semibold text-text-primary">{children}</strong>;
 }
 
+/**
+ * Inline phrase in another language (e.g. quoted Polish UI labels), so screen readers switch pronunciation
+ * (WCAG 3.1.2 Language of Parts). Keep quote marks outside the span.
+ */
+export function Lang({ lang, children }: { lang: string; children: ReactNode }) {
+  return <span lang={lang}>{children}</span>;
+}
+
 /** Inline colour chip for hex values quoted in copy (content data, not UI chrome). */
 export function Swatch({ hex }: { hex: string }) {
   return (

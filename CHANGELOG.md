@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 1.2.4 - 2026-10-12
+
+#### Fixed
+
+- Quoted Polish UI labels in the Project Planning case study (21 phrases, e.g. "Koszt opóźnień") are marked `lang="pl"`, so screen readers pronounce them in Polish (WCAG 3.1.2). New `Lang` inline component in `ui/text.tsx`; a content test fails if Polish letters appear outside it.
+
 ### 1.2.3 - 2026-10-12
 
 #### Fixed
