@@ -4,7 +4,16 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v2.0.1 - 2026-10-12
+
+- Two new buttons under the Work page intro lead to the case studies and to Karolina's Figma workspace.
+- Case-study thumbnails on the Work page open their case study, and recommendations link to their authors and companies on LinkedIn.
+- The header takes one slim row on computers and no longer covers the page on short screens.
+- Screenshots open at once in the image viewer, which moves more smoothly and stays usable at high browser zoom.
+- Better accessibility for keyboard and screen reader users, including a clearer focus outline in dark mode and screenshot descriptions that match the images.
+- The separate cover letter page has been removed.
+
+Versions: 1.2.2 - 2.0.1.
 
 ### 2.0.1 - 2026-10-12
 
@@ -151,6 +160,13 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 - The image viewer kept moving its Previous / Next buttons as image heights changed (up to 167 px), so quick taps or clicks could hit the backdrop and close it. The image area now has a fixed height, which also stops the panel growing when zooming in.
 - Quick taps on buttons and links no longer zoom the page on touch screens (double-tap zoom). Pinch-zoom still works.
 - A downward swipe in the open image viewer no longer pulls to refresh the page behind it.
+
+## Release v1.2.1 - 2026-10-09
+
+- Swipe left or right in the image viewer to browse screenshots on phones and tablets.
+- Automated accessibility checks now cover every page in light and dark mode.
+
+Versions: 1.2.0 - 1.2.1.
 
 ### 1.2.1 - 2026-10-09
 
