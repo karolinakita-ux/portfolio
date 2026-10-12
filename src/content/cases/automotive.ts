@@ -12,7 +12,8 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
     { label: "Domain", value: "Automotive B2B Marketplace & Fleet Remarketing" },
     {
       label: "Team",
-      value: "Design Lead, 2 Senior UX Designers (my focus: buyer flows; peer designer: seller flows), UX Researcher (joined mid-project), Product & Engineering team",
+      value:
+        "Design Lead, 2 Senior UX Designers (my focus: buyer flows; peer designer: seller flows), UX Researcher (joined mid-project), Product & Engineering team",
     },
     {
       label: "Key Outcome",
@@ -41,7 +42,7 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
         {
           id: "survey",
           asset: "automotive-research-surveymonkey-markets.png",
-          alt: "Multi-market quantitative survey analysis across 6 European countries in SurveyMonkey",
+          alt: "Survey data quality table: mandatory questions and answer length could not be tracked; regional coverage is complete at 87.5% (7 of 8 markets), with responses per country: Germany 231, France 96, Italy 87, Netherlands 66, Spain 35, Portugal 19, Poland 11.",
           title: "Multi-Market Survey Analysis",
           intro:
             "Analyzed quantitative feedback from dealers across Spain, France, Germany, Portugal, the UK, and Poland, mapping out common bottlenecks in vehicle search, filtering, and checkout.",
@@ -49,7 +50,7 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
         {
           id: "interviews",
           asset: "automotive-qualitative-interviews-synthesis.png",
-          alt: "Structured qualitative interview script and executive research documentation",
+          alt: "Franchise dealer research board for Poland: grouped quotes from dealer interviews, a table that turns each finding into a platform implication, and charts of preferred communication channels.",
           title: "1-on-1 Customer Interviews",
           intro:
             "Collaborated with the marketing team to prepare an interview guide and conducted 1-on-1 interviews with Polish dealers to uncover daily frustrations and real-world workflows.",
@@ -71,7 +72,7 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
         {
           id: "persona",
           asset: "automotive-b2b-persona-dealer.png",
-          alt: "B2B automotive dealer persona and purchasing workflow model",
+          alt: "Service provider persona built from survey data: profile and goals, charts of respondent roles, business locations and vehicles bought per month, and lists of behaviour traits and priorities.",
           title: "B2B User Personas",
           intro:
             "Mapped out realistic personas based on actual dealer habits - contrasting high-volume independent dealerships with corporate fleet managers to account for different buying frequencies and volume needs.",
@@ -87,7 +88,7 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
         {
           id: "buy-in",
           asset: "automotive-executive-stakeholder-presentation.png",
-          alt: "Presentation slides summarizing research and audit findings for product leadership",
+          alt: "Audit summary slide for the heuristic Visibility of System Status: 8 problems (21.62% of all issues), 1 catastrophic and 7 major, with notes on missing feedback to the user.",
           title: "Prioritizing Improvements",
           intro:
             "Combined interview pain points with audit findings to prioritize fixes with product leadership, creating a clear roadmap for the redesigned core workflows.",
