@@ -77,7 +77,11 @@ interface LightboxState {
   direction: 1 | -1 | 0;
 }
 
-const IMAGE_ENTRY = { 1: "motion-safe:animate-slide-in-next", [-1]: "motion-safe:animate-slide-in-prev", 0: "motion-safe:animate-view-in" } as const;
+const IMAGE_ENTRY = {
+  1: "motion-safe:animate-slide-in-next",
+  [-1]: "motion-safe:animate-slide-in-prev",
+  0: "motion-safe:animate-view-in",
+} as const;
 
 export function LightboxProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<LightboxState | null>(null);
@@ -104,7 +108,7 @@ export function LightboxProvider({ children }: { children: ReactNode }) {
             index: (current.index + delta + current.items.length) % current.items.length,
             direction: delta > 0 ? 1 : -1,
           }
-        : current
+        : current,
     );
   }, []);
 
@@ -127,6 +131,8 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
   const titleId = useId();
   const viewportRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const zoomInRef = useRef<HTMLButtonElement>(null);
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
   const [zoom, setZoom] = useState<ZoomState | null>(null);
   // Point to keep in the middle of the pane: set on zoom, kept current by scrolling and dragging.
@@ -177,7 +183,10 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
     if (!isZoomed || typeof window.matchMedia !== "function") return undefined;
     const query = window.matchMedia(ZOOM_QUERY);
     const onChange = (event: MediaQueryListEvent) => {
-      if (!event.matches) setZoom(null);
+      if (event.matches) return;
+      // The zoom controls are hidden now: keep focus in the dialog on Close.
+      if (document.activeElement === viewportRef.current) closeRef.current?.focus();
+      setZoom(null);
     };
     query.addEventListener("change", onChange);
     return () => query.removeEventListener("change", onChange);
@@ -204,6 +213,8 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
     const next = Math.min(Math.max(target, 0), maxZoomStep);
     if (!viewport || !image || failed || next === zoomStep) return;
     if (next === 0) {
+      // Back to fit makes the pane unfocusable; move focus first so it does not drop to the page (WCAG 2.4.3).
+      if (document.activeElement === viewport) zoomInRef.current?.focus();
       setZoom(null);
       return;
     }
@@ -294,7 +305,8 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
           onTouchCancel={() => {
             swipeRef.current = null;
           }}
-          className="flex w-full max-w-header min-w-0 flex-col gap-sm rounded-lg border border-border-subtle bg-bg-surface-raised p-sm shadow-xl motion-safe:animate-view-in md:p-md">
+          className="flex w-full max-w-header min-w-0 flex-col gap-sm rounded-lg border border-border-subtle bg-bg-surface-raised p-sm shadow-xl motion-safe:animate-view-in md:p-md"
+        >
           <div className="flex items-start justify-between gap-md">
             <div className="flex min-w-0 flex-col gap-3xs">
               {count > 1 && (
@@ -302,12 +314,12 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
                   {state.index + 1} / {count}
                 </p>
               )}
-              <h2 id={titleId} className="text-balance text-title-md text-text-primary">
+              <h2 id={titleId} className="text-title-md text-balance text-text-primary">
                 {item.title}
               </h2>
             </div>
             {/* First focusable element, so showModal() puts focus here. */}
-            <IconButton label="Close image viewer" icon={X} onClick={close} />
+            <IconButton ref={closeRef} label="Close image viewer" icon={X} onClick={close} />
           </div>
 
           <div
@@ -325,8 +337,11 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
             className={cn(
               "kb-lightbox-pane min-h-0 rounded-sm border border-border-subtle bg-bg-surface-default",
               zoom
-                ? cn("kb-lightbox-viewport cursor-grab overflow-auto overscroll-contain select-none active:cursor-grabbing", FOCUS_RING)
-                : "flex items-center justify-center overflow-hidden"
+                ? cn(
+                    "kb-lightbox-viewport cursor-grab overflow-auto overscroll-contain select-none active:cursor-grabbing",
+                    FOCUS_RING,
+                  )
+                : "flex items-center justify-center overflow-hidden",
             )}
           >
             {failed ? (
@@ -355,14 +370,18 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
                 className={cn(
                   "block h-auto",
                   IMAGE_ENTRY[state.direction],
-                  zoom ? "kb-lightbox-image-zoomed mx-auto max-w-none" : "kb-lightbox-image w-auto max-w-full object-contain"
+                  zoom
+                    ? "kb-lightbox-image-zoomed mx-auto max-w-none"
+                    : "kb-lightbox-image w-auto max-w-full object-contain",
                 )}
               />
             )}
           </div>
 
           {/* Single image on a phone: no browse or zoom controls, so no toolbar. */}
-          <div className={cn("flex items-center gap-md", count > 1 ? "justify-between" : "hidden justify-center md:flex")}>
+          <div
+            className={cn("flex items-center gap-md", count > 1 ? "justify-between" : "hidden justify-center md:flex")}
+          >
             {count > 1 && <IconButton label="Previous image" icon={ChevronLeft} onClick={() => step(-1)} />}
             <div className="flex items-center gap-md">
               <div role="group" aria-label="Zoom" className="hidden items-center gap-xs md:flex">
@@ -378,6 +397,7 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
                   {zoom ? `${zoomLevel * 100}%` : "Fit"}
                 </p>
                 <IconButton
+                  ref={zoomInRef}
                   label="Zoom in"
                   title="Zoom in (+)"
                   aria-keyshortcuts="+"
