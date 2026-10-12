@@ -26,7 +26,7 @@ const openViewer = async () => {
   render(
     <LightboxProvider>
       <Opener />
-    </LightboxProvider>
+    </LightboxProvider>,
   );
   await user.click(screen.getByRole("button", { name: "Open" }));
   const dialog = screen.getByRole("dialog");
@@ -80,7 +80,10 @@ describe("Lightbox zoom", () => {
     await user.click(zoomIn);
     expect(readout()).toHaveTextContent("150%");
     expect(zoomOut).toHaveAttribute("aria-disabled", "false");
-    expect(within(dialog).getByRole("region", { name: "Zoomed image, scroll to pan" })).toHaveAttribute("tabindex", "0");
+    expect(within(dialog).getByRole("region", { name: "Zoomed image, scroll to pan" })).toHaveAttribute(
+      "tabindex",
+      "0",
+    );
 
     await user.click(zoomOut);
     expect(readout()).toHaveTextContent("Fit");
@@ -108,6 +111,33 @@ describe("Lightbox zoom", () => {
     expect(readout()).toHaveTextContent("400%");
     expect(zoomIn).toHaveAttribute("aria-disabled", "true");
     expect(zoomIn).toHaveFocus();
+  });
+
+  it.each([
+    ["0", "{0}"],
+    ["-", "-"],
+  ])("moves focus from the zoomed pane to Zoom in when %s returns to fit (WCAG 2.4.3)", async (_key, keys) => {
+    const { user, dialog, zoomIn, readout } = await openViewer();
+    await user.click(zoomIn);
+    const pane = within(dialog).getByRole("region", { name: "Zoomed image, scroll to pan" });
+    act(() => pane.focus());
+
+    await user.keyboard(keys);
+    expect(readout()).toHaveTextContent("Fit");
+    expect(zoomIn).toHaveFocus();
+
+    await user.keyboard("+"); // keys still reach the viewer
+    expect(readout()).toHaveTextContent("150%");
+  });
+
+  it("moves focus from the zoomed pane to Close when the window narrows below md", async () => {
+    const media = mockMatchMedia(true);
+    const { user, dialog, zoomIn } = await openViewer();
+    await user.click(zoomIn);
+    act(() => within(dialog).getByRole("region", { name: "Zoomed image, scroll to pan" }).focus());
+
+    act(() => media.change(false));
+    expect(within(dialog).getByRole("button", { name: "Close image viewer" })).toHaveFocus();
   });
 
   it("resets to fit when browsing to another image and after closing", async () => {

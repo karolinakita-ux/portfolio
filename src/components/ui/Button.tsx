@@ -1,4 +1,4 @@
-import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "react";
+import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode, Ref } from "react";
 import type { IconComponent } from "../icons.tsx";
 import { cn, FOCUS_RING } from "../../lib/ui.ts";
 
@@ -8,17 +8,17 @@ const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
   primary: cn(
     "bg-bg-interactive-primary-default text-text-interactive-primary font-semibold shadow-sm",
     "hover:bg-bg-interactive-primary-hover active:bg-bg-interactive-primary-active",
-    "disabled:bg-bg-interactive-disabled disabled:text-text-interactive-disabled disabled:shadow-none"
+    "disabled:bg-bg-interactive-disabled disabled:text-text-interactive-disabled disabled:shadow-none",
   ),
   secondary: cn(
     "border border-border-interactive-default bg-bg-interactive-secondary-default text-text-interactive-secondary",
     "hover:border-border-interactive-hover hover:bg-bg-interactive-secondary-hover active:bg-bg-interactive-secondary-active",
-    "disabled:border-border-interactive-disabled disabled:text-text-interactive-disabled"
+    "disabled:border-border-interactive-disabled disabled:text-text-interactive-disabled",
   ),
   subtle: cn(
     "bg-bg-interactive-subtle-default text-text-interactive-secondary",
     "hover:bg-bg-interactive-subtle-hover active:bg-bg-interactive-subtle-active",
-    "disabled:bg-bg-interactive-disabled disabled:text-text-interactive-disabled"
+    "disabled:bg-bg-interactive-disabled disabled:text-text-interactive-disabled",
   ),
   link: "text-text-primary decoration-1 underline-offset-4 hover:underline disabled:text-text-interactive-disabled",
 };
@@ -31,7 +31,8 @@ interface ButtonOwnProps {
   children: ReactNode;
 }
 
-type AsButton = ButtonOwnProps & Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof ButtonOwnProps> & { as?: "button" };
+type AsButton = ButtonOwnProps &
+  Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof ButtonOwnProps> & { as?: "button" };
 type AsAnchor = ButtonOwnProps & Omit<AnchorHTMLAttributes<HTMLAnchorElement>, keyof ButtonOwnProps> & { as: "a" };
 
 export type ButtonProps = AsButton | AsAnchor;
@@ -46,7 +47,7 @@ export function Button(props: ButtonProps) {
     "transition-[background-color,border-color,color,box-shadow] duration-150 ease-out disabled:cursor-not-allowed",
     FOCUS_RING,
     BUTTON_VARIANTS[props.variant ?? "primary"],
-    props.className
+    props.className,
   );
 
   const content = (
@@ -85,6 +86,7 @@ interface IconButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 
   /** Accessible name and tooltip. */
   label: string;
   icon: IconComponent;
+  ref?: Ref<HTMLButtonElement>;
 }
 
 /** Square icon-only button on a raised surface (image viewer controls). */
@@ -104,7 +106,7 @@ export function IconButton({ label, icon: Icon, className, ...props }: IconButto
         "aria-disabled:cursor-not-allowed aria-disabled:border-border-interactive-disabled aria-disabled:bg-bg-surface-raised",
         "aria-disabled:text-text-interactive-disabled aria-disabled:shadow-none",
         FOCUS_RING,
-        className
+        className,
       )}
       {...props}
     >

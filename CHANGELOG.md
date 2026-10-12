@@ -6,6 +6,16 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 1.2.5 - 2026-10-12
+
+#### Fixed
+
+- Image viewer: when zoom returns to Fit (0 or - key) while the zoomed image has focus, focus moves to Zoom in instead of dropping to the page, so the keys keep working. When the window narrows below 768 px, focus moves to Close (WCAG 2.4.3).
+
+#### Changed
+
+- `IconButton` accepts a `ref`.
+
 ### 1.2.4 - 2026-10-12
 
 #### Fixed
