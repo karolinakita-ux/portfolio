@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { ArrowUp, Linkedin, Mail } from "../icons.tsx";
 import { Container } from "../ui/layout.tsx";
 import { ViewLink } from "../ui/navigation.tsx";
@@ -13,7 +14,7 @@ const CURRENT_YEAR = new Date().getFullYear();
 export function SiteFooter({ onNavigate }: { onNavigate: Navigate }) {
   return (
     <footer className="bg-bg-footer">
-      <Container className="pb-xl pt-3xl">
+      <Container className="pt-3xl pb-xl">
         <div className="grid gap-2xl md:grid-cols-2 lg:mx-auto lg:max-w-footer">
           <nav aria-labelledby="footer-explore-title">
             <h2 id="footer-explore-title" className="text-title-md text-text-primary">
@@ -27,7 +28,7 @@ export function SiteFooter({ onNavigate }: { onNavigate: Navigate }) {
                     onNavigate={onNavigate}
                     className={cn(
                       "-mx-2xs block rounded-sm px-2xs py-3xs text-body-md text-text-primary underline-offset-4 hover:underline",
-                      FOCUS_RING
+                      FOCUS_RING,
                     )}
                   >
                     {item.label}
@@ -50,7 +51,7 @@ export function SiteFooter({ onNavigate }: { onNavigate: Navigate }) {
                   rel="noopener noreferrer"
                   className={cn(
                     "rounded-sm text-body-md text-text-link-default underline underline-offset-2 hover:text-text-link-hover",
-                    FOCUS_RING
+                    FOCUS_RING,
                   )}
                 >
                   {PROFILE.name} | LinkedIn
@@ -67,17 +68,25 @@ export function SiteFooter({ onNavigate }: { onNavigate: Navigate }) {
           </section>
         </div>
 
-        <p className="mt-4xl text-center text-body-sm text-text-secondary">
-          © {CURRENT_YEAR} {PROFILE.name} | All Rights Reserved
-        </p>
+        <div className="mt-4xl flex flex-col gap-2xs text-center text-body-sm text-text-secondary">
+          <p>
+            © {CURRENT_YEAR} {PROFILE.name} | All Rights Reserved
+          </p>
+          <p>{PROFILE.builtWith}</p>
+        </div>
       </Container>
     </footer>
   );
 }
 
-/** Floating "back to top" button, shown after the visitor scrolls down. */
+/**
+ * Floating "back to top" button, shown after the visitor scrolls down.
+ * It stays shown while it has focus (e.g. after Home scrolls the page up), so keyboard focus never sits on a hidden button.
+ */
 export function BackToTop({ onActivate }: { onActivate: () => void }) {
-  const visible = useScrolledPast(640);
+  const scrolledPast = useScrolledPast(640);
+  const [focused, setFocused] = useState(false);
+  const visible = scrolledPast || focused;
 
   return (
     <button
@@ -87,13 +96,15 @@ export function BackToTop({ onActivate }: { onActivate: () => void }) {
       tabIndex={visible ? 0 : -1}
       aria-hidden={!visible}
       onClick={onActivate}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
       style={{ marginBottom: "env(safe-area-inset-bottom, 0px)" }}
       className={cn(
-        "fixed bottom-md right-md z-20 inline-flex size-2xl items-center justify-center rounded-full md:bottom-lg md:right-lg",
+        "fixed right-md bottom-md z-20 inline-flex size-2xl items-center justify-center rounded-full md:right-lg md:bottom-lg",
         "border border-border-subtle bg-bg-surface-raised text-text-primary shadow-lg",
         "transition-[opacity,transform,background-color] duration-200 ease-out hover:bg-bg-surface-default",
         visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-xs opacity-0",
-        FOCUS_RING
+        FOCUS_RING,
       )}
     >
       <ArrowUp aria-hidden="true" size={20} />

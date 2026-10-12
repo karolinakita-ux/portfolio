@@ -4,28 +4,18 @@
  *                        ├─ #case-project-planning   (Project Planning)
  *                        └─ #case-automotive  (Automotive Ecosystem)
  *   #about · #contact · #cv (print-ready CV, not in the primary nav)
- *   #cover-letter (print-ready cover letter, not in the primary nav)
  *
  * Every view has its own browser-history entry, so Back / Forward (and the
  * swipe-back gesture on phones) move between views instead of leaving the site.
  * Work is the bare root; other views live in the URL hash, which keeps deep
  * links shareable without any server rewrites.
  */
-export const VIEWS = [
-  "work",
-  "about",
-  "case-theming",
-  "case-project-planning",
-  "case-automotive",
-  "contact",
-  "cv",
-  "cover-letter",
-] as const;
+export const VIEWS = ["work", "about", "case-theming", "case-project-planning", "case-automotive", "contact", "cv"] as const;
 
 export type View = (typeof VIEWS)[number];
 
 export interface NavigateOptions {
-  /** Glide to the top instead of jumping (ignored with prefers-reduced-motion). */
+  /** Glide to the top or the anchor instead of jumping (ignored with prefers-reduced-motion). */
   smooth?: boolean;
 }
 
@@ -39,7 +29,6 @@ const VIEW_ALIASES: Readonly<Record<string, View>> = {
   landing: "work",
   projects: "work",
   resume: "cv",
-  letter: "cover-letter",
 };
 
 export const isView = (value: string): value is View => (VIEWS as readonly string[]).includes(value);
@@ -87,7 +76,6 @@ const VIEW_TITLES: Readonly<Record<View, string>> = {
   about: "About - " + SITE_NAME,
   contact: "Contact - " + SITE_NAME,
   cv: SITE_NAME + " - CV",
-  "cover-letter": SITE_NAME + " - Cover Letter",
   "case-theming": "Data Governance Case Study - " + SITE_NAME,
   "case-project-planning": "Project Planning Case Study - " + SITE_NAME,
   "case-automotive": "Automotive Ecosystem Case Study - " + SITE_NAME,

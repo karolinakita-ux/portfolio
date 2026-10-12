@@ -46,10 +46,12 @@ function EngagementTiers({ items }: { items: ReadonlyArray<Engagement> }) {
           <span
             className={cn(
               "inline-flex items-center gap-xs rounded-md px-sm py-2xs text-label-lg sm:rounded-full",
-              TIER_PILL[item.tier]
+              TIER_PILL[item.tier],
             )}
           >
-            {item.tier === "primary" && <span aria-hidden="true" className="size-xs shrink-0 rounded-full bg-bg-accent-brand" />}
+            {item.tier === "primary" && (
+              <span aria-hidden="true" className="size-xs shrink-0 rounded-full bg-bg-accent-brand" />
+            )}
             {item.label}
           </span>
           <p className="text-body-md text-text-secondary">{item.body}</p>
@@ -69,7 +71,7 @@ export function ContactView({ onNavigate }: { onNavigate: Navigate }) {
             <Eyebrow parts={[CONTACT.eyebrow]} />
             <h1
               id="contact-title"
-              className="text-balance font-display text-display-sm font-normal text-text-primary md:text-display-md"
+              className="font-display text-display-sm font-normal text-balance text-text-primary md:text-display-md"
             >
               {CONTACT.title}
             </h1>
@@ -92,7 +94,7 @@ export function ContactView({ onNavigate }: { onNavigate: Navigate }) {
               rel="noopener noreferrer"
               className={cn(
                 "inline-flex items-center gap-xs rounded-sm text-text-link-default underline underline-offset-2 hover:text-text-link-hover",
-                FOCUS_RING
+                FOCUS_RING,
               )}
             >
               {PROFILE.name} | LinkedIn

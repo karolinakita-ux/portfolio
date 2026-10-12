@@ -180,6 +180,21 @@
       transform: translateY(0);
     }
   }
+  /* Image viewer: the next image comes in from the right, the previous from the left. */
+  --animate-slide-in-next: slide-in-next 240ms cubic-bezier(0.2, 0, 0, 1) both;
+  --animate-slide-in-prev: slide-in-prev 240ms cubic-bezier(0.2, 0, 0, 1) both;
+  @keyframes slide-in-next {
+    from {
+      opacity: 0;
+      transform: translateX(24px);
+    }
+  }
+  @keyframes slide-in-prev {
+    from {
+      opacity: 0;
+      transform: translateX(-24px);
+    }
+  }
 }
 
 /* Named layout utilities */
@@ -198,6 +213,14 @@
 @utility grid-cols-term {
   grid-template-columns: auto minmax(0, 1fr);
 }
+/* Site header from md: logo | nav (centred on the page) | theme switch */
+@utility grid-cols-header {
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+}
+
+/* Short viewports: landscape phones, or 200-400% browser zoom on a laptop.
+   The sticky header lets go there so it never covers a large share of the screen. */
+@custom-variant short (@media (max-height: 30rem));
 /* Accordion: animating grid rows 0fr → 1fr gives a smooth auto-height expand */
 @utility grid-rows-collapsed {
   grid-template-rows: 0fr;
@@ -246,9 +269,19 @@
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
-  /* Scroll lock while the image viewer is open. */
+  /* Quick taps on controls (e.g. Next image) are not read as double-tap zoom on
+     touch screens. Pinch-zoom still works. */
+  a,
+  button,
+  summary,
+  [role="button"] {
+    touch-action: manipulation;
+  }
+  /* Scroll lock while the image viewer is open; overscroll off too, so a
+     downward swipe does not pull-to-refresh the page behind it. */
   html.kb-scroll-locked {
     overflow: hidden;
+    overscroll-behavior: none;
   }
 }
 
@@ -260,18 +293,50 @@
 :root.dark .kb-lightbox::backdrop {
   background: #1a1a1ab2; /* bgOverlay (dark) */
 }
-/* Keep the full image inside the viewport, leaving room for the panel chrome
-   (title row, controls and paddings). */
-.kb-lightbox-image,
+/* Backdrop fades in with the panel. The reduced-motion rule below does not
+   reach ::backdrop, hence the media query. */
+@media (prefers-reduced-motion: no-preference) {
+  .kb-lightbox[open]::backdrop {
+    animation: backdrop-in 240ms cubic-bezier(0.2, 0, 0, 1);
+  }
+}
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+/* Zoomed pane: thin scrollbars in the border colour instead of the heavy defaults. */
 .kb-lightbox-viewport {
-  max-height: calc(100vh - 208px);
-  max-height: calc(100dvh - 208px);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-default) transparent;
+}
+/* Image pane: the window height minus the panel chrome (title row, controls and
+   paddings), fixed rather than following each image, so the panel and its
+   Previous / Next buttons stay in place from image to image and when zooming.
+   The fitted image stays inside it. Never below 12rem: on short screens or at
+   400% browser zoom the dialog scrolls instead of shrinking the image away
+   (WCAG 1.4.10; the panel is centred with auto margins so nothing is clipped). */
+.kb-lightbox-pane {
+  height: max(12rem, calc(100vh - 208px));
+  height: max(12rem, calc(100dvh - 208px));
+}
+.kb-lightbox-image {
+  max-height: max(12rem, calc(100vh - 208px));
+  max-height: max(12rem, calc(100dvh - 208px));
+}
+/* Loading skeleton: the size the fitted image will have (as .kb-lightbox-image:
+   pane width, height limit or natural width, whichever is smallest), from the
+   image's known size. Variables are set inline by Lightbox.tsx. */
+.kb-lightbox-skeleton {
+  width: min(100%, max(12rem, 100vh - 208px) * var(--kb-aspect), var(--kb-natural-width));
+  width: min(100%, max(12rem, 100dvh - 208px) * var(--kb-aspect), var(--kb-natural-width));
+  aspect-ratio: var(--kb-aspect);
 }
 /* Zoomed image: the fitted width (pane width, height limit or natural width,
    whichever is smallest, as .kb-lightbox-image) times the zoom level. In CSS so
    it follows window resizes. Variables are set inline by Lightbox.tsx. */
 .kb-lightbox-image-zoomed {
-  width: calc(min(100%, (100dvh - 208px) * var(--kb-aspect), var(--kb-natural-width)) * var(--kb-zoom));
+  width: calc(min(100%, max(12rem, 100dvh - 208px) * var(--kb-aspect), var(--kb-natural-width)) * var(--kb-zoom));
 }
 
 @media (prefers-reduced-motion: reduce) {

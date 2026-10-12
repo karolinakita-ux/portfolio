@@ -1,13 +1,9 @@
 /* ==========================================================================
-   Print layer - A4 / PDF export (the CV and cover letter views, and any
-   other view printed)
+   Print layer - A4 / PDF export (the CV view, and any other view printed)
 
    - Page: A4 with 17mm margins on every side. 17mm is the print equivalent
      of spacing3xl (64px), the sheet's padding on screen, so the on-screen
      preview and the PDF share the same text width.
-   - Cover letter: its own named page, A4 with 20mm margins. Browsers without
-     named-page support fall back to the 17mm default page, which only widens
-     the text column, so the letter still fits on one page.
    - Colour: dark-mode tokens are screen-only (see tokens.css), so paper
      always gets the light KitaBranding values.
    - Site chrome (header, footer, back-to-top) and action CTAs carry
@@ -18,26 +14,10 @@
 @utility max-w-a4 {
   max-width: 210mm;
 }
-@utility min-h-a4 {
-  min-height: 297mm;
-}
-/* Business-letter margin: the preview's padding equals the printed page margin. */
-@utility p-letter {
-  padding: 20mm;
-}
-/* Puts a view on the named cover-letter page below (no effect on screen). */
-@utility page-cover-letter {
-  page: cover-letter;
-}
 
 @page {
   size: A4;
   margin: 17mm;
-}
-
-@page cover-letter {
-  size: A4;
-  margin: 20mm;
 }
 
 @media print {
@@ -50,7 +30,7 @@
     background: var(--bg-canvas);
   }
 
-  /* Keep a block (a job role, the summary, education, the cover letter) on one page. */
+  /* Keep a block (a job role, the summary, education) on one page. */
   .kb-print-block {
     break-inside: avoid;
     page-break-inside: avoid;

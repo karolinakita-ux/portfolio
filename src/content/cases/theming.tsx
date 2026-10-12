@@ -11,7 +11,8 @@ export const THEMING_CASE: ThemingCaseStudy = {
     { label: "My role", value: "UX/UI Designer" },
     {
       label: "Team",
-      value: "1 Lead Designer, 1 Senior UX Designer, 1 UX/UI Designer (myself), Product Owners, QA Engineers, Frontend & Backend Engineering Team",
+      value:
+        "1 Lead Designer, 1 Senior UX Designer, 1 UX/UI Designer (myself), Product Owners, QA Engineers, Frontend & Backend Engineering Team",
     },
     { label: "Duration", value: "October 2020 - December 2022 (2 years 2 months)" },
     { label: "Domain", value: "Multi-Tenant Enterprise / Healthcare / Federal Institutions" },
@@ -32,16 +33,20 @@ export const THEMING_CASE: ThemingCaseStudy = {
     "The platform is an enterprise data governance tool deployed across multi-tenant environments, including healthcare organizations and public sector agencies.",
     "To support institutional white-labeling, executive management initially proposed an open color picker allowing administrators to freely rebrand the user interface. However, unrestricted customization posed a severe usability risk: non-designer admins could unintentionally choose low-contrast color combinations, making dense data views unreadable and violating mandatory accessibility requirements (WCAG 2.1 AA).",
   ],
-  assumption: "Give client administrators complete freedom to apply their corporate brand colors to any interface component.",
+  assumption:
+    "Give client administrators complete freedom to apply their corporate brand colors to any interface component.",
   reality: [
-    lead("High risk of human error", "Untrained admins pairing light text with pastel buttons or dark cards on dark backgrounds."),
+    lead(
+      "High risk of human error",
+      "Untrained admins pairing light text with pastel buttons or dark cards on dark backgrounds.",
+    ),
     lead(
       "Accessibility compliance failures",
-      "Failing mandatory WCAG 2.1 AA contrast requirements (4.5:1 for body text, 3:1 for graphical elements)."
+      "Failing mandatory WCAG 2.1 AA contrast requirements (4.5:1 for body text, 3:1 for graphical elements).",
     ),
     lead(
       "Illegible critical data",
-      "Low-contrast palettes making system status badges, table data, and interactive actions difficult to read for everyday users."
+      "Low-contrast palettes making system status badges, table data, and interactive actions difficult to read for everyday users.",
     ),
   ],
   solutionIntro:
@@ -56,15 +61,15 @@ export const THEMING_CASE: ThemingCaseStudy = {
       bullets: [
         lead(
           "Scoped Brand Surfaces",
-          "Limited customization to high-impact touchpoints - such as the Header Bar, Action Buttons, and Navigation Sidebar - keeping data-dense tables and canvas areas neutral."
+          "Limited customization to high-impact touchpoints - such as the Header Bar, Action Buttons, and Navigation Sidebar - keeping data-dense tables and canvas areas neutral.",
         ),
         lead(
           "Contextual Guidance",
-          "Added inline tooltips and live previews within the modal, explaining how color choices impact usability during heavy daily workflows."
+          "Added inline tooltips and live previews within the modal, explaining how color choices impact usability during heavy daily workflows.",
         ),
         lead(
           "Structured Theming Modal",
-          "Designed an intuitive editing dialog with clear field groupings, reducing setup errors for non-technical administrators."
+          "Designed an intuitive editing dialog with clear field groupings, reducing setup errors for non-technical administrators.",
         ),
       ],
     },
@@ -78,15 +83,15 @@ export const THEMING_CASE: ThemingCaseStudy = {
       bullets: [
         lead(
           "No Manual State Tuning",
-          "Instead of forcing admins to pick separate colors for hover, active, and disabled states, the system applies fixed dark or light transparency layers over their base brand color."
+          "Instead of forcing admins to pick separate colors for hover, active, and disabled states, the system applies fixed dark or light transparency layers over their base brand color.",
         ),
         lead(
           "Adaptive Icon and Text Contrast",
-          "Icons and labels automatically switch to light or dark variants based on the background luminance to keep visual contrast as high as possible."
+          "Icons and labels automatically switch to light or dark variants based on the background luminance to keep visual contrast as high as possible.",
         ),
         lead(
           "Standardized Dev Handoff",
-          "Documented exact overlay values (+30% black for hover, +30% white for active, and +60% white for disabled) so engineers could build consistent interactions across components."
+          "Documented exact overlay values (+30% black for hover, +30% white for active, and +60% white for disabled) so engineers could build consistent interactions across components.",
         ),
       ],
     },
@@ -99,15 +104,15 @@ export const THEMING_CASE: ThemingCaseStudy = {
       bullets: [
         lead(
           "Subtle Row Selection",
-          "Highlighted table rows and active sidebar items use a soft tint (35% opacity) of the admin's chosen color, keeping dense records legible."
+          "Highlighted table rows and active sidebar items use a soft tint (35% opacity) of the admin's chosen color, keeping dense records legible.",
         ),
         lead(
           "Icon and State Consistency",
-          "Icons and selection indicators adapt their tone alongside the background, ensuring active items stay distinct without clashing."
+          "Icons and selection indicators adapt their tone alongside the background, ensuring active items stay distinct without clashing.",
         ),
         lead(
           "Predictable UI Behavior",
-          "Applying a single opacity standard across all components prevented custom styling bugs and saved significant development time."
+          "Applying a single opacity standard across all components prevented custom styling bugs and saved significant development time.",
         ),
       ],
     },
@@ -121,15 +126,15 @@ export const THEMING_CASE: ThemingCaseStudy = {
       bullets: [
         lead(
           "Demonstrating Real Usability Risks",
-          "Prepared side-by-side screens showing how custom brand themes (such as bold red) create visual confusion under Protanopia, Deuteranopia, and Tritanopia."
+          "Prepared side-by-side screens showing how custom brand themes (such as bold red) create visual confusion under Protanopia, Deuteranopia, and Tritanopia.",
         ),
         lead(
           "Highlighting Broken Interactions",
-          "Showed the team that without safeguards, primary buttons could look disabled or unclickable, while urgent alerts stopped standing out."
+          "Showed the team that without safeguards, primary buttons could look disabled or unclickable, while urgent alerts stopped standing out.",
         ),
         lead(
           "Aligning the Team on Accessibility",
-          "Used this practical comparison to convince stakeholders and developers that we needed built-in contrast rules, not an unconstrained color picker."
+          "Used this practical comparison to convince stakeholders and developers that we needed built-in contrast rules, not an unconstrained color picker.",
         ),
       ],
     },
@@ -138,19 +143,20 @@ export const THEMING_CASE: ThemingCaseStudy = {
       asset: "gov-solution-cvd-normal-vs-tritanopia.png",
       alt: "Two Information panels side by side: the current theme's accessibility preview under normal vision and under tritanopia.",
       title: "Side-Panel Accessibility Preview (Phase 2 Concept)",
-      intro: "A proposed preview in the side panel to help administrators see the impact of their color choices on readability.",
+      intro:
+        "A proposed preview in the side panel to help administrators see the impact of their color choices on readability.",
       bullets: [
         lead(
           "Accessibility Tab in Side Panel",
-          "Added an 'Accessibility' tab to the settings drawer so admins could quickly check how themes look under color blindness filters."
+          "Added an 'Accessibility' tab to the settings drawer so admins could quickly check how themes look under color blindness filters.",
         ),
         lead(
           "Showing Real Usability Issues",
-          "Designed simple preview cards to show admins that low-contrast colors make text and buttons hard to read for other users."
+          "Designed simple preview cards to show admins that low-contrast colors make text and buttons hard to read for other users.",
         ),
         lead(
           "Moved to Phase 2",
-          "To launch the MVP on time with core validation rules, we saved this interactive preview for the next product release."
+          "To launch the MVP on time with core validation rules, we saved this interactive preview for the next product release.",
         ),
       ],
     },
@@ -167,11 +173,11 @@ export const THEMING_CASE: ThemingCaseStudy = {
       bullets: [
         lead(
           "No Deleting the Default Theme",
-          "The core system theme cannot be edited or deleted, ensuring the application always has a stable, accessible fallback."
+          "The core system theme cannot be edited or deleted, ensuring the application always has a stable, accessible fallback.",
         ),
         lead(
           "Duplicate to Customize",
-          "Admins create new themes by duplicating an existing one, making it easy to test changes without risking the baseline setup."
+          "Admins create new themes by duplicating an existing one, making it easy to test changes without risking the baseline setup.",
         ),
       ],
     },
@@ -184,11 +190,11 @@ export const THEMING_CASE: ThemingCaseStudy = {
       bullets: [
         lead(
           "Explicit Confirmation Modal",
-          "Designed a confirmation step before activating a theme, clearly stating that changes apply to all tenant users on their next page refresh."
+          "Designed a confirmation step before activating a theme, clearly stating that changes apply to all tenant users on their next page refresh.",
         ),
         lead(
           "Reducing Accidental Publishing",
-          "Prevents administrators from unintentionally altering the live interface during working hours without prior notice."
+          "Prevents administrators from unintentionally altering the live interface during working hours without prior notice.",
         ),
       ],
     },
@@ -201,11 +207,11 @@ export const THEMING_CASE: ThemingCaseStudy = {
       bullets: [
         lead(
           "Secondary Add-on",
-          "Provided an optional CSS code box for edge-case styling needs, moving it below the visual controls so users don't rely on raw code."
+          "Provided an optional CSS code box for edge-case styling needs, moving it below the visual controls so users don't rely on raw code.",
         ),
         lead(
           "Clear Warning Notice",
-          "Added an inline warning explaining that custom CSS rules could break layouts during monthly platform updates and require ongoing maintenance."
+          "Added an inline warning explaining that custom CSS rules could break layouts during monthly platform updates and require ongoing maintenance.",
         ),
       ],
     },

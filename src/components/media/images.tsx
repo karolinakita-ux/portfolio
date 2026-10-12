@@ -26,7 +26,14 @@ export function ThumbnailScaffold({ failed = false }: { failed?: boolean }) {
         <rect x="46" y="52" width="50" height="28" rx="2" className="fill-bg-surface-default stroke-border-subtle" />
         <rect x="100" y="52" width="50" height="28" rx="2" className="fill-bg-surface-default stroke-border-subtle" />
         <rect x="46" y="84" width="50" height="28" rx="2" className="fill-bg-surface-default stroke-border-subtle" />
-        <rect x="100" y="84" width="50" height="28" rx="2" className="fill-bg-accent-brand-subtle stroke-border-subtle" />
+        <rect
+          x="100"
+          y="84"
+          width="50"
+          height="28"
+          rx="2"
+          className="fill-bg-accent-brand-subtle stroke-border-subtle"
+        />
       </svg>
       {failed && (
         <span className="inline-flex items-center gap-2xs text-label-sm text-text-secondary">
@@ -38,11 +45,19 @@ export function ThumbnailScaffold({ failed = false }: { failed?: boolean }) {
   );
 }
 
-/** Work-page case thumbnail: fixed 4:3 frame, image contained, scaffold while loading. */
-export function CaseThumbnail({ src, alt }: { src: string; alt: string }) {
+/**
+ * Work-page case thumbnail: fixed 4:3 frame, image contained, scaffold while loading.
+ * `interactive`: hover feedback (border, slight zoom) when an ancestor with `group/thumb` is hovered.
+ */
+export function CaseThumbnail({ src, alt, interactive = false }: { src: string; alt: string; interactive?: boolean }) {
   const { status, setStatus, ref } = useImageStatus(src);
   return (
-    <div className="relative aspect-thumb w-full max-w-full overflow-hidden rounded-sm border border-border-subtle bg-bg-surface-default">
+    <div
+      className={cn(
+        "relative aspect-thumb w-full max-w-full overflow-hidden rounded-sm border border-border-subtle bg-bg-surface-default",
+        interactive && "transition-colors duration-150 group-hover/thumb:border-border-interactive-hover",
+      )}
+    >
       {status !== "loaded" && <ThumbnailScaffold failed={status === "error"} />}
       {status !== "error" && (
         <img
@@ -54,8 +69,9 @@ export function CaseThumbnail({ src, alt }: { src: string; alt: string }) {
           onLoad={() => setStatus("loaded")}
           onError={() => setStatus("error")}
           className={cn(
-            "absolute inset-0 h-full w-full object-contain p-xs transition-opacity duration-300 ease-out",
-            status === "loaded" ? "opacity-100" : "opacity-0"
+            "absolute inset-0 h-full w-full object-contain p-xs transition-[opacity,scale] duration-300 ease-out",
+            status === "loaded" ? "opacity-100" : "opacity-0",
+            interactive && "motion-safe:group-hover/thumb:scale-[1.02]",
           )}
         />
       )}
@@ -105,13 +121,17 @@ export function Screenshot({ src, fallbackSrc, alt, onExpand }: ScreenshotProps)
       onError={handleError}
       className={cn(
         "block h-auto w-full transition-transform duration-300 ease-out",
-        onExpand && "motion-safe:group-hover/zoom:scale-[1.02]"
+        onExpand && "motion-safe:group-hover/zoom:scale-[1.02]",
       )}
     />
   );
 
   if (!onExpand) {
-    return <div className="min-w-0 overflow-hidden rounded-sm border border-border-subtle bg-bg-surface-default">{image}</div>;
+    return (
+      <div className="min-w-0 overflow-hidden rounded-sm border border-border-subtle bg-bg-surface-default">
+        {image}
+      </div>
+    );
   }
 
   return (
@@ -121,7 +141,7 @@ export function Screenshot({ src, fallbackSrc, alt, onExpand }: ScreenshotProps)
       onClick={(event) => onExpand(event.currentTarget)}
       className={cn(
         "group/zoom relative block w-full min-w-0 cursor-zoom-in overflow-hidden rounded-sm border border-border-subtle bg-bg-surface-default text-left",
-        FOCUS_RING
+        FOCUS_RING,
       )}
     >
       <span className="sr-only">View full size: </span>
@@ -130,8 +150,8 @@ export function Screenshot({ src, fallbackSrc, alt, onExpand }: ScreenshotProps)
       <span
         aria-hidden="true"
         className={cn(
-          "pointer-events-none absolute right-xs top-xs inline-flex items-center gap-2xs rounded-sm border border-border-subtle",
-          "bg-bg-surface-raised px-xs py-2xs text-label-sm text-text-primary shadow-sm"
+          "pointer-events-none absolute top-xs right-xs inline-flex items-center gap-2xs rounded-sm border border-border-subtle",
+          "bg-bg-surface-raised px-xs py-2xs text-label-sm text-text-primary shadow-sm",
         )}
       >
         <Maximize2 size={12} />

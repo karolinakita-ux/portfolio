@@ -10,6 +10,6 @@ export function useScrolledPast(threshold: number): boolean {
   return useSyncExternalStore(
     subscribe,
     () => window.scrollY > threshold,
-    () => false
+    () => false,
   );
 }

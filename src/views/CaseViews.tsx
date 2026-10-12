@@ -3,6 +3,7 @@ import { CaseIntro, CaseNav, CaseSummary, DetailList, KeyOutcomes, ShowcaseRow }
 import { useCaseGallery, type GalleryRow } from "../components/case/useCaseGallery.ts";
 import { Section } from "../components/ui/layout.tsx";
 import type { CaseStudy, ThemingCaseStudy } from "../content/types.ts";
+import { caseCards } from "../lib/gallery.ts";
 import type { Navigate } from "../lib/routes.ts";
 import { BULLET_LIST } from "../lib/ui.ts";
 
@@ -25,7 +26,7 @@ function ShowcaseRows({ rows }: { rows: ReadonlyArray<GalleryRow> }) {
  * intro → summary → screenshot sections (optional key-outcomes grid) → optional outcomes / reflections → prev/next.
  */
 export function CaseStudyView({ c, resolveAsset, onNavigate }: CaseViewProps<CaseStudy>) {
-  const cards = useMemo(() => c.sections.flatMap((section) => section.cards), [c]);
+  const cards = useMemo(() => caseCards(c), [c]);
   const rows = useCaseGallery(cards, resolveAsset);
 
   // Start index of each section's cards in the shared gallery.
@@ -79,7 +80,7 @@ export function CaseStudyView({ c, resolveAsset, onNavigate }: CaseViewProps<Cas
 
 /** Multi-Tenant Theme Customizer: problem cards, solution and safety rows, delivery, handoff, takeaways. */
 export function CaseThemingView({ c, resolveAsset, onNavigate }: CaseViewProps<ThemingCaseStudy>) {
-  const cards = useMemo(() => [...c.solution, ...c.safety], [c]);
+  const cards = useMemo(() => caseCards(c), [c]);
   const rows = useCaseGallery(cards, resolveAsset);
   const solutionRows = rows.slice(0, c.solution.length);
   const safetyRows = rows.slice(c.solution.length);
@@ -106,7 +107,11 @@ export function CaseThemingView({ c, resolveAsset, onNavigate }: CaseViewProps<T
         </div>
       </Section>
 
-      <Section id="case-solution" title="The Solution: Governed White-Label Theming & Accessibility" description={c.solutionIntro}>
+      <Section
+        id="case-solution"
+        title="The Solution: Governed White-Label Theming & Accessibility"
+        description={c.solutionIntro}
+      >
         <ol className="flex flex-col gap-md">
           <ShowcaseRows rows={solutionRows} />
         </ol>
@@ -122,7 +127,11 @@ export function CaseThemingView({ c, resolveAsset, onNavigate }: CaseViewProps<T
         <DetailList items={c.delivery} />
       </Section>
 
-      <Section id="case-engineering" title="Developer Handoff & Technical Collaboration" description={c.engineeringIntro}>
+      <Section
+        id="case-engineering"
+        title="Developer Handoff & Technical Collaboration"
+        description={c.engineeringIntro}
+      >
         <DetailList items={c.engineering} />
       </Section>
 

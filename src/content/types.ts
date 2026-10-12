@@ -116,12 +116,18 @@ export interface WorkCase {
   view: View;
 }
 
+/** A LinkedIn recommendation quoted on the Work page. */
 export interface Testimonial {
   id: string;
   quote: string;
   name: string;
   initials: string;
+  /** The person's LinkedIn profile. */
+  profileUrl: string;
+  /** Job title, without the company. */
   role: string;
+  /** Company at the time, with its LinkedIn page. */
+  company: { name: string; url: string };
 }
 
 export interface Milestone {
@@ -148,7 +154,7 @@ export interface FaqItem {
   points?: ReadonlyArray<readonly [term: string, text: string]>;
 }
 
-/** Bold lead-in bullet in the CV and cover letter: "<strong>Lead:</strong> text". */
+/** Bold lead-in bullet in the CV: "<strong>Lead:</strong> text". */
 export interface LeadBullet {
   lead: string;
   text: string;
@@ -196,17 +202,4 @@ export interface Cv {
   competencies: ReadonlyArray<{ group: string; items: ReadonlyArray<string> }>;
   experience: ReadonlyArray<CvRole>;
   education: ReadonlyArray<CvDegree>;
-}
-
-export interface CoverLetter {
-  sender: CvHeader & { phone: string };
-  /** ISO date, e.g. "2026-10-08". */
-  date: string;
-  recipient: ReadonlyArray<string>;
-  subject: string;
-  salutation: string;
-  opening: string;
-  highlights: ReadonlyArray<LeadBullet>;
-  closing: string;
-  signOff: string;
 }

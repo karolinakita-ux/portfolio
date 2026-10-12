@@ -22,7 +22,7 @@ function AboutHero({ onNavigate }: { onNavigate: Navigate }) {
               Full column width, no max-w; kept short so it fits one line on desktop. No trailing period. */}
           <h1
             id="about-title"
-            className="w-full text-balance font-display text-display-sm font-normal text-text-primary md:text-display-md"
+            className="w-full font-display text-display-sm font-normal text-balance text-text-primary md:text-display-md"
           >
             Designing clarity for complex software
           </h1>
@@ -72,7 +72,7 @@ function PortraitCard({ src }: { src: string }) {
             onError={() => setStatus("error")}
             className={cn(
               "absolute inset-0 h-full w-full object-cover object-top transition-opacity duration-300 ease-out",
-              status === "loaded" ? "opacity-100" : "opacity-0"
+              status === "loaded" ? "opacity-100" : "opacity-0",
             )}
           />
         )}
@@ -101,7 +101,7 @@ function PhilosophySection({ portraitSrc }: { portraitSrc: string }) {
               key={principle.id}
               className="flex flex-col gap-sm rounded-md border border-border-subtle bg-bg-surface-raised p-lg shadow-sm"
             >
-              <h3 className="text-balance text-title-md text-text-primary">{principle.title}</h3>
+              <h3 className="text-title-md text-balance text-text-primary">{principle.title}</h3>
               <p className="text-body-md text-text-secondary">{principle.body}</p>
             </li>
           ))}
@@ -121,7 +121,7 @@ function MilestoneCard({ milestone }: { milestone: Milestone }) {
     >
       <p className="text-body-sm text-text-secondary">{milestone.period}</p>
       <div className="flex flex-col gap-2xs">
-        <h3 id={titleId} className="text-balance text-title-lg text-text-primary">
+        <h3 id={titleId} className="text-title-lg text-balance text-text-primary">
           {milestone.title}
         </h3>
         <p className="text-body-md text-text-secondary">{milestone.org}</p>
@@ -202,14 +202,17 @@ function FaqItem({ item }: { item: FaqEntry }) {
           className={cn(
             "flex w-full items-center justify-between gap-md rounded-md px-lg py-md text-left",
             "transition-colors duration-150 hover:text-text-secondary",
-            FOCUS_RING
+            FOCUS_RING,
           )}
         >
           <span className="min-w-0">{item.question}</span>
           <ChevronDown
             aria-hidden="true"
             size={20}
-            className={cn("shrink-0 text-text-secondary transition-transform duration-200 ease-out", open && "rotate-180")}
+            className={cn(
+              "shrink-0 text-text-secondary transition-transform duration-200 ease-out",
+              open && "rotate-180",
+            )}
           />
         </button>
       </h3>
@@ -220,7 +223,7 @@ function FaqItem({ item }: { item: FaqEntry }) {
         inert={!open}
         className={cn(
           "grid transition-[grid-template-rows] duration-200 ease-out",
-          open ? "grid-rows-expanded" : "grid-rows-collapsed"
+          open ? "grid-rows-expanded" : "grid-rows-collapsed",
         )}
       >
         <div className="overflow-hidden">

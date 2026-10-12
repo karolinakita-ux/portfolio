@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { CopyEmail } from "./CopyEmail.tsx";
 
@@ -15,7 +15,10 @@ afterEach(() => {
 describe("CopyEmail", () => {
   it("links to the mail app", () => {
     render(<CopyEmail email={EMAIL} />);
-    expect(screen.getByRole("link", { name: /karolina\.kita\.zg@gmail\.com/ })).toHaveAttribute("href", "mailto:" + EMAIL);
+    expect(screen.getByRole("link", { name: /karolina\.kita\.zg@gmail\.com/ })).toHaveAttribute(
+      "href",
+      "mailto:" + EMAIL,
+    );
   });
 
   it("copies the address and confirms in a live region", async () => {
@@ -44,5 +47,40 @@ describe("CopyEmail", () => {
     render(<CopyEmail email={EMAIL} />);
     fireEvent.click(screen.getByRole("button", { name: "Copy email address" }));
     expect(screen.getByRole("status")).toHaveTextContent(/Selected/);
+  });
+
+  it("keeps the copy instruction until focus leaves the button, in words a screen reader can say", () => {
+    vi.useFakeTimers();
+    try {
+      render(<CopyEmail email={EMAIL} />);
+      const button = screen.getByRole("button", { name: "Copy email address" });
+      act(() => button.focus());
+      fireEvent.click(button);
+      expect(screen.getByRole("status")).toHaveTextContent("Selected - press Ctrl+C or Command+C");
+      expect(screen.getByRole("status").textContent).not.toContain("⌘");
+
+      act(() => vi.advanceTimersByTime(10_000));
+      expect(screen.getByRole("status")).toHaveTextContent(/Selected/);
+
+      act(() => button.blur());
+      expect(screen.getByRole("status")).toHaveTextContent("");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("still clears the copied confirmation after 2 seconds", async () => {
+    vi.useFakeTimers();
+    try {
+      stubClipboard(() => Promise.resolve());
+      render(<CopyEmail email={EMAIL} />);
+      fireEvent.click(screen.getByRole("button", { name: "Copy email address" }));
+      await act(async () => {}); // let the clipboard promise settle
+      expect(screen.getByRole("status")).toHaveTextContent("Copied to clipboard!");
+      act(() => vi.advanceTimersByTime(2100));
+      expect(screen.getByRole("status")).toHaveTextContent("");
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

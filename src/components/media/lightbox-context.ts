@@ -4,6 +4,9 @@ export interface LightboxItem {
   src: string;
   alt: string;
   title: string;
+  /** Pixel size, when known: the viewer shows a placeholder of this shape while the image loads. */
+  width?: number;
+  height?: number;
 }
 
 /**

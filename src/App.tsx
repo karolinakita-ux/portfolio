@@ -7,12 +7,13 @@ import { PROJECT_PLANNING_CASE } from "./content/cases/project-planning.tsx";
 import { THEMING_CASE } from "./content/cases/theming.tsx";
 import { useHistoryRoute } from "./hooks/useHistoryRoute.ts";
 import { useTheme } from "./hooks/useTheme.ts";
+import { caseCards } from "./lib/gallery.ts";
+import { preloadImages } from "./lib/imagePreload.ts";
 import { titleForView, type Navigate, type View } from "./lib/routes.ts";
 import { cn, FOCUS_RING, prefersReducedMotion } from "./lib/ui.ts";
 import { AboutView } from "./views/AboutView.tsx";
 import { CaseStudyView, CaseThemingView } from "./views/CaseViews.tsx";
 import { ContactView } from "./views/ContactView.tsx";
-import { CoverLetterView } from "./views/CoverLetterView.tsx";
 import { CvView } from "./views/CvView.tsx";
 import { WorkView } from "./views/WorkView.tsx";
 
@@ -34,7 +35,6 @@ const VIEW_RENDERERS: Record<View, (ctx: ViewContext) => ReactNode> = {
   about: ({ navigate, portraitSrc }) => <AboutView portraitSrc={portraitSrc} onNavigate={navigate} />,
   contact: ({ navigate }) => <ContactView onNavigate={navigate} />,
   cv: ({ navigate }) => <CvView onNavigate={navigate} />,
-  "cover-letter": ({ navigate }) => <CoverLetterView onNavigate={navigate} />,
   "case-theming": ({ navigate, resolveAsset }) => (
     <CaseThemingView c={THEMING_CASE} resolveAsset={resolveAsset} onNavigate={navigate} />
   ),
@@ -48,7 +48,7 @@ const VIEW_RENDERERS: Record<View, (ctx: ViewContext) => ReactNode> = {
 
 /**
  * KitaPortfolio - Senior UX Portfolio
- * Views: work (default) · about · contact · cv · cover-letter · case-theming · case-project-planning · case-automotive
+ * Views: work (default) · about · contact · cv · case-theming · case-project-planning · case-automotive
  *
  * Styling: every colour, space, radius, shadow and type style resolves to a
  * KitaBranding token (src/styles). Light/Dark swaps CSS variables via the
@@ -70,6 +70,13 @@ export function App({ assetBase = "/assets", portraitSrc = assetBase + "/avatar-
   /** Named asset → URL (every image is served from /assets). */
   const resolveAsset = useCallback((name: string) => assetBase + "/" + name, [assetBase]);
 
+  // Once the first page has loaded, fetch every case study's full screenshots in the background,
+  // so the image viewer opens at once. The open case study queues its own first (useCaseGallery).
+  useEffect(() => {
+    const cases = [AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE, THEMING_CASE];
+    preloadImages(cases.flatMap((c) => caseCards(c).map((card) => resolveAsset(card.asset))));
+  }, [resolveAsset]);
+
   useEffect(() => {
     document.title = titleForView(route.view);
   }, [route.view]);
@@ -89,12 +96,12 @@ export function App({ assetBase = "/assets", portraitSrc = assetBase + "/avatar-
       return () => window.cancelAnimationFrame(frame);
     }
 
+    const smooth = route.smooth && !prefersReducedMotion();
     const target = route.anchor ? document.getElementById(route.anchor) : null;
     if (target) {
-      target.scrollIntoView({ block: "start" });
+      target.scrollIntoView({ block: "start", behavior: smooth ? "smooth" : "auto" });
       target.focus({ preventScroll: true });
     } else {
-      const smooth = route.smooth && !prefersReducedMotion();
       window.scrollTo({ top: 0, behavior: smooth ? "smooth" : "auto" });
       focusMain();
     }
@@ -123,7 +130,7 @@ export function App({ assetBase = "/assets", portraitSrc = assetBase + "/avatar-
       <div
         className={cn(
           "flex min-h-screen flex-col bg-bg-canvas font-sans text-text-primary antialiased",
-          "selection:bg-bg-accent-brand-subtle selection:text-text-primary"
+          "selection:bg-bg-accent-brand-subtle selection:text-text-primary",
         )}
       >
         <a
@@ -133,17 +140,23 @@ export function App({ assetBase = "/assets", portraitSrc = assetBase + "/avatar-
             mainRef.current?.focus();
           }}
           className={cn(
-            "sr-only focus:not-sr-only focus:fixed focus:left-md focus:top-md focus:z-skip",
+            "sr-only focus:not-sr-only focus:fixed focus:top-md focus:left-md focus:z-skip",
             "focus:rounded-md focus:bg-bg-surface-raised focus:px-md focus:py-xs focus:text-label-lg focus:shadow-md",
             "print:hidden",
-            FOCUS_RING
+            FOCUS_RING,
           )}
         >
           Skip to main content
         </a>
 
         <div className="contents print:hidden">
-          <SiteHeader activeView={route.view} onNavigate={navigate} onHome={goHome} theme={theme} onThemeChange={pickTheme} />
+          <SiteHeader
+            activeView={route.view}
+            onNavigate={navigate}
+            onHome={goHome}
+            theme={theme}
+            onThemeChange={pickTheme}
+          />
         </div>
 
         <main id="main" ref={mainRef} tabIndex={-1} className="flex-1 pb-3xl focus:outline-none lg:pb-4xl print:pb-0">
