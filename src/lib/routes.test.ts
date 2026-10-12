@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { hrefForView, isView, navSectionFor, readViewFromLocation, resolveView, titleForView, urlForView, VIEWS } from "./routes.ts";
+import {
+  hrefForView,
+  isView,
+  navSectionFor,
+  readViewFromLocation,
+  resolveView,
+  titleForView,
+  urlForView,
+  VIEWS,
+} from "./routes.ts";
 
 describe("resolveView", () => {
   it("returns every known view unchanged", () => {
