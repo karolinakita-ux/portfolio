@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 1.4.2 - 2026-10-12
+
+#### Changed
+
+- Prettier formatting in `src/lib/dates.ts`, `src/lib/routes.test.ts` and `src/lib/ui.ts` (line breaks and trailing commas only, no code changes).
+
 ### 1.4.1 - 2026-10-12
 
 #### Changed

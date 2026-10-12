@@ -20,12 +20,19 @@ export const BULLET_LIST =
 export const DOC_LINK = cn(
   "rounded-sm text-text-link-default underline underline-offset-2 hover:text-text-link-hover",
   "print:text-text-primary print:no-underline",
-  FOCUS_RING
+  FOCUS_RING,
 );
 
 /** tel: link for a display phone number (keeps digits and "+"). */
 export const telHref = (phone: string): string => "tel:" + phone.replace(/[^\d+]/g, "");
 
 /** True for a plain left click (no modifier): the app navigates in place; otherwise the browser opens a tab. */
-export const isPlainLeftClick = (event: { defaultPrevented: boolean; button: number; metaKey: boolean; ctrlKey: boolean; shiftKey: boolean; altKey: boolean }): boolean =>
+export const isPlainLeftClick = (event: {
+  defaultPrevented: boolean;
+  button: number;
+  metaKey: boolean;
+  ctrlKey: boolean;
+  shiftKey: boolean;
+  altKey: boolean;
+}): boolean =>
   !event.defaultPrevented && event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
