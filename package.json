@@ -1,7 +1,7 @@
 {
   "name": "kkita-portfolio",
   "private": true,
-  "version": "1.2.8",
+  "version": "1.2.9",
   "description": "Karolina Kita - Senior Product Designer portfolio (karolina.kita.company)",
   "type": "module",
   "scripts": {

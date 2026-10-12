@@ -47,12 +47,15 @@ describe("App", () => {
 
     await user.click(screen.getByRole("link", { name: "View Discovery Case" }));
     expect(h1()).toHaveTextContent("Automotive B2B Marketplace: Research-Backed Redesign");
-    expect(within(primaryNav()).getByRole("link", { name: "Work" })).toHaveAttribute("aria-current", "page");
+    // Work is the current section; only the breadcrumb marks the case study as the current page.
+    expect(within(primaryNav()).getByRole("link", { name: "Work" })).toHaveAttribute("aria-current", "true");
 
     await user.click(screen.getByRole("link", { name: /Next Case Study: MeetEstim/ }));
     expect(h1()).toHaveTextContent("MeetEstim");
 
-    await user.click(within(screen.getByRole("navigation", { name: "Breadcrumb" })).getByRole("link", { name: "Work" }));
+    await user.click(
+      within(screen.getByRole("navigation", { name: "Breadcrumb" })).getByRole("link", { name: "Work" }),
+    );
     expect(h1()).toHaveTextContent("Clarity for complex enterprise software");
   });
 
