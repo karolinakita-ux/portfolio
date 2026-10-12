@@ -6,6 +6,17 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 1.3.0 - 2026-10-12
+
+#### Added
+
+- Two buttons under the Work hero intro: "Explore Case Studies" (primary, down arrow) glides to the case studies and moves focus to their heading, and "Inspect Figma Workspace" (outlined, Figma icon, opens in a new tab).
+- Footer note under the copyright: "Designed in Figma, prototyped & built with Claude AI assistance".
+
+#### Changed
+
+- Anchor navigation with the `smooth` option now glides to the anchor too, not only to the top (still a jump with reduced motion).
+
 ### 1.2.10 - 2026-10-12
 
 #### Fixed

@@ -21,6 +21,20 @@ describe("App", () => {
     expect(within(primaryNav()).getByRole("link", { name: "Work" })).toHaveAttribute("aria-current", "page");
   });
 
+  it("offers the case studies and the Figma workspace from the hero, and credits the tools in the footer", async () => {
+    const { user } = renderApp();
+
+    const figma = screen.getByRole("link", { name: /^Inspect Figma Workspace.*opens in a new tab/ });
+    expect(figma).toHaveAttribute("href", expect.stringContaining("figma.com"));
+    expect(figma).toHaveAttribute("target", "_blank");
+
+    await user.click(screen.getByRole("link", { name: "Explore Case Studies" }));
+    expect(screen.getByRole("heading", { name: "Selected Work & Case Studies" })).toHaveFocus();
+    expect(window.location.hash).toBe("");
+
+    expect(within(screen.getByRole("contentinfo")).getByText(/prototyped & built with Claude AI assistance/)).toBeInTheDocument();
+  });
+
   it.each([
     ["#about", "Designing clarity for complex software"],
     ["#contact", "Let’s connect"],

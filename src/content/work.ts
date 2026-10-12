@@ -1,5 +1,11 @@
 import type { Testimonial, WorkCase } from "./types.ts";
 
+/** Hero buttons below the intro. The arrows are icons, not part of the label. */
+export const HERO_ACTIONS = {
+  cases: "Explore Case Studies",
+  figma: "Inspect Figma Workspace",
+};
+
 export const WORK_INTRO =
   "A closer look at how I tackle complex B2B workflows, structure dense data, and collaborate with product teams to solve real business problems.";
 

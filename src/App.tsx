@@ -89,12 +89,12 @@ export function App({ assetBase = "/assets", portraitSrc = assetBase + "/avatar-
       return () => window.cancelAnimationFrame(frame);
     }
 
+    const smooth = route.smooth && !prefersReducedMotion();
     const target = route.anchor ? document.getElementById(route.anchor) : null;
     if (target) {
-      target.scrollIntoView({ block: "start" });
+      target.scrollIntoView({ block: "start", behavior: smooth ? "smooth" : "auto" });
       target.focus({ preventScroll: true });
     } else {
-      const smooth = route.smooth && !prefersReducedMotion();
       window.scrollTo({ top: 0, behavior: smooth ? "smooth" : "auto" });
       focusMain();
     }

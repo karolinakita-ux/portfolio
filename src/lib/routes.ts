@@ -25,7 +25,7 @@ export const VIEWS = [
 export type View = (typeof VIEWS)[number];
 
 export interface NavigateOptions {
-  /** Glide to the top instead of jumping (ignored with prefers-reduced-motion). */
+  /** Glide to the top or the anchor instead of jumping (ignored with prefers-reduced-motion). */
   smooth?: boolean;
 }
 

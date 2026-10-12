@@ -1,16 +1,16 @@
 import { useId } from "react";
-import { ArrowRight, ArrowUpRight, Quote } from "../components/icons.tsx";
+import { ArrowDown, ArrowRight, ArrowUpRight, Figma, Quote } from "../components/icons.tsx";
 import { CaseThumbnail } from "../components/media/images.tsx";
 import { Button } from "../components/ui/Button.tsx";
 import { Container, Eyebrow, Section } from "../components/ui/layout.tsx";
 import { Callout } from "../components/ui/text.tsx";
 import { PROFILE } from "../content/profile.ts";
 import type { WorkCase } from "../content/types.ts";
-import { PROCESS_BANNER, TESTIMONIALS, WORK_CASES, WORK_INTRO } from "../content/work.ts";
+import { HERO_ACTIONS, PROCESS_BANNER, TESTIMONIALS, WORK_CASES, WORK_INTRO } from "../content/work.ts";
 import { hrefForView, type Navigate } from "../lib/routes.ts";
 import { cn, FOCUS_RING } from "../lib/ui.ts";
 
-function HeroSection() {
+function HeroSection({ onNavigate }: { onNavigate: Navigate }) {
   return (
     <section aria-labelledby="hero-title" className="pt-2xl lg:pt-3xl">
       <Container>
@@ -29,6 +29,31 @@ function HeroSection() {
             products. With a background in psychology, I focus on how people actually think and work - combining practical
             research with solid design systems that engineers can easily build.
           </p>
+          <div className="flex flex-wrap gap-sm">
+            <Button
+              as="a"
+              href="#enterprise-cases"
+              iconRight={ArrowDown}
+              onClick={(event) => {
+                event.preventDefault();
+                onNavigate("work", "enterprise-cases-title", { smooth: true });
+              }}
+            >
+              {HERO_ACTIONS.cases}
+            </Button>
+            <Button
+              as="a"
+              href={PROFILE.figmaWorkspaceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="secondary"
+              iconLeft={Figma}
+              iconRight={ArrowUpRight}
+            >
+              {HERO_ACTIONS.figma}
+              <span className="sr-only"> (opens in a new tab)</span>
+            </Button>
+          </div>
         </div>
       </Container>
     </section>
@@ -146,7 +171,7 @@ export function WorkView({ resolveAsset, onNavigate }: { resolveAsset: (name: st
   // Rhythm: hero → 64px → heading → 8px → lead-in → 24px → NDA note → 24px → cards
   return (
     <>
-      <HeroSection />
+      <HeroSection onNavigate={onNavigate} />
       <Section id="enterprise-cases" title="Selected Work & Case Studies" description={WORK_INTRO} headingProps={{ tabIndex: -1 }}>
         <Callout tone="warning" label="Confidentiality note">
           Due to confidentiality and <strong className="font-semibold">NDAs</strong>, sensitive business data and client names have
