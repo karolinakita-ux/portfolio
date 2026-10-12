@@ -87,6 +87,42 @@ describe("Lightbox loading", () => {
     await user.click(within(dialog).getByRole("button", { name: "Next image" }));
     expect(preloadImages).toHaveBeenLastCalledWith(["/assets/square.png", "/assets/wide.png"], { urgent: true });
   });
+
+  it("shows the image even when decoding fails", async () => {
+    const { dialog } = await openViewer();
+    const image = within(dialog).getByRole<HTMLImageElement>("img", { name: "Wide screen" });
+    image.decode = () => Promise.reject(new Error("EncodingError"));
+    await act(async () => fireEvent.load(image));
+    expect(skeleton(dialog)).not.toBeInTheDocument();
+    expect(image).not.toHaveClass("opacity-0");
+  });
+
+  it("does not let a previous image's late decode hide the current one", async () => {
+    const { user, dialog } = await openViewer();
+    const wide = within(dialog).getByRole<HTMLImageElement>("img", { name: "Wide screen" });
+    let wideDecoded = () => {};
+    wide.decode = () => new Promise<void>((resolve) => (wideDecoded = resolve));
+    fireEvent.load(wide);
+
+    await user.click(within(dialog).getByRole("button", { name: "Next image" }));
+    const tall = within(dialog).getByRole<HTMLImageElement>("img", { name: "Tall screen" });
+    tall.decode = () => Promise.resolve();
+    await act(async () => fireEvent.load(tall));
+    expect(tall).not.toHaveClass("opacity-0");
+
+    await act(async () => wideDecoded()); // the first image finishes decoding after the visitor moved on
+    expect(tall).not.toHaveClass("opacity-0");
+    expect(dialog.querySelector(".kb-lightbox-pane > [aria-hidden='true']")).not.toBeInTheDocument();
+  });
+
+  it("says when an image cannot load, with no skeleton and no zoom", async () => {
+    const { dialog, zoomIn } = await openViewer();
+    fireEvent.error(within(dialog).getByRole("img", { name: "Wide screen" }));
+    expect(within(dialog).getByText("Image unavailable")).toBeInTheDocument();
+    expect(within(dialog).queryByRole("img")).not.toBeInTheDocument();
+    expect(skeleton(dialog)).not.toBeInTheDocument();
+    expect(zoomIn).toHaveAttribute("aria-disabled", "true");
+  });
 });
 
 describe("Lightbox zoom", () => {
