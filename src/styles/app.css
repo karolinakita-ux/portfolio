@@ -305,20 +305,22 @@
 /* Image pane: the window height minus the panel chrome (title row, controls and
    paddings), fixed rather than following each image, so the panel and its
    Previous / Next buttons stay in place from image to image and when zooming.
-   The fitted image stays inside it. */
+   The fitted image stays inside it. Never below 12rem: on short screens or at
+   400% browser zoom the dialog scrolls instead of shrinking the image away
+   (WCAG 1.4.10; the panel is centred with auto margins so nothing is clipped). */
 .kb-lightbox-pane {
-  height: calc(100vh - 208px);
-  height: calc(100dvh - 208px);
+  height: max(12rem, calc(100vh - 208px));
+  height: max(12rem, calc(100dvh - 208px));
 }
 .kb-lightbox-image {
-  max-height: calc(100vh - 208px);
-  max-height: calc(100dvh - 208px);
+  max-height: max(12rem, calc(100vh - 208px));
+  max-height: max(12rem, calc(100dvh - 208px));
 }
 /* Zoomed image: the fitted width (pane width, height limit or natural width,
    whichever is smallest, as .kb-lightbox-image) times the zoom level. In CSS so
    it follows window resizes. Variables are set inline by Lightbox.tsx. */
 .kb-lightbox-image-zoomed {
-  width: calc(min(100%, (100dvh - 208px) * var(--kb-aspect), var(--kb-natural-width)) * var(--kb-zoom));
+  width: calc(min(100%, max(12rem, 100dvh - 208px) * var(--kb-aspect), var(--kb-natural-width)) * var(--kb-zoom));
 }
 
 @media (prefers-reduced-motion: reduce) {
