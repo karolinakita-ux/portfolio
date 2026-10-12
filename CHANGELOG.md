@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 1.2.7 - 2026-10-12
+
+#### Fixed
+
+- Dark theme focus ring is easier to see: `borderInteractiveFocus` (dark) changes from #5c6bc0 to #9fa8da, the dark link colour. Lowest contrast against the background behind a focused control goes from 2.91:1 to 6.13:1 (WCAG 1.4.11 needs 3:1). Updated in `kita-branding.tokens.json` and `tokens.css`; the Figma variable still needs the same value.
+
 ### 1.2.6 - 2026-10-12
 
 #### Fixed
