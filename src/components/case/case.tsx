@@ -5,7 +5,14 @@ import { Container, Eyebrow, Section } from "../ui/layout.tsx";
 import { Breadcrumb } from "../ui/navigation.tsx";
 import { Callout } from "../ui/text.tsx";
 import { WORK_CRUMB } from "./crumbs.ts";
-import type { CaseNavTarget, CaseStudy, DetailItem, MetaEntry, ShowcaseCard, ThemingCaseStudy } from "../../content/types.ts";
+import type {
+  CaseNavTarget,
+  CaseStudy,
+  DetailItem,
+  MetaEntry,
+  ShowcaseCard,
+  ThemingCaseStudy,
+} from "../../content/types.ts";
 import { hrefForView, type Navigate } from "../../lib/routes.ts";
 import { BULLET_LIST, cn, FOCUS_RING } from "../../lib/ui.ts";
 
@@ -21,7 +28,7 @@ export function CaseIntro({ c, onNavigate }: { c: AnyCase; onNavigate: Navigate 
           <Eyebrow parts={c.eyebrow} />
           <h1
             id="case-title"
-            className="text-balance font-display text-display-sm font-normal text-text-primary md:text-display-md"
+            className="font-display text-display-sm font-normal text-balance text-text-primary md:text-display-md"
           >
             {c.title}
           </h1>
@@ -68,7 +75,7 @@ export function MetaMatrix({ entries }: { entries: ReadonlyArray<MetaEntry> }) {
           className={cn(
             "flex min-w-0 flex-col gap-2xs border-border-subtle p-md",
             index > 0 && "border-t",
-            entry.wide ? "lg:col-span-4" : index > 0 && "lg:border-l lg:border-t-0"
+            entry.wide ? "lg:col-span-4" : index > 0 && "lg:border-t-0 lg:border-l",
           )}
         >
           <dt className="text-body-sm text-text-secondary">{entry.label}</dt>
@@ -97,16 +104,21 @@ export function ShowcaseRow({ src, previewSrc, item, onExpand }: ShowcaseRowProp
       aria-labelledby={titleId}
       className="grid gap-lg rounded-md border border-border-subtle bg-bg-surface-raised p-md shadow-sm md:grid-cols-showcase md:items-center md:p-lg"
     >
-      <Screenshot src={previewSrc ?? src} fallbackSrc={previewSrc ? src : undefined} alt={item.alt} onExpand={onExpand} />
+      <Screenshot
+        src={previewSrc ?? src}
+        fallbackSrc={previewSrc ? src : undefined}
+        alt={item.alt}
+        onExpand={onExpand}
+      />
       <div className="flex min-w-0 flex-col gap-sm">
-        <h3 id={titleId} className="text-balance text-title-md text-text-primary">
+        <h3 id={titleId} className="text-title-md text-balance text-text-primary">
           {item.title}
         </h3>
         {item.intro && <p className="text-body-md text-text-secondary">{item.intro}</p>}
         {/* Optional secondary titled paragraphs within one screenshot row */}
         {item.blocks?.map((block) => (
           <div key={block.title} className="flex flex-col gap-2xs pt-xs">
-            <h4 className="text-balance text-title-md text-text-primary">{block.title}</h4>
+            <h4 className="text-title-md text-balance text-text-primary">{block.title}</h4>
             <p className="text-body-md text-text-secondary">{block.body}</p>
           </div>
         ))}
@@ -171,7 +183,15 @@ export function KeyOutcomes({ items, labelId }: { items: ReadonlyArray<DetailIte
   );
 }
 
-function CaseNavLink({ target, direction, onNavigate }: { target: CaseNavTarget; direction: "prev" | "next"; onNavigate: Navigate }) {
+function CaseNavLink({
+  target,
+  direction,
+  onNavigate,
+}: {
+  target: CaseNavTarget;
+  direction: "prev" | "next";
+  onNavigate: Navigate;
+}) {
   const isNext = direction === "next";
   const Icon = isNext ? ArrowRight : ArrowLeft;
   const arrow = (
@@ -180,7 +200,7 @@ function CaseNavLink({ target, direction, onNavigate }: { target: CaseNavTarget;
       size={16}
       className={cn(
         "shrink-0 transition-transform duration-150 ease-out",
-        isNext ? "motion-safe:group-hover/nav:translate-x-2xs" : "motion-safe:group-hover/nav:-translate-x-2xs"
+        isNext ? "motion-safe:group-hover/nav:translate-x-2xs" : "motion-safe:group-hover/nav:-translate-x-2xs",
       )}
     />
   );
@@ -194,7 +214,7 @@ function CaseNavLink({ target, direction, onNavigate }: { target: CaseNavTarget;
       className={cn(
         "group/nav flex min-w-0 flex-col gap-2xs rounded-sm px-2xs py-xs",
         isNext ? "ml-auto items-end text-right" : "items-start",
-        FOCUS_RING
+        FOCUS_RING,
       )}
     >
       <span className="inline-flex items-center gap-xs text-label-lg text-text-primary decoration-1 underline-offset-4 group-hover/nav:underline">
@@ -216,7 +236,15 @@ function CaseNavLink({ target, direction, onNavigate }: { target: CaseNavTarget;
  * Hover: label underlines, arrow nudges outward, project name darkens.
  * Wraps on narrow screens; Next keeps right alignment via ml-auto.
  */
-export function CaseNav({ prev, next, onNavigate }: { prev?: CaseNavTarget; next?: CaseNavTarget; onNavigate: Navigate }) {
+export function CaseNav({
+  prev,
+  next,
+  onNavigate,
+}: {
+  prev?: CaseNavTarget;
+  next?: CaseNavTarget;
+  onNavigate: Navigate;
+}) {
   return (
     <section aria-label="More case studies" className="pt-3xl">
       <Container>
@@ -224,7 +252,7 @@ export function CaseNav({ prev, next, onNavigate }: { prev?: CaseNavTarget; next
           aria-label="Case study navigation"
           className={cn(
             "flex flex-wrap items-start gap-md",
-            prev && next ? "justify-between" : next ? "justify-end" : "justify-start"
+            prev && next ? "justify-between" : next ? "justify-end" : "justify-start",
           )}
         >
           {prev && <CaseNavLink target={prev} direction="prev" onNavigate={onNavigate} />}

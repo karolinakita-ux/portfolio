@@ -10,5 +10,5 @@ createRoot(root).render(
   <StrictMode>
     {/* Follows Vite's base: "/assets" on the site, "./assets" in a relative build (e.g. a claude.ai artifact). */}
     <App assetBase={import.meta.env.BASE_URL + "assets"} />
-  </StrictMode>
+  </StrictMode>,
 );

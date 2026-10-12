@@ -16,7 +16,8 @@ export function mockMatchMedia(initial: boolean) {
       media: query,
       onchange: null,
       addEventListener: (_type: string, listener: (event: MediaQueryListEvent) => void) => listeners.add(listener),
-      removeEventListener: (_type: string, listener: (event: MediaQueryListEvent) => void) => listeners.delete(listener),
+      removeEventListener: (_type: string, listener: (event: MediaQueryListEvent) => void) =>
+        listeners.delete(listener),
       addListener: () => {},
       removeListener: () => {},
       dispatchEvent: () => true,

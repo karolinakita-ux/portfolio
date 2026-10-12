@@ -132,7 +132,7 @@ export function App({ assetBase = "/assets", portraitSrc = assetBase + "/avatar-
       <div
         className={cn(
           "flex min-h-screen flex-col bg-bg-canvas font-sans text-text-primary antialiased",
-          "selection:bg-bg-accent-brand-subtle selection:text-text-primary"
+          "selection:bg-bg-accent-brand-subtle selection:text-text-primary",
         )}
       >
         <a
@@ -142,17 +142,23 @@ export function App({ assetBase = "/assets", portraitSrc = assetBase + "/avatar-
             mainRef.current?.focus();
           }}
           className={cn(
-            "sr-only focus:not-sr-only focus:fixed focus:left-md focus:top-md focus:z-skip",
+            "sr-only focus:not-sr-only focus:fixed focus:top-md focus:left-md focus:z-skip",
             "focus:rounded-md focus:bg-bg-surface-raised focus:px-md focus:py-xs focus:text-label-lg focus:shadow-md",
             "print:hidden",
-            FOCUS_RING
+            FOCUS_RING,
           )}
         >
           Skip to main content
         </a>
 
         <div className="contents print:hidden">
-          <SiteHeader activeView={route.view} onNavigate={navigate} onHome={goHome} theme={theme} onThemeChange={pickTheme} />
+          <SiteHeader
+            activeView={route.view}
+            onNavigate={navigate}
+            onHome={goHome}
+            theme={theme}
+            onThemeChange={pickTheme}
+          />
         </div>
 
         <main id="main" ref={mainRef} tabIndex={-1} className="flex-1 pb-3xl focus:outline-none lg:pb-4xl print:pb-0">

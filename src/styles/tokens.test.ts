@@ -30,7 +30,9 @@ function readBlock(startMarker: string, endMarker?: string): Map<string, string>
   const end = endMarker ? css.indexOf(endMarker, start) : css.length;
   if (start < 0 || end < 0) throw new Error(`tokens.css block not found: ${startMarker}`);
   const block = css.slice(start, end);
-  return new Map([...block.matchAll(/--([a-z0-9-]+):\s*([^;]+);/g)].map(([, name = "", value = ""]) => [name, value.trim()]));
+  return new Map(
+    [...block.matchAll(/--([a-z0-9-]+):\s*([^;]+);/g)].map(([, name = "", value = ""]) => [name, value.trim()]),
+  );
 }
 
 const MODES = {

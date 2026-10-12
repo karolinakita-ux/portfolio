@@ -19,7 +19,7 @@ describe("Button", () => {
     render(
       <Button as="a" href="#about" variant="link" iconRight={ArrowRight}>
         About
-      </Button>
+      </Button>,
     );
     const link = screen.getByRole("link", { name: "About" });
     expect(link).toHaveAttribute("href", "#about");
@@ -30,7 +30,10 @@ describe("Button", () => {
 
   it("applies the variant's token classes", () => {
     render(<Button variant="secondary">Cancel</Button>);
-    expect(screen.getByRole("button")).toHaveClass("border-border-interactive-default", "bg-bg-interactive-secondary-default");
+    expect(screen.getByRole("button")).toHaveClass(
+      "border-border-interactive-default",
+      "bg-bg-interactive-secondary-default",
+    );
   });
 
   it("does not fire clicks when disabled", async () => {
@@ -38,7 +41,7 @@ describe("Button", () => {
     render(
       <Button disabled onClick={onClick}>
         Save
-      </Button>
+      </Button>,
     );
     await userEvent.click(screen.getByRole("button"));
     expect(onClick).not.toHaveBeenCalled();

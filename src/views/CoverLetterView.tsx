@@ -86,7 +86,7 @@ function LetterHeader({ sender }: { sender: CoverLetter["sender"] }) {
     <header className="flex flex-col gap-2xs border-b border-border-default pb-md">
       <h1 className="font-display text-display-sm font-medium text-text-primary">{sender.name}</h1>
       <p className="text-title-lg text-text-primary">{sender.title}</p>
-      <address className="mt-2xs flex flex-col text-body-md not-italic text-text-secondary">
+      <address className="mt-2xs flex flex-col text-body-md text-text-secondary not-italic">
         <span>
           <Joined
             parts={[
@@ -137,14 +137,20 @@ function Highlights({ items }: { items: ReadonlyArray<LeadBullet> }) {
 }
 
 /** The printable sheet: A4 on screen, edge-to-edge inside the 20mm @page margins on paper. */
-export function CoverLetterSheet({ letter = COVER_LETTER, contentRef }: { letter?: CoverLetter; contentRef?: Ref<HTMLDivElement> }) {
+export function CoverLetterSheet({
+  letter = COVER_LETTER,
+  contentRef,
+}: {
+  letter?: CoverLetter;
+  contentRef?: Ref<HTMLDivElement>;
+}) {
   return (
     <article
       aria-labelledby="cover-letter-subject"
       className={cn(
         "kb-theme-light kb-print-block mx-auto w-full max-w-a4",
         "rounded-sm border border-border-subtle bg-bg-canvas p-lg text-text-primary shadow-md md:min-h-a4 md:p-letter",
-        "print:max-w-none print:min-h-0 print:rounded-none print:border-0 print:p-0 print:shadow-none"
+        "print:min-h-0 print:max-w-none print:rounded-none print:border-0 print:p-0 print:shadow-none",
       )}
     >
       <div ref={contentRef} className="flex flex-col gap-lg">
@@ -186,7 +192,7 @@ export function CoverLetterView({ onNavigate }: { onNavigate: Navigate }) {
   const fit = usePageFit(contentRef);
 
   return (
-    <Container className="page-cover-letter pt-xl print:p-0">
+    <Container className="pt-xl page-cover-letter print:p-0">
       <div className="flex flex-col gap-lg print:hidden">
         <Breadcrumb onNavigate={onNavigate} items={[WORK_CRUMB, { label: "Cover Letter" }]} />
         <div className="flex flex-col gap-md md:flex-row md:items-end md:justify-between">
