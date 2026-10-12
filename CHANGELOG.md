@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 2.0.0 - 2026-10-12
+
+#### Removed
+
+- The cover letter page (`#cover-letter`, alias `#letter`). It was not in the menu or the sitemap, and a cover letter is written per application anyway. Old links now open the Work page. Removed with it: `src/content/cover-letter.ts`, `CoverLetterView`, the `CoverLetter` type, the letter print page (`@page cover-letter`, `p-letter`, `page-cover-letter`, `min-h-a4`), `formatLongDate` and the one-page fit check (`lib/pageFit.ts`), which only the letter used.
+
 ### 1.6.0 - 2026-10-12
 
 #### Added

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 /**
- * Shared primitives for printable documents (CV, cover letter).
+ * Shared primitives for printable documents (the CV).
  * Both read as plain text when a PDF is parsed, so separators are typed
  * characters and links show their URL as the visible label (see DOC_LINK in lib/ui.ts).
  */

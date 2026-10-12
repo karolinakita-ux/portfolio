@@ -1,20 +1,5 @@
 const SHORT_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] as const;
 
-const LONG_MONTHS = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-] as const;
-
 /** Splits an ISO date ("2026", "2026-10" or "2026-10-08") into numbers. */
 const parseIso = (iso: string) => {
   const match = /^(\d{4})(?:-(\d{2}))?(?:-(\d{2}))?$/.exec(iso);
@@ -33,14 +18,4 @@ const monthName = (names: ReadonlyArray<string>, month: number, iso: string) => 
 export const formatMonthYear = (iso: string): string => {
   const { year, month } = parseIso(iso);
   return month === null ? String(year) : monthName(SHORT_MONTHS, month, iso) + " " + year;
-};
-
-/**
- * Letter dates: "2026-10-08" → "October 8, 2026".
- * Parsed by hand: `new Date(iso)` is UTC and shifts a day west of Greenwich.
- */
-export const formatLongDate = (iso: string): string => {
-  const { year, month, day } = parseIso(iso);
-  if (month === null || day === null) throw new Error(`Expected a full ISO date (YYYY-MM-DD): "${iso}"`);
-  return monthName(LONG_MONTHS, month, iso) + " " + day + ", " + year;
 };

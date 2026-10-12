@@ -21,7 +21,6 @@ describe("resolveView", () => {
     ["landing", "work"],
     ["projects", "work"],
     ["resume", "cv"],
-    ["letter", "cover-letter"],
   ])("maps the alias %j to %s", (alias, view) => {
     expect(resolveView(alias)).toBe(view);
   });
@@ -44,7 +43,6 @@ describe("readViewFromLocation", () => {
   it.each([
     ["#about", "about"],
     ["#resume", "cv"],
-    ["#cover-letter", "cover-letter"],
     ["", "work"],
   ])("reads %j as %s", (hash, view) => {
     window.history.replaceState(null, "", "/" + hash);
@@ -56,6 +54,13 @@ describe("readViewFromLocation", () => {
     expect(readViewFromLocation()).toBeNull();
     window.history.replaceState(null, "", "/#%E0%A4%A");
     expect(readViewFromLocation()).toBeNull();
+  });
+
+  it("no longer knows the removed cover letter page", () => {
+    for (const hash of ["#cover-letter", "#letter"]) {
+      window.history.replaceState(null, "", "/" + hash);
+      expect(readViewFromLocation()).toBeNull();
+    }
   });
 });
 
@@ -85,6 +90,5 @@ describe("titleForView", () => {
 
   it("leads with the name on printable documents (default PDF file name)", () => {
     expect(titleForView("cv")).toBe("Karolina Kita - CV");
-    expect(titleForView("cover-letter")).toBe("Karolina Kita - Cover Letter");
   });
 });
