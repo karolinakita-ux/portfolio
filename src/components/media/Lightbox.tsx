@@ -40,8 +40,11 @@ import { LightboxContext, type LightboxItem, type OpenLightbox } from "./lightbo
 /** Zoom levels as multiples of the fitted width; index 0 is "fit to the viewer". */
 const ZOOM_STEPS = [1, 1.5, 2, 3, 4] as const;
 
-/** Zoom is a desktop feature (the md breakpoint); below it the viewer always fits. */
-const ZOOM_QUERY = "(min-width: 768px)";
+/**
+ * Zoom needs the md breakpoint or a mouse / trackpad. Phones and small touch screens fit and keep their own
+ * pinch-zoom; a desktop browser zoomed to 200-400% (a narrow viewport) keeps the zoom controls (WCAG 1.4.4, 1.4.10).
+ */
+const ZOOM_QUERY = "(min-width: 768px), (pointer: fine)";
 /** Shortest horizontal finger travel, in px, that counts as a swipe. */
 const SWIPE_MIN_DISTANCE = 50;
 
@@ -218,7 +221,7 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
       setZoom(null);
       return;
     }
-    if (!canZoom() || !image.naturalWidth || !image.naturalHeight) return; // Phone width, or not loaded yet.
+    if (!canZoom() || !image.naturalWidth || !image.naturalHeight) return; // Small touch screen, or not loaded yet.
     centerRef.current = readCenter(viewport);
     setZoom({ step: next, aspect: image.naturalWidth / image.naturalHeight, naturalWidth: image.naturalWidth });
   };
@@ -296,7 +299,7 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
       onClose={handleClose}
       onKeyDown={handleKeyDown}
       onClick={handleClick}
-      className="kb-lightbox fixed inset-0 m-0 h-full max-h-none w-full max-w-none items-center justify-center bg-transparent p-md open:flex md:p-xl"
+      className="kb-lightbox fixed inset-0 m-0 h-full max-h-none w-full max-w-none items-start justify-center bg-transparent p-md open:flex md:p-xl"
     >
       {state && item && (
         <figure
@@ -305,7 +308,7 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
           onTouchCancel={() => {
             swipeRef.current = null;
           }}
-          className="flex w-full max-w-header min-w-0 flex-col gap-sm rounded-lg border border-border-subtle bg-bg-surface-raised p-sm shadow-xl motion-safe:animate-view-in md:p-md"
+          className="my-auto flex w-full max-w-header min-w-0 flex-col gap-sm rounded-lg border border-border-subtle bg-bg-surface-raised p-sm shadow-xl motion-safe:animate-view-in md:p-md"
         >
           <div className="flex items-start justify-between gap-md">
             <div className="flex min-w-0 flex-col gap-3xs">
@@ -380,11 +383,14 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
 
           {/* Single image on a phone: no browse or zoom controls, so no toolbar. */}
           <div
-            className={cn("flex items-center gap-md", count > 1 ? "justify-between" : "hidden justify-center md:flex")}
+            className={cn(
+              "flex items-center gap-md",
+              count > 1 ? "justify-between" : "hidden justify-center md:flex pointer-fine:flex",
+            )}
           >
             {count > 1 && <IconButton label="Previous image" icon={ChevronLeft} onClick={() => step(-1)} />}
             <div className="flex items-center gap-md">
-              <div role="group" aria-label="Zoom" className="hidden items-center gap-xs md:flex">
+              <div role="group" aria-label="Zoom" className="hidden items-center gap-xs md:flex pointer-fine:flex">
                 <IconButton
                   label="Zoom out"
                   title="Zoom out (-)"
