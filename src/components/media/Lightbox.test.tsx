@@ -3,11 +3,14 @@ import userEvent from "@testing-library/user-event";
 import { act } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mockMatchMedia } from "../../test/matchMedia.ts";
+import { preloadImages } from "../../lib/imagePreload.ts";
 import { LightboxProvider } from "./Lightbox.tsx";
 import { useLightbox, type LightboxItem } from "./lightbox-context.ts";
 
+vi.mock("../../lib/imagePreload.ts", () => ({ preloadImages: vi.fn() }));
+
 const ITEMS: LightboxItem[] = [
-  { src: "/assets/wide.png", alt: "Wide screen", title: "Wide" },
+  { src: "/assets/wide.png", alt: "Wide screen", title: "Wide", width: 4000, height: 1000 },
   { src: "/assets/tall.png", alt: "Tall screen", title: "Tall" },
   { src: "/assets/square.png", alt: "Square screen", title: "Square" },
 ];
@@ -41,11 +44,57 @@ const openViewer = async () => {
   };
 };
 
+describe("Lightbox loading", () => {
+  const skeleton = (dialog: HTMLElement) => dialog.querySelector(".kb-lightbox-skeleton");
+
+  it("shows a skeleton of the image's shape until the image is decoded", async () => {
+    const { dialog, zoomIn } = await openViewer();
+    const image = within(dialog).getByRole<HTMLImageElement>("img", { name: "Wide screen" });
+    expect(skeleton(dialog)).toHaveAttribute("aria-hidden", "true");
+    expect((skeleton(dialog) as HTMLElement).style.getPropertyValue("--kb-aspect")).toBe("4");
+    expect((skeleton(dialog) as HTMLElement).style.getPropertyValue("--kb-natural-width")).toBe("4000px");
+    expect(image).toHaveClass("opacity-0");
+    expect(zoomIn).toHaveAttribute("aria-disabled", "true");
+
+    let decoded = () => {};
+    image.decode = () => new Promise<void>((resolve) => (decoded = resolve));
+    fireEvent.load(image);
+    expect(skeleton(dialog)).toBeInTheDocument(); // loaded, not yet decoded
+    await act(async () => decoded());
+    expect(skeleton(dialog)).not.toBeInTheDocument();
+    expect(image).not.toHaveClass("opacity-0");
+    expect(zoomIn).toHaveAttribute("aria-disabled", "false");
+  });
+
+  it("fills the pane when the image size is unknown", async () => {
+    const { user, dialog } = await openViewer();
+    await user.click(within(dialog).getByRole("button", { name: "Next image" }));
+    expect(skeleton(dialog)).not.toBeInTheDocument();
+    expect(dialog.querySelector(".kb-lightbox-pane > [aria-hidden='true']")).toHaveClass("h-full", "w-full");
+  });
+
+  it("shows a cached image straight away", async () => {
+    vi.spyOn(HTMLImageElement.prototype, "complete", "get").mockReturnValue(true);
+    vi.spyOn(HTMLImageElement.prototype, "naturalWidth", "get").mockReturnValue(4000);
+    const { dialog } = await openViewer();
+    expect(skeleton(dialog)).not.toBeInTheDocument();
+    expect(within(dialog).getByRole("img", { name: "Wide screen" })).not.toHaveClass("opacity-0");
+  });
+
+  it("loads the images either side ahead", async () => {
+    const { user, dialog } = await openViewer();
+    expect(preloadImages).toHaveBeenLastCalledWith(["/assets/tall.png", "/assets/square.png"], { urgent: true });
+    await user.click(within(dialog).getByRole("button", { name: "Next image" }));
+    expect(preloadImages).toHaveBeenLastCalledWith(["/assets/square.png", "/assets/wide.png"], { urgent: true });
+  });
+});
+
 describe("Lightbox zoom", () => {
   // jsdom loads no images; zoom needs the intrinsic size.
   beforeEach(() => {
     vi.spyOn(HTMLImageElement.prototype, "naturalWidth", "get").mockReturnValue(4000);
     vi.spyOn(HTMLImageElement.prototype, "naturalHeight", "get").mockReturnValue(1000);
+    vi.spyOn(HTMLImageElement.prototype, "complete", "get").mockReturnValue(true); // as if cached
   });
 
   it("sizes the zoomed image from its intrinsic size, so it follows window resizes", async () => {
@@ -190,6 +239,7 @@ describe("Lightbox swipe", () => {
   it("does not browse while zoomed", async () => {
     vi.spyOn(HTMLImageElement.prototype, "naturalWidth", "get").mockReturnValue(4000);
     vi.spyOn(HTMLImageElement.prototype, "naturalHeight", "get").mockReturnValue(1000);
+    vi.spyOn(HTMLImageElement.prototype, "complete", "get").mockReturnValue(true); // as if cached
     const { user, dialog, zoomIn } = await openViewer();
     await user.click(zoomIn);
 

@@ -7,6 +7,8 @@ import { MEETESTIM_CASE } from "./content/cases/meetestim.tsx";
 import { THEMING_CASE } from "./content/cases/theming.tsx";
 import { useHistoryRoute } from "./hooks/useHistoryRoute.ts";
 import { useTheme } from "./hooks/useTheme.ts";
+import { caseCards } from "./lib/gallery.ts";
+import { preloadImages } from "./lib/imagePreload.ts";
 import { titleForView, type Navigate, type View } from "./lib/routes.ts";
 import { cn, FOCUS_RING, prefersReducedMotion } from "./lib/ui.ts";
 import { AboutView } from "./views/AboutView.tsx";
@@ -69,6 +71,13 @@ export function App({ assetBase = "/assets", portraitSrc = assetBase + "/avatar-
 
   /** Named asset → URL (every image is served from /assets). */
   const resolveAsset = useCallback((name: string) => assetBase + "/" + name, [assetBase]);
+
+  // Once the first page has loaded, fetch every case study's full screenshots in the background,
+  // so the image viewer opens at once. The open case study queues its own first (useCaseGallery).
+  useEffect(() => {
+    const cases = [AUTOMOTIVE_CASE, MEETESTIM_CASE, THEMING_CASE];
+    preloadImages(cases.flatMap((c) => caseCards(c).map((card) => resolveAsset(card.asset))));
+  }, [resolveAsset]);
 
   useEffect(() => {
     document.title = titleForView(route.view);
