@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 1.2.3 - 2026-10-12
+
+#### Fixed
+
+- Back to top stays visible while it has keyboard focus. Before, pressing Home on it scrolled to the top and hid the button with focus still on it, so focus was invisible (WCAG 2.4.7).
+
 ### 1.2.2 - 2026-10-09
 
 #### Changed
