@@ -213,6 +213,14 @@
 @utility grid-cols-term {
   grid-template-columns: auto minmax(0, 1fr);
 }
+/* Site header from md: logo | nav (centred on the page) | theme switch */
+@utility grid-cols-header {
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+}
+
+/* Short viewports: landscape phones, or 200-400% browser zoom on a laptop.
+   The sticky header lets go there so it never covers a large share of the screen. */
+@custom-variant short (@media (max-height: 30rem));
 /* Accordion: animating grid rows 0fr → 1fr gives a smooth auto-height expand */
 @utility grid-rows-collapsed {
   grid-template-rows: 0fr;

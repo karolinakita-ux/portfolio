@@ -136,6 +136,17 @@ describe("App", () => {
     expect(h1()).toHaveTextContent("Clarity for complex enterprise software");
   });
 
+  it("orders the header as it looks on desktop: logo, primary nav, then the theme switch", () => {
+    renderApp();
+    const header = screen.getByRole("banner");
+    const logo = within(header).getByRole("link", { name: "Karolina Kita, home page" });
+    const nav = within(header).getByRole("navigation", { name: "Primary" });
+    const themeSwitch = within(header).getByRole("group", { name: "Color theme" });
+
+    expect(logo.compareDocumentPosition(nav) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(nav.compareDocumentPosition(themeSwitch) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
   it("switches and remembers the theme", async () => {
     const { user } = renderApp();
     const dark = screen.getByRole("button", { name: "Dark theme" });

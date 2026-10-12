@@ -89,9 +89,17 @@ interface SiteHeaderProps {
 }
 
 /**
- * Sticky header: translucent canvas + backdrop blur, a borderSubtle hairline,
- * and shadow-sm once the page scrolls so content reads as passing underneath.
- * Publishes its height as --kb-header-h so anchor jumps clear it.
+ * Sticky header on an opaque canvas (content never shows through it), a
+ * borderSubtle hairline, and shadow-sm once the page scrolls.
+ *
+ * Layout: one row from md (logo | nav centred | theme switch, ~67px); two rows
+ * on phones (logo + theme switch, then the nav, ~103px). Its height never
+ * changes while scrolling, so nothing jumps and anchor offsets stay right.
+ * DOM order is logo → nav → theme switch, the same as the desktop row.
+ *
+ * On short viewports (landscape phones, 200-400% zoom) it stops sticking.
+ * Publishes the height it covers as --kb-header-h (0 when not sticky) so
+ * anchor jumps and keyboard focus clear it.
  */
 export function SiteHeader({ activeView, onNavigate, onHome, theme, onThemeChange }: SiteHeaderProps) {
   const headerRef = useRef<HTMLElement>(null);
@@ -100,12 +108,18 @@ export function SiteHeader({ activeView, onNavigate, onHome, theme, onThemeChang
   useEffect(() => {
     const node = headerRef.current;
     if (!node) return undefined;
-    const publish = () => document.documentElement.style.setProperty("--kb-header-h", node.offsetHeight + "px");
+    const publish = () => {
+      const covers = getComputedStyle(node).position === "sticky" ? node.offsetHeight : 0;
+      document.documentElement.style.setProperty("--kb-header-h", covers + "px");
+    };
     publish();
-    if (typeof ResizeObserver !== "function") return undefined;
-    const observer = new ResizeObserver(publish);
-    observer.observe(node);
-    return () => observer.disconnect();
+    window.addEventListener("resize", publish); // viewport height or zoom crosses the short breakpoint
+    const observer = typeof ResizeObserver === "function" ? new ResizeObserver(publish) : null;
+    observer?.observe(node);
+    return () => {
+      window.removeEventListener("resize", publish);
+      observer?.disconnect();
+    };
   }, []);
 
   return (
@@ -113,28 +127,26 @@ export function SiteHeader({ activeView, onNavigate, onHome, theme, onThemeChang
       ref={headerRef}
       style={{ top: "env(safe-area-inset-top, 0px)" }}
       className={cn(
-        "sticky z-header border-b border-border-subtle bg-bg-canvas-translucent px-lg pt-md pb-sm backdrop-blur-md md:px-2xl lg:px-4xl",
+        "sticky z-header border-b border-border-subtle bg-bg-canvas px-lg pt-sm pb-xs md:px-2xl md:py-sm lg:px-4xl short:static",
         "transition-[box-shadow,background-color,border-color] duration-200 ease-out",
         scrolled ? "shadow-sm" : "shadow-none",
       )}
     >
-      <div className="mx-auto flex w-full max-w-header flex-col gap-xs">
-        <div className="flex items-center justify-between gap-md">
-          <a
-            href="#"
-            onClick={(event) => {
-              event.preventDefault();
-              onHome();
-            }}
-            aria-label="Karolina Kita, home page"
-            className={cn("block cursor-pointer rounded-sm", FOCUS_RING)}
-          >
-            <Logo />
-          </a>
-          <ThemeToggle theme={theme} onChange={onThemeChange} />
-        </div>
+      {/* Phones: flex-wrap puts the nav on its own row below. From md: a 3-column grid keeps the nav centred. */}
+      <div className="mx-auto flex w-full max-w-header flex-wrap items-center justify-between gap-x-md gap-y-2xs md:grid md:grid-cols-header">
+        <a
+          href="#"
+          onClick={(event) => {
+            event.preventDefault();
+            onHome();
+          }}
+          aria-label="Karolina Kita, home page"
+          className={cn("block cursor-pointer justify-self-start rounded-sm", FOCUS_RING)}
+        >
+          <Logo />
+        </a>
 
-        <nav aria-label="Primary">
+        <nav aria-label="Primary" className="order-last w-full md:order-none md:w-auto">
           <ul className="flex flex-wrap items-center justify-center gap-2xs">
             {NAV_ITEMS.map((item) => {
               const active = navSectionFor(activeView) === item.view;
@@ -160,6 +172,10 @@ export function SiteHeader({ activeView, onNavigate, onHome, theme, onThemeChang
             })}
           </ul>
         </nav>
+
+        <div className="justify-self-end">
+          <ThemeToggle theme={theme} onChange={onThemeChange} />
+        </div>
       </div>
     </header>
   );

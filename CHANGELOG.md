@@ -6,6 +6,19 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 2.0.1 - 2026-10-12
+
+#### Changed
+
+- Header on desktop (768 px and up) is one row: logo, Work / About / Contact centred, theme switch on the right. It is 67 px instead of 115 px (7-9% of a laptop screen instead of 13-16%) and keeps that height while scrolling, so nothing jumps.
+- Header on phones keeps two rows with tighter spacing: 103 px instead of 115 px.
+- Header background is opaque instead of see-through, so page text no longer shows faintly behind it (NN/g guidance on sticky headers).
+- Tab order in the header follows the desktop layout: logo, nav, theme switch.
+
+#### Fixed
+
+- On short screens (under 480 px tall: phones in landscape, or 200-400% browser zoom) the header no longer sticks, so it cannot cover up to 40% of the screen. Anchor jumps then stop reserving space for it.
+
 ### 2.0.0 - 2026-10-12
 
 #### Removed
