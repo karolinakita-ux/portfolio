@@ -1,14 +1,13 @@
 import { isValidElement, type ReactElement, type ReactNode } from "react";
 import { describe, expect, it } from "vitest";
 import { Lang, Strong } from "../components/ui/text.tsx";
-import { formatLongDate, formatMonthYear } from "../lib/dates.ts";
+import { formatMonthYear } from "../lib/dates.ts";
 import { isView, VIEWS } from "../lib/routes.ts";
 import { ABOUT_INTRO, FAQ, MILESTONES, PRINCIPLES } from "./about.ts";
 import { AUTOMOTIVE_CASE } from "./cases/automotive.ts";
 import { PROJECT_PLANNING_CASE } from "./cases/project-planning.tsx";
 import { THEMING_CASE } from "./cases/theming.tsx";
 import { CONTACT } from "./contact.ts";
-import { COVER_LETTER } from "./cover-letter.ts";
 import { CV } from "./cv-data.ts";
 import { PROFILE } from "./profile.ts";
 import type { CaseStudy, ShowcaseCard, ThemingCaseStudy } from "./types.ts";
@@ -17,7 +16,7 @@ import { PROCESS_BANNER, TESTIMONIALS, WORK_CASES, WORK_INTRO } from "./work.ts"
 /**
  * Content rules for the portfolio copy, so they hold for every future edit:
  *   - Short hyphens with spaces ("word - word", "2019 - 2026"), never en or em dashes.
- *   - The CV and cover letter are plain text for ATS parsers: no curly quotes either.
+ *   - The CV is plain text for ATS parsers: no curly quotes either.
  *   - H1 headings never end with a trailing period.
  *   - Every case-study bullet opens with a bold lead-in term and a colon.
  *   - Navigation targets and image file names are valid on Netlify (Linux: case-sensitive).
@@ -44,7 +43,6 @@ const ALL_CONTENT = {
   MILESTONES,
   PRINCIPLES,
   CONTACT,
-  COVER_LETTER,
   CV,
   PROFILE,
   PROCESS_BANNER,
@@ -60,8 +58,8 @@ describe("copy style", () => {
     expect(offending).toEqual([]);
   });
 
-  it("keeps the CV and cover letter ATS-safe (no curly quotes)", () => {
-    const offending = collectText({ CV, COVER_LETTER }).filter((text) => /[‘’“”]/.test(text));
+  it("keeps the CV ATS-safe (no curly quotes)", () => {
+    const offending = collectText({ CV }).filter((text) => /[‘’“”]/.test(text));
     expect(offending).toEqual([]);
   });
 
@@ -155,25 +153,21 @@ describe("work page", () => {
   });
 });
 
-describe("CV and cover letter", () => {
+describe("CV", () => {
   it("uses valid ISO dates", () => {
     for (const role of [...CV.experience, ...CV.education]) {
       expect(() => formatMonthYear(role.start)).not.toThrow();
       if (role.end) expect(() => formatMonthYear(role.end ?? "")).not.toThrow();
     }
-    expect(() => formatLongDate(COVER_LETTER.date)).not.toThrow();
   });
 
   it("writes lead-ins without their own colon (the layout adds it)", () => {
-    const leads = [...CV.experience.flatMap((role) => role.bullets), ...COVER_LETTER.highlights].map(
-      (bullet) => bullet.lead,
-    );
+    const leads = CV.experience.flatMap((role) => role.bullets).map((bullet) => bullet.lead);
     for (const lead of leads) expect(lead).not.toMatch(/:\s*$/);
   });
 
   it("shares contact details with the profile", () => {
     expect(CV.header.email).toBe(PROFILE.email);
-    expect(COVER_LETTER.sender.email).toBe(PROFILE.email);
     expect(CV.header.linkedin.href).toBe(PROFILE.linkedinUrl);
     expect(PROFILE.linkedinRecommendationsUrl.startsWith(PROFILE.linkedinUrl + "/")).toBe(true);
   });

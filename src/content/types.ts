@@ -154,7 +154,7 @@ export interface FaqItem {
   points?: ReadonlyArray<readonly [term: string, text: string]>;
 }
 
-/** Bold lead-in bullet in the CV and cover letter: "<strong>Lead:</strong> text". */
+/** Bold lead-in bullet in the CV: "<strong>Lead:</strong> text". */
 export interface LeadBullet {
   lead: string;
   text: string;
@@ -202,17 +202,4 @@ export interface Cv {
   competencies: ReadonlyArray<{ group: string; items: ReadonlyArray<string> }>;
   experience: ReadonlyArray<CvRole>;
   education: ReadonlyArray<CvDegree>;
-}
-
-export interface CoverLetter {
-  sender: CvHeader & { phone: string };
-  /** ISO date, e.g. "2026-10-08". */
-  date: string;
-  recipient: ReadonlyArray<string>;
-  subject: string;
-  salutation: string;
-  opening: string;
-  highlights: ReadonlyArray<LeadBullet>;
-  closing: string;
-  signOff: string;
 }

@@ -33,7 +33,7 @@ Karolina Kita's portfolio (karolina.kita.company). React 19 + TypeScript (strict
 - Every case-study bullet opens with a bold lead-in and colon: build bullets with `lead("Term", "text")` from `components/ui/lead.tsx`.
 - H1 headings never end with a period.
 - Plain, grounded B2-level English. No buzzwords or corporate fluff. Keep claims honest about team roles and verified outcomes; reflections stay general.
-- CV and cover letter are ATS plain text: no curly quotes or long dashes, ISO dates.
+- The CV is ATS plain text: no curly quotes or long dashes, ISO dates.
 
 ## Code conventions
 

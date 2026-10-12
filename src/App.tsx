@@ -14,7 +14,6 @@ import { cn, FOCUS_RING, prefersReducedMotion } from "./lib/ui.ts";
 import { AboutView } from "./views/AboutView.tsx";
 import { CaseStudyView, CaseThemingView } from "./views/CaseViews.tsx";
 import { ContactView } from "./views/ContactView.tsx";
-import { CoverLetterView } from "./views/CoverLetterView.tsx";
 import { CvView } from "./views/CvView.tsx";
 import { WorkView } from "./views/WorkView.tsx";
 
@@ -36,7 +35,6 @@ const VIEW_RENDERERS: Record<View, (ctx: ViewContext) => ReactNode> = {
   about: ({ navigate, portraitSrc }) => <AboutView portraitSrc={portraitSrc} onNavigate={navigate} />,
   contact: ({ navigate }) => <ContactView onNavigate={navigate} />,
   cv: ({ navigate }) => <CvView onNavigate={navigate} />,
-  "cover-letter": ({ navigate }) => <CoverLetterView onNavigate={navigate} />,
   "case-theming": ({ navigate, resolveAsset }) => (
     <CaseThemingView c={THEMING_CASE} resolveAsset={resolveAsset} onNavigate={navigate} />
   ),
@@ -50,7 +48,7 @@ const VIEW_RENDERERS: Record<View, (ctx: ViewContext) => ReactNode> = {
 
 /**
  * KitaPortfolio - Senior UX Portfolio
- * Views: work (default) · about · contact · cv · cover-letter · case-theming · case-project-planning · case-automotive
+ * Views: work (default) · about · contact · cv · case-theming · case-project-planning · case-automotive
  *
  * Styling: every colour, space, radius, shadow and type style resolves to a
  * KitaBranding token (src/styles). Light/Dark swaps CSS variables via the
