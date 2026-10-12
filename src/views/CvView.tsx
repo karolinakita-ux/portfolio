@@ -37,7 +37,17 @@ function DateRange({ start, end }: { start: string; end: string | null }) {
   );
 }
 
-function CvSection({ id, title, keepTogether = false, children }: { id: string; title: string; keepTogether?: boolean; children: ReactNode }) {
+function CvSection({
+  id,
+  title,
+  keepTogether = false,
+  children,
+}: {
+  id: string;
+  title: string;
+  keepTogether?: boolean;
+  children: ReactNode;
+}) {
   const titleId = "cv-" + id + "-title";
   return (
     <section aria-labelledby={titleId} className={cn("flex flex-col gap-sm", keepTogether && "kb-print-block")}>
@@ -77,7 +87,7 @@ function CvHeader({ header }: { header: CvHeaderData }) {
         {header.name}
       </h1>
       <p className="text-title-lg text-text-primary">{header.title}</p>
-      <address className="mt-2xs text-body-md not-italic text-text-secondary">
+      <address className="mt-2xs text-body-md text-text-secondary not-italic">
         <Joined parts={contacts} />
       </address>
     </header>
@@ -146,7 +156,7 @@ export function CvSheet({ cv = CV }: { cv?: Cv }) {
       className={cn(
         "kb-theme-light mx-auto flex w-full max-w-a4 flex-col gap-lg",
         "rounded-sm border border-border-subtle bg-bg-canvas p-lg text-text-primary shadow-md md:p-3xl",
-        "print:max-w-none print:rounded-none print:border-0 print:p-0 print:shadow-none"
+        "print:max-w-none print:rounded-none print:border-0 print:p-0 print:shadow-none",
       )}
     >
       <CvHeader header={cv.header} />
@@ -191,8 +201,8 @@ export function CvView({ onNavigate }: { onNavigate: Navigate }) {
           <div className="flex flex-col gap-xs">
             <Eyebrow parts={["Curriculum Vitae", "ATS-ready"]} />
             <p className="text-body-md text-text-secondary">
-              Single-column and plain text, so applicant tracking systems parse it cleanly. To save a PDF, choose
-              Save as PDF, paper size A4, and turn off Headers and footers.
+              Single-column and plain text, so applicant tracking systems parse it cleanly. To save a PDF, choose Save
+              as PDF, paper size A4, and turn off Headers and footers.
             </p>
           </div>
           <Button onClick={() => window.print()} className="self-start md:self-auto">

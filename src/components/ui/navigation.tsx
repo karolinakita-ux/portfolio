@@ -58,7 +58,7 @@ export function Breadcrumb({ items, onNavigate }: { items: ReadonlyArray<Breadcr
                   onNavigate={onNavigate}
                   className={cn(
                     "inline-flex items-center gap-2xs rounded-sm underline underline-offset-2 hover:text-text-primary",
-                    FOCUS_RING
+                    FOCUS_RING,
                   )}
                 >
                   {Icon && <Icon aria-hidden="true" size={14} />}

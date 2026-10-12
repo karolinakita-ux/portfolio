@@ -20,7 +20,7 @@ export function useImageStatus(src: string) {
     (img: HTMLImageElement | null) => {
       if (img?.complete) setState({ src, status: img.naturalWidth > 0 ? "loaded" : "error" });
     },
-    [src]
+    [src],
   );
 
   return { status, setStatus, ref };

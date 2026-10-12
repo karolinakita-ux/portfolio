@@ -13,7 +13,7 @@ export function Container({ className, children }: { className?: string; childre
 /** Uppercase Label Medium kicker; parts are joined by a decorative bullet. */
 export function Eyebrow({ parts, className }: { parts: ReadonlyArray<string>; className?: string }) {
   return (
-    <p className={cn("text-label-md uppercase text-text-secondary", className)}>
+    <p className={cn("text-label-md text-text-secondary uppercase", className)}>
       {parts.map((part, index) => (
         <span key={part}>
           {index > 0 && (
@@ -53,7 +53,7 @@ export function Section({ id, title, description, children, headingProps, bodyGa
           <div className="flex flex-col gap-xs">
             <h2
               id={titleId}
-              className="scroll-mt-lg text-balance font-display text-headline-lg text-text-primary focus:outline-none lg:text-display-sm"
+              className="scroll-mt-lg font-display text-headline-lg text-balance text-text-primary focus:outline-none lg:text-display-sm"
               {...headingProps}
             >
               {title}

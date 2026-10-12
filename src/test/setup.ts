@@ -25,7 +25,9 @@ if (typeof HTMLDialogElement !== "undefined") {
     proto.showModal = function (this: HTMLDialogElement) {
       this.setAttribute("open", "");
       // Like browsers: focus moves to the first focusable element inside.
-      this.querySelector<HTMLElement>("button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])")?.focus();
+      this.querySelector<HTMLElement>(
+        "button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])",
+      )?.focus();
     };
     proto.close = function (this: HTMLDialogElement) {
       if (!this.hasAttribute("open")) return;

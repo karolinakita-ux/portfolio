@@ -67,9 +67,9 @@ const CASES: ReadonlyArray<WorkCase> = [
 /** Work page order: most recent and highest-impact first. */
 const WORK_CASE_ORDER = ["automotive-discovery", "project-planning", "theming-system"] as const;
 
-export const WORK_CASES: ReadonlyArray<WorkCase> = WORK_CASE_ORDER.map((id) => CASES.find((item) => item.id === id)).filter(
-  (item): item is WorkCase => item !== undefined
-);
+export const WORK_CASES: ReadonlyArray<WorkCase> = WORK_CASE_ORDER.map((id) =>
+  CASES.find((item) => item.id === id),
+).filter((item): item is WorkCase => item !== undefined);
 
 /** Work page banner below the case-study grid. */
 export const PROCESS_BANNER = {

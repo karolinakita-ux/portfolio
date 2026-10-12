@@ -14,7 +14,13 @@ export const MILESTONES: ReadonlyArray<Milestone> = [
     org: "University of Zielona Góra - Master's Degree in Psychology",
     focus:
       "Built a strong foundation in human behavior, decision-making, and research methodology. Conducted quantitative and qualitative studies, learning how to analyze user needs objectively and design interfaces that reduce cognitive strain.",
-    tags: ["Cognitive Psychology", "Quantitative Research", "Qualitative Research", "Behavioral Analysis", "Research Methodology"],
+    tags: [
+      "Cognitive Psychology",
+      "Quantitative Research",
+      "Qualitative Research",
+      "Behavioral Analysis",
+      "Research Methodology",
+    ],
   },
   {
     id: "fintech",
@@ -41,7 +47,13 @@ export const MILESTONES: ReadonlyArray<Milestone> = [
     org: "Programado - Senior Product Designer (Consulting / Contract)",
     focus:
       "Leading the design and evolution of scalable design systems tailored to enterprise front-end frameworks (such as PrimeNG and Angular). Defining design tokens, theming structures (light/dark modes), and accessibility standards to help product teams deliver consistent interfaces faster.",
-    tags: ["Design Systems", "Design Tokens", "Component Guidelines", "Accessible UI (WCAG 2.1 AA)", "PrimeNG Alignment"],
+    tags: [
+      "Design Systems",
+      "Design Tokens",
+      "Component Guidelines",
+      "Accessible UI (WCAG 2.1 AA)",
+      "PrimeNG Alignment",
+    ],
   },
 ];
 

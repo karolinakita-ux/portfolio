@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 1.4.3 - 2026-10-12
+
+#### Changed
+
+- Whole repo formatted with Prettier (`yarn format`): line breaks, trailing commas, sorted Tailwind classes, self-closing tags in `index.html` and `0.10` written as `0.1` in `tokens.css`. No behaviour changes; `yarn verify` and `yarn a11y` pass, and `prettier --check .` is clean.
+
 ### 1.4.2 - 2026-10-12
 
 #### Changed

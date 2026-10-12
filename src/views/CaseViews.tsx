@@ -107,7 +107,11 @@ export function CaseThemingView({ c, resolveAsset, onNavigate }: CaseViewProps<T
         </div>
       </Section>
 
-      <Section id="case-solution" title="The Solution: Governed White-Label Theming & Accessibility" description={c.solutionIntro}>
+      <Section
+        id="case-solution"
+        title="The Solution: Governed White-Label Theming & Accessibility"
+        description={c.solutionIntro}
+      >
         <ol className="flex flex-col gap-md">
           <ShowcaseRows rows={solutionRows} />
         </ol>
@@ -123,7 +127,11 @@ export function CaseThemingView({ c, resolveAsset, onNavigate }: CaseViewProps<T
         <DetailList items={c.delivery} />
       </Section>
 
-      <Section id="case-engineering" title="Developer Handoff & Technical Collaboration" description={c.engineeringIntro}>
+      <Section
+        id="case-engineering"
+        title="Developer Handoff & Technical Collaboration"
+        description={c.engineeringIntro}
+      >
         <DetailList items={c.engineering} />
       </Section>
 

@@ -20,14 +20,14 @@ function HeroSection({ onNavigate }: { onNavigate: Navigate }) {
               Kept short (~40 characters) so it fits one line on desktop from 1024px. */}
           <h1
             id="hero-title"
-            className="text-balance font-display text-display-sm font-normal text-text-primary md:text-display-md"
+            className="font-display text-display-sm font-normal text-balance text-text-primary md:text-display-md"
           >
             Clarity for complex enterprise software
           </h1>
           <p className="font-display text-headline-sm text-text-secondary">
-            I have 8+ years of experience turning data-heavy B2B platforms and messy workflows into clear, usable digital
-            products. With a background in psychology, I focus on how people actually think and work - combining practical
-            research with solid design systems that engineers can easily build.
+            I have 8+ years of experience turning data-heavy B2B platforms and messy workflows into clear, usable
+            digital products. With a background in psychology, I focus on how people actually think and work - combining
+            practical research with solid design systems that engineers can easily build.
           </p>
           <div className="flex flex-wrap gap-sm">
             <Button
@@ -115,7 +115,7 @@ function CaseCard({ item, resolveAsset, onNavigate }: CaseCardProps) {
       <div className="flex w-full min-w-0 flex-col items-start gap-xs">
         <Eyebrow parts={item.eyebrow} />
         {/* Full column width; text-pretty only prevents a lone last word (no forced even split) */}
-        <h3 id={titleId} className="w-full text-pretty text-title-md text-text-primary">
+        <h3 id={titleId} className="w-full text-title-md text-pretty text-text-primary">
           {item.title}
         </h3>
         <p className="text-body-md text-text-secondary">{item.summary}</p>
@@ -150,14 +150,14 @@ function ProcessBanner() {
           rel="noopener noreferrer"
           className={cn(
             "group/fig inline-flex items-center gap-2xs rounded-sm text-label-lg font-semibold decoration-1 underline-offset-4 hover:underline",
-            FOCUS_RING
+            FOCUS_RING,
           )}
         >
           {PROCESS_BANNER.linkLabel}
           <ArrowUpRight
             aria-hidden="true"
             size={16}
-            className="shrink-0 transition-transform duration-150 motion-safe:group-hover/fig:-translate-y-3xs motion-safe:group-hover/fig:translate-x-3xs"
+            className="shrink-0 transition-transform duration-150 motion-safe:group-hover/fig:translate-x-3xs motion-safe:group-hover/fig:-translate-y-3xs"
           />
           <span className="sr-only"> (opens in a new tab)</span>
         </a>
@@ -167,16 +167,27 @@ function ProcessBanner() {
 }
 
 /** Work (default view): hero → featured case studies → leadership endorsements. */
-export function WorkView({ resolveAsset, onNavigate }: { resolveAsset: (name: string) => string; onNavigate: Navigate }) {
+export function WorkView({
+  resolveAsset,
+  onNavigate,
+}: {
+  resolveAsset: (name: string) => string;
+  onNavigate: Navigate;
+}) {
   // Rhythm: hero → 64px → heading → 8px → lead-in → 24px → NDA note → 24px → cards
   return (
     <>
       <HeroSection onNavigate={onNavigate} />
-      <Section id="enterprise-cases" title="Selected Work & Case Studies" description={WORK_INTRO} headingProps={{ tabIndex: -1 }}>
+      <Section
+        id="enterprise-cases"
+        title="Selected Work & Case Studies"
+        description={WORK_INTRO}
+        headingProps={{ tabIndex: -1 }}
+      >
         <Callout tone="warning" label="Confidentiality note">
-          Due to confidentiality and <strong className="font-semibold">NDAs</strong>, sensitive business data and client names have
-          been anonymized, except where explicitly permitted for public display. In-depth walkthroughs of
-          proprietary flows are available during interviews.
+          Due to confidentiality and <strong className="font-semibold">NDAs</strong>, sensitive business data and client
+          names have been anonymized, except where explicitly permitted for public display. In-depth
+          walkthroughs of proprietary flows are available during interviews.
         </Callout>
         <ul className="flex flex-col gap-md">
           {WORK_CASES.map((item) => (

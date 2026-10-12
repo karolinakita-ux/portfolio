@@ -39,7 +39,9 @@ describe("App", () => {
     expect(screen.getByRole("heading", { name: "Selected Work & Case Studies" })).toHaveFocus();
     expect(window.location.hash).toBe("");
 
-    expect(within(screen.getByRole("contentinfo")).getByText(/prototyped & built with Claude AI assistance/)).toBeInTheDocument();
+    expect(
+      within(screen.getByRole("contentinfo")).getByText(/prototyped & built with Claude AI assistance/),
+    ).toBeInTheDocument();
   });
 
   it.each([
