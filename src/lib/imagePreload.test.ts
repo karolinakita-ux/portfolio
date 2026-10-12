@@ -68,6 +68,50 @@ describe("preloadImages", () => {
     expect(requested()).toEqual(["/a.png", "/b.png", "/d.png", "/e.png"]);
   });
 
+  it("waits for the page to finish loading first", () => {
+    vi.stubGlobal("requestIdleCallback", (run: () => void) => (run(), 1));
+    Object.defineProperty(document, "readyState", { value: "interactive", configurable: true });
+    try {
+      preloadImages(["/a.png"]);
+      expect(requested()).toEqual([]);
+      window.dispatchEvent(new Event("load"));
+      expect(requested()).toEqual(["/a.png"]);
+    } finally {
+      Reflect.deleteProperty(document, "readyState"); // back to jsdom's own getter
+    }
+  });
+
+  it("falls back to a short timeout where the browser has no idle callback (Safari)", () => {
+    vi.useFakeTimers();
+    try {
+      vi.stubGlobal("requestIdleCallback", undefined);
+      preloadImages(["/a.png"]);
+      expect(requested()).toEqual([]);
+      vi.advanceTimersByTime(200);
+      expect(requested()).toEqual(["/a.png"]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("moves on when an image fails", () => {
+    vi.stubGlobal("requestIdleCallback", (run: () => void) => (run(), 1));
+    preloadImages(["/a.png", "/b.png", "/c.png"]);
+    FakeImage.requests[0]?.onerror?.();
+    expect(requested()).toEqual(["/a.png", "/b.png", "/c.png"]);
+  });
+
+  it("loads nothing on a 2G connection", () => {
+    vi.stubGlobal("requestIdleCallback", (run: () => void) => (run(), 1));
+    Object.defineProperty(navigator, "connection", { value: { effectiveType: "slow-2g" }, configurable: true });
+    try {
+      preloadImages(["/a.png"]);
+      expect(requested()).toEqual([]);
+    } finally {
+      Reflect.deleteProperty(navigator, "connection");
+    }
+  });
+
   it("loads nothing when the visitor saves data", () => {
     vi.stubGlobal("requestIdleCallback", (run: () => void) => (run(), 1));
     Object.defineProperty(navigator, "connection", { value: { saveData: true }, configurable: true });

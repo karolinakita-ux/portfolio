@@ -1,7 +1,14 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { App } from "./App.tsx";
+import { AUTOMOTIVE_CASE } from "./content/cases/automotive.ts";
+import { MEETESTIM_CASE } from "./content/cases/meetestim.tsx";
+import { THEMING_CASE } from "./content/cases/theming.tsx";
+import { caseCards } from "./lib/gallery.ts";
+import { preloadImages } from "./lib/imagePreload.ts";
+
+vi.mock("./lib/imagePreload.ts", () => ({ preloadImages: vi.fn() }));
 
 const renderApp = (hash = "") => {
   window.history.replaceState(null, "", "/" + hash);
@@ -100,6 +107,14 @@ describe("App", () => {
     await user.click(within(dialog).getByRole("button", { name: "Close image viewer" }));
     expect(dialog).not.toHaveAttribute("open");
     expect(firstScreenshot).toHaveFocus();
+  });
+
+  it("queues every case study's screenshots for background loading from any page", () => {
+    renderApp("#about");
+    const all = [AUTOMOTIVE_CASE, MEETESTIM_CASE, THEMING_CASE].flatMap((c) =>
+      caseCards(c).map((card) => "/assets/" + card.asset),
+    );
+    expect(preloadImages).toHaveBeenCalledWith(all);
   });
 
   it("expands FAQ answers on the About page", async () => {

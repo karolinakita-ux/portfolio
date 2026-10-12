@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 1.4.1 - 2026-10-12
+
+#### Changed
+
+- Tests for the 1.4.0 image loading: the viewer's "Image unavailable" state, a failed decode, and a late decode of the previous image after browsing on; the preloader waiting for page load, its Safari fallback (no idle callback), moving on after a failed image, and skipping 2G; the size manifest's values; screenshot order per case; `useCaseGallery` passing sizes to the viewer; and the app queuing all three case studies.
+
 ### 1.4.0 - 2026-10-12
 
 #### Added
