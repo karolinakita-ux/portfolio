@@ -99,6 +99,26 @@ describe("App", () => {
     expect(within(primaryNav()).getByRole("link", { name: "About" })).toHaveAttribute("aria-current", "page");
   });
 
+  it("opens a case study from its thumbnail, without an extra Tab stop or screen reader link", async () => {
+    const { user } = renderApp();
+    const thumbnailLinks = document.querySelectorAll<HTMLAnchorElement>("a[data-case-thumbnail-link]");
+    expect(thumbnailLinks).toHaveLength(3);
+    for (const link of thumbnailLinks) {
+      expect(link).toHaveAttribute("tabindex", "-1");
+      expect(link).toHaveAttribute("aria-hidden", "true");
+    }
+    // The image stays readable: the overlay sits beside it, not around it.
+    const thumbnail = screen.getByRole("img", { name: /^Three Edit Theme panels/ });
+    expect(thumbnail.closest("a")).toBeNull();
+    // Only the CTA reaches the theming case from the keyboard / accessibility tree.
+    expect(screen.getAllByRole("link").filter((link) => link.getAttribute("href") === "#case-theming")).toHaveLength(1);
+
+    const themingLink = [...thumbnailLinks].find((link) => link.getAttribute("href") === "#case-theming");
+    await user.click(themingLink as HTMLAnchorElement);
+    expect(h1()).toHaveTextContent("Multi-Tenant Theme Customizer");
+    expect(window.location.hash).toBe("#case-theming");
+  });
+
   it("walks the case studies from the Work page", async () => {
     const { user } = renderApp();
 

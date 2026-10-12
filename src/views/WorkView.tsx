@@ -3,6 +3,7 @@ import { ArrowDown, ArrowRight, ArrowUpRight, ExternalLink, Figma, Linkedin, Quo
 import { CaseThumbnail } from "../components/media/images.tsx";
 import { Button } from "../components/ui/Button.tsx";
 import { Container, Eyebrow, Section } from "../components/ui/layout.tsx";
+import { ViewLink } from "../components/ui/navigation.tsx";
 import { Callout } from "../components/ui/text.tsx";
 import { PROFILE } from "../content/profile.ts";
 import type { WorkCase } from "../content/types.ts";
@@ -161,7 +162,7 @@ interface CaseCardProps {
   onNavigate: Navigate;
 }
 
-/** Static container - only the CTA link is interactive. */
+/** Static container: the CTA link, plus the thumbnail for mouse and touch. */
 function CaseCard({ item, resolveAsset, onNavigate }: CaseCardProps) {
   const titleId = useId();
   return (
@@ -169,7 +170,22 @@ function CaseCard({ item, resolveAsset, onNavigate }: CaseCardProps) {
       aria-labelledby={titleId}
       className="grid gap-lg rounded-md border border-border-subtle bg-bg-surface-raised p-md shadow-sm md:grid-cols-case-md md:items-center md:p-lg lg:grid-cols-case-lg"
     >
-      <CaseThumbnail src={resolveAsset(item.asset)} alt={item.alt} />
+      {/* The thumbnail opens the case study too (mouse and touch). Keyboard and screen reader users get the
+          "View Case Study" link below, so this overlay is out of the Tab order and hidden from assistive tech;
+          the image itself, and its alt text, stay readable. */}
+      <div className="group/thumb relative w-full min-w-0">
+        <CaseThumbnail src={resolveAsset(item.asset)} alt={item.alt} interactive />
+        <ViewLink
+          view={item.view}
+          onNavigate={onNavigate}
+          tabIndex={-1}
+          aria-hidden="true"
+          data-case-thumbnail-link=""
+          className="absolute inset-0 rounded-sm"
+        >
+          {null}
+        </ViewLink>
+      </div>
       <div className="flex w-full min-w-0 flex-col items-start gap-xs">
         <Eyebrow parts={item.eyebrow} />
         {/* Full column width; text-pretty only prevents a lone last word (no forced even split) */}
