@@ -1,12 +1,19 @@
 import { useId } from "react";
-import { ArrowDown, ArrowRight, ArrowUpRight, Figma, Quote } from "../components/icons.tsx";
+import { ArrowDown, ArrowRight, ArrowUpRight, ExternalLink, Figma, Linkedin, Quote } from "../components/icons.tsx";
 import { CaseThumbnail } from "../components/media/images.tsx";
 import { Button } from "../components/ui/Button.tsx";
 import { Container, Eyebrow, Section } from "../components/ui/layout.tsx";
 import { Callout } from "../components/ui/text.tsx";
 import { PROFILE } from "../content/profile.ts";
 import type { WorkCase } from "../content/types.ts";
-import { HERO_ACTIONS, PROCESS_BANNER, TESTIMONIALS, WORK_CASES, WORK_INTRO } from "../content/work.ts";
+import {
+  HERO_ACTIONS,
+  PROCESS_BANNER,
+  RECOMMENDATIONS_LINK_LABEL,
+  TESTIMONIALS,
+  WORK_CASES,
+  WORK_INTRO,
+} from "../content/work.ts";
 import { hrefForView, type Navigate } from "../lib/routes.ts";
 import { cn, FOCUS_RING } from "../lib/ui.ts";
 
@@ -71,6 +78,32 @@ function Avatar({ initials }: { initials: string }) {
   );
 }
 
+/**
+ * Text link to a LinkedIn page, opened in a new tab: link colour, underline and an
+ * external-link icon. Its name starts with the visible label (WCAG 2.5.3), e.g.
+ * "Stewart Wilson, LinkedIn profile (opens in a new tab)". An aria-label rather than
+ * sr-only text: Chrome puts a space before a comma in an absolutely positioned span.
+ * At least 24px tall, so the stacked links stay easy to tap (WCAG 2.5.8).
+ */
+function LinkedInTextLink({ href, label, destination }: { href: string; label: string; destination: string }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={`${label}, ${destination} (opens in a new tab)`}
+      className={cn(
+        "inline-flex min-h-lg items-center gap-2xs rounded-sm text-text-link-default underline underline-offset-2 hover:text-text-link-hover",
+        FOCUS_RING,
+      )}
+    >
+      {label}
+      <ExternalLink aria-hidden="true" size={14} className="shrink-0" />
+    </a>
+  );
+}
+
+/** Quotes are excerpts of LinkedIn recommendations: each names its author and company, with links to both. */
 function TestimonialsSection() {
   return (
     <Section id="testimonials" title="Trusted by the leaders I worked for">
@@ -79,20 +112,45 @@ function TestimonialsSection() {
           <li key={item.id} className="min-w-0">
             <figure className="flex h-full flex-col gap-md rounded-md border border-border-subtle bg-bg-surface-raised p-lg shadow-sm">
               <Quote aria-hidden="true" size={24} className="text-bg-accent-brand" />
-              <blockquote className="flex-1 text-body-md text-text-secondary">
+              <blockquote cite={PROFILE.linkedinRecommendationsUrl} className="flex-1 text-body-md text-text-secondary">
                 <p>{item.quote}</p>
               </blockquote>
               <figcaption className="flex items-center gap-sm border-t border-border-subtle pt-md">
                 <Avatar initials={item.initials} />
-                <span className="flex min-w-0 flex-col">
-                  <span className="text-title-sm text-text-primary">{item.name}</span>
-                  <span className="text-body-sm text-text-secondary">{item.role}</span>
+                <span className="flex min-w-0 flex-col items-start gap-3xs">
+                  <span className="text-title-sm">
+                    <LinkedInTextLink href={item.profileUrl} label={item.name} destination="LinkedIn profile" />
+                  </span>
+                  <span className="text-body-sm text-text-secondary">
+                    {item.role}
+                    <span aria-hidden="true"> | </span>
+                    <span className="sr-only"> at </span>
+                    <LinkedInTextLink
+                      href={item.company.url}
+                      label={item.company.name}
+                      destination="company page on LinkedIn"
+                    />
+                  </span>
                 </span>
               </figcaption>
             </figure>
           </li>
         ))}
       </ul>
+      <div className="flex">
+        <Button
+          as="a"
+          href={PROFILE.linkedinRecommendationsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          variant="secondary"
+          iconLeft={Linkedin}
+          iconRight={ArrowUpRight}
+        >
+          {RECOMMENDATIONS_LINK_LABEL}
+          <span className="sr-only"> (opens in a new tab)</span>
+        </Button>
+      </div>
     </Section>
   );
 }

@@ -44,6 +44,40 @@ describe("App", () => {
     ).toBeInTheDocument();
   });
 
+  it("links each recommendation to its author and company on LinkedIn, and to the full recommendations", () => {
+    renderApp();
+    const section = within(screen.getByRole("region", { name: "Trusted by the leaders I worked for" }));
+    const expectNewTab = (name: RegExp, href: string) => {
+      const link = section.getByRole("link", { name });
+      expect(link).toHaveAttribute("href", href);
+      expect(link).toHaveAttribute("target", "_blank");
+      expect(link).toHaveAttribute("rel", "noopener noreferrer");
+    };
+
+    expectNewTab(
+      /^Stewart Wilson, LinkedIn profile \(opens in a new tab\)$/,
+      "https://www.linkedin.com/in/stewart-wilson-ba92112a/",
+    );
+    expectNewTab(
+      /^Precisely, company page on LinkedIn \(opens in a new tab\)$/,
+      "https://www.linkedin.com/company/preciselydata/",
+    );
+    expectNewTab(/^Gavin Harvey, LinkedIn profile \(opens in a new tab\)$/, "https://www.linkedin.com/in/harveygavin/");
+    expectNewTab(
+      /^Cox Automotive, company page on LinkedIn \(opens in a new tab\)$/,
+      "https://www.linkedin.com/company/coxautomotiveeurope/",
+    );
+    // jsdom's name computation drops the space before the sr-only suffix inside Button; browsers keep it.
+    expectNewTab(
+      /^Read the full recommendations on LinkedIn ?\(opens in a new tab\)$/,
+      "https://www.linkedin.com/in/karolinakita/details/recommendations",
+    );
+    // Seen as "Role | Company"; the bar is hidden from screen readers, which hear "Role at Company".
+    const roleLine = section.getByText(/^UX Director/);
+    expect(roleLine).toHaveTextContent("UX Director | at Precisely");
+    expect(within(roleLine).getByText("|")).toHaveAttribute("aria-hidden", "true");
+  });
+
   it.each([
     ["#about", "Designing clarity for complex software"],
     ["#contact", "Let’s connect"],
