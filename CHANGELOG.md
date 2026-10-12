@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 1.6.0 - 2026-10-12
+
+#### Added
+
+- Case-study thumbnails on the Work page open their case study on click or tap (pointer cursor, border darkens and the image zooms slightly on hover; Ctrl / middle click opens a new tab). Keyboard and screen reader users keep the single "View Case Study" link: the thumbnail link is out of the Tab order and hidden from assistive tech, and the image alt text is still read.
+
 ### 1.5.0 - 2026-10-12
 
 #### Added

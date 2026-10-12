@@ -45,11 +45,19 @@ export function ThumbnailScaffold({ failed = false }: { failed?: boolean }) {
   );
 }
 
-/** Work-page case thumbnail: fixed 4:3 frame, image contained, scaffold while loading. */
-export function CaseThumbnail({ src, alt }: { src: string; alt: string }) {
+/**
+ * Work-page case thumbnail: fixed 4:3 frame, image contained, scaffold while loading.
+ * `interactive`: hover feedback (border, slight zoom) when an ancestor with `group/thumb` is hovered.
+ */
+export function CaseThumbnail({ src, alt, interactive = false }: { src: string; alt: string; interactive?: boolean }) {
   const { status, setStatus, ref } = useImageStatus(src);
   return (
-    <div className="relative aspect-thumb w-full max-w-full overflow-hidden rounded-sm border border-border-subtle bg-bg-surface-default">
+    <div
+      className={cn(
+        "relative aspect-thumb w-full max-w-full overflow-hidden rounded-sm border border-border-subtle bg-bg-surface-default",
+        interactive && "transition-colors duration-150 group-hover/thumb:border-border-interactive-hover",
+      )}
+    >
       {status !== "loaded" && <ThumbnailScaffold failed={status === "error"} />}
       {status !== "error" && (
         <img
@@ -61,8 +69,9 @@ export function CaseThumbnail({ src, alt }: { src: string; alt: string }) {
           onLoad={() => setStatus("loaded")}
           onError={() => setStatus("error")}
           className={cn(
-            "absolute inset-0 h-full w-full object-contain p-xs transition-opacity duration-300 ease-out",
+            "absolute inset-0 h-full w-full object-contain p-xs transition-[opacity,scale] duration-300 ease-out",
             status === "loaded" ? "opacity-100" : "opacity-0",
+            interactive && "motion-safe:group-hover/thumb:scale-[1.02]",
           )}
         />
       )}
