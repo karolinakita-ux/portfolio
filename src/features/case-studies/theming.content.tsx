@@ -1,3 +1,4 @@
+import { VIEW } from "#shared/lib/routes.ts";
 import { lead } from "#shared/ui/lead.tsx";
 
 import type { ThemingCaseStudy } from "./case-studies.types.ts";
@@ -262,5 +263,5 @@ export const THEMING_CASE: ThemingCaseStudy = {
   ],
   // Last case in the Work order (Automotive → Project Planning → Data Governance).
   prev: { view: "case-project-planning", label: "Enterprise Project Planning & Cost Management Platform" },
-  next: { view: "work", action: "Back to All Work" },
+  next: { view: VIEW.work, action: "Back to All Work" },
 };

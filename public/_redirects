@@ -1,0 +1,3 @@
+# Netlify: every page is a client-side route (src/shared/lib/routes.ts), so unknown
+# paths load the app, which shows Work and normalises the URL.
+/*    /index.html    200

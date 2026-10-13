@@ -1,22 +1,24 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
-import { readViewFromLocation, urlForView, type Navigate, type View } from "#shared/lib/routes.ts";
+import { readRoute, VIEW, VIEW_PATHS, type Navigate, type View } from "#shared/lib/routes.ts";
 
 /**
- * View routing backed by the browser history.
+ * View routing backed by the browser history and real URL paths (/about, /work/project-planning).
  *
  * - navigate() pushes a new history entry when the view changes, so Back and
  *   Forward (and swipe-back on phones) move between views.
  * - Each entry remembers its scroll position; going Back returns to where the
  *   visitor was, e.g. the case-study card they clicked.
- * - Re-selecting the current view resets it to the top without adding history.
+ * - Re-selecting the current view resets it to the top (or to its anchor) without adding history.
+ * - The first load normalises the URL: old hash links (/#about) and aliases (/resume)
+ *   become their path, an unknown path becomes /, a section hash (/about#career) stays.
  *
  * route.key changes on every navigation; App uses it to remount the view and
  * to apply scroll / focus once the new view has rendered.
  */
 export interface Route {
   view: View;
-  /** Element id to land on after navigating (instead of the top). */
+  /** Section id to land on after navigating (instead of the top). */
   anchor: string | null;
   smooth: boolean;
   /** Scroll position to restore (Back / Forward), or null for a fresh visit. */
@@ -32,6 +34,10 @@ interface HistoryState {
 
 const SCROLL_SAVE_DELAY = 300; // ms after scrolling stops (keeps replaceState calls rare)
 
+/** URL of a view; keeps the query string (e.g. ?ref=cv) and adds the section anchor. */
+const urlFor = (view: View, anchor: string | null): string =>
+  VIEW_PATHS[view] + window.location.search + (anchor ? "#" + anchor : "");
+
 const saveScrollPosition = (view: View) => {
   try {
     const current = (window.history.state ?? {}) as HistoryState;
@@ -42,17 +48,15 @@ const saveScrollPosition = (view: View) => {
   }
 };
 
-export function useHistoryRoute(initialView: View = "work"): [Route, Navigate] {
-  const [route, setRoute] = useState<Route>(() => ({
-    view: readViewFromLocation() ?? initialView,
-    anchor: null,
-    smooth: false,
-    restoreY: null,
-    key: 0,
-  }));
+export function useHistoryRoute(initialView: View = VIEW.work): [Route, Navigate] {
+  const [route, setRoute] = useState<Route>(() => {
+    const { view, anchor } = readRoute(window.location);
+    return { view: view ?? initialView, anchor, smooth: false, restoreY: null, key: 0 };
+  });
 
   // The committed view, read by event handlers and navigate().
   const viewRef = useRef(route.view);
+  const initialAnchorRef = useRef(route.anchor);
   useLayoutEffect(() => {
     viewRef.current = route.view;
   }, [route.view]);
@@ -61,10 +65,10 @@ export function useHistoryRoute(initialView: View = "work"): [Route, Navigate] {
     // The app restores scroll itself, per view.
     if ("scrollRestoration" in window.history) window.history.scrollRestoration = "manual";
 
-    // Normalise the first entry (aliases such as #projects → bare root).
+    // Normalise the first entry (old hash links, aliases, unknown paths).
     try {
       const first: HistoryState = { kbView: viewRef.current, scrollY: 0 };
-      window.history.replaceState(first, "", urlForView(viewRef.current));
+      window.history.replaceState(first, "", urlFor(viewRef.current, initialAnchorRef.current));
     } catch {
       /* ignore */
     }
@@ -74,7 +78,7 @@ export function useHistoryRoute(initialView: View = "work"): [Route, Navigate] {
     const onPopState = (event: PopStateEvent) => {
       // A pending save belongs to the entry we just left; drop it.
       window.clearTimeout(timer);
-      const view = readViewFromLocation() ?? "work";
+      const view = readRoute(window.location).view ?? VIEW.work;
       const state = event.state as HistoryState | null;
       const restoreY = typeof state?.scrollY === "number" ? state.scrollY : 0;
       setRoute((current) => ({ view, anchor: null, smooth: false, restoreY, key: current.key + 1 }));
@@ -95,16 +99,18 @@ export function useHistoryRoute(initialView: View = "work"): [Route, Navigate] {
   }, []);
 
   const navigate = useCallback<Navigate>((view, anchor = null, options = {}) => {
-    if (view !== viewRef.current) {
-      saveScrollPosition(viewRef.current);
-      try {
+    try {
+      if (view !== viewRef.current) {
+        saveScrollPosition(viewRef.current);
         const next: HistoryState = { kbView: view, scrollY: 0 };
-        window.history.pushState(next, "", urlForView(view));
-      } catch {
-        /* routing still works in state */
+        window.history.pushState(next, "", urlFor(view, anchor));
+      } else {
+        window.history.replaceState(window.history.state, "", urlFor(view, anchor));
       }
-      viewRef.current = view;
+    } catch {
+      /* routing still works in state */
     }
+    viewRef.current = view;
     setRoute((current) => ({
       view,
       anchor,

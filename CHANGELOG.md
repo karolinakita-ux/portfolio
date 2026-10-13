@@ -6,6 +6,19 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.0.0 - 2026-10-13
+
+#### Changed
+
+- Every page has its own address: `/about`, `/contact`, `/cv`, `/work/data-governance`, `/work/project-planning` and `/work/automotive` instead of `/#about` and similar. Old links keep working: they open the right page and the address bar shows the new address.
+- The sitemap lists all seven pages, so search engines can index each one.
+- View ids, page paths and section anchors live in one place (`VIEW`, `VIEW_PATHS`, `SECTION` in `src/shared/lib/routes.ts`) instead of repeated strings.
+
+#### Added
+
+- Every section heading has a link icon (on hover, keyboard focus, and always on touch screens). Clicking it copies a link to that section, such as `/about#career`, and announces "Link copied".
+- While you scroll, the address bar follows the section you are reading, so copying the address shares that spot. A link with a section opens the page at that section.
+
 ### 2.0.4 - 2026-10-13
 
 #### Changed

@@ -1,3 +1,5 @@
+import { VIEW } from "#shared/lib/routes.ts";
+
 import type { Testimonial, WorkCase } from "./work.types.ts";
 
 /** Hero buttons below the intro. The arrows are icons, not part of the label. */
@@ -45,7 +47,7 @@ const CASES: readonly WorkCase[] = [
     summary:
       "Replaced a raw CSS configuration panel with a visual theme generator for non-technical users. Automated text color selection based on contrast so custom themes stayed readable, and provided developers with clear rules for calculating interactive states like hovers.",
     cta: "View Case Study",
-    view: "case-theming",
+    view: VIEW.caseTheming,
   },
   {
     id: "project-planning",
@@ -56,7 +58,7 @@ const CASES: readonly WorkCase[] = [
     summary:
       "Designed an enterprise resource planning and budget estimation platform from discovery to release. Built a scalable Figma component library aligned with PrimeNG, mentored a junior designer, and transformed complex spreadsheet workflows into an intuitive planning tool.",
     cta: "View Case Study",
-    view: "case-project-planning",
+    view: VIEW.caseProjectPlanning,
   },
   {
     id: "automotive-discovery",
@@ -67,7 +69,7 @@ const CASES: readonly WorkCase[] = [
     summary:
       "Redesigned the core vehicle purchasing flow across 6 European markets. Synthesized qualitative interviews and competitor data into a streamlined transaction architecture, eliminating checkout friction and reducing cognitive overload for commercial buyers.",
     cta: "View Discovery Case",
-    view: "case-automotive",
+    view: VIEW.caseAutomotive,
   },
 ];
 

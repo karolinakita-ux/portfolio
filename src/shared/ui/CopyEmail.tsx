@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
+import { writeClipboard } from "#shared/lib/clipboard.utils.ts";
 import { cn, FOCUS_RING } from "#shared/lib/ui.utils.ts";
 
 import { Check, Copy } from "./icons.tsx";
@@ -53,14 +54,7 @@ export function CopyEmail({ email, textClassName = "text-body-md", icon = null }
 
   const handleCopy = () => {
     // writeText must start inside the click handler (user activation).
-    let write: Promise<void> | null;
-    try {
-      // navigator.clipboard is undefined outside secure contexts, whatever the DOM types say.
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      write = typeof navigator.clipboard?.writeText === "function" ? navigator.clipboard.writeText(email) : null;
-    } catch {
-      write = null;
-    }
+    const write = writeClipboard(email);
     if (!write) {
       fallBackToSelection();
       return;

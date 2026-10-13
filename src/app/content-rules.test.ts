@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { isValidElement, type ReactElement, type ReactNode } from "react";
 import { describe, expect, it } from "vitest";
 
@@ -11,7 +13,7 @@ import { CV } from "#features/cv/cv.content.ts";
 import { formatMonthYear } from "#features/cv/dates.utils.ts";
 import { PROCESS_BANNER, TESTIMONIALS, WORK_CASES, WORK_INTRO } from "#features/work/work.content.ts";
 import { PROFILE } from "#shared/content/profile.ts";
-import { isView, VIEWS } from "#shared/lib/routes.ts";
+import { isView, VIEW_PATHS, VIEWS } from "#shared/lib/routes.ts";
 import { Lang, Strong } from "#shared/ui/text.tsx";
 
 /**
@@ -179,5 +181,13 @@ describe("CV", () => {
       expect(item.company.url).toMatch(/^https:\/\/www\.linkedin\.com\/company\/[\w-]+\/$/);
       expect(item.role).not.toContain("|"); // the company is its own field
     }
+  });
+});
+
+describe("sitemap", () => {
+  it("lists every page by its path, and nothing else", () => {
+    const xml = readFileSync(join(process.cwd(), "public", "sitemap.xml"), "utf8");
+    const locs = [...xml.matchAll(/<loc>https:\/\/karolina\.kita\.company(\/[^<]*)<\/loc>/g)].map((m) => m[1]);
+    expect(new Set(locs)).toEqual(new Set(VIEWS.map((view) => VIEW_PATHS[view])));
   });
 });

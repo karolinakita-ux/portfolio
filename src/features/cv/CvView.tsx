@@ -5,6 +5,7 @@ import { cn, DOC_LINK, telHref } from "#shared/lib/ui.utils.ts";
 import { Button } from "#shared/ui/Button.tsx";
 import { WORK_CRUMB } from "#shared/ui/crumbs.constants.ts";
 import { Joined } from "#shared/ui/document.tsx";
+import { HeadingAnchor } from "#shared/ui/HeadingAnchor.tsx";
 import { Container, Eyebrow } from "#shared/ui/layout.tsx";
 import { Breadcrumb } from "#shared/ui/navigation.tsx";
 
@@ -52,13 +53,18 @@ function CvSection({
 }) {
   const titleId = "cv-" + id + "-title";
   return (
-    <section aria-labelledby={titleId} className={cn("flex flex-col gap-sm", keepTogether && "kb-print-block")}>
-      <h2
-        id={titleId}
-        className="kb-print-keep-with-next border-b border-border-default pb-2xs font-display text-headline-sm text-text-primary"
-      >
-        {title}
-      </h2>
+    <section
+      id={id}
+      aria-labelledby={titleId}
+      data-anchor=""
+      className={cn("flex flex-col gap-sm", keepTogether && "kb-print-block")}
+    >
+      <div className="group kb-print-keep-with-next flex items-center gap-xs border-b border-border-default pb-2xs">
+        <h2 id={titleId} tabIndex={-1} className="font-display text-headline-sm text-text-primary focus:outline-none">
+          {title}
+        </h2>
+        <HeadingAnchor id={id} headingId={titleId} label={title} />
+      </div>
       {children}
     </section>
   );

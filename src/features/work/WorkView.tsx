@@ -1,7 +1,7 @@
 import { useId } from "react";
 
 import { PROFILE } from "#shared/content/profile.ts";
-import { hrefForView, type Navigate } from "#shared/lib/routes.ts";
+import { hrefForView, SECTION, VIEW, type Navigate } from "#shared/lib/routes.ts";
 import { cn, FOCUS_RING } from "#shared/lib/ui.utils.ts";
 import { CaseThumbnail } from "#shared/media/images.tsx";
 import { Button } from "#shared/ui/Button.tsx";
@@ -42,11 +42,11 @@ function HeroSection({ onNavigate }: { onNavigate: Navigate }) {
           <div className="flex flex-wrap gap-sm">
             <Button
               as="a"
-              href="#enterprise-cases"
+              href={hrefForView(VIEW.work, SECTION.workCases)}
               iconRight={ArrowDown}
               onClick={(event) => {
                 event.preventDefault();
-                onNavigate("work", "enterprise-cases-title", { smooth: true });
+                onNavigate(VIEW.work, SECTION.workCases, { smooth: true });
               }}
             >
               {HERO_ACTIONS.cases}
@@ -255,7 +255,7 @@ export function WorkView({
     <>
       <HeroSection onNavigate={onNavigate} />
       <Section
-        id="enterprise-cases"
+        id={SECTION.workCases}
         title="Selected Work & Case Studies"
         description={WORK_INTRO}
         headingProps={{ tabIndex: -1 }}

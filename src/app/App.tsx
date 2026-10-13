@@ -16,11 +16,16 @@ import { WorkView } from "#features/work/index.ts";
 import { useTheme } from "#shared/hooks/useTheme.ts";
 import { BackToTop, SiteFooter } from "#shared/layout/SiteFooter.tsx";
 import { SiteHeader } from "#shared/layout/SiteHeader.tsx";
-import { titleForView, type Navigate, type View } from "#shared/lib/routes.ts";
+import { titleForView, VIEW, type Navigate, type View } from "#shared/lib/routes.ts";
 import { cn, FOCUS_RING, prefersReducedMotion } from "#shared/lib/ui.utils.ts";
 import { preloadImages } from "#shared/media/image-preload.ts";
 
 import { useHistoryRoute } from "./useHistoryRoute.ts";
+import { useSectionHash } from "./useSectionHash.ts";
+
+/** A section's heading (focusable, sits below the sticky header), else the element with that id. */
+const findAnchorTarget = (anchor: string | null): HTMLElement | null =>
+  anchor ? (document.getElementById(anchor + "-title") ?? document.getElementById(anchor)) : null;
 
 interface AppProps {
   /** Base URL of every image (screenshots, thumbnails, portrait). */
@@ -36,24 +41,24 @@ interface ViewContext {
 
 /** One entry per view: adding a view to VIEWS without a renderer is a type error. */
 const VIEW_RENDERERS: Record<View, (ctx: ViewContext) => ReactNode> = {
-  work: ({ navigate, resolveAsset }) => <WorkView resolveAsset={resolveAsset} onNavigate={navigate} />,
-  about: ({ navigate, portraitSrc }) => <AboutView portraitSrc={portraitSrc} onNavigate={navigate} />,
-  contact: ({ navigate }) => <ContactView onNavigate={navigate} />,
-  cv: ({ navigate }) => <CvView onNavigate={navigate} />,
-  "case-theming": ({ navigate, resolveAsset }) => (
+  [VIEW.work]: ({ navigate, resolveAsset }) => <WorkView resolveAsset={resolveAsset} onNavigate={navigate} />,
+  [VIEW.about]: ({ navigate, portraitSrc }) => <AboutView portraitSrc={portraitSrc} onNavigate={navigate} />,
+  [VIEW.contact]: ({ navigate }) => <ContactView onNavigate={navigate} />,
+  [VIEW.cv]: ({ navigate }) => <CvView onNavigate={navigate} />,
+  [VIEW.caseTheming]: ({ navigate, resolveAsset }) => (
     <CaseThemingView c={THEMING_CASE} resolveAsset={resolveAsset} onNavigate={navigate} />
   ),
-  "case-project-planning": ({ navigate, resolveAsset }) => (
+  [VIEW.caseProjectPlanning]: ({ navigate, resolveAsset }) => (
     <CaseStudyView c={PROJECT_PLANNING_CASE} resolveAsset={resolveAsset} onNavigate={navigate} />
   ),
-  "case-automotive": ({ navigate, resolveAsset }) => (
+  [VIEW.caseAutomotive]: ({ navigate, resolveAsset }) => (
     <CaseStudyView c={AUTOMOTIVE_CASE} resolveAsset={resolveAsset} onNavigate={navigate} />
   ),
 };
 
 /**
  * KitaPortfolio - Senior UX Portfolio
- * Views: work (default) · about · contact · cv · case-theming · case-project-planning · case-automotive
+ * Views and their URLs: VIEW and VIEW_PATHS in src/shared/lib/routes.ts.
  *
  * Styling: every colour, space, radius, shadow and type style resolves to a
  * KitaBranding token (src/styles). Light/Dark swaps CSS variables via the
@@ -64,12 +69,14 @@ const VIEW_RENDERERS: Record<View, (ctx: ViewContext) => ReactNode> = {
  * Page size, margins and break rules live in src/styles/print.css.
  *
  * Routing: src/app/useHistoryRoute.ts. Navigating resets scroll to the top
- * (or to an anchor, e.g. the cases grid) and moves focus to the new view;
- * Back / Forward restore the scroll position of that entry.
+ * (or to a section anchor, e.g. /#enterprise-cases) and moves focus to the new view;
+ * Back / Forward restore the scroll position of that entry. A deep link with a hash
+ * (/about#career) lands on that section; useSectionHash keeps the hash on the
+ * section in view while scrolling.
  */
 export function App({ assetBase = "/assets", portraitSrc = assetBase + "/avatar-cutout.png" }: AppProps) {
   const [theme, pickTheme] = useTheme();
-  const [route, navigate] = useHistoryRoute("work");
+  const [route, navigate] = useHistoryRoute(VIEW.work);
   const mainRef = useRef<HTMLElement>(null);
 
   /** Named asset → URL (every image is served from /assets). */
@@ -86,10 +93,21 @@ export function App({ assetBase = "/assets", portraitSrc = assetBase + "/avatar-
     document.title = titleForView(route.view);
   }, [route.view]);
 
+  useSectionHash(route.key);
+
   // After each navigation: restore scroll (Back / Forward), land on an anchor, or go to the top.
   // `route` is a new object on every navigation (route.key increments), so it is the trigger.
+  // The first load only acts on a deep link to a section (/about#career).
   useEffect(() => {
-    if (route.key === 0) return undefined;
+    if (route.key === 0) {
+      const target = findAnchorTarget(route.anchor);
+      if (!target) return undefined;
+      const frame = window.requestAnimationFrame(() => {
+        target.scrollIntoView({ block: "start", behavior: "auto" });
+        target.focus({ preventScroll: true });
+      });
+      return () => window.cancelAnimationFrame(frame);
+    }
     const focusMain = () => mainRef.current?.focus({ preventScroll: true });
 
     if (route.restoreY !== null) {
@@ -102,7 +120,7 @@ export function App({ assetBase = "/assets", portraitSrc = assetBase + "/avatar-
     }
 
     const smooth = route.smooth && !prefersReducedMotion();
-    const target = route.anchor ? document.getElementById(route.anchor) : null;
+    const target = findAnchorTarget(route.anchor);
     if (target) {
       target.scrollIntoView({ block: "start", behavior: smooth ? "smooth" : "auto" });
       target.focus({ preventScroll: true });
@@ -115,12 +133,12 @@ export function App({ assetBase = "/assets", portraitSrc = assetBase + "/avatar-
 
   /** Logo: home reset. Already home → glide to top without re-mounting the view. */
   const goHome = useCallback(() => {
-    if (route.view === "work") {
+    if (route.view === VIEW.work) {
       window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" });
       mainRef.current?.focus({ preventScroll: true });
       return;
     }
-    navigate("work", null, { smooth: true });
+    navigate(VIEW.work, null, { smooth: true });
   }, [route.view, navigate]);
 
   const backToTop = useCallback(() => {

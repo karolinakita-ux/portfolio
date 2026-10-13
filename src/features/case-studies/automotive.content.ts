@@ -1,3 +1,5 @@
+import { VIEW } from "#shared/lib/routes.ts";
+
 import type { CaseStudy } from "./case-studies.types.ts";
 
 /* Case study - Automotive B2B Marketplace. Screenshot fields: see ShowcaseCard in case-studies.types.ts. */
@@ -202,9 +204,9 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
     ],
   },
   // First case in the Work order: left link returns to the list, right link continues to Project Planning.
-  prev: { view: "work", action: "Back to All Work" },
+  prev: { view: VIEW.work, action: "Back to All Work" },
   next: {
-    view: "case-project-planning",
+    view: VIEW.caseProjectPlanning,
     action: "Next Case Study: Project Planning",
     label: "Enterprise Project Planning & Cost Management Platform",
   },

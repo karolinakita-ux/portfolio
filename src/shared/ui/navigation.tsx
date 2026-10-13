@@ -13,13 +13,13 @@ interface ViewLinkProps extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "h
 }
 
 /**
- * <a> with a real href (#view) for semantics, middle-click and "open in new
+ * <a> with a real href (/about, /work#cases) for semantics, middle-click and "open in new
  * tab"; a plain click navigates through app state and browser history.
  */
 export function ViewLink({ view, anchor, onNavigate, className, children, ...props }: ViewLinkProps) {
   return (
     <a
-      href={hrefForView(view)}
+      href={hrefForView(view, anchor)}
       onClick={(event) => {
         if (!isPlainLeftClick(event)) return; // let the browser open a new tab / window
         event.preventDefault();

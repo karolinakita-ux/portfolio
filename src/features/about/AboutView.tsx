@@ -1,7 +1,7 @@
 import { useId, useState } from "react";
 
 import { PROFILE } from "#shared/content/profile.ts";
-import type { Navigate } from "#shared/lib/routes.ts";
+import { hrefForView, SECTION, VIEW, type Navigate } from "#shared/lib/routes.ts";
 import { BULLET_LIST, cn, FOCUS_RING } from "#shared/lib/ui.utils.ts";
 import { useImageStatus } from "#shared/media/useImageStatus.ts";
 import { Button } from "#shared/ui/Button.tsx";
@@ -36,10 +36,10 @@ function AboutHero({ onNavigate }: { onNavigate: Navigate }) {
           <div className="flex flex-wrap justify-end gap-sm">
             <Button
               as="a"
-              href="#enterprise-cases"
+              href={hrefForView(VIEW.work, SECTION.workCases)}
               onClick={(event) => {
                 event.preventDefault();
-                onNavigate("work", "enterprise-cases-title");
+                onNavigate(VIEW.work, SECTION.workCases);
               }}
             >
               Explore Selected Work
@@ -165,11 +165,11 @@ function CareerSection({ onNavigate }: { onNavigate: Navigate }) {
       <div className="flex flex-wrap justify-end gap-sm pt-xs">
         <Button
           as="a"
-          href="#"
+          href={hrefForView(VIEW.work, SECTION.workCases)}
           iconRight={ArrowRight}
           onClick={(event) => {
             event.preventDefault();
-            onNavigate("work", "enterprise-cases-title");
+            onNavigate(VIEW.work, SECTION.workCases);
           }}
         >
           Explore Enterprise Case Studies
