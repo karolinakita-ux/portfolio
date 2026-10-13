@@ -1,12 +1,12 @@
 import type { FaqItem, Milestone, Principle } from "./about.types.ts";
 
-export const ABOUT_INTRO: ReadonlyArray<string> = [
+export const ABOUT_INTRO: readonly string[] = [
   "I am a Product and UX/UI Designer with a background in psychology. Since 2018, I have been turning complicated software into clear, practical tools that people actually enjoy using. My psychology foundation helps me understand how people think, make decisions, and deal with cognitive overload in fast-paced work environments.",
   "I specialize in data-heavy enterprise workflows, B2B SaaS platforms, and multi-brand design systems. Working closely with product managers and engineers, I bridge the gap between human behavior, design consistency, and technical feasibility.",
 ];
 
 /** Authored oldest → newest; the About timeline reads newest first. `lesson` (quote block) is optional. */
-export const MILESTONES: ReadonlyArray<Milestone> = [
+export const MILESTONES: readonly Milestone[] = [
   {
     id: "academic",
     period: "2015 - 2020",
@@ -57,7 +57,7 @@ export const MILESTONES: ReadonlyArray<Milestone> = [
   },
 ];
 
-export const FAQ: { title: string; intro: string; items: ReadonlyArray<FaqItem> } = {
+export const FAQ: { title: string; intro: string; items: readonly FaqItem[] } = {
   title: "How I Think & Work",
   intro: "A few common questions about my design approach, background, and how I collaborate with teams.",
   items: [
@@ -101,7 +101,7 @@ export const FAQ: { title: string; intro: string; items: ReadonlyArray<FaqItem> 
   ],
 };
 
-export const PRINCIPLES: ReadonlyArray<Principle> = [
+export const PRINCIPLES: readonly Principle[] = [
   {
     id: "utility",
     title: "Clarity First",

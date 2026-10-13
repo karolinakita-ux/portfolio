@@ -1,14 +1,16 @@
 import type { ReactNode } from "react";
-import { WORK_CRUMB } from "#shared/ui/crumbs.constants.ts";
+
+import type { Navigate } from "#shared/lib/routes.ts";
+import { cn, DOC_LINK, telHref } from "#shared/lib/ui.utils.ts";
 import { Button } from "#shared/ui/Button.tsx";
+import { WORK_CRUMB } from "#shared/ui/crumbs.constants.ts";
 import { Joined } from "#shared/ui/document.tsx";
 import { Container, Eyebrow } from "#shared/ui/layout.tsx";
 import { Breadcrumb } from "#shared/ui/navigation.tsx";
+
 import { CV } from "./cv.content.ts";
 import type { Cv, CvDegree, CvHeader as CvHeaderData, CvRole, LeadBullet } from "./cv.types.ts";
 import { formatMonthYear } from "./dates.utils.ts";
-import type { Navigate } from "#shared/lib/routes.ts";
-import { cn, DOC_LINK, telHref } from "#shared/lib/ui.utils.ts";
 
 /**
  * CvView - ATS-friendly, single-column CV with A4 print / PDF export.
@@ -66,17 +68,17 @@ function CvHeader({ header }: { header: CvHeaderData }) {
   const contacts: ReactNode[] = [
     header.location,
     header.phone && (
-      <a href={telHref(header.phone)} className={DOC_LINK}>
+      <a key="phone" href={telHref(header.phone)} className={DOC_LINK}>
         {header.phone}
       </a>
     ),
-    <a href={"mailto:" + header.email} className={DOC_LINK}>
+    <a key="email" href={"mailto:" + header.email} className={DOC_LINK}>
       {header.email}
     </a>,
-    <a href={header.portfolio.href} className={DOC_LINK}>
+    <a key="portfolio" href={header.portfolio.href} className={DOC_LINK}>
       {header.portfolio.label}
     </a>,
-    <a href={header.linkedin.href} className={DOC_LINK}>
+    <a key="linkedin" href={header.linkedin.href} className={DOC_LINK}>
       {header.linkedin.label}
     </a>,
   ];
@@ -94,7 +96,7 @@ function CvHeader({ header }: { header: CvHeaderData }) {
   );
 }
 
-function Bullets({ items }: { items: ReadonlyArray<LeadBullet> }) {
+function Bullets({ items }: { items: readonly LeadBullet[] }) {
   return (
     <ul className="flex list-disc flex-col gap-2xs pl-lg text-body-md text-text-primary marker:text-text-primary">
       {items.map((item) => (
@@ -116,9 +118,11 @@ function Role({ role }: { role: CvRole }) {
         <p className="text-body-md text-text-secondary">
           <Joined
             parts={[
-              <span className="font-semibold text-text-primary">{role.company}</span>,
+              <span key="company" className="font-semibold text-text-primary">
+                {role.company}
+              </span>,
               role.location,
-              <DateRange start={role.start} end={role.end} />,
+              <DateRange key="dates" start={role.start} end={role.end} />,
             ]}
           />
         </p>
@@ -138,8 +142,10 @@ function Degree({ item }: { item: CvDegree }) {
       <p className="text-body-md text-text-secondary">
         <Joined
           parts={[
-            <span className="font-semibold text-text-primary">{item.institution}</span>,
-            <DateRange start={item.start} end={item.end} />,
+            <span key="institution" className="font-semibold text-text-primary">
+              {item.institution}
+            </span>,
+            <DateRange key="dates" start={item.start} end={item.end} />,
           ]}
         />
       </p>

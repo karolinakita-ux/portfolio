@@ -1,6 +1,8 @@
 import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+
 import { mockMatchMedia } from "#test/matchMedia.ts";
+
 import { THEME_STORAGE_KEY, useTheme } from "./useTheme.ts";
 
 const html = () => document.documentElement;
@@ -11,7 +13,7 @@ describe("useTheme", () => {
     const { result } = renderHook(() => useTheme());
     expect(result.current[0]).toBe("dark");
     expect(html()).toHaveClass("dark");
-    expect(html().style.colorScheme).toBe("dark");
+    expect(html()).toHaveStyle({ colorScheme: "dark" });
   });
 
   it("falls back to light without matchMedia", () => {

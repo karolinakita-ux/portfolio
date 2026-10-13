@@ -1,11 +1,13 @@
 import { renderHook } from "@testing-library/react";
-import ASSET_SIZES from "virtual:asset-sizes";
 import type { ReactNode } from "react";
+import ASSET_SIZES from "virtual:asset-sizes";
 import { describe, expect, it, vi } from "vitest";
-import { AUTOMOTIVE_CASE } from "./automotive.content.ts";
-import { caseCards } from "./gallery.utils.ts";
+
 import { preloadImages } from "#shared/media/image-preload.ts";
 import { LightboxContext, type OpenLightbox } from "#shared/media/lightbox.context.ts";
+
+import { AUTOMOTIVE_CASE } from "./automotive.content.ts";
+import { caseCards } from "./gallery.utils.ts";
 import { useCaseGallery } from "./useCaseGallery.ts";
 
 vi.mock("#shared/media/image-preload.ts", () => ({ preloadImages: vi.fn() }));
@@ -15,9 +17,7 @@ const resolveAsset = (name: string) => "/assets/" + name;
 
 const renderGallery = () => {
   const open = vi.fn<OpenLightbox>();
-  const wrapper = ({ children }: { children: ReactNode }) => (
-    <LightboxContext.Provider value={open}>{children}</LightboxContext.Provider>
-  );
+  const wrapper = ({ children }: { children: ReactNode }) => <LightboxContext value={open}>{children}</LightboxContext>;
   const { result } = renderHook(() => useCaseGallery(cards, resolveAsset), { wrapper });
   return { rows: result.current, open };
 };

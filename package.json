@@ -1,8 +1,10 @@
 {
   "name": "kkita-portfolio",
   "private": true,
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Karolina Kita - Senior Product Designer portfolio (karolina.kita.company)",
+  "author": "Karolina Kita",
+  "homepage": "https://karolina.kita.company",
   "type": "module",
   "imports": {
     "#app/*": "./src/app/*",
@@ -15,12 +17,13 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b",
-    "lint": "eslint .",
+    "lint": "eslint . --max-warnings 0",
     "format": "prettier --write .",
     "test": "vitest",
     "test:run": "vitest run",
     "a11y": "node scripts/a11y-audit.ts",
-    "verify": "tsc -b && eslint . && vitest run && vite build"
+    "verify": "tsc -b && eslint . --max-warnings 0 && prettier --check . && vitest run && vite build",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
@@ -31,8 +34,10 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
+    "@eslint-react/eslint-plugin": "^5.26.5",
     "@eslint/js": "^10.0.1",
     "@guidepup/virtual-screen-reader": "^0.33.0",
+    "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
@@ -41,10 +46,14 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
+    "@vitest/eslint-plugin": "^1.6.27",
     "eslint": "^10.10.0",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-jest-dom": "^5.10.1",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.6",
+    "eslint-plugin-testing-library": "^7.16.2",
     "globals": "^17.12.0",
     "jsdom": "^30.1.2",
     "playwright": "^1.64.0",

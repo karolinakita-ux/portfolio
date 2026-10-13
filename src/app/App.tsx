@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, type ReactNode } from "react";
-import { BackToTop, SiteFooter } from "#shared/layout/SiteFooter.tsx";
-import { SiteHeader } from "#shared/layout/SiteHeader.tsx";
-import { LightboxProvider } from "#features/image-viewer/index.ts";
+
+import { AboutView } from "#features/about/index.ts";
 import {
   AUTOMOTIVE_CASE,
   caseCards,
@@ -10,15 +9,18 @@ import {
   MEETESTIM_CASE,
   THEMING_CASE,
 } from "#features/case-studies/index.ts";
-import { useHistoryRoute } from "./useHistoryRoute.ts";
-import { useTheme } from "#shared/hooks/useTheme.ts";
-import { preloadImages } from "#shared/media/image-preload.ts";
-import { titleForView, type Navigate, type View } from "#shared/lib/routes.ts";
-import { cn, FOCUS_RING, prefersReducedMotion } from "#shared/lib/ui.utils.ts";
-import { AboutView } from "#features/about/index.ts";
 import { ContactView } from "#features/contact/index.ts";
 import { CvView } from "#features/cv/index.ts";
+import { LightboxProvider } from "#features/image-viewer/index.ts";
 import { WorkView } from "#features/work/index.ts";
+import { useTheme } from "#shared/hooks/useTheme.ts";
+import { BackToTop, SiteFooter } from "#shared/layout/SiteFooter.tsx";
+import { SiteHeader } from "#shared/layout/SiteHeader.tsx";
+import { titleForView, type Navigate, type View } from "#shared/lib/routes.ts";
+import { cn, FOCUS_RING, prefersReducedMotion } from "#shared/lib/ui.utils.ts";
+import { preloadImages } from "#shared/media/image-preload.ts";
+
+import { useHistoryRoute } from "./useHistoryRoute.ts";
 
 interface AppProps {
   /** Base URL of every image (screenshots, thumbnails, portrait). */

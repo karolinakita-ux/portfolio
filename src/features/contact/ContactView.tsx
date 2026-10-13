@@ -1,13 +1,15 @@
 import type { ReactNode } from "react";
-import { WORK_CRUMB } from "#shared/ui/crumbs.constants.ts";
-import { ExternalLink } from "#shared/ui/icons.tsx";
-import { CopyEmail } from "#shared/ui/CopyEmail.tsx";
-import { Container, Eyebrow, Section } from "#shared/ui/layout.tsx";
-import { Breadcrumb } from "#shared/ui/navigation.tsx";
-import { CONTACT, type Engagement } from "./contact.content.ts";
+
 import { PROFILE } from "#shared/content/profile.ts";
 import type { Navigate } from "#shared/lib/routes.ts";
 import { cn, FOCUS_RING } from "#shared/lib/ui.utils.ts";
+import { CopyEmail } from "#shared/ui/CopyEmail.tsx";
+import { WORK_CRUMB } from "#shared/ui/crumbs.constants.ts";
+import { ExternalLink } from "#shared/ui/icons.tsx";
+import { Container, Eyebrow, Section } from "#shared/ui/layout.tsx";
+import { Breadcrumb } from "#shared/ui/navigation.tsx";
+
+import { CONTACT, type Engagement } from "./contact.content.ts";
 
 /** Two-cell label/value panel; cells stack with a hairline below lg. */
 function InfoPanel({ children }: { children: ReactNode }) {
@@ -38,7 +40,7 @@ const TIER_PILL: Record<Engagement["tier"], string> = {
   selective: "border border-border-subtle bg-bg-surface-default text-text-secondary",
 };
 
-function EngagementTiers({ items }: { items: ReadonlyArray<Engagement> }) {
+function EngagementTiers({ items }: { items: readonly Engagement[] }) {
   return (
     <ul className="flex flex-col gap-lg">
       {items.map((item) => (

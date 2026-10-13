@@ -1,16 +1,18 @@
 import { useId, useState } from "react";
+
+import { PROFILE } from "#shared/content/profile.ts";
+import type { Navigate } from "#shared/lib/routes.ts";
+import { BULLET_LIST, cn, FOCUS_RING } from "#shared/lib/ui.utils.ts";
+import { useImageStatus } from "#shared/media/useImageStatus.ts";
+import { Button } from "#shared/ui/Button.tsx";
 import { WORK_CRUMB } from "#shared/ui/crumbs.constants.ts";
 import { ArrowRight, ChevronDown } from "#shared/ui/icons.tsx";
-import { Button } from "#shared/ui/Button.tsx";
 import { Container, Section } from "#shared/ui/layout.tsx";
 import { lead } from "#shared/ui/lead.tsx";
 import { Breadcrumb } from "#shared/ui/navigation.tsx";
+
 import { ABOUT_INTRO, FAQ, MILESTONES, PRINCIPLES } from "./about.content.ts";
-import { PROFILE } from "#shared/content/profile.ts";
 import type { FaqItem as FaqEntry, Milestone } from "./about.types.ts";
-import { useImageStatus } from "#shared/media/useImageStatus.ts";
-import type { Navigate } from "#shared/lib/routes.ts";
-import { BULLET_LIST, cn, FOCUS_RING } from "#shared/lib/ui.utils.ts";
 
 function AboutHero({ onNavigate }: { onNavigate: Navigate }) {
   return (

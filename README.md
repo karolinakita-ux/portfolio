@@ -12,14 +12,14 @@ yarn dev           # http://localhost:5173
 
 ## Scripts
 
-| Command        | What it does                                                     |
-| -------------- | ---------------------------------------------------------------- |
-| `yarn dev`     | Dev server with hot reload                                       |
-| `yarn verify`  | Typecheck + lint + tests + production build (run before pushing) |
-| `yarn test`    | Vitest watch mode (`yarn test:run` for a single run)             |
-| `yarn build`   | Typecheck and build to `dist/`                                   |
-| `yarn preview` | Serve the production build locally                               |
-| `yarn format`  | Prettier (sorts Tailwind classes too)                            |
+| Command        | What it does                                                                    |
+| -------------- | ------------------------------------------------------------------------------- |
+| `yarn dev`     | Dev server with hot reload                                                      |
+| `yarn verify`  | Typecheck + lint + format check + tests + production build (run before pushing) |
+| `yarn test`    | Vitest watch mode (`yarn test:run` for a single run)                            |
+| `yarn build`   | Typecheck and build to `dist/`                                                  |
+| `yarn preview` | Serve the production build locally                                              |
+| `yarn format`  | Prettier: formats, sorts imports and Tailwind classes                           |
 
 ## Where things live
 

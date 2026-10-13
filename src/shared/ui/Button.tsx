@@ -1,6 +1,8 @@
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode, Ref } from "react";
-import type { IconComponent } from "./icons.tsx";
+
 import { cn, FOCUS_RING } from "#shared/lib/ui.utils.ts";
+
+import type { IconComponent } from "./icons.tsx";
 
 export type ButtonVariant = "primary" | "secondary" | "subtle" | "link";
 

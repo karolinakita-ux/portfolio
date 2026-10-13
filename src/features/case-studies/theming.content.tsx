@@ -1,4 +1,5 @@
 import { lead } from "#shared/ui/lead.tsx";
+
 import type { ThemingCaseStudy } from "./case-studies.types.ts";
 
 /* Case study - Multi-Tenant Theme Customizer (Data Governance). Screenshot fields: see ShowcaseCard in case-studies.types.ts. */

@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from "react";
+
 import { cn } from "#shared/lib/ui.utils.ts";
 
 /** Page gutter + centred 1120px content column. */
@@ -11,7 +12,7 @@ export function Container({ className, children }: { className?: string; childre
 }
 
 /** Uppercase Label Medium kicker; parts are joined by a decorative bullet. */
-export function Eyebrow({ parts, className }: { parts: ReadonlyArray<string>; className?: string }) {
+export function Eyebrow({ parts, className }: { parts: readonly string[]; className?: string }) {
   return (
     <p className={cn("text-label-md text-text-secondary uppercase", className)}>
       {parts.map((part, index) => (
@@ -36,7 +37,7 @@ interface SectionProps {
   id: string;
   title: string;
   /** One paragraph, or several rendered as separate paragraphs. */
-  description?: string | ReadonlyArray<string>;
+  description?: string | readonly string[];
   children?: ReactNode;
   headingProps?: HTMLAttributes<HTMLHeadingElement>;
   bodyGap?: keyof typeof SECTION_BODY_GAP;
@@ -59,6 +60,7 @@ export function Section({ id, title, description, children, headingProps, bodyGa
               {title}
             </h2>
             {paragraphs.map((paragraph, index) => (
+              // eslint-disable-next-line @eslint-react/no-array-index-key -- static paragraphs in fixed order
               <p key={index} className={cn("text-body-lg text-text-secondary", index > 0 && "mt-xs")}>
                 {paragraph}
               </p>

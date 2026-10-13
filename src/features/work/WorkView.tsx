@@ -1,12 +1,15 @@
 import { useId } from "react";
-import { ArrowDown, ArrowRight, ArrowUpRight, ExternalLink, Figma, Linkedin, Quote } from "#shared/ui/icons.tsx";
+
+import { PROFILE } from "#shared/content/profile.ts";
+import { hrefForView, type Navigate } from "#shared/lib/routes.ts";
+import { cn, FOCUS_RING } from "#shared/lib/ui.utils.ts";
 import { CaseThumbnail } from "#shared/media/images.tsx";
 import { Button } from "#shared/ui/Button.tsx";
+import { ArrowDown, ArrowRight, ArrowUpRight, ExternalLink, Figma, Linkedin, Quote } from "#shared/ui/icons.tsx";
 import { Container, Eyebrow, Section } from "#shared/ui/layout.tsx";
 import { ViewLink } from "#shared/ui/navigation.tsx";
 import { Callout } from "#shared/ui/text.tsx";
-import { PROFILE } from "#shared/content/profile.ts";
-import type { WorkCase } from "./work.types.ts";
+
 import {
   HERO_ACTIONS,
   PROCESS_BANNER,
@@ -15,8 +18,7 @@ import {
   WORK_CASES,
   WORK_INTRO,
 } from "./work.content.ts";
-import { hrefForView, type Navigate } from "#shared/lib/routes.ts";
-import { cn, FOCUS_RING } from "#shared/lib/ui.utils.ts";
+import type { WorkCase } from "./work.types.ts";
 
 function HeroSection({ onNavigate }: { onNavigate: Navigate }) {
   return (

@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import type * as ImagePreload from "./image-preload.ts";
+
 /** Stands in for `new Image()`: records each request; finish() fires its load event. */
 class FakeImage {
   static requests: FakeImage[] = [];
@@ -21,7 +23,7 @@ class FakeImage {
 
 const requested = () => FakeImage.requests.map((image) => image.src);
 
-let preloadImages: typeof import("./image-preload.ts").preloadImages;
+let preloadImages: typeof ImagePreload.preloadImages;
 
 beforeEach(async () => {
   FakeImage.requests = [];

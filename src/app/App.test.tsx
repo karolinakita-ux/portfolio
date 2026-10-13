@@ -1,12 +1,14 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import { App } from "./App.tsx";
+
 import { AUTOMOTIVE_CASE } from "#features/case-studies/automotive.content.ts";
+import { caseCards } from "#features/case-studies/gallery.utils.ts";
 import { MEETESTIM_CASE } from "#features/case-studies/meetestim.content.tsx";
 import { THEMING_CASE } from "#features/case-studies/theming.content.tsx";
-import { caseCards } from "#features/case-studies/gallery.utils.ts";
 import { preloadImages } from "#shared/media/image-preload.ts";
+
+import { App } from "./App.tsx";
 
 vi.mock("#shared/media/image-preload.ts", () => ({ preloadImages: vi.fn() }));
 
@@ -114,7 +116,7 @@ describe("App", () => {
     expect(screen.getAllByRole("link").filter((link) => link.getAttribute("href") === "#case-theming")).toHaveLength(1);
 
     const themingLink = [...thumbnailLinks].find((link) => link.getAttribute("href") === "#case-theming");
-    await user.click(themingLink as HTMLAnchorElement);
+    await user.click(themingLink!);
     expect(h1()).toHaveTextContent("Multi-Tenant Theme Customizer");
     expect(window.location.hash).toBe("#case-theming");
   });
