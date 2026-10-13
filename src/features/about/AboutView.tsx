@@ -70,6 +70,7 @@ function PortraitCard({ src }: { src: string }) {
             src={src}
             alt={PROFILE.name}
             decoding="async"
+            fetchPriority="high"
             onLoad={() => setStatus("loaded")}
             onError={() => setStatus("error")}
             className={cn(

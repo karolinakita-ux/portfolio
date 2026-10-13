@@ -3,6 +3,12 @@ import { createRoot } from "react-dom/client";
 
 import { App } from "#app/App.tsx";
 
+// Self-hosted fonts (no request to Google): only the weights the type scale uses.
+import "@fontsource/inter/400.css";
+import "@fontsource/inter/500.css";
+import "@fontsource/inter/600.css";
+import "@fontsource/zilla-slab/400.css";
+import "@fontsource/zilla-slab/500.css";
 import "./styles/app.css";
 
 const root = document.getElementById("root");

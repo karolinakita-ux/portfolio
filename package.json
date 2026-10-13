@@ -1,7 +1,7 @@
 {
   "name": "kkita-portfolio",
   "private": true,
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "Karolina Kita - Senior Product Designer portfolio (karolina.kita.company)",
   "author": "Karolina Kita",
   "homepage": "https://karolina.kita.company",
@@ -27,6 +27,8 @@
     "prerender": "vite build --ssr src/app/prerender.entry.tsx --outDir node_modules/.tmp/ssr --emptyOutDir --logLevel warn && node scripts/prerender.ts"
   },
   "dependencies": {
+    "@fontsource/inter": "5.3.0",
+    "@fontsource/zilla-slab": "5.3.0",
     "@tailwindcss/vite": "^4.3.3",
     "lucide-react": "^1.54.0",
     "react": "^19.2.8",
@@ -61,6 +63,7 @@
     "playwright": "^1.64.0",
     "prettier": "^3.9.9",
     "prettier-plugin-tailwindcss": "^0.8.1",
+    "sharp": "^0.35.5",
     "typescript": "~6.0.0",
     "typescript-eslint": "^8.71.1",
     "vite": "^8.3.0",

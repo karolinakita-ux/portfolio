@@ -6,6 +6,19 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.2.0 - 2026-10-13
+
+#### Changed
+
+- Images are sorted into folders: `/assets/site/` and `/assets/cases/<case>/`, with shorter names (`cases/automotive/thumbnail.webp`).
+- Screenshots are WebP instead of PNG: 3.7 MB of images instead of 11.7 MB, at the same size in pixels and with sharp text. The link-preview image stays PNG.
+- Fonts (Inter, Zilla Slab) are served from the site itself instead of Google Fonts: one less connection before text appears, and no visitor data goes to Google.
+- Browsers keep images for a week; the About portrait loads first.
+
+#### Removed
+
+- Four images no page used (two dark link-preview variants, a light one, and an early MeetEstim palette screenshot).
+
 ### 3.1.0 - 2026-10-13
 
 #### Added

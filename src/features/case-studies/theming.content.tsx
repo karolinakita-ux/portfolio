@@ -56,7 +56,7 @@ export const THEMING_CASE: ThemingCaseStudy = {
   solution: [
     {
       id: "surfaces",
-      asset: "gov-solution-scoped-theming.png",
+      asset: "cases/data-governance/solution-scoped-theming.webp",
       alt: "Edit Theme modal with header bar, logo and colour fields, and an inline tooltip warning that the Take Action button must stay visible against the navigation bar.",
       title: "Configurable Surfaces & Inline Guidance",
       intro: "A focused modal letting administrators rebrand key touchpoints while preserving data readability.",
@@ -77,7 +77,7 @@ export const THEMING_CASE: ThemingCaseStudy = {
     },
     {
       id: "contrast",
-      asset: "gov-solution-contrast-inversion.png",
+      asset: "cases/data-governance/solution-contrast-inversion.webp",
       alt: "Button state matrix in four brand colours with hover, active and disabled overlays, and navigation bars using white or black opacity overlays.",
       title: "Automated Component States via Opacity Rules",
       intro:
@@ -99,7 +99,7 @@ export const THEMING_CASE: ThemingCaseStudy = {
     },
     {
       id: "states",
-      asset: "gov-solution-opacity-states.png",
+      asset: "cases/data-governance/solution-opacity-states.webp",
       alt: "Sidebar and data table examples showing selected states at full accent colour, 35% opacity, and colour plus 8% black.",
       title: "Sidebar and Table Selection Rules",
       intro: "Extending the same overlay logic to navigation drawers and dense data tables.",
@@ -120,7 +120,7 @@ export const THEMING_CASE: ThemingCaseStudy = {
     },
     {
       id: "cvd-matrix",
-      asset: "gov-solution-cvd-matrix.png",
+      asset: "cases/data-governance/solution-cvd-matrix.webp",
       alt: "Grid of three themes, Precisely, red and blue, each previewed under normal vision, tritanopia, protanopia and deuteranopia.",
       title: "Advocating for Accessibility in Team Reviews",
       intro:
@@ -142,7 +142,7 @@ export const THEMING_CASE: ThemingCaseStudy = {
     },
     {
       id: "global-views",
-      asset: "gov-solution-cvd-normal-vs-tritanopia.png",
+      asset: "cases/data-governance/solution-cvd-normal-vs-tritanopia.webp",
       alt: "Two Information panels side by side: the current theme's accessibility preview under normal vision and under tritanopia.",
       title: "Side-Panel Accessibility Preview (Phase 2 Concept)",
       intro:
@@ -168,7 +168,7 @@ export const THEMING_CASE: ThemingCaseStudy = {
   safety: [
     {
       id: "immutability",
-      asset: "gov-safety-base-immutability.png",
+      asset: "cases/data-governance/safety-base-immutability.webp",
       alt: "Branding page listing the default Precisely Theme as current, with Duplicate as the only action in its menu.",
       title: "Protecting the Default System Theme",
       intro: "Preventing critical system errors by locking the baseline theme.",
@@ -185,7 +185,7 @@ export const THEMING_CASE: ThemingCaseStudy = {
     },
     {
       id: "session-warning",
-      asset: "gov-safety-session-warning-modal.png",
+      asset: "cases/data-governance/safety-session-warning-modal.webp",
       alt: "Set as Current Theme confirmation dialog explaining that logged-in users will see the new theme when they refresh.",
       title: "Clear Warnings Before Applying Changes",
       intro: "Explaining the immediate impact of publishing a theme to active users.",
@@ -202,7 +202,7 @@ export const THEMING_CASE: ThemingCaseStudy = {
     },
     {
       id: "css-sandbox",
-      asset: "gov-safety-css-sandbox-disclaimer.png",
+      asset: "cases/data-governance/safety-css-sandbox-disclaimer.webp",
       alt: "CSS Customization panel with a warning that overrides can break with monthly releases and require regression testing.",
       title: "Optional CSS Field with Maintenance Warnings",
       intro: "Keeping custom CSS as a secondary fallback for technical teams, not the primary tool.",

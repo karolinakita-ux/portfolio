@@ -45,7 +45,7 @@ export const MEETESTIM_CASE: CaseStudy = {
       cards: [
         {
           id: "tokens",
-          asset: "meetestim-color-tokens-primeng.png",
+          asset: "cases/meetestim/color-tokens-primeng.webp",
           alt: "Two token tables: the navyblue primitive scale from 50 to 950 with hex values, and the primary scale mapping each step to its navyblue primitive.",
           title: "Primary Palette & Token Aliasing",
           intro: (
@@ -71,7 +71,7 @@ export const MEETESTIM_CASE: CaseStudy = {
         },
         {
           id: "contrast",
-          asset: "meetestim-02-accessibility-contrast-checker.png",
+          asset: "cases/meetestim/02-accessibility-contrast-checker.webp",
           alt: "WCAG 2.1 contrast checker showing white text on #005D8F with a 7.09 contrast ratio, passing AA and AAA for normal and large text.",
           title: "Accessibility: WCAG AAA Contrast Verification",
           intro:
@@ -101,7 +101,7 @@ export const MEETESTIM_CASE: CaseStudy = {
       cards: [
         {
           id: "week-grid",
-          asset: "meetestim-03-calendar-weekly-grid-roles.png",
+          asset: "cases/meetestim/03-calendar-weekly-grid-roles.webp",
           alt: "Month overview with a participant/organizer toggle, project filter, mini month calendar and a weekly schedule grid of meetings.",
           title: "Weekly Timeline & Role Perspectives",
           intro:
@@ -124,7 +124,7 @@ export const MEETESTIM_CASE: CaseStudy = {
         },
         {
           id: "day-view",
-          asset: "meetestim-04-calendar-faceted-filter-density.png",
+          asset: "cases/meetestim/04-calendar-faceted-filter-density.webp",
           alt: "Calendar in day view with a collapsed icon sidebar, the selected date highlighted in the mini calendar and its meetings listed inline.",
           title: "Daily Detail View & Mini-Calendar Navigation",
           intro:
@@ -158,7 +158,7 @@ export const MEETESTIM_CASE: CaseStudy = {
       cards: [
         {
           id: "kpis",
-          asset: "meetestim-05-telemetry-kpi-sparklines.png",
+          asset: "cases/meetestim/05-telemetry-kpi-sparklines.webp",
           alt: "Seven meeting KPI cards, each with a percentage or cost value, a coloured trend sparkline and the change versus the previous period.",
           title: "Meeting Health Metrics & Trend Sparklines",
           intro: "Summary KPI cards showing scheduling discipline, team habits, and meeting delay costs.",
@@ -182,7 +182,7 @@ export const MEETESTIM_CASE: CaseStudy = {
         },
         {
           id: "portfolio-table",
-          asset: "meetestim-06-pmo-portfolio-data-tables.png",
+          asset: "cases/meetestim/06-pmo-portfolio-data-tables.webp",
           alt: "Project list table with budget progress bars, time and cost deltas, meeting hours, task counts, team size and end dates with warning icons.",
           title: "Project Budget Table & Visual Progress Bars",
           intro:
@@ -215,7 +215,7 @@ export const MEETESTIM_CASE: CaseStudy = {
       cards: [
         {
           id: "workshop",
-          asset: "meetestim-07-discovery-workshop-miro-board.png",
+          asset: "cases/meetestim/07-discovery-workshop-miro-board.webp",
           alt: "Discovery workshop board with sticky notes grouped into Strategic Goals, Client Pain Points, UX Solutions and Technical Alignment.",
           title: "Discovery Workshop & Scope Alignment",
           intro:
@@ -237,7 +237,7 @@ export const MEETESTIM_CASE: CaseStudy = {
         },
         {
           id: "roadmap",
-          asset: "meetestim-08-roadmap-gantt-goals-decomposition.png",
+          asset: "cases/meetestim/08-roadmap-gantt-goals-decomposition.webp",
           alt: "Project Goals tab: project list on the left, an expandable goals and tasks tree with status badges, and a Gantt timeline with a Today line and an overdue warning.",
           title: "Master-Detail Roadmap & Timeline View",
           intro: "A split-screen layout keeping project navigation on the left and interactive timelines on the right.",
@@ -274,7 +274,7 @@ export const MEETESTIM_CASE: CaseStudy = {
       cards: [
         {
           id: "hygiene",
-          asset: "meetestim-09-meeting-hygiene-break-culture.png",
+          asset: "cases/meetestim/09-meeting-hygiene-break-culture.webp",
           alt: "HR panel Organization settings: focus blocks by weekday, standard working hours, agenda requirement, maximum participants and minimum break between meetings.",
           title: "Meeting Policies & Work-Life Balance Settings",
           intro:
@@ -302,7 +302,7 @@ export const MEETESTIM_CASE: CaseStudy = {
         },
         {
           id: "budget",
-          asset: "meetestim-10-project-budget-cost-telemetry.png",
+          asset: "cases/meetestim/10-project-budget-cost-telemetry.webp",
           alt: "Project details with an 84% budget bar, four cost KPI cards and a pie chart splitting costs into meetings, external costs and labor.",
           title: "Project Cost Breakdown & Spend Visibility",
           intro:
@@ -325,7 +325,7 @@ export const MEETESTIM_CASE: CaseStudy = {
         },
         {
           id: "rates",
-          asset: "meetestim-11-batch-rate-import-csv-tables.png",
+          asset: "cases/meetestim/11-batch-rate-import-csv-tables.webp",
           alt: "Departments and Employees tables with hourly rates, department badges, role tags and CSV import and export buttons with tooltips.",
           title: "Hourly Rate Management & CSV Batch Updates",
           intro: "Streamlined administration tables to maintain department baselines and individual contributor rates.",

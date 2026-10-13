@@ -25,8 +25,8 @@ describe("caseCards", () => {
 describe("virtual:asset-sizes", () => {
   it("reads width and height from the PNG header", () => {
     // Sizes seen in the browser (naturalWidth x naturalHeight), so a swapped or misread field fails here.
-    expect(ASSET_SIZES["automotive-research-surveymonkey-markets.png"]).toEqual([605, 481]);
-    expect(ASSET_SIZES["avatar-cutout.png"]).toEqual([376, 566]);
+    expect(ASSET_SIZES["cases/automotive/research-surveymonkey-markets.webp"]).toEqual([605, 481]);
+    expect(ASSET_SIZES["site/portrait.webp"]).toEqual([376, 566]);
   });
 
   it.each([AUTOMOTIVE_CASE, MEETESTIM_CASE, THEMING_CASE])(
