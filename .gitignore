@@ -22,8 +22,59 @@ a11y-report
 Thumbs.db
 desktop.ini
 
-# Claude Code personal settings
-.claude/settings.local.json
+# Claude Code: personal settings and worktrees stay local; shared skills and agents are tracked.
+.claude/*
+!.claude/agents/
+!.claude/skills/
+CLAUDE.local.md
+*.local.md
+.mcp.json
+
+# Private notes. docs/ is public, except files and folders starting with "_"
+docs/_*
+notes/
+private/
+scratch/
+tmp/
+
+# Personal documents and design sources: CVs, cover letters, unredacted client
+# screens. Only the exported, anonymised PNGs in public/assets/ are published.
+*.pdf
+*.doc
+*.docx
+*.odt
+*.rtf
+*.pages
+*[Cc]over-[Ll]etter*
+*[Cc]over[Ll]etter*
+*.fig
+*.sketch
+*.xd
+*.psd
+*.ai
+originals/
+
+# Downloads and archives (Netlify deploy-<id>.zip, image packs)
+*.zip
+*.7z
+*.rar
+*.tgz
+*.tar.gz
+
+# Test and browser-automation output, tool caches
+test-results/
+playwright-report/
+blob-report/
+.eslintcache
+*.tsbuildinfo
+
+# Secrets and registry auth
+.npmrc
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
 
 # Editor directories and files
 .vscode/*

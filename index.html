@@ -25,7 +25,7 @@
       property="og:description"
       content="Senior Product Designer with 8+ years on B2B and enterprise platforms: UX research, complex workflows and token-driven design systems."
     />
-    <meta property="og:image" content="https://karolina.kita.company/assets/og-image.png" />
+    <meta property="og:image" content="https://karolina.kita.company/assets/site/og-image.png" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -39,13 +39,14 @@
       name="twitter:description"
       content="Senior Product Designer with 8+ years on B2B and enterprise platforms: UX research, complex workflows and token-driven design systems."
     />
-    <meta name="twitter:image" content="https://karolina.kita.company/assets/og-image.png" />
+    <meta name="twitter:image" content="https://karolina.kita.company/assets/site/og-image.png" />
     <meta
       name="twitter:image:alt"
       content="Karolina Kita - Deconstructing complexity through human cognition and systems. Senior Product Designer."
     />
 
-    <!-- Structured data for search engines (Google rich results, knowledge panel). Facts match the CV and LinkedIn. -->
+    <!-- Site-wide structured data (Google rich results, knowledge panel); facts match the CV and LinkedIn.
+         Each page adds its own WebPage / ProfilePage / CreativeWork block at build time (scripts/prerender.ts). -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -59,19 +60,11 @@
             "publisher": { "@id": "https://karolina.kita.company/#person" }
           },
           {
-            "@type": "ProfilePage",
-            "@id": "https://karolina.kita.company/#profile",
-            "url": "https://karolina.kita.company/",
-            "name": "Karolina Kita - Senior Product Designer",
-            "isPartOf": { "@id": "https://karolina.kita.company/#website" },
-            "mainEntity": { "@id": "https://karolina.kita.company/#person" }
-          },
-          {
             "@type": "Person",
             "@id": "https://karolina.kita.company/#person",
             "name": "Karolina Kita",
             "url": "https://karolina.kita.company/",
-            "image": "https://karolina.kita.company/assets/avatar-cutout.png",
+            "image": "https://karolina.kita.company/assets/site/portrait.webp",
             "jobTitle": "Senior Product Designer",
             "description": "Senior Product Designer with 8+ years on B2B and enterprise platforms: UX research, complex workflows and token-driven design systems. MSc in Psychology.",
             "email": "mailto:karolina.kita.zg@gmail.com",
@@ -115,7 +108,7 @@
       }
     </script>
 
-    <!-- Theme before first paint: stored choice, else the system setting (see src/hooks/useTheme.ts). -->
+    <!-- Theme before first paint: stored choice, else the system setting (see src/shared/hooks/useTheme.ts). -->
     <script>
       (function () {
         var theme = null;
@@ -129,39 +122,9 @@
         document.documentElement.style.colorScheme = theme;
       })();
     </script>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Zilla+Slab:wght@400;500&display=swap"
-    />
   </head>
   <body>
     <div id="root"></div>
-    <noscript>
-      <div
-        style="
-          padding: 24px;
-          font:
-            16px/24px Inter,
-            -apple-system,
-            sans-serif;
-        "
-      >
-        <h1>Karolina Kita - Senior Product Designer</h1>
-        <p>
-          8+ years turning data-heavy B2B platforms and complex workflows into clear, usable products, with a background
-          in psychology (MSc). Case studies: Automotive B2B Marketplace Redesign, MeetEstim project planning and cost
-          management platform, Enterprise White-Label Theme Generator.
-        </p>
-        <p>
-          This portfolio needs JavaScript. Contact:
-          <a href="mailto:karolina.kita.zg@gmail.com">karolina.kita.zg@gmail.com</a> ·
-          <a href="https://www.linkedin.com/in/karolinakita">LinkedIn</a>
-        </p>
-      </div>
-    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

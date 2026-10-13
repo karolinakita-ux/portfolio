@@ -17,7 +17,8 @@ import { AxeBuilder } from "@axe-core/playwright";
 import type { Virtual } from "@guidepup/virtual-screen-reader";
 import { chromium, type Browser, type Page } from "playwright";
 import { createServer } from "vite";
-import { VIEWS, type View } from "../src/lib/routes.ts";
+
+import { VIEW, VIEW_PATHS, VIEWS, type View } from "#shared/lib/routes.ts";
 
 declare global {
   interface Window {
@@ -34,7 +35,7 @@ const VIEWPORTS = {
 type ViewportName = keyof typeof VIEWPORTS;
 type Theme = "light" | "dark";
 const THEMES: readonly Theme[] = ["light", "dark"];
-const LIGHTBOX_VIEW: View = "case-automotive";
+const LIGHTBOX_VIEW: View = VIEW.caseAutomotive;
 const MAX_SR_STEPS = 2500;
 const MAX_TAB_STOPS = 250;
 
@@ -73,7 +74,7 @@ const require = createRequire(import.meta.url);
 const vsrBundlePath = require.resolve("@guidepup/virtual-screen-reader/browser.js");
 
 const clip = (text: string, max: number): string => (text.length > max ? text.slice(0, max) + "…" : text);
-const urlFor = (base: string, view: View): string => (view === "work" ? base : base + "#" + view);
+const urlFor = (base: string, view: View): string => base.replace(/\/$/, "") + VIEW_PATHS[view];
 
 async function runAxe(page: Page, scenario: string): Promise<AxeRun> {
   const result = await new AxeBuilder({ page }).withTags([...WCAG_TAGS, "best-practice"]).analyze();
@@ -149,7 +150,7 @@ async function tabOrder(page: Page): Promise<TabStop[]> {
       const outline = style.outlineStyle !== "none" && parseFloat(style.outlineWidth) > 0;
       const shadow = style.boxShadow !== "none" && style.boxShadow !== "";
       const rect = el.getBoundingClientRect();
-      const name = (el.getAttribute("aria-label") ?? el.textContent ?? "").replace(/\s+/g, " ").trim();
+      const name = (el.getAttribute("aria-label") ?? el.textContent).replace(/\s+/g, " ").trim();
       return {
         index,
         tag: el.tagName.toLowerCase(),
