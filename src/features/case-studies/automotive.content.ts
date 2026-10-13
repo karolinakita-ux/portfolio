@@ -43,7 +43,7 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
       cards: [
         {
           id: "survey",
-          asset: "automotive-research-surveymonkey-markets.png",
+          asset: "cases/automotive/research-surveymonkey-markets.webp",
           alt: "Survey data quality table: mandatory questions and answer length could not be tracked; regional coverage is complete at 87.5% (7 of 8 markets).",
           title: "Multi-Market Survey Analysis",
           intro:
@@ -51,7 +51,7 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
         },
         {
           id: "interviews",
-          asset: "automotive-qualitative-interviews-synthesis.png",
+          asset: "cases/automotive/qualitative-interviews-synthesis.webp",
           alt: "Franchise dealer research board for Poland: grouped quotes from dealer interviews, a table that turns each finding into a platform implication, and charts of preferred communication channels.",
           title: "1-on-1 Customer Interviews",
           intro:
@@ -73,7 +73,7 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
       cards: [
         {
           id: "persona",
-          asset: "automotive-b2b-persona-dealer.png",
+          asset: "cases/automotive/b2b-persona-dealer.webp",
           alt: "Service provider persona built from survey data: profile and goals, charts of respondent roles, business locations and vehicles bought per month, and lists of behaviour traits and priorities.",
           title: "B2B User Personas",
           intro:
@@ -81,7 +81,7 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
         },
         {
           id: "heuristics",
-          asset: "automotive-heuristic-evaluation-matrix.png",
+          asset: "cases/automotive/heuristic-evaluation-matrix.webp",
           alt: "Heuristic evaluation matrix detailing existing platform usability friction",
           title: "Heuristic Evaluation",
           intro:
@@ -89,7 +89,7 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
         },
         {
           id: "buy-in",
-          asset: "automotive-executive-stakeholder-presentation.png",
+          asset: "cases/automotive/executive-stakeholder-presentation.webp",
           alt: "Audit summary slide for the heuristic Visibility of System Status: 8 problems (21.62% of all issues), 1 catastrophic and 7 major, with notes on missing feedback to the user.",
           title: "Prioritizing Improvements",
           intro:
@@ -105,7 +105,7 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
       cards: [
         {
           id: "benchmark",
-          asset: "automotive-competitive-benchmarking-notes.png",
+          asset: "cases/automotive/competitive-benchmarking-notes.webp",
           alt: "Benchmarking notes with best practices from OPENLANE, Volvo, AutoTrader, Copart, IAA and Bring a Trailer",
           title: "Checkout & B2B Purchase Benchmarking",
           intro:
@@ -113,7 +113,7 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
         },
         {
           id: "workflows",
-          asset: "automotive-profit-estimator-flow.png",
+          asset: "cases/automotive/profit-estimator-flow.webp",
           alt: "Price Margin screen with a vehicle selector, acquisition, reconditioning and resale cost fields, a VAT scheme toggle, and a summary card showing net profit and ROI.",
           title: "Workflow Architecture & Financial Tools",
           intro:
@@ -121,7 +121,7 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
         },
         {
           id: "hifi",
-          asset: "automotive-hifi-screens-documentation.png",
+          asset: "cases/automotive/hifi-screens-documentation.webp",
           alt: "Four high-fidelity screens - basket, per-vehicle payment options, purchased vehicles and order details - each shown beside persona notes on how the screen supports that user.",
           title: "High-Fidelity UI & Feature Documentation",
           intro:
@@ -129,7 +129,7 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
         },
         {
           id: "badges-contrast",
-          asset: "automotive-wcag-contrast-audit.png",
+          asset: "cases/automotive/wcag-contrast-audit.webp",
           alt: "WCAG AA and AAA contrast ratio verification matrix for B2B marketplace status badges",
           title: "Badge System & Contrast Compliance",
           intro:
@@ -137,7 +137,7 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
         },
         {
           id: "prototype-qa",
-          asset: "automotive-prototype-audit-tracker.png",
+          asset: "cases/automotive/prototype-audit-tracker.webp",
           alt: "Prototype audit table listing issues 22 to 29 with severity ratings, beside a write-up of issue 27, a split-payment checkout screen that does not update, with observation, severity and recommended fixes.",
           title: "AI Prototype QA & Heuristic Audit",
           intro:
@@ -153,7 +153,7 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
       cards: [
         {
           id: "usability",
-          asset: "automotive-usability-testing-findings.png",
+          asset: "cases/automotive/usability-testing-findings.webp",
           alt: "Usability testing synthesis for 6 UK dealers: a validation matrix of tested flows, task completion of 91.6% against about 48% on the legacy portal, and SEQ scores for the profit estimator, cart and payment setup.",
           title: "Scenario-Based Usability Validation",
           intro:
@@ -161,7 +161,7 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
         },
         {
           id: "handoff",
-          asset: "automotive-dev-handoff-specs.png",
+          asset: "cases/automotive/dev-handoff-specs.webp",
           alt: "Vehicle price and action panel with Buy Now, bid and CAP valuation details, beside its specification: description, UX rationale and a field-by-field table explaining each price line.",
           title: "Technical Feasibility & Dev Handoff",
           intro:

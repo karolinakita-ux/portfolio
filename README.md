@@ -48,7 +48,7 @@ Screenshots are small on the cards. Each card accepts an optional close-up:
 ```ts
 {
   id: "roadmap",
-  asset: "project-planning-08-roadmap-gantt-goals-decomposition.png",          // full screen, opens in the viewer
+  asset: "cases/project-planning/08-roadmap-gantt-goals-decomposition.webp",          // full screen, opens in the viewer
   detail: "project-planning-08-roadmap-gantt-goals-decomposition--detail.png", // close-up shown on the card
 }
 ```
@@ -61,4 +61,4 @@ Day-to-day work goes to `develop`; `main` is the live site and changes only in a
 
 Netlify is linked to this repository: every push to `main` runs `yarn test:run && yarn build` and publishes `dist/`. A failing test blocks the deploy. `develop` and pull requests get preview URLs.
 
-Link previews are cached by apps: check LinkedIn at https://www.linkedin.com/post-inspector after changing `og-image.png`.
+Link previews are cached by apps: check LinkedIn at https://www.linkedin.com/post-inspector after changing `site/og-image.png`.

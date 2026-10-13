@@ -13,8 +13,11 @@ import { CV } from "#features/cv/cv.content.ts";
 import { formatMonthYear } from "#features/cv/dates.utils.ts";
 import { PROCESS_BANNER, TESTIMONIALS, WORK_CASES, WORK_INTRO } from "#features/work/work.content.ts";
 import { PROFILE } from "#shared/content/profile.ts";
-import { isView, VIEW_PATHS, VIEWS } from "#shared/lib/routes.ts";
+import { isView, VIEW, VIEW_PATHS, VIEWS, type View } from "#shared/lib/routes.ts";
 import { Lang, Strong } from "#shared/ui/text.tsx";
+
+/** Image path under /assets: lowercase kebab-case folders and file name, web image formats. */
+const ASSET_PATH = /^(?:[a-z0-9-]+\/)*[a-z0-9-]+\.(png|jpe?g|webp)$/;
 
 /**
  * Content rules for the portfolio copy, so they hold for every future edit:
@@ -74,8 +77,15 @@ describe("copy style", () => {
 
 const CASE_TABLE = CASES.map((c): [string, CaseStudy | ThemingCaseStudy] => [c.shortTitle, c]);
 
+const CASE_VIEWS = new Map<CaseStudy | ThemingCaseStudy, View>([
+  [AUTOMOTIVE_CASE, VIEW.caseAutomotive],
+  [PROJECT_PLANNING_CASE, VIEW.caseProjectPlanning],
+  [THEMING_CASE, VIEW.caseTheming],
+]);
+
 describe.each(CASE_TABLE)("case study: %s", (_name, c) => {
   const cards = caseCards(c);
+  const view = CASE_VIEWS.get(c) ?? VIEW.work;
 
   it("opens every bullet with a bold lead-in term and a colon", () => {
     const bullets: ReactNode[] = [...cards.flatMap((card) => card.bullets ?? []), ...("reality" in c ? c.reality : [])];
@@ -121,10 +131,12 @@ describe.each(CASE_TABLE)("case study: %s", (_name, c) => {
     expect(unmarked).toEqual([]);
   });
 
-  it("names screenshots in lowercase kebab-case (Netlify paths are case-sensitive)", () => {
+  it("keeps screenshots in the case's own folder, named in lowercase kebab-case (Netlify paths are case-sensitive)", () => {
+    const folder = "cases/" + VIEW_PATHS[view].split("/").pop() + "/";
     for (const card of cards) {
-      expect(card.asset).toMatch(/^[a-z0-9-]+\.(png|jpe?g|webp)$/);
-      if (card.detail) expect(card.detail).toMatch(/^[a-z0-9-]+\.(png|jpe?g|webp)$/);
+      expect(card.asset).toMatch(ASSET_PATH);
+      expect(card.asset.startsWith(folder), card.asset).toBe(true);
+      if (card.detail) expect(card.detail).toMatch(ASSET_PATH);
     }
   });
 });
@@ -138,7 +150,7 @@ describe("work page", () => {
   it("uses unique, valid thumbnail names", () => {
     const assets = WORK_CASES.map((item) => item.asset);
     expect(new Set(assets).size).toBe(assets.length);
-    for (const asset of assets) expect(asset).toMatch(/^[a-z0-9-]+\.(png|jpe?g|webp)$/);
+    for (const asset of assets) expect(asset).toMatch(ASSET_PATH);
   });
 
   it("chains case studies in the same order as the Work page", () => {

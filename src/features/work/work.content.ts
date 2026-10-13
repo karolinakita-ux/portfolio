@@ -40,7 +40,7 @@ export const TESTIMONIALS: readonly Testimonial[] = [
 const CASES: readonly WorkCase[] = [
   {
     id: "theming-system",
-    asset: "thumb-case-theming-system.png",
+    asset: "cases/data-governance/thumbnail.webp",
     alt: "Three Edit Theme panels from a data governance platform, showing header, navigation and general colour settings used to brand each tenant.",
     eyebrow: ["B2B Platform", "Feature Design"],
     title: "Enterprise White-Label Theme Generator",
@@ -51,7 +51,7 @@ const CASES: readonly WorkCase[] = [
   },
   {
     id: "project-planning",
-    asset: "thumb-case-project-planning-suite.png",
+    asset: "cases/project-planning/thumbnail.webp",
     alt: "Project planning month overview: a participant calendar with a mini month picker beside a weekly schedule of meetings.",
     eyebrow: ["Enterprise SaaS", "Design System & Product Design"],
     title: "Project Planning & Cost Management Platform",
@@ -62,7 +62,7 @@ const CASES: readonly WorkCase[] = [
   },
   {
     id: "automotive-discovery",
-    asset: "thumb-case-automotive-confluence.png",
+    asset: "cases/automotive/thumbnail.webp",
     alt: "Research documentation tree beside a UX benchmarking page that lists best practices to adopt and flaws to avoid on vehicle search.",
     eyebrow: ["European Automotive B2B", "UX Research & Interface Design"],
     title: "Automotive B2B Marketplace Redesign",

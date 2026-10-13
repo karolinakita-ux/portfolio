@@ -75,7 +75,7 @@ const VIEW_RENDERERS: Record<View, (ctx: ViewContext) => ReactNode> = {
  * (/about#career) lands on that section; useSectionHash keeps the hash on the
  * section in view while scrolling.
  */
-export function App({ assetBase = "/assets", portraitSrc = assetBase + "/avatar-cutout.png" }: AppProps) {
+export function App({ assetBase = "/assets", portraitSrc = assetBase + "/site/portrait.webp" }: AppProps) {
   const [theme, pickTheme] = useTheme();
   const [route, navigate] = useHistoryRoute(VIEW.work);
   const mainRef = useRef<HTMLElement>(null);
