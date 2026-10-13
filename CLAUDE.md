@@ -11,10 +11,13 @@ Karolina Kita's portfolio (karolina.kita.company). React 19 + TypeScript (strict
 
 ## Layout
 
-- `src/content/` - all copy, typed by `src/content/types.ts`. Most edits happen here, not in views.
-- `src/views/` - one component per page; `src/App.tsx` maps every `View` to a renderer.
-- `src/components/` - `ui/` primitives, `layout/` header/footer, `media/` images + lightbox, `case/` case-study blocks.
-- `src/lib/routes.ts` - the `VIEWS` list, hash routing helpers, page titles.
+Vertical slices: `app` → `features` → `shared`, never the other way.
+
+- `src/app/` - the shell: `App.tsx` maps every `View` to its feature's view, `useHistoryRoute.ts` routing, `content-rules.test.ts` cross-feature copy checks.
+- `src/features/<name>/` - one slice per page or capability: `work`, `about`, `contact`, `cv`, `case-studies`, `image-viewer`. A slice owns its view, components, hooks, copy (`*.content.ts`), types (`*.types.ts`) and tests. The app imports a feature only through its `index.ts`; features never import each other. Most copy edits happen in `*.content.ts`.
+- `src/shared/` - used by several slices: `ui/` primitives, `layout/` header/footer, `media/` images, preload and the viewer context, `hooks/`, `lib/` (`routes.ts`: the `VIEWS` list, routing helpers, page titles; `ui.utils.ts`: `cn`, `FOCUS_RING`), `content/profile.ts`. Shared code never imports `app` or `features`.
+- Imports: `#app/*`, `#features/*`, `#shared/*`, `#test/*` (subpath imports in `package.json`), `./x` within the same folder.
+- File names: components `PascalCase.tsx`, hooks `useX.ts`, other modules kebab-case with a role suffix (`*.content.ts`, `*.types.ts`, `*.constants.ts`, `*.context.ts`, `*.utils.ts`), tests `*.test.ts(x)` next to the file.
 - `src/styles/tokens.css` - KitaBranding tokens as CSS variables (light + dark); `app.css` maps them into Tailwind's theme.
 - `src/styles/kita-branding.tokens.json` - Figma Variables export; `tokens.test.ts` keeps `tokens.css` 1:1 with it.
 - `public/assets/` - images, referenced by file name from content (`/assets/<name>`). Lowercase kebab-case names.
@@ -28,10 +31,10 @@ Karolina Kita's portfolio (karolina.kita.company). React 19 + TypeScript (strict
 - New token: add it in Figma, re-export `kita-branding.tokens.json`, then add the variable to `tokens.css` (both modes) and the mapping in `app.css`.
 - WCAG 2.1 AA minimum: keyboard focus (`FOCUS_RING`), labelled controls, semantic headings and landmarks.
 
-## Copy rules (Karolina's, enforced by `src/content/content.test.ts`)
+## Copy rules (Karolina's, enforced by `src/app/content-rules.test.ts`)
 
 - Short hyphen with spaces (`word - word`, `2019 - 2026`). Never en or em dashes.
-- Every case-study bullet opens with a bold lead-in and colon: build bullets with `lead("Term", "text")` from `components/ui/lead.tsx`.
+- Every case-study bullet opens with a bold lead-in and colon: build bullets with `lead("Term", "text")` from `shared/ui/lead.tsx`.
 - H1 headings never end with a period.
 - Plain, grounded B2-level English. No buzzwords or corporate fluff. Keep claims honest about team roles and verified outcomes; reflections stay general.
 - The CV is ATS plain text: no curly quotes or long dashes, ISO dates.
@@ -39,7 +42,7 @@ Karolina Kita's portfolio (karolina.kita.company). React 19 + TypeScript (strict
 ## Code conventions
 
 - TypeScript strict with `noUncheckedIndexedAccess`; no `any`. Import with explicit extensions (`./App.tsx`), `import type` for types.
-- Files that export components export only components (Fast Refresh); helpers live in `src/lib/`, contexts in `*-context.ts`.
+- Files that export components export only components (Fast Refresh); helpers live in `*.utils.ts` (slice) or `src/shared/lib/`, contexts in `*.context.ts`.
 - React Compiler lint rules are on: no `setState` inside effects, no ref reads during render. Derive state instead (see `useImageStatus`, `useScrolledPast`).
 - Tests sit next to the code (`*.test.ts(x)`); query by role and accessible name. jsdom gaps are polyfilled in `src/test/setup.ts`.
 - Line endings are LF (`.gitattributes`). Netlify builds on Linux, so file names are case-sensitive.

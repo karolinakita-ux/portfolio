@@ -27,7 +27,7 @@ export default defineConfig([
   },
   {
     // Content modules export data (some with JSX), tests export nothing: Fast Refresh does not apply.
-    files: ["src/content/**/*.{ts,tsx}", "src/**/*.test.{ts,tsx}", "src/test/**/*.{ts,tsx}"],
+    files: ["src/**/*.content.{ts,tsx}", "src/**/*.test.{ts,tsx}", "src/test/**/*.{ts,tsx}"],
     rules: { "react-refresh/only-export-components": "off" },
   },
   {
