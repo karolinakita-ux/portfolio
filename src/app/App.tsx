@@ -16,10 +16,11 @@ import { WorkView } from "#features/work/index.ts";
 import { useTheme } from "#shared/hooks/useTheme.ts";
 import { BackToTop, SiteFooter } from "#shared/layout/SiteFooter.tsx";
 import { SiteHeader } from "#shared/layout/SiteHeader.tsx";
-import { titleForView, VIEW, type Navigate, type View } from "#shared/lib/routes.ts";
+import { VIEW, type Navigate, type View } from "#shared/lib/routes.ts";
 import { cn, FOCUS_RING, prefersReducedMotion } from "#shared/lib/ui.utils.ts";
 import { preloadImages } from "#shared/media/image-preload.ts";
 
+import { headFor } from "./seo.utils.ts";
 import { useHistoryRoute } from "./useHistoryRoute.ts";
 import { useSectionHash } from "./useSectionHash.ts";
 
@@ -89,8 +90,18 @@ export function App({ assetBase = "/assets", portraitSrc = assetBase + "/avatar-
     preloadImages(cases.flatMap((c) => caseCards(c).map((card) => resolveAsset(card.asset))));
   }, [resolveAsset]);
 
+  // Title, description, canonical URL and the page's structured data follow the view
+  // (the prerendered HTML already carries them for the first page).
   useEffect(() => {
-    document.title = titleForView(route.view);
+    const head = headFor(route.view);
+    document.title = head.title;
+    const set = (selector: string, attribute: string, value: string) =>
+      document.querySelector(selector)?.setAttribute(attribute, value);
+    set('meta[name="description"]', "content", head.description);
+    set('link[rel="canonical"]', "href", head.url);
+    set('meta[property="og:url"]', "content", head.url);
+    const pageData = document.querySelector('script[type="application/ld+json"][data-page]');
+    if (pageData) pageData.textContent = JSON.stringify(head.jsonLd);
   }, [route.view]);
 
   useSectionHash(route.key);
@@ -183,7 +194,8 @@ export function App({ assetBase = "/assets", portraitSrc = assetBase + "/avatar-
         </div>
 
         <main id="main" ref={mainRef} tabIndex={-1} className="flex-1 pb-3xl focus:outline-none lg:pb-4xl print:pb-0">
-          <div key={route.key} className="motion-safe:animate-view-in">
+          {/* No fade on the first view: it is already on screen as prerendered HTML. */}
+          <div key={route.key} className={route.key > 0 ? "motion-safe:animate-view-in" : undefined}>
             {view}
           </div>
         </main>

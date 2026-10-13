@@ -13,7 +13,7 @@ Karolina Kita's portfolio (karolina.kita.company). React 19 + TypeScript (strict
 
 Vertical slices: `app` → `features` → `shared`, never the other way.
 
-- `src/app/` - the shell: `App.tsx` maps every `View` to its feature's view, `useHistoryRoute.ts` routing (real paths, old `/#view` links redirect), `useSectionHash.ts` (the hash follows the section in view), `content-rules.test.ts` cross-feature copy checks.
+- `src/app/` - the shell: `App.tsx` maps every `View` to its feature's view, `useHistoryRoute.ts` routing (real paths, old `/#view` links redirect), `useSectionHash.ts` (the hash follows the section in view), `seo.content.ts` + `seo.utils.ts` (descriptions, head tags, structured data, llms.txt), `prerender.entry.tsx`, `content-rules.test.ts` cross-feature copy checks.
 - `src/features/<name>/` - one slice per page or capability: `work`, `about`, `contact`, `cv`, `case-studies`, `image-viewer`. A slice owns its view, components, hooks, copy (`*.content.ts`), types (`*.types.ts`) and tests. The app imports a feature only through its `index.ts`; features never import each other. Most copy edits happen in `*.content.ts`.
 - `src/shared/` - used by several slices: `ui/` primitives, `layout/` header/footer, `media/` images, preload and the viewer context, `hooks/`, `lib/` (`routes.ts`: `VIEW` ids, `VIEW_PATHS`, `SECTION` anchors, routing helpers, page titles; `ui.utils.ts`: `cn`, `FOCUS_RING`), `content/profile.ts`. Shared code never imports `app` or `features`.
 - Repeated values (view ids, paths, section anchors, storage keys) are `as const` objects with a derived union type, never `enum` (`erasableSyntaxOnly`) and never repeated string literals.
@@ -70,4 +70,4 @@ Uncommitted user edits stay out of the release. If `git switch` refuses because 
 
 ## Deploy
 
-Netlify project `karolina-kita`. Production deploys from `main` (releases only); `develop` gets a branch deploy at `develop--karolina-kita.netlify.app`. Each build runs `yarn test:run && yarn build` and publishes `dist/` (see `netlify.toml`). Hashed bundles go to `/static/` (cached for a year by `public/_headers`).
+Netlify project `karolina-kita`. Production deploys from `main` (releases only); `develop` gets a branch deploy at `develop--karolina-kita.netlify.app`. Each build runs `yarn test:run && yarn build` and publishes `dist/` (see `netlify.toml`). `yarn build` ends with `yarn prerender`: an SSR build of `src/app/prerender.entry.tsx` and `scripts/prerender.ts`, which writes static HTML per page (`about.html` + `about/index.html`), `404.html` and `llms.txt`. A new view needs its path in `VIEW_PATHS`, a description in `seo.content.ts` and a line in `public/sitemap.xml`; tests check all three. Hashed bundles go to `/static/` (cached for a year by `public/_headers`).

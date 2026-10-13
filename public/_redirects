@@ -1,3 +1,3 @@
-# Netlify: every page is a client-side route (src/shared/lib/routes.ts), so unknown
-# paths load the app, which shows Work and normalises the URL.
-/*    /index.html    200
+# Netlify. Every page is prerendered to its own HTML file (scripts/prerender.ts), so no
+# catch-all rewrite: unknown paths get dist/404.html with a real 404 status.
+/work    /    301
