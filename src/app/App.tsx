@@ -194,8 +194,10 @@ export function App({ assetBase = "/assets", portraitSrc = assetBase + "/site/po
         </div>
 
         <main id="main" ref={mainRef} tabIndex={-1} className="flex-1 pb-3xl focus:outline-none lg:pb-4xl print:pb-0">
-          {/* No fade on the first view: it is already on screen as prerendered HTML. */}
-          <div key={route.key} className={route.key > 0 ? "motion-safe:animate-view-in" : undefined}>
+          {/* Remounts and fades in only when the view changes: a jump within the page
+              (Explore Case Studies) just scrolls. No fade on the first view: it is
+              already on screen as prerendered HTML. */}
+          <div key={route.viewKey} className={route.viewKey > 0 ? "motion-safe:animate-view-in" : undefined}>
             {view}
           </div>
         </main>

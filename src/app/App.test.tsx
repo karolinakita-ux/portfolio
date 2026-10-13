@@ -36,12 +36,15 @@ describe("App", () => {
     const figma = screen.getByRole("link", { name: /^Inspect Figma Workspace.*opens in a new tab/ });
     expect(figma).toHaveAttribute("href", expect.stringContaining("figma.com"));
     expect(figma).toHaveAttribute("target", "_blank");
-    // No source-code button until the repo is public (PROFILE.repositoryUrl is null).
-    expect(screen.queryByRole("link", { name: /View Code on GitHub/ })).not.toBeInTheDocument();
+    // No source-code links until the repo is public (PROFILE.repositoryUrl is null).
+    expect(screen.queryByRole("link", { name: /GitHub/ })).not.toBeInTheDocument();
 
+    const hero = screen.getByRole("heading", { level: 1 });
     await user.click(screen.getByRole("link", { name: "Explore Case Studies" }));
     expect(screen.getByRole("heading", { name: "Selected Work & Case Studies" })).toHaveFocus();
     expect(window.location.pathname + window.location.hash).toBe("/#enterprise-cases");
+    // A jump within the page only scrolls: the view is not re-rendered (no fade, no flicker).
+    expect(screen.getByRole("heading", { level: 1 })).toBe(hero);
 
     expect(
       within(screen.getByRole("contentinfo")).getByText(/prototyped & built with Claude AI assistance/),

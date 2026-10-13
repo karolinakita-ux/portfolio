@@ -13,7 +13,7 @@ const start = (url: string) => {
 describe("useHistoryRoute", () => {
   it("starts on the view named in the path", () => {
     const result = start("/about");
-    expect(result.current[0]).toMatchObject({ view: VIEW.about, anchor: null, key: 0, restoreY: null });
+    expect(result.current[0]).toMatchObject({ view: VIEW.about, anchor: null, key: 0, viewKey: 0, restoreY: null });
     expect(window.location.pathname).toBe("/about");
   });
 
@@ -48,18 +48,24 @@ describe("useHistoryRoute", () => {
 
     act(() => result.current[1](VIEW.contact));
 
-    expect(result.current[0]).toMatchObject({ view: VIEW.contact, key: 1, anchor: null });
+    expect(result.current[0]).toMatchObject({ view: VIEW.contact, key: 1, viewKey: 1, anchor: null });
     expect(window.location.pathname).toBe("/contact");
     expect(window.history.length).toBe(before + 1);
   });
 
-  it("re-selecting the current view goes to its anchor without adding history", () => {
+  it("re-selecting the current view goes to its anchor without adding history or remounting", () => {
     const result = start("/");
     const before = window.history.length;
 
     act(() => result.current[1](VIEW.work, "enterprise-cases", { smooth: true }));
 
-    expect(result.current[0]).toMatchObject({ view: VIEW.work, key: 1, anchor: "enterprise-cases", smooth: true });
+    expect(result.current[0]).toMatchObject({
+      view: VIEW.work,
+      key: 1,
+      viewKey: 0,
+      anchor: "enterprise-cases",
+      smooth: true,
+    });
     expect(window.location.hash).toBe("#enterprise-cases");
     expect(window.history.length).toBe(before);
   });
@@ -73,6 +79,6 @@ describe("useHistoryRoute", () => {
       window.dispatchEvent(new PopStateEvent("popstate", { state: { kbView: VIEW.caseTheming, scrollY: 640 } }));
     });
 
-    expect(result.current[0]).toMatchObject({ view: VIEW.caseTheming, restoreY: 640, key: 2 });
+    expect(result.current[0]).toMatchObject({ view: VIEW.caseTheming, restoreY: 640, key: 2, viewKey: 2 });
   });
 });
