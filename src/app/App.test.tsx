@@ -36,6 +36,8 @@ describe("App", () => {
     const figma = screen.getByRole("link", { name: /^Inspect Figma Workspace.*opens in a new tab/ });
     expect(figma).toHaveAttribute("href", expect.stringContaining("figma.com"));
     expect(figma).toHaveAttribute("target", "_blank");
+    // No source-code button until the repo is public (PROFILE.repositoryUrl is null).
+    expect(screen.queryByRole("link", { name: /View Code on GitHub/ })).not.toBeInTheDocument();
 
     await user.click(screen.getByRole("link", { name: "Explore Case Studies" }));
     expect(screen.getByRole("heading", { name: "Selected Work & Case Studies" })).toHaveFocus();

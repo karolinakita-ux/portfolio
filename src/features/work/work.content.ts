@@ -6,6 +6,7 @@ import type { Testimonial, WorkCase } from "./work.types.ts";
 export const HERO_ACTIONS = {
   cases: "Explore Case Studies",
   figma: "Inspect Figma Workspace",
+  source: "View Code on GitHub",
 };
 
 export const WORK_INTRO =

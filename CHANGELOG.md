@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.3.0 - 2026-10-13
+
+#### Added
+
+- A "View Code on GitHub" button next to the Figma workspace on the Work page. It stays hidden until the repository is public: set `PROFILE.repositoryUrl` to switch it on.
+
 ### 3.2.0 - 2026-10-13
 
 #### Changed

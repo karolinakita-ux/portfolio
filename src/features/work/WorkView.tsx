@@ -5,7 +5,16 @@ import { hrefForView, SECTION, VIEW, type Navigate } from "#shared/lib/routes.ts
 import { cn, FOCUS_RING } from "#shared/lib/ui.utils.ts";
 import { CaseThumbnail } from "#shared/media/images.tsx";
 import { Button } from "#shared/ui/Button.tsx";
-import { ArrowDown, ArrowRight, ArrowUpRight, ExternalLink, Figma, Linkedin, Quote } from "#shared/ui/icons.tsx";
+import {
+  ArrowDown,
+  ArrowRight,
+  ArrowUpRight,
+  ExternalLink,
+  Figma,
+  Github,
+  Linkedin,
+  Quote,
+} from "#shared/ui/icons.tsx";
 import { Container, Eyebrow, Section } from "#shared/ui/layout.tsx";
 import { ViewLink } from "#shared/ui/navigation.tsx";
 import { Callout } from "#shared/ui/text.tsx";
@@ -63,6 +72,20 @@ function HeroSection({ onNavigate }: { onNavigate: Navigate }) {
               {HERO_ACTIONS.figma}
               <span className="sr-only"> (opens in a new tab)</span>
             </Button>
+            {PROFILE.repositoryUrl ? (
+              <Button
+                as="a"
+                href={PROFILE.repositoryUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="secondary"
+                iconLeft={Github}
+                iconRight={ArrowUpRight}
+              >
+                {HERO_ACTIONS.source}
+                <span className="sr-only"> (opens in a new tab)</span>
+              </Button>
+            ) : null}
           </div>
         </div>
       </Container>
