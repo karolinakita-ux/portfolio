@@ -6,6 +6,23 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.3.1 - 2026-10-13
+
+#### Added
+
+- `LICENSE`: all rights reserved. The code, copy, images and design can be viewed and linked, not reused without Karolina's written permission. `THIRD-PARTY-NOTICES.md` keeps the Lucide (ISC) and Feather (MIT) notices for the icons.
+- Claude Code setup in `.claude/`: the `/release` and `ship-change` skills and two review agents (`a11y-reviewer`, `copy-reviewer`).
+- `docs/architecture.md` (layers, routing, prerendering, images, adding a page) and `docs/claude-code.md` (how the site is built with Claude Code).
+
+#### Changed
+
+- README rewritten for visitors: what the project shows, how to run it, where things live, how to edit content.
+- `package.json` marks the project as `UNLICENSED` (not open source).
+
+#### Removed
+
+- The unused `lucide-react` package: the icons are drawn locally.
+
 ### 3.3.0 - 2026-10-13
 
 #### Added

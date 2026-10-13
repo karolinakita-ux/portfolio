@@ -22,8 +22,10 @@ a11y-report
 Thumbs.db
 desktop.ini
 
-# Claude Code local files (settings, worktrees, agents)
+# Claude Code: personal settings and worktrees stay local; shared skills and agents are tracked.
 .claude/*
+!.claude/agents/
+!.claude/skills/
 CLAUDE.local.md
 *.local.md
 .mcp.json

@@ -56,17 +56,13 @@ Vertical slices: `app` → `features` → `shared`, never the other way.
 - Every commit: `yarn verify`, bump `version` in `package.json` (semver rules in `CONTRIBUTING.md`), add a `###` entry under `## Unreleased` in `CHANGELOG.md`, all in the same commit. Put the version in the subject: `... (1.2.0)`.
 - Stage files by name, only the ones you changed. Never `git add -A` or `git commit -a`: the user often has unfinished edits in the tree. Check `git status` before committing and leave anything you did not write unstaged.
 
-### When the user asks for a release
+### Skills and agents (`.claude/`)
 
-Follow "Releases" in `CONTRIBUTING.md` step by step:
+- `/release` (`.claude/skills/release/`): the release, only when the user asks for one. Compare against `origin/main`, not local `main`.
+- `ship-change` (`.claude/skills/ship-change/`): the commit routine above, step by step.
+- Agents: `a11y-reviewer` (runs `yarn a11y`, reviews WCAG 2.1 AA) and `copy-reviewer` (Karolina's copy rules). Both only report.
 
-1. On `develop`: pull, `yarn verify`, and show the user `git log --oneline main..develop` plus the `## Unreleased` entries. Stop and ask if verify fails, if a commit has no changelog entry, or if `main` has commits that are not on `develop`.
-2. Write the release notes (rules in `CONTRIBUTING.md`) and rename `## Unreleased` to `## Release vX.Y.Z - YYYY-MM-DD`. No version bump for the release itself.
-3. Commit `CHANGELOG.md` only as `Release vX.Y.Z`, merge `develop` into `main` with `--no-ff`, tag `vX.Y.Z`, push `main` with tags, then fast-forward `develop` to `main` and push it.
-4. Use the Netlify MCP (project `karolina-kita`) to check that the production deploy of the release commit is ready. If it failed, read the deploy log and report.
-5. Reply with the version, the release notes as written, and the deploy result.
-
-Uncommitted user edits stay out of the release. If `git switch` refuses because of them, stop and ask; do not stash or discard them.
+Uncommitted user edits stay out of commits and releases. If `git switch` refuses because of them, stop and ask; do not stash or discard them.
 
 ## Deploy
 

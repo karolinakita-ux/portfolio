@@ -3,12 +3,10 @@ import { createElement, type ComponentType, type SVGProps } from "react";
 import { cn } from "#shared/lib/ui.utils.ts";
 
 /**
- * Icons - Lucide geometry with the lucide-react prop API
- * (size, strokeWidth, color, className). Drawn locally so the bundle carries
- * only the icons the site uses. To switch to the package later:
- *   yarn add lucide-react
- *   import { Sun, Moon, … } from "lucide-react";
- * (LinkedIn and Figma are brand icons that newer lucide-react releases may no longer ship.)
+ * Icons - Lucide geometry (ISC; some icons from Feather, MIT: see THIRD-PARTY-NOTICES.md)
+ * with the lucide-react prop API (size, strokeWidth, color, className). Drawn locally so
+ * the bundle carries only the icons the site uses. LinkedIn, Figma and GitHub are brand
+ * marks of their owners, which newer lucide-react releases no longer ship.
  */
 export interface IconProps extends Omit<SVGProps<SVGSVGElement>, "ref"> {
   size?: number | string;
