@@ -264,17 +264,19 @@ function BannerLink({ href, icon: Icon, children }: { href: string; icon: IconCo
 function ProcessBanner() {
   return (
     <Callout tone="info" label="How this portfolio was built" title={PROCESS_BANNER.title}>
-      <p>{PROCESS_BANNER.body}</p>
-      {/* Rhythm: body → 12px → links (same at every width); they wrap on narrow screens */}
-      <div className="flex flex-wrap gap-x-lg gap-y-xs">
-        <BannerLink href={PROFILE.figmaWorkspaceUrl} icon={Figma}>
-          {PROCESS_BANNER.linkLabel}
-        </BannerLink>
-        {PROFILE.repositoryUrl ? (
-          <BannerLink href={PROFILE.repositoryUrl} icon={Github}>
-            {PROCESS_BANNER.sourceLinkLabel}
+      {/* Rhythm: title → 12px → body → 16px → links (same at every width); links wrap on narrow screens */}
+      <div className="flex flex-col gap-md">
+        <p>{PROCESS_BANNER.body}</p>
+        <div className="flex flex-wrap gap-x-lg gap-y-xs">
+          <BannerLink href={PROFILE.figmaWorkspaceUrl} icon={Figma}>
+            {PROCESS_BANNER.linkLabel}
           </BannerLink>
-        ) : null}
+          {PROFILE.repositoryUrl ? (
+            <BannerLink href={PROFILE.repositoryUrl} icon={Github}>
+              {PROCESS_BANNER.sourceLinkLabel}
+            </BannerLink>
+          ) : null}
+        </div>
       </div>
     </Callout>
   );
