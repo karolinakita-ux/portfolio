@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { writeClipboard } from "#shared/lib/clipboard.utils.ts";
+import { urlWithAnchor } from "#shared/lib/routes.ts";
 import { cn, FOCUS_RING, isPlainLeftClick, prefersReducedMotion } from "#shared/lib/ui.utils.ts";
 
 import { Check, Link } from "./icons.tsx";
@@ -40,12 +41,12 @@ export function HeadingAnchor({ id, headingId, label }: HeadingAnchorProps) {
         onClick={(event) => {
           if (!isPlainLeftClick(event)) return;
           event.preventDefault();
-          const { origin, pathname, search } = window.location;
-          window.history.replaceState(window.history.state, "", pathname + search + hash);
+          const url = urlWithAnchor(window.location, id);
+          window.history.replaceState(window.history.state, "", url);
           document
             .getElementById(headingId)
             ?.scrollIntoView({ block: "start", behavior: prefersReducedMotion() ? "auto" : "smooth" });
-          void writeClipboard(origin + pathname + search + hash)?.then(
+          void writeClipboard(window.location.origin + url)?.then(
             () => setCopied(true),
             () => undefined, // blocked clipboard: the link and the address bar still carry the URL
           );

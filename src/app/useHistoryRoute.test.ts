@@ -1,7 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { VIEW } from "#shared/lib/routes.ts";
+import { setHashRouting, VIEW } from "#shared/lib/routes.ts";
 
 import { useHistoryRoute } from "./useHistoryRoute.ts";
 
@@ -80,5 +80,21 @@ describe("useHistoryRoute", () => {
     });
 
     expect(result.current[0]).toMatchObject({ view: VIEW.caseTheming, restoreY: 640, key: 2, viewKey: 2 });
+  });
+
+  it("with hash routing, keeps the page's path and moves between views in the hash", () => {
+    setHashRouting(true);
+    try {
+      const result = start("/artifact-page.html#/about");
+      expect(result.current[0]).toMatchObject({ view: VIEW.about });
+
+      act(() => result.current[1](VIEW.caseProjectPlanning));
+      expect(window.location.pathname + window.location.hash).toBe("/artifact-page.html#/work/project-planning");
+
+      act(() => result.current[1](VIEW.work, "enterprise-cases"));
+      expect(window.location.pathname + window.location.hash).toBe("/artifact-page.html#/#enterprise-cases");
+    } finally {
+      setHashRouting(false);
+    }
   });
 });

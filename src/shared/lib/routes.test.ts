@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import {
   hrefForView,
@@ -6,7 +6,11 @@ import {
   navSectionFor,
   readRoute,
   resolveView,
+  SECTION,
+  setHashRouting,
   titleForView,
+  urlForView,
+  urlWithAnchor,
   VIEW,
   VIEW_PATHS,
   viewForPath,
@@ -112,6 +116,43 @@ describe("hrefForView", () => {
     expect(hrefForView(VIEW.work)).toBe("/");
     expect(hrefForView(VIEW.caseTheming)).toBe("/work/data-governance");
     expect(hrefForView(VIEW.work, "enterprise-cases")).toBe("/#enterprise-cases");
+  });
+});
+
+describe("address-bar URLs", () => {
+  it("use the view's path, keep the query string and swap the section anchor", () => {
+    expect(urlForView(VIEW.about, "career", { pathname: "/", search: "?ref=cv" })).toBe("/about?ref=cv#career");
+    expect(urlWithAnchor({ pathname: "/about", search: "", hash: "#faq" }, "career")).toBe("/about#career");
+    expect(urlWithAnchor({ pathname: "/about", search: "", hash: "#faq" }, null)).toBe("/about");
+  });
+});
+
+describe("hash routing (one-page builds, e.g. the claude.ai artifact)", () => {
+  const page = "/artifact-page.html";
+  beforeEach(() => {
+    setHashRouting(true);
+  });
+  afterEach(() => {
+    setHashRouting(false);
+  });
+
+  it("links views and sections inside the hash", () => {
+    expect(hrefForView(VIEW.about)).toBe("#/about");
+    expect(hrefForView(VIEW.work, SECTION.workCases)).toBe("#/#enterprise-cases");
+  });
+
+  it("reads the view and the section from the hash, whatever the page's own path", () => {
+    expect(readRoute({ pathname: page, hash: "" })).toEqual({ view: VIEW.work, anchor: null });
+    expect(readRoute({ pathname: page, hash: "#/work/project-planning" })).toEqual({ view: VIEW.caseProjectPlanning, anchor: null });
+    expect(readRoute({ pathname: page, hash: "#/about#career" })).toEqual({ view: VIEW.about, anchor: "career" });
+    expect(readRoute({ pathname: page, hash: "#about" })).toEqual({ view: VIEW.about, anchor: null }); // old view hash
+  });
+
+  it("keeps the page's own path and query string in addresses", () => {
+    const here = { pathname: page, search: "?ref=cv", hash: "#/about#faq" };
+    expect(urlForView(VIEW.cv, null, here)).toBe(page + "?ref=cv#/cv");
+    expect(urlWithAnchor(here, "career")).toBe(page + "?ref=cv#/about#career");
+    expect(urlWithAnchor(here, null)).toBe(page + "?ref=cv#/about");
   });
 });
 
