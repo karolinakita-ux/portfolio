@@ -6,6 +6,16 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.5.3 - 2026-10-14
+
+#### Changed
+
+- Motion has design tokens: `motion/duration/fast`, `medium` and `slow` (150, 240 and 300ms) and `motion/easing/standard` in Figma, exported to `kita-branding.tokens.json` and declared once in `tokens.css` (they are the same in both modes). The KitaBranding design system on claude.ai has them too.
+- Every transition and animation uses them through `duration-fast|medium|slow` and `ease-standard`; Tailwind's own easings are switched off. A new test (`motion-tokens.test.ts`) fails on a raw duration, delay or easing, and `tokens.test.ts` checks the motion tokens against Figma in both modes.
+- Small visible change: four transitions that took 200ms (FAQ chevron and answer, header shadow, back to top) now take 240ms, and eight transitions without an easing use the standard easing instead of Tailwind's default.
+- Tailwind reads class names from `src/` only, without test files, so utilities quoted in tests and docs no longer end up in the site's CSS.
+- `CLAUDE.md` and `docs/design.md` describe the motion tokens and where they are mirrored.
+
 ### 3.5.2 - 2026-10-13
 
 #### Fixed

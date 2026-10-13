@@ -103,7 +103,7 @@ export function BackToTop({ onActivate }: { onActivate: () => void }) {
       className={cn(
         "fixed right-md bottom-md z-20 inline-flex size-2xl items-center justify-center rounded-full md:right-lg md:bottom-lg",
         "border border-border-subtle bg-bg-surface-raised text-text-primary shadow-lg",
-        "transition-[opacity,transform,background-color] duration-200 ease-out hover:bg-bg-surface-default",
+        "transition-[opacity,transform,background-color] duration-medium ease-standard hover:bg-bg-surface-default",
         visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-xs opacity-0",
         FOCUS_RING,
       )}

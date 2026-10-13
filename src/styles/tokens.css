@@ -14,7 +14,19 @@
 
    Elevation tokens are named --elevation-* so they do not collide with
    Tailwind's own --shadow-* theme variables (shadow-sm → --elevation-sm).
+
+   Motion tokens (motion/duration/*, motion/easing/* in Figma) are the same in
+   both modes, so they are declared once. Figma stores durations as numbers of
+   milliseconds (motionDurationFast: 150 → --motion-duration-fast: 150ms).
    ========================================================================== */
+
+/* Motion: the same in light and dark */
+:root {
+  --motion-duration-fast: 150ms; /* hover and colour changes, small icon nudges */
+  --motion-duration-medium: 240ms; /* enter, leave, travel: view fade, nav pill, theme cross-fade, accordion */
+  --motion-duration-slow: 300ms; /* image fade-in, image hover zoom */
+  --motion-easing-standard: cubic-bezier(0.2, 0, 0, 1); /* every transition and animation: quick start, soft landing */
+}
 
 :root,
 .kb-theme-light {

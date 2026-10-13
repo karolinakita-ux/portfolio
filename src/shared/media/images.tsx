@@ -57,7 +57,7 @@ export function CaseThumbnail({ src, alt, interactive = false }: { src: string; 
     <div
       className={cn(
         "relative aspect-thumb w-full max-w-full overflow-hidden rounded-sm border border-border-subtle bg-bg-surface-default",
-        interactive && "transition-colors duration-150 group-hover/thumb:border-border-interactive-hover",
+        interactive && "transition-colors duration-fast group-hover/thumb:border-border-interactive-hover",
       )}
     >
       {status !== "loaded" && <ThumbnailScaffold failed={status === "error"} />}
@@ -71,7 +71,7 @@ export function CaseThumbnail({ src, alt, interactive = false }: { src: string; 
           onLoad={() => setStatus("loaded")}
           onError={() => setStatus("error")}
           className={cn(
-            "absolute inset-0 h-full w-full object-contain p-xs transition-[opacity,scale] duration-300 ease-out",
+            "absolute inset-0 h-full w-full object-contain p-xs transition-[opacity,scale] duration-slow ease-standard",
             status === "loaded" ? "opacity-100" : "opacity-0",
             interactive && "motion-safe:group-hover/thumb:scale-[1.02]",
           )}
@@ -122,7 +122,7 @@ export function Screenshot({ src, fallbackSrc, alt, onExpand }: ScreenshotProps)
       onLoad={() => setStatus("loaded")}
       onError={handleError}
       className={cn(
-        "block h-auto w-full transition-transform duration-300 ease-out",
+        "block h-auto w-full transition-transform duration-slow ease-standard",
         onExpand && "motion-safe:group-hover/zoom:scale-[1.02]",
       )}
     />

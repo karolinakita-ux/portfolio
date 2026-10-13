@@ -30,7 +30,8 @@ Vertical slices: `app` → `features` → `shared`, never the other way.
 - Style only with token utilities: `bg-bg-canvas`, `text-text-secondary`, `border-border-subtle`, spacing `p-md` / `gap-lg` (3xs 2px … 4xl 96px), radius `rounded-sm|md|lg|xl|full`, shadows `shadow-sm…xl`, type `text-display-*`, `text-headline-*`, `text-title-*`, `text-label-*`, `text-body-*`.
 - `app.css` resets Tailwind's default colours, radii, shadows and font sizes, so `bg-gray-100` or `text-lg` do not exist. Never add hex values or arbitrary values where a token exists.
 - Dark mode swaps CSS variables via `.dark` on `<html>`. Do not use `dark:` variants.
-- New token: add it in Figma, re-export `kita-branding.tokens.json`, then add the variable to `tokens.css` (both modes) and the mapping in `app.css`.
+- Motion: `duration-fast|medium|slow` (150 / 240 / 300ms) and `ease-standard`, from the `--motion-*` tokens. Never `duration-150`, `ease-out` or a raw ms value (`src/styles/motion-tokens.test.ts`). Motion stays calm: nothing moves on the first screen at load, nothing loops past 5 s, and `prefers-reduced-motion` makes every change instant (the CSS rule in `app.css`; animations started from JS check `prefersReducedMotion()`).
+- New token: add it in Figma, re-export `kita-branding.tokens.json`, then add the variable to `tokens.css` (both modes; motion tokens once, they have no mode) and the mapping in `app.css`. Mirror it in the KitaBranding design system on claude.ai.
 - WCAG 2.1 AA minimum: keyboard focus (`FOCUS_RING`), labelled controls, semantic headings and landmarks.
 
 ## Copy rules (Karolina's, enforced by `src/app/content-rules.test.ts`)
