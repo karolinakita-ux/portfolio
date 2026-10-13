@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.5.0 - 2026-10-13
+
+#### Added
+
+- The code is public: "View Code on GitHub" in the Work page hero and "Explore the Code on GitHub" in the Behind the Design banner open the repository at github.com/karolinakita-ux/portfolio.
+
 ### 3.4.1 - 2026-10-13
 
 #### Changed
