@@ -4,7 +4,16 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v3.5.0 - 2026-10-13
+
+- The code behind the site is now public on GitHub, linked from the Work page next to the Figma workspace.
+- Every page has its own address, such as /about or /work/project-planning, and old links still open the right page.
+- Every section heading has a link icon that copies a link to that section, and the address bar follows the section you are reading.
+- Pages load faster and show up better in search results, link previews and AI assistants: images are about three times smaller, and every page arrives ready to read.
+- Screenshots in the automotive case study no longer show client names.
+- "Explore Case Studies" now scrolls smoothly to the case studies, without a flicker.
+
+Versions: 2.0.2 - 3.5.0.
 
 ### 3.5.0 - 2026-10-13
 
