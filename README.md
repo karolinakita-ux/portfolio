@@ -1,68 +1,80 @@
-# K.Kita Portfolio - karolina.kita.company
+# Karolina Kita - portfolio
 
-Karolina Kita's portfolio: React 19, TypeScript, Tailwind CSS v4 (KitaBranding design tokens), Vite, Vitest. Deployed on Netlify from the `main` branch (releases only; work happens on `develop`).
+Source of **[karolina.kita.company](https://karolina.kita.company)**, the portfolio of Karolina Kita, Senior Product Designer. Three case studies (an automotive B2B marketplace, the Project Planning planning platform and a white-label theme generator), an About page, a printable CV and contact details.
 
-## Setup (Windows 11)
+Designed by Karolina in Figma and built with [Claude Code](docs/claude-code.md): React 19, TypeScript (strict), Tailwind CSS v4 with her KitaBranding design tokens, Vite, Vitest. Deployed on Netlify.
 
-```powershell
-fnm use            # Node version from .node-version
-yarn               # install
-yarn dev           # http://localhost:5173
+## What is inside
+
+- **Design tokens from Figma.** Every colour, space, radius, shadow and type style is a token exported from the Figma file; a test fails when the CSS drifts from the export. Light and dark mode swap the same variables. [Design source](docs/design.md)
+- **Vertical slices.** Each page is a feature folder with its own view, copy, types and tests; ESLint enforces the boundaries between `app`, `features` and `shared`. [Architecture](docs/architecture.md)
+- **Real pages, prerendered.** Every page has its own URL (`/work/project-planning`) and is written to static HTML at build time, so search engines, link previews and AI assistants read the full content without JavaScript. Per-page titles, descriptions, structured data, a sitemap and [`/llms.txt`](https://karolina.kita.company/llms.txt).
+- **Section links.** Each section heading has a link that copies its address (`/about#career`); the address bar follows the section you are reading.
+- **Accessible by design.** WCAG 2.1 AA is the minimum: keyboard focus, labelled controls, landmarks, reduced motion. `yarn a11y` audits every page in real Chromium (axe, an emulated screen reader, Tab order, reflow at 320 px).
+- **Image viewer.** Screenshots open full size with zoom, swipe and arrow keys; WebP images and background preloading keep it fast.
+- **Quality gate.** `yarn verify` runs the typecheck, ESLint with zero warnings, a Prettier check, 270+ tests and the full build before every commit.
+
+## Getting started
+
+Needs Node (version in `.node-version`, for example through [fnm](https://github.com/Schniz/fnm)) and Yarn 1.
+
+```sh
+fnm use        # Node version from .node-version
+yarn           # install
+yarn dev       # http://localhost:5173
 ```
-
-Copy Karolina's images into `public/assets/` once (case-study screenshots, thumbnails, `avatar-cutout.png`, `og-image.png`). Without them the site still works and shows placeholder frames.
 
 ## Scripts
 
-| Command        | What it does                                                     |
-| -------------- | ---------------------------------------------------------------- |
-| `yarn dev`     | Dev server with hot reload                                       |
-| `yarn verify`  | Typecheck + lint + tests + production build (run before pushing) |
-| `yarn test`    | Vitest watch mode (`yarn test:run` for a single run)             |
-| `yarn build`   | Typecheck and build to `dist/`                                   |
-| `yarn preview` | Serve the production build locally                               |
-| `yarn format`  | Prettier (sorts Tailwind classes too)                            |
+| Command        | What it does                                                                      |
+| -------------- | --------------------------------------------------------------------------------- |
+| `yarn dev`     | Dev server with hot reload                                                        |
+| `yarn verify`  | Typecheck, lint (zero warnings), format check, tests, build and prerender         |
+| `yarn test`    | Vitest in watch mode (`yarn test:run` for a single run)                           |
+| `yarn build`   | Typecheck, build to `dist/`, then prerender every page (`yarn prerender`)         |
+| `yarn preview` | Serve the production build locally                                                |
+| `yarn lint`    | ESLint, zero warnings allowed                                                     |
+| `yarn format`  | Prettier: formats files, sorts imports and Tailwind classes (`yarn format:check`) |
+| `yarn a11y`    | Accessibility audit in real Chromium; report in `a11y-report/`                    |
 
 ## Where things live
 
 ```
-index.html                     <head>: title, description, link-preview tags, theme script
-public/                        copied as-is: favicon.svg, _headers, assets/ (images)
-src/content/                   all copy (typed in types.ts) - most edits happen here
-src/views/                     the pages: Work, About, Contact, case studies, CV
-src/components/                ui/, layout/, media/, case/, icons.tsx
-src/hooks/                     theme, history routing, image loading, scroll position
-src/lib/                       routes, class helpers, dates, A4 page-fit maths
-src/styles/tokens.css          KitaBranding tokens (light / dark)
-src/styles/app.css             Tailwind theme mapped to the tokens
-src/styles/kita-branding.tokens.json   Figma Variables export (tests keep tokens.css in sync)
+index.html                     <head>: site-wide meta, structured data, theme script
+public/                        copied as-is: robots.txt, sitemap.xml, _headers, _redirects, assets/
+public/assets/site/            portrait and link-preview image
+public/assets/cases/<case>/    case-study screenshots and thumbnail (WebP)
+src/app/                       shell: App, routing, section hash, SEO, prerender entry, copy tests
+src/features/<name>/           one slice per page: view, components, copy (*.content.ts), types, tests
+src/shared/                    ui/, layout/, media/, hooks/, lib/ (routes), content/ (profile)
+src/styles/                    tokens.css (light/dark), app.css (Tailwind theme), Figma export
+scripts/                       prerender.ts (static HTML per page), a11y-audit.ts
+docs/                          architecture, design source, working with Claude Code
+.claude/                       Claude Code skills (/release, ship-change) and review agents
 ```
 
-## Tests
+## Editing content
 
-- `src/content/content.test.ts` - copy rules (hyphens, bold lead-ins, no trailing period on H1s), navigation links, image file names.
-- `src/styles/tokens.test.ts` - every CSS token matches the Figma export, in both modes.
-- `src/lib/*.test.ts`, `src/hooks/*.test.ts` - routing, dates, theme, history.
-- `src/App.test.tsx`, `src/components/**` - navigation, theme toggle, image viewer, copy-email, buttons.
+Most edits are copy changes in `src/features/*/*.content.ts` (case studies in `src/features/case-studies/`). The writing rules (plain English, short hyphens, bold lead-ins on case-study bullets, an ATS-safe CV) are checked by `src/app/content-rules.test.ts`.
 
-## Close-up images on case-study cards
-
-Screenshots are small on the cards. Each card accepts an optional close-up:
+To add a screenshot to a case study, put a WebP file in `public/assets/cases/<case>/` and reference it by its path under `/assets`:
 
 ```ts
 {
   id: "roadmap",
-  asset: "project-planning-08-roadmap-gantt-goals-decomposition.png",          // full screen, opens in the viewer
-  detail: "project-planning-08-roadmap-gantt-goals-decomposition--detail.png", // close-up shown on the card
+  asset: "cases/project-planning/08-roadmap-gantt-goals-decomposition.webp",          // full screen, opens in the viewer
+  detail: "cases/project-planning/08-roadmap-gantt-goals-decomposition--detail.webp", // optional close-up shown on the card
 }
 ```
 
-If the close-up file is missing, the card shows the full screenshot.
+Images are cached for a week, so a changed image gets a new file name.
 
-## Deploy
+## Deploy and releases
 
-Day-to-day work goes to `develop`; `main` is the live site and changes only in a release. Branches, versions, changelog and the release steps: [CONTRIBUTING.md](CONTRIBUTING.md).
+Work happens on `develop`; `main` is the live site and changes only in a release. Every commit bumps the version and adds a `CHANGELOG.md` entry. Branches, versions and the release steps: [CONTRIBUTING.md](CONTRIBUTING.md). Netlify builds with `yarn test:run && yarn build` and publishes `dist/`; a failing test blocks the deploy.
 
-Netlify is linked to this repository: every push to `main` runs `yarn test:run && yarn build` and publishes `dist/`. A failing test blocks the deploy. `develop` and pull requests get preview URLs.
+Link previews are cached by apps: check LinkedIn at https://www.linkedin.com/post-inspector after changing the link-preview image.
 
-Link previews are cached by apps: check LinkedIn at https://www.linkedin.com/post-inspector after changing `og-image.png`.
+## Licence
+
+All rights reserved: the code, copy, images and design are published to be viewed, not reused. See [LICENSE](LICENSE); third-party icon notices are in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).

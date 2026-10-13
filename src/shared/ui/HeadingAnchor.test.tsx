@@ -1,0 +1,67 @@
+import { fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+import { HeadingAnchor } from "./HeadingAnchor.tsx";
+
+function stubClipboard(writeText: (text: string) => Promise<void>) {
+  Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
+}
+
+afterEach(() => {
+  Reflect.deleteProperty(navigator, "clipboard");
+});
+
+const renderAnchor = () =>
+  render(
+    <div className="group">
+      <h2 id="career-title" tabIndex={-1}>
+        Career Progression
+      </h2>
+      <HeadingAnchor id="career" headingId="career-title" label="Career Progression" />
+    </div>,
+  );
+
+describe("HeadingAnchor", () => {
+  it("is a real link to the section, named after its heading, outside the heading", () => {
+    renderAnchor();
+    const link = screen.getByRole("link", { name: "Copy link to section: Career Progression" });
+    expect(link).toHaveAttribute("href", "#career");
+    // The heading's accessible name stays the heading text alone.
+    expect(screen.getByRole("heading", { level: 2 })).toHaveAccessibleName("Career Progression");
+  });
+
+  it("copies the full URL, puts the hash in the address bar and announces it", async () => {
+    window.history.replaceState(null, "", "/about?ref=cv");
+    const writeText = vi.fn((_text: string) => Promise.resolve());
+    stubClipboard(writeText);
+    renderAnchor();
+
+    fireEvent.click(screen.getByRole("link", { name: /Copy link to section/ }));
+
+    expect(writeText).toHaveBeenCalledWith(window.location.origin + "/about?ref=cv#career");
+    expect(window.location.pathname + window.location.search + window.location.hash).toBe("/about?ref=cv#career");
+    expect(await screen.findByRole("status")).toHaveTextContent("Link copied");
+  });
+
+  it("still updates the address bar when the clipboard is blocked", () => {
+    window.history.replaceState(null, "", "/about");
+    stubClipboard(() => Promise.reject(new Error("denied")));
+    renderAnchor();
+
+    fireEvent.click(screen.getByRole("link", { name: /Copy link to section/ }));
+
+    expect(window.location.hash).toBe("#career");
+    expect(screen.getByRole("status")).toHaveTextContent("");
+  });
+
+  it("leaves modified clicks (new tab) to the browser", () => {
+    window.history.replaceState(null, "", "/about");
+    const writeText = vi.fn((_text: string) => Promise.resolve());
+    stubClipboard(writeText);
+    renderAnchor();
+
+    fireEvent.click(screen.getByRole("link", { name: /Copy link to section/ }), { ctrlKey: true });
+
+    expect(writeText).not.toHaveBeenCalled();
+  });
+});

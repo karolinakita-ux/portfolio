@@ -4,6 +4,142 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Release v3.5.0 - 2026-10-13
+
+- The code behind the site is now public on GitHub, linked from the Work page next to the Figma workspace.
+- Every page has its own address, such as /about or /work/project-planning, and old links still open the right page.
+- Every section heading has a link icon that copies a link to that section, and the address bar follows the section you are reading.
+- Pages load faster and show up better in search results, link previews and AI assistants: images are about three times smaller, and every page arrives ready to read.
+- Screenshots in the automotive case study no longer show client names.
+- "Explore Case Studies" now scrolls smoothly to the case studies, without a flicker.
+
+Versions: 2.0.2 - 3.5.0.
+
+### 3.5.0 - 2026-10-13
+
+#### Added
+
+- The code is public: "View Code on GitHub" in the Work page hero and "Explore the Code on GitHub" in the Behind the Design banner open the repository at github.com/karolinakita-ux/portfolio.
+
+### 3.4.1 - 2026-10-13
+
+#### Changed
+
+- "Behind the Design" banner: more space between the text and its links (16px instead of 12px).
+
+### 3.4.0 - 2026-10-13
+
+#### Added
+
+- The "Behind the Design" banner on the Work page links the code on GitHub next to the Figma workspace, both with their brand icon. Like the hero button, the GitHub link shows once the repository is public.
+
+#### Fixed
+
+- "Explore Case Studies" no longer makes the page flicker: a jump within the same page now only scrolls smoothly to the section, without re-rendering and fading in the whole page.
+
+### 3.3.1 - 2026-10-13
+
+#### Added
+
+- `LICENSE`: all rights reserved. The code, copy, images and design can be viewed and linked, not reused without Karolina's written permission. `THIRD-PARTY-NOTICES.md` keeps the Lucide (ISC) and Feather (MIT) notices for the icons.
+- Claude Code setup in `.claude/`: the `/release` and `ship-change` skills and two review agents (`a11y-reviewer`, `copy-reviewer`).
+- `docs/architecture.md` (layers, routing, prerendering, images, adding a page) and `docs/claude-code.md` (how the site is built with Claude Code).
+
+#### Changed
+
+- README rewritten for visitors: what the project shows, how to run it, where things live, how to edit content.
+- `package.json` marks the project as `UNLICENSED` (not open source).
+
+#### Removed
+
+- The unused `lucide-react` package: the icons are drawn locally.
+
+### 3.3.0 - 2026-10-13
+
+#### Added
+
+- A "View Code on GitHub" button next to the Figma workspace on the Work page. It stays hidden until the repository is public: set `PROFILE.repositoryUrl` to switch it on.
+
+### 3.2.0 - 2026-10-13
+
+#### Changed
+
+- Images are sorted into folders: `/assets/site/` and `/assets/cases/<case>/`, with shorter names (`cases/automotive/thumbnail.webp`).
+- Screenshots are WebP instead of PNG: 3.7 MB of images instead of 11.7 MB, at the same size in pixels and with sharp text. The link-preview image stays PNG.
+- Fonts (Inter, Zilla Slab) are served from the site itself instead of Google Fonts: one less connection before text appears, and no visitor data goes to Google.
+- Browsers keep images for a week; the About portrait loads first.
+
+#### Removed
+
+- Four images no page used (two dark link-preview variants, a light one, and an early Project Planning palette screenshot).
+
+### 3.1.0 - 2026-10-13
+
+#### Added
+
+- Every page is prerendered to its own HTML file at build time (`scripts/prerender.ts`), so search engines, link previews, recruiting tools and AI assistants read the full content without running JavaScript. The app then takes over as before.
+- Each page has its own title, description, canonical address, link-preview tags and structured data: a profile page for Work, About and CV, and each case study as Karolina's creative work, with breadcrumbs.
+- `/llms.txt`: a short, plain-text map of the site for AI assistants, built from the site's own copy.
+- `robots.txt` names the main AI crawlers and assistants as welcome.
+
+#### Changed
+
+- Unknown addresses return a real 404 status (the page shows Work) instead of the Work page with status 200; `/work` redirects to `/`.
+- The first page no longer fades in, because it is already on screen as HTML.
+- The "needs JavaScript" fallback note is gone: the content is there without it.
+
+### 3.0.0 - 2026-10-13
+
+#### Changed
+
+- Every page has its own address: `/about`, `/contact`, `/cv`, `/work/data-governance`, `/work/project-planning` and `/work/automotive` instead of `/#about` and similar. Old links keep working: they open the right page and the address bar shows the new address.
+- The sitemap lists all seven pages, so search engines can index each one.
+- View ids, page paths and section anchors live in one place (`VIEW`, `VIEW_PATHS`, `SECTION` in `src/shared/lib/routes.ts`) instead of repeated strings.
+
+#### Added
+
+- Every section heading has a link icon (on hover, keyboard focus, and always on touch screens). Clicking it copies a link to that section, such as `/about#career`, and announces "Link copied".
+- While you scroll, the address bar follows the section you are reading, so copying the address shares that spot. A link with a section opens the page at that section.
+
+### 2.0.4 - 2026-10-13
+
+#### Changed
+
+- Stricter, current lint setup: typescript-eslint strict and stylistic type-checked rules, `@eslint-react`, `jsx-a11y`, Vitest, Testing Library and jest-dom rules, and import boundaries between app, features and shared code. `yarn verify` now fails on any lint warning and on unformatted files.
+- Prettier sorts imports by layer; `.editorconfig` sets the same basics for every editor.
+- React 19 context syntax (`<Context value>`), keys on the CV's inline links, the logo links to `/`, and clearer test helpers.
+- `package.json` names Karolina as the author and the site as the homepage.
+
+### 2.0.3 - 2026-10-13
+
+#### Changed
+
+- Code is organised in vertical slices: `src/app/` (shell and routing), `src/features/<name>/` (work, about, contact, cv, case-studies, image-viewer: each with its view, copy, types and tests) and `src/shared/` (ui, layout, media, hooks, lib). The app imports a feature only through its `index.ts`.
+- Imports use subpath aliases from `package.json`: `#app/*`, `#features/*`, `#shared/*`, `#test/*`.
+- Files are named by role: `*.content.ts` for copy, `*.types.ts`, `*.constants.ts`, `*.context.ts`, `*.utils.ts`. The one shared types file is split per feature.
+- No visible change on the site.
+
+### 2.0.2 - 2026-10-13
+
+#### Added
+
+- `docs/design.md`: the Figma design source and how its variables become the site's tokens.
+
+#### Changed
+
+- `.gitignore` keeps private and local files out of the repo before it goes public: Claude Code local files, notes, private docs (`docs/_*`), documents such as CVs and cover letters, design sources, archives, test output and key files. ESLint skips the same local folders.
+- README describes the project for visitors and links the design doc; the stale image setup step is gone.
+- The release rule in CONTRIBUTING names Karolina only.
+
+#### Removed
+
+- Six unused automotive screenshots from `public/assets/` that showed client names or internal project material. No page used them, but the live site still served them by URL until the next release.
+- A personal detail from the 2.0.0 changelog entry, and cover letter mentions left in code comments.
+
+#### Fixed
+
+- The phone number test uses a made-up number.
+
 ## Release v2.0.1 - 2026-10-12
 
 - Two new buttons under the Work page intro lead to the case studies and to Karolina's Figma workspace.
