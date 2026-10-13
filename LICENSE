@@ -1,0 +1,48 @@
+Copyright (c) 2026 Karolina Kita. All rights reserved.
+
+This repository holds the source code, text, images, design and design tokens of the
+website karolina.kita.company (together, "the Work"). The Work is published so that
+people can see how the portfolio is made. It is not open source, and no licence to
+use it is granted.
+
+WHAT YOU MAY DO
+
+- View the Work on GitHub and on karolina.kita.company, and link to it.
+- Search engines and AI assistants may index the website and quote short parts of it
+  to describe Karolina Kita's work, with a link back to the source.
+- Anything that GitHub's Terms of Service allow GitHub users to do with a public
+  repository, such as viewing it and forking it on GitHub. A fork does not grant any
+  other right.
+
+WHAT YOU MAY NOT DO WITHOUT WRITTEN PERMISSION FROM KAROLINA KITA
+
+- Copy, reproduce, modify or translate the Work or any part of it.
+- Publish, distribute, host, sublicense or sell the Work or any part of it.
+- Use any part of the Work (code, text, images, case studies, design, design tokens)
+  in another website, portfolio, product, template or training material, or present
+  it as your own.
+
+Requests for permission: karolina.kita.zg@gmail.com
+
+HOW THE WORK WAS MADE
+
+The site was designed by Karolina Kita and built with the help of Claude Code, an AI
+coding assistant from Anthropic. Under Anthropic's terms, the rights in the assistant's
+output belong to its user, and they are part of the Work covered by this notice.
+
+THIRD-PARTY MATERIAL
+
+Some parts keep their own licences, and this notice does not change them:
+
+- The icon shapes in src/shared/ui/icons.tsx come from Lucide (ISC licence) and, for
+  some icons, from Feather (MIT licence). See THIRD-PARTY-NOTICES.md.
+- Packages installed with yarn (listed in package.json) are under their own licences.
+- Company and product names, logos and screenshots of third-party products shown in the
+  case studies belong to their owners. They appear only to describe Karolina Kita's
+  work, and no right to use them is given.
+
+NO WARRANTY
+
+The Work is provided "as is", without warranty of any kind. In no event shall the
+author be liable for any claim, damages or other liability arising from the Work or
+its use.
