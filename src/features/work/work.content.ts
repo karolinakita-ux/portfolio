@@ -86,6 +86,6 @@ export const PROCESS_BANNER = {
   title: "Behind the Design",
   body: "I treat design handoff seriously. Components and flows are organized with clear states, responsive layouts, and practical documentation so developers don't have to guess how things should behave.",
   linkLabel: "Explore the Figma Workspace",
-  /** Shown once PROFILE.repositoryUrl is set (the repo is public). */
+  /** Shown while PROFILE.repositoryUrl is set. */
   sourceLinkLabel: "Explore the Code on GitHub",
 };

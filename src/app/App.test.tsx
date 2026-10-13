@@ -30,14 +30,14 @@ describe("App", () => {
     expect(within(primaryNav()).getByRole("link", { name: "Work" })).toHaveAttribute("aria-current", "page");
   });
 
-  it("offers the case studies and the Figma workspace from the hero, and credits the tools in the footer", async () => {
+  it("offers the case studies, the Figma workspace and the code from the hero, and credits the tools in the footer", async () => {
     const { user } = renderApp();
 
     const figma = screen.getByRole("link", { name: /^Inspect Figma Workspace.*opens in a new tab/ });
     expect(figma).toHaveAttribute("href", expect.stringContaining("figma.com"));
     expect(figma).toHaveAttribute("target", "_blank");
-    // No source-code links until the repo is public (PROFILE.repositoryUrl is null).
-    expect(screen.queryByRole("link", { name: /GitHub/ })).not.toBeInTheDocument();
+    const code = screen.getByRole("link", { name: /^View Code on GitHub.*opens in a new tab/ });
+    expect(code).toHaveAttribute("href", "https://github.com/karolinakita-ux/portfolio");
 
     const hero = screen.getByRole("heading", { level: 1 });
     await user.click(screen.getByRole("link", { name: "Explore Case Studies" }));
