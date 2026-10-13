@@ -4,6 +4,29 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Unreleased
+
+### 2.0.2 - 2026-10-13
+
+#### Added
+
+- `docs/design.md`: the Figma design source and how its variables become the site's tokens.
+
+#### Changed
+
+- `.gitignore` keeps private and local files out of the repo before it goes public: Claude Code local files, notes, private docs (`docs/_*`), documents such as CVs and cover letters, design sources, archives, test output and key files. ESLint skips the same local folders.
+- README describes the project for visitors and links the design doc; the stale image setup step is gone.
+- The release rule in CONTRIBUTING names Karolina only.
+
+#### Removed
+
+- Six unused automotive screenshots from `public/assets/` that showed client names or internal project material. No page used them, but the live site still served them by URL until the next release.
+- A personal detail from the 2.0.0 changelog entry, and cover letter mentions left in code comments.
+
+#### Fixed
+
+- The phone number test uses a made-up number.
+
 ## Release v2.0.1 - 2026-10-12
 
 - Two new buttons under the Work page intro lead to the case studies and to Karolina's Figma workspace.

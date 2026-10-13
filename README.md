@@ -1,6 +1,6 @@
-# K.Kita Portfolio - karolina.kita.company
+# Karolina Kita - portfolio
 
-Karolina Kita's portfolio: React 19, TypeScript, Tailwind CSS v4 (KitaBranding design tokens), Vite, Vitest. Deployed on Netlify from the `main` branch (releases only; work happens on `develop`).
+Source of [karolina.kita.company](https://karolina.kita.company), the portfolio of Karolina Kita, Senior Product Designer. Designed in Figma ([design source](docs/design.md)) and built with Claude Code: React 19, TypeScript, Tailwind CSS v4 (KitaBranding design tokens), Vite, Vitest. Deployed on Netlify from the `main` branch (releases only; work happens on `develop`).
 
 ## Setup (Windows 11)
 
@@ -9,8 +9,6 @@ fnm use            # Node version from .node-version
 yarn               # install
 yarn dev           # http://localhost:5173
 ```
-
-Copy Karolina's images into `public/assets/` once (case-study screenshots, thumbnails, `avatar-cutout.png`, `og-image.png`). Without them the site still works and shows placeholder frames.
 
 ## Scripts
 
@@ -32,10 +30,11 @@ src/content/                   all copy (typed in types.ts) - most edits happen 
 src/views/                     the pages: Work, About, Contact, case studies, CV
 src/components/                ui/, layout/, media/, case/, icons.tsx
 src/hooks/                     theme, history routing, image loading, scroll position
-src/lib/                       routes, class helpers, dates, A4 page-fit maths
+src/lib/                       routes, class helpers, dates, gallery, image preload
 src/styles/tokens.css          KitaBranding tokens (light / dark)
 src/styles/app.css             Tailwind theme mapped to the tokens
 src/styles/kita-branding.tokens.json   Figma Variables export (tests keep tokens.css in sync)
+docs/                          project docs, e.g. the design source in Figma
 ```
 
 ## Tests

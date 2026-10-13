@@ -7,7 +7,8 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 
 export default defineConfig([
-  globalIgnores(["dist", "coverage"]),
+  // Build output, reports and local-only files (see .gitignore)
+  globalIgnores(["dist", "coverage", "a11y-report", ".claude", "docs/_*", "notes", "private", "scratch", "tmp"]),
   {
     files: ["**/*.{ts,tsx}"],
     extends: [
