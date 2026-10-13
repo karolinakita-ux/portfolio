@@ -2,10 +2,12 @@ import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { act } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { mockMatchMedia } from "#test/matchMedia.ts";
+
 import { preloadImages } from "#shared/media/image-preload.ts";
-import { LightboxProvider } from "./Lightbox.tsx";
 import { useLightbox, type LightboxItem } from "#shared/media/lightbox.context.ts";
+import { mockMatchMedia } from "#test/matchMedia.ts";
+
+import { LightboxProvider } from "./Lightbox.tsx";
 
 vi.mock("#shared/media/image-preload.ts", () => ({ preloadImages: vi.fn() }));
 
@@ -60,7 +62,10 @@ describe("Lightbox loading", () => {
     image.decode = () => new Promise<void>((resolve) => (decoded = resolve));
     fireEvent.load(image);
     expect(skeleton(dialog)).toBeInTheDocument(); // loaded, not yet decoded
-    await act(async () => decoded());
+    await act(() => {
+      decoded();
+      return Promise.resolve();
+    });
     expect(skeleton(dialog)).not.toBeInTheDocument();
     expect(image).not.toHaveClass("opacity-0");
     expect(zoomIn).toHaveAttribute("aria-disabled", "false");
@@ -92,7 +97,8 @@ describe("Lightbox loading", () => {
     const { dialog } = await openViewer();
     const image = within(dialog).getByRole<HTMLImageElement>("img", { name: "Wide screen" });
     image.decode = () => Promise.reject(new Error("EncodingError"));
-    await act(async () => fireEvent.load(image));
+    fireEvent.load(image);
+    await act(() => Promise.resolve());
     expect(skeleton(dialog)).not.toBeInTheDocument();
     expect(image).not.toHaveClass("opacity-0");
   });
@@ -107,10 +113,15 @@ describe("Lightbox loading", () => {
     await user.click(within(dialog).getByRole("button", { name: "Next image" }));
     const tall = within(dialog).getByRole<HTMLImageElement>("img", { name: "Tall screen" });
     tall.decode = () => Promise.resolve();
-    await act(async () => fireEvent.load(tall));
+    fireEvent.load(tall);
+    await act(() => Promise.resolve());
     expect(tall).not.toHaveClass("opacity-0");
 
-    await act(async () => wideDecoded()); // the first image finishes decoding after the visitor moved on
+    // the first image finishes decoding after the visitor moved on
+    await act(() => {
+      wideDecoded();
+      return Promise.resolve();
+    });
     expect(tall).not.toHaveClass("opacity-0");
     expect(dialog.querySelector(".kb-lightbox-pane > [aria-hidden='true']")).not.toBeInTheDocument();
   });

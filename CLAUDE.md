@@ -5,9 +5,9 @@ Karolina Kita's portfolio (karolina.kita.company). React 19 + TypeScript (strict
 ## Commands
 
 - `yarn dev` - local server at http://localhost:5173
-- `yarn verify` - typecheck, lint, tests, production build. Run before every commit.
+- `yarn verify` - typecheck, lint (zero warnings), Prettier check, tests, production build. Run before every commit.
 - `yarn test` - Vitest in watch mode; `yarn test:run` once
-- `yarn typecheck`, `yarn lint`, `yarn format`
+- `yarn typecheck`, `yarn lint`, `yarn format` (writes), `yarn format:check`
 
 ## Layout
 
@@ -43,6 +43,7 @@ Vertical slices: `app` → `features` → `shared`, never the other way.
 
 - TypeScript strict with `noUncheckedIndexedAccess`; no `any`. Import with explicit extensions (`./App.tsx`), `import type` for types.
 - Files that export components export only components (Fast Refresh); helpers live in `*.utils.ts` (slice) or `src/shared/lib/`, contexts in `*.context.ts`.
+- ESLint: typescript-eslint `strictTypeChecked` + `stylisticTypeChecked`, `@eslint-react`, `jsx-a11y`, Vitest + Testing Library rules, and the slice boundaries (`no-restricted-imports`). Fix the code rather than disabling a rule; a needed exception is a one-line disable with a reason after `--`. Prettier sorts imports by layer.
 - React Compiler lint rules are on: no `setState` inside effects, no ref reads during render. Derive state instead (see `useImageStatus`, `useScrolledPast`).
 - Tests sit next to the code (`*.test.ts(x)`); query by role and accessible name. jsdom gaps are polyfilled in `src/test/setup.ts`.
 - Line endings are LF (`.gitattributes`). Netlify builds on Linux, so file names are case-sensitive.

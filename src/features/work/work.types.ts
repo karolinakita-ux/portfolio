@@ -6,7 +6,7 @@ export interface WorkCase {
   id: string;
   asset: string;
   alt: string;
-  eyebrow: ReadonlyArray<string>;
+  eyebrow: readonly string[];
   title: string;
   summary: string;
   cta: string;

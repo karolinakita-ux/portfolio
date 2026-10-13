@@ -1,17 +1,18 @@
 import { isValidElement, type ReactElement, type ReactNode } from "react";
 import { describe, expect, it } from "vitest";
-import { Lang, Strong } from "#shared/ui/text.tsx";
-import { formatMonthYear } from "#features/cv/dates.utils.ts";
-import { isView, VIEWS } from "#shared/lib/routes.ts";
+
 import { ABOUT_INTRO, FAQ, MILESTONES, PRINCIPLES } from "#features/about/about.content.ts";
 import { AUTOMOTIVE_CASE } from "#features/case-studies/automotive.content.ts";
+import type { CaseStudy, ShowcaseCard, ThemingCaseStudy } from "#features/case-studies/case-studies.types.ts";
 import { PROJECT_PLANNING_CASE } from "#features/case-studies/project-planning.content.tsx";
 import { THEMING_CASE } from "#features/case-studies/theming.content.tsx";
 import { CONTACT } from "#features/contact/contact.content.ts";
 import { CV } from "#features/cv/cv.content.ts";
-import { PROFILE } from "#shared/content/profile.ts";
-import type { CaseStudy, ShowcaseCard, ThemingCaseStudy } from "#features/case-studies/case-studies.types.ts";
+import { formatMonthYear } from "#features/cv/dates.utils.ts";
 import { PROCESS_BANNER, TESTIMONIALS, WORK_CASES, WORK_INTRO } from "#features/work/work.content.ts";
+import { PROFILE } from "#shared/content/profile.ts";
+import { isView, VIEWS } from "#shared/lib/routes.ts";
+import { Lang, Strong } from "#shared/ui/text.tsx";
 
 /**
  * Content rules for the portfolio copy, so they hold for every future edit:
@@ -79,7 +80,7 @@ describe.each(CASE_TABLE)("case study: %s", (_name, c) => {
     for (const bullet of bullets) {
       expect(isValidElement(bullet), "bullet must be JSX (use lead())").toBe(true);
       const children = (bullet as ReactElement<{ children?: ReactNode }>).props.children;
-      const first = Array.isArray(children) ? children[0] : children;
+      const first: ReactNode = Array.isArray(children) ? (children as ReactNode[])[0] : children;
       expect(
         isValidElement(first) && first.type === Strong,
         `first child must be <Strong>: ${collectText(bullet).join("")}`,

@@ -10,6 +10,7 @@
  *   - Optional fields (phone, location, previousTitle, details) render only when set.
  */
 import { PROFILE } from "#shared/content/profile.ts";
+
 import type { Cv } from "./cv.types.ts";
 
 export const CV: Cv = {

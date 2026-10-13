@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+
 import { cn } from "#shared/lib/ui.utils.ts";
 
 export type CalloutTone = "warning" | "info";

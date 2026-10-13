@@ -29,7 +29,7 @@ interface NetworkInformation {
 
 const savesData = () => {
   const connection = (navigator as Navigator & { connection?: NetworkInformation }).connection;
-  return Boolean(connection?.saveData) || /2g/.test(connection?.effectiveType ?? "");
+  return Boolean(connection?.saveData) || (connection?.effectiveType ?? "").includes("2g");
 };
 
 function pump() {
@@ -58,7 +58,7 @@ function whenIdleAfterLoad(run: () => void) {
   else window.addEventListener("load", idle, { once: true });
 }
 
-export function preloadImages(srcs: ReadonlyArray<string>, { urgent = false }: { urgent?: boolean } = {}) {
+export function preloadImages(srcs: readonly string[], { urgent = false }: { urgent?: boolean } = {}) {
   if (savesData()) return;
   if (urgent) {
     // Still-queued URLs move to the front; ones already loading or done are left alone.

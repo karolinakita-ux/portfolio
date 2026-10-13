@@ -1,9 +1,10 @@
 import ASSET_SIZES from "virtual:asset-sizes";
 import { describe, expect, it } from "vitest";
+
 import { AUTOMOTIVE_CASE } from "./automotive.content.ts";
+import { caseCards } from "./gallery.utils.ts";
 import { PROJECT_PLANNING_CASE } from "./project-planning.content.tsx";
 import { THEMING_CASE } from "./theming.content.tsx";
-import { caseCards } from "./gallery.utils.ts";
 
 describe("caseCards", () => {
   it("lists a case study's screenshots in page order, section by section", () => {

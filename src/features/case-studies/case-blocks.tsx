@@ -1,10 +1,14 @@
 import { useId } from "react";
-import { ArrowLeft, ArrowRight } from "#shared/ui/icons.tsx";
+
+import { hrefForView, type Navigate } from "#shared/lib/routes.ts";
+import { BULLET_LIST, cn, FOCUS_RING } from "#shared/lib/ui.utils.ts";
 import { Screenshot } from "#shared/media/images.tsx";
+import { WORK_CRUMB } from "#shared/ui/crumbs.constants.ts";
+import { ArrowLeft, ArrowRight } from "#shared/ui/icons.tsx";
 import { Container, Eyebrow, Section } from "#shared/ui/layout.tsx";
 import { Breadcrumb } from "#shared/ui/navigation.tsx";
 import { Callout } from "#shared/ui/text.tsx";
-import { WORK_CRUMB } from "#shared/ui/crumbs.constants.ts";
+
 import type {
   CaseNavTarget,
   CaseStudy,
@@ -13,8 +17,6 @@ import type {
   ShowcaseCard,
   ThemingCaseStudy,
 } from "./case-studies.types.ts";
-import { hrefForView, type Navigate } from "#shared/lib/routes.ts";
-import { BULLET_LIST, cn, FOCUS_RING } from "#shared/lib/ui.utils.ts";
 
 type AnyCase = CaseStudy | ThemingCaseStudy;
 
@@ -66,7 +68,7 @@ export function CaseSummary({ c }: { c: AnyCase }) {
  * Team cell is present). Dividers are per-cell borders so both layouts share the
  * same 1px border-subtle rules: stacked rows on mobile, columns + row on lg.
  */
-export function MetaMatrix({ entries }: { entries: ReadonlyArray<MetaEntry> }) {
+export function MetaMatrix({ entries }: { entries: readonly MetaEntry[] }) {
   return (
     <dl className="mt-xl grid rounded-md border border-border-subtle bg-bg-surface-raised shadow-sm lg:grid-cols-4">
       {entries.map((entry, index) => (
@@ -114,7 +116,7 @@ export function ShowcaseRow({ src, previewSrc, item, onExpand }: ShowcaseRowProp
         <h3 id={titleId} className="text-title-md text-balance text-text-primary">
           {item.title}
         </h3>
-        {item.intro && <p className="text-body-md text-text-secondary">{item.intro}</p>}
+        {item.intro ? <p className="text-body-md text-text-secondary">{item.intro}</p> : null}
         {/* Optional secondary titled paragraphs within one screenshot row */}
         {item.blocks?.map((block) => (
           <div key={block.title} className="flex flex-col gap-2xs pt-xs">
@@ -125,6 +127,7 @@ export function ShowcaseRow({ src, previewSrc, item, onExpand }: ShowcaseRowProp
         {item.bullets && (
           <ul className={BULLET_LIST}>
             {item.bullets.map((bullet, index) => (
+              // eslint-disable-next-line @eslint-react/no-array-index-key -- static content in fixed order
               <li key={index}>{bullet}</li>
             ))}
           </ul>
@@ -140,7 +143,7 @@ export function ShowcaseRow({ src, previewSrc, item, onExpand }: ShowcaseRowProp
  *   Section H2 → optional lead (Body Large) → items:
  *   Title Medium, semibold, own line → Body Large description; 24px between items.
  */
-export function DetailList({ items }: { items: ReadonlyArray<DetailItem> }) {
+export function DetailList({ items }: { items: readonly DetailItem[] }) {
   return (
     <ul className="flex list-none flex-col gap-lg">
       {items.map((item) => (
@@ -165,7 +168,7 @@ export function DetailList({ items }: { items: ReadonlyArray<DetailItem> }) {
  * flat editorial LAYOUT RULE above (no cards, boxes or borders), laid out as a
  * grid: 1 column on mobile, 3 from md. 24px extra space separates it from the cards.
  */
-export function KeyOutcomes({ items, labelId }: { items: ReadonlyArray<DetailItem>; labelId: string }) {
+export function KeyOutcomes({ items, labelId }: { items: readonly DetailItem[]; labelId: string }) {
   return (
     <div className="flex flex-col gap-md pt-lg">
       <h3 id={labelId} className="text-title-lg text-text-primary">

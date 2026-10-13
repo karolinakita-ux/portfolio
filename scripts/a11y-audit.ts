@@ -17,6 +17,7 @@ import { AxeBuilder } from "@axe-core/playwright";
 import type { Virtual } from "@guidepup/virtual-screen-reader";
 import { chromium, type Browser, type Page } from "playwright";
 import { createServer } from "vite";
+
 import { VIEWS, type View } from "#shared/lib/routes.ts";
 
 declare global {
@@ -149,7 +150,7 @@ async function tabOrder(page: Page): Promise<TabStop[]> {
       const outline = style.outlineStyle !== "none" && parseFloat(style.outlineWidth) > 0;
       const shadow = style.boxShadow !== "none" && style.boxShadow !== "";
       const rect = el.getBoundingClientRect();
-      const name = (el.getAttribute("aria-label") ?? el.textContent ?? "").replace(/\s+/g, " ").trim();
+      const name = (el.getAttribute("aria-label") ?? el.textContent).replace(/\s+/g, " ").trim();
       return {
         index,
         tag: el.tagName.toLowerCase(),

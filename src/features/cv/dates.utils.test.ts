@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import { formatMonthYear } from "./dates.utils.ts";
 
 describe("formatMonthYear", () => {

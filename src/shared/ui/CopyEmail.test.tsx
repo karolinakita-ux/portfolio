@@ -1,5 +1,6 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+
 import { CopyEmail } from "./CopyEmail.tsx";
 
 const EMAIL = "karolina.kita.zg@gmail.com";
@@ -57,7 +58,7 @@ describe("CopyEmail", () => {
       act(() => button.focus());
       fireEvent.click(button);
       expect(screen.getByRole("status")).toHaveTextContent("Selected - press Ctrl+C or Command+C");
-      expect(screen.getByRole("status").textContent).not.toContain("⌘");
+      expect(screen.getByRole("status")).not.toHaveTextContent(/⌘/);
 
       act(() => vi.advanceTimersByTime(10_000));
       expect(screen.getByRole("status")).toHaveTextContent(/Selected/);
@@ -75,7 +76,7 @@ describe("CopyEmail", () => {
       stubClipboard(() => Promise.resolve());
       render(<CopyEmail email={EMAIL} />);
       fireEvent.click(screen.getByRole("button", { name: "Copy email address" }));
-      await act(async () => {}); // let the clipboard promise settle
+      await act(() => Promise.resolve()); // let the clipboard promise settle
       expect(screen.getByRole("status")).toHaveTextContent("Copied to clipboard!");
       act(() => vi.advanceTimersByTime(2100));
       expect(screen.getByRole("status")).toHaveTextContent("");

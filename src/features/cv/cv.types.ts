@@ -30,7 +30,7 @@ export interface CvRole {
   location?: string;
   start: string;
   end: string | null;
-  bullets: ReadonlyArray<LeadBullet>;
+  bullets: readonly LeadBullet[];
 }
 
 export interface CvDegree {
@@ -45,7 +45,7 @@ export interface CvDegree {
 export interface Cv {
   header: CvHeader;
   summary: string;
-  competencies: ReadonlyArray<{ group: string; items: ReadonlyArray<string> }>;
-  experience: ReadonlyArray<CvRole>;
-  education: ReadonlyArray<CvDegree>;
+  competencies: ReadonlyArray<{ group: string; items: readonly string[] }>;
+  experience: readonly CvRole[];
+  education: readonly CvDegree[];
 }

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+
 import type { View } from "#shared/lib/routes.ts";
 import type { CalloutTone } from "#shared/ui/text.tsx";
 
@@ -36,7 +37,7 @@ export interface ShowcaseCard {
   intro?: ReactNode;
   blocks?: ReadonlyArray<{ title: string; body: string }>;
   /** Every bullet opens with a bold lead-in term (see shared/ui/lead.tsx). */
-  bullets?: ReadonlyArray<ReactNode>;
+  bullets?: readonly ReactNode[];
 }
 
 export interface DetailItem {
@@ -57,13 +58,13 @@ interface CaseBase {
   /** Prefix for section ids. */
   id: string;
   shortTitle: string;
-  eyebrow: ReadonlyArray<string>;
+  eyebrow: readonly string[];
   /** H1. No trailing period. */
   title: string;
-  meta: ReadonlyArray<MetaEntry>;
+  meta: readonly MetaEntry[];
   notice?: Notice;
   summaryTitle: string;
-  summary: ReadonlyArray<string>;
+  summary: readonly string[];
   prev?: CaseNavTarget;
   next?: CaseNavTarget;
 }
@@ -71,17 +72,17 @@ interface CaseBase {
 export interface CaseSection {
   id: string;
   title: string;
-  intro?: string | ReadonlyArray<string>;
-  cards: ReadonlyArray<ShowcaseCard>;
-  highlights?: ReadonlyArray<DetailItem>;
+  intro?: string | readonly string[];
+  cards: readonly ShowcaseCard[];
+  highlights?: readonly DetailItem[];
 }
 
 /** Shared layout: Project Planning, Automotive. */
 export interface CaseStudy extends CaseBase {
-  sections: ReadonlyArray<CaseSection>;
+  sections: readonly CaseSection[];
   outcomesTitle?: string;
   outcomesIntro?: string;
-  outcomes?: ReadonlyArray<DetailItem>;
+  outcomes?: readonly DetailItem[];
   reflections?: {
     title: string;
     intro?: string;
@@ -92,14 +93,14 @@ export interface CaseStudy extends CaseBase {
 /** Data Governance theming case: its own section structure. */
 export interface ThemingCaseStudy extends CaseBase {
   assumption: string;
-  reality: ReadonlyArray<ReactNode>;
+  reality: readonly ReactNode[];
   solutionIntro: string;
-  solution: ReadonlyArray<ShowcaseCard>;
+  solution: readonly ShowcaseCard[];
   safetyIntro: string;
-  safety: ReadonlyArray<ShowcaseCard>;
+  safety: readonly ShowcaseCard[];
   deliveryIntro: string;
-  delivery: ReadonlyArray<DetailItem>;
+  delivery: readonly DetailItem[];
   engineeringIntro: string;
-  engineering: ReadonlyArray<DetailItem>;
-  takeaways: ReadonlyArray<DetailItem>;
+  engineering: readonly DetailItem[];
+  takeaways: readonly DetailItem[];
 }

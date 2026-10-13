@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { ArrowUp, Linkedin, Mail } from "#shared/ui/icons.tsx";
-import { Container } from "#shared/ui/layout.tsx";
-import { ViewLink } from "#shared/ui/navigation.tsx";
-import { CopyEmail } from "#shared/ui/CopyEmail.tsx";
+
 import { PROFILE } from "#shared/content/profile.ts";
 import { useScrolledPast } from "#shared/hooks/useScrolledPast.ts";
 import { NAV_ITEMS, type Navigate } from "#shared/lib/routes.ts";
 import { cn, FOCUS_RING } from "#shared/lib/ui.utils.ts";
+import { CopyEmail } from "#shared/ui/CopyEmail.tsx";
+import { ArrowUp, Linkedin, Mail } from "#shared/ui/icons.tsx";
+import { Container } from "#shared/ui/layout.tsx";
+import { ViewLink } from "#shared/ui/navigation.tsx";
 
 /** Read once per page load (rendering stays pure). */
 const CURRENT_YEAR = new Date().getFullYear();

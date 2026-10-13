@@ -12,7 +12,7 @@ export const WORK_INTRO =
 /** Link under the quotes: they are excerpts, the full texts are on LinkedIn. */
 export const RECOMMENDATIONS_LINK_LABEL = "Read the full recommendations on LinkedIn";
 
-export const TESTIMONIALS: ReadonlyArray<Testimonial> = [
+export const TESTIMONIALS: readonly Testimonial[] = [
   {
     id: "stewart-wilson",
     quote:
@@ -35,7 +35,7 @@ export const TESTIMONIALS: ReadonlyArray<Testimonial> = [
   },
 ];
 
-const CASES: ReadonlyArray<WorkCase> = [
+const CASES: readonly WorkCase[] = [
   {
     id: "theming-system",
     asset: "thumb-case-theming-system.png",
@@ -74,9 +74,9 @@ const CASES: ReadonlyArray<WorkCase> = [
 /** Work page order: most recent and highest-impact first. */
 const WORK_CASE_ORDER = ["automotive-discovery", "project-planning", "theming-system"] as const;
 
-export const WORK_CASES: ReadonlyArray<WorkCase> = WORK_CASE_ORDER.map((id) =>
-  CASES.find((item) => item.id === id),
-).filter((item): item is WorkCase => item !== undefined);
+export const WORK_CASES: readonly WorkCase[] = WORK_CASE_ORDER.map((id) => CASES.find((item) => item.id === id)).filter(
+  (item): item is WorkCase => item !== undefined,
+);
 
 /** Work page banner below the case-study grid. */
 export const PROCESS_BANNER = {

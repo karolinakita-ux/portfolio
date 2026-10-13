@@ -1,4 +1,5 @@
 import { createElement, type ComponentType, type SVGProps } from "react";
+
 import { cn } from "#shared/lib/ui.utils.ts";
 
 /**
@@ -38,6 +39,7 @@ function createIcon(name: string, nodes: readonly IconNode[]): IconComponent {
       className={cn("lucide", "lucide-" + name, className)}
       {...props}
     >
+      {/* eslint-disable-next-line @eslint-react/no-array-index-key -- fixed SVG path list */}
       {nodes.map(([tag, attrs], index) => createElement(tag, { key: index, ...attrs }))}
     </svg>
   );

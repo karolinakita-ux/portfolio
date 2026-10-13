@@ -7,8 +7,9 @@ import type { ReactNode } from "react";
  */
 
 /** Typed " | " separators between parts, so extracted text stays readable. Falsy parts are skipped. */
-export function Joined({ parts }: { parts: ReadonlyArray<ReactNode> }) {
+export function Joined({ parts }: { parts: readonly ReactNode[] }) {
   return parts.filter(Boolean).map((part, index) => (
+    // eslint-disable-next-line @eslint-react/no-array-index-key -- positional parts, never reordered
     <span key={index}>
       {index > 0 && " | "}
       {part}

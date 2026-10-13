@@ -1,10 +1,11 @@
 import { useEffect, useRef } from "react";
-import { Moon, Sun } from "#shared/ui/icons.tsx";
-import { ViewLink } from "#shared/ui/navigation.tsx";
-import type { Theme } from "#shared/hooks/useTheme.ts";
+
 import { useScrolledPast } from "#shared/hooks/useScrolledPast.ts";
+import type { Theme } from "#shared/hooks/useTheme.ts";
 import { NAV_ITEMS, navSectionFor, type Navigate, type View } from "#shared/lib/routes.ts";
 import { cn, FOCUS_RING } from "#shared/lib/ui.utils.ts";
+import { Moon, Sun } from "#shared/ui/icons.tsx";
+import { ViewLink } from "#shared/ui/navigation.tsx";
 
 /** K.KITA wordmark. Letters take textPrimary, the dot takes bgAccentBrand. */
 function Logo() {
@@ -135,7 +136,7 @@ export function SiteHeader({ activeView, onNavigate, onHome, theme, onThemeChang
       {/* Phones: flex-wrap puts the nav on its own row below. From md: a 3-column grid keeps the nav centred. */}
       <div className="mx-auto flex w-full max-w-header flex-wrap items-center justify-between gap-x-md gap-y-2xs md:grid md:grid-cols-header">
         <a
-          href="#"
+          href="/"
           onClick={(event) => {
             event.preventDefault();
             onHome();

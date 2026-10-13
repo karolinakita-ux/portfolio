@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo } from "react";
 import ASSET_SIZES from "virtual:asset-sizes";
-import type { ShowcaseCard } from "./case-studies.types.ts";
+
 import { preloadImages } from "#shared/media/image-preload.ts";
 import { useLightbox, type LightboxItem } from "#shared/media/lightbox.context.ts";
+
+import type { ShowcaseCard } from "./case-studies.types.ts";
 
 export interface GalleryRow {
   card: ShowcaseCard;
@@ -20,10 +22,7 @@ export interface GalleryRow {
  * Returns one row per card, in the same order as `cards`. Once the page is
  * idle, the full screenshots load in the background, so the viewer opens at once.
  */
-export function useCaseGallery(
-  cards: ReadonlyArray<ShowcaseCard>,
-  resolveAsset: (name: string) => string,
-): GalleryRow[] {
+export function useCaseGallery(cards: readonly ShowcaseCard[], resolveAsset: (name: string) => string): GalleryRow[] {
   const openImage = useLightbox();
 
   const gallery = useMemo(

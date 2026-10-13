@@ -13,13 +13,14 @@ import {
   type SyntheticEvent,
   type TouchEvent,
 } from "react";
-import { useImageStatus } from "#shared/media/useImageStatus.ts";
-import { preloadImages } from "#shared/media/image-preload.ts";
+
 import { cn, FOCUS_RING } from "#shared/lib/ui.utils.ts";
-import { ChevronLeft, ChevronRight, ImageOff, X, ZoomIn, ZoomOut } from "#shared/ui/icons.tsx";
-import { IconButton } from "#shared/ui/Button.tsx";
+import { preloadImages } from "#shared/media/image-preload.ts";
 import { ThumbnailScaffold } from "#shared/media/images.tsx";
 import { LightboxContext, type LightboxItem, type OpenLightbox } from "#shared/media/lightbox.context.ts";
+import { useImageStatus } from "#shared/media/useImageStatus.ts";
+import { IconButton } from "#shared/ui/Button.tsx";
+import { ChevronLeft, ChevronRight, ImageOff, X, ZoomIn, ZoomOut } from "#shared/ui/icons.tsx";
 
 /**
  * Full-size image viewer for case-study screenshots.
@@ -82,7 +83,7 @@ const scrollToCenter = (pane: HTMLElement, center: ScrollCenter) => {
 };
 
 interface LightboxState {
-  items: ReadonlyArray<LightboxItem>;
+  items: readonly LightboxItem[];
   index: number;
   /** Last move: 1 next, -1 previous, 0 just opened. Picks the image's entry animation. */
   direction: 1 | -1 | 0;
@@ -124,10 +125,10 @@ export function LightboxProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <LightboxContext.Provider value={open}>
+    <LightboxContext value={open}>
       {children}
       <LightboxDialog state={state} onClosed={handleClosed} onStep={step} />
-    </LightboxContext.Provider>
+    </LightboxContext>
   );
 }
 
@@ -332,6 +333,8 @@ function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
   };
 
   return (
+    // A native modal <dialog>: backdrop clicks land on the element itself, keys apply to the whole viewer.
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
     <dialog
       ref={dialogRef}
       aria-labelledby={titleId}

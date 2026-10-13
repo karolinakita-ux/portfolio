@@ -1,8 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import { ArrowRight } from "./icons.tsx";
+
 import { Button, IconButton } from "./Button.tsx";
+import { ArrowRight } from "./icons.tsx";
 
 describe("Button", () => {
   it("renders a type=button by default, so it never submits a form", () => {

@@ -1,4 +1,7 @@
 import "@testing-library/jest-dom/vitest";
+
+// Vitest runs without globals, so Testing Library cannot register its own afterEach cleanup.
+// eslint-disable-next-line testing-library/no-manual-cleanup
 import { cleanup } from "@testing-library/react";
 import { afterEach } from "vitest";
 
@@ -7,7 +10,7 @@ import { afterEach } from "vitest";
  */
 
 // No layout engine: scrolling is a no-op.
-window.scrollTo = (() => {}) as typeof window.scrollTo;
+window.scrollTo = () => {};
 Element.prototype.scrollIntoView = () => {};
 
 // <dialog>: showModal / close with the `close` event the app listens for.

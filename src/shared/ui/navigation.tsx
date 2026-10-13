@@ -1,7 +1,9 @@
 import type { AnchorHTMLAttributes, ReactNode } from "react";
-import { ChevronRight, type IconComponent } from "./icons.tsx";
+
 import { hrefForView, type Navigate, type View } from "#shared/lib/routes.ts";
 import { cn, FOCUS_RING, isPlainLeftClick } from "#shared/lib/ui.utils.ts";
+
+import { ChevronRight, type IconComponent } from "./icons.tsx";
 
 interface ViewLinkProps extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href" | "onClick"> {
   view: View;
@@ -38,7 +40,7 @@ export interface BreadcrumbItem {
   icon?: IconComponent;
 }
 
-export function Breadcrumb({ items, onNavigate }: { items: ReadonlyArray<BreadcrumbItem>; onNavigate: Navigate }) {
+export function Breadcrumb({ items, onNavigate }: { items: readonly BreadcrumbItem[]; onNavigate: Navigate }) {
   return (
     <nav aria-label="Breadcrumb">
       <ol className="flex flex-wrap items-center gap-2xs text-body-sm text-text-secondary">

@@ -1,11 +1,13 @@
 import { useMemo } from "react";
-import { CaseIntro, CaseNav, CaseSummary, DetailList, KeyOutcomes, ShowcaseRow } from "./case-blocks.tsx";
-import { useCaseGallery, type GalleryRow } from "./useCaseGallery.ts";
-import { Section } from "#shared/ui/layout.tsx";
-import type { CaseStudy, ThemingCaseStudy } from "./case-studies.types.ts";
-import { caseCards } from "./gallery.utils.ts";
+
 import type { Navigate } from "#shared/lib/routes.ts";
 import { BULLET_LIST } from "#shared/lib/ui.utils.ts";
+import { Section } from "#shared/ui/layout.tsx";
+
+import { CaseIntro, CaseNav, CaseSummary, DetailList, KeyOutcomes, ShowcaseRow } from "./case-blocks.tsx";
+import type { CaseStudy, ThemingCaseStudy } from "./case-studies.types.ts";
+import { caseCards } from "./gallery.utils.ts";
+import { useCaseGallery, type GalleryRow } from "./useCaseGallery.ts";
 
 interface CaseViewProps<C> {
   c: C;
@@ -13,7 +15,7 @@ interface CaseViewProps<C> {
   onNavigate: Navigate;
 }
 
-function ShowcaseRows({ rows }: { rows: ReadonlyArray<GalleryRow> }) {
+function ShowcaseRows({ rows }: { rows: readonly GalleryRow[] }) {
   return rows.map((row) => (
     <li key={row.card.id}>
       <ShowcaseRow item={row.card} src={row.src} previewSrc={row.previewSrc} onExpand={row.onExpand} />
@@ -100,6 +102,7 @@ export function CaseThemingView({ c, resolveAsset, onNavigate }: CaseViewProps<T
             <h3 className="text-title-md text-text-primary">The Reality</h3>
             <ul className={BULLET_LIST}>
               {c.reality.map((point, index) => (
+                // eslint-disable-next-line @eslint-react/no-array-index-key -- static content in fixed order
                 <li key={index}>{point}</li>
               ))}
             </ul>

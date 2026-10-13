@@ -6,6 +6,15 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 2.0.4 - 2026-10-13
+
+#### Changed
+
+- Stricter, current lint setup: typescript-eslint strict and stylistic type-checked rules, `@eslint-react`, `jsx-a11y`, Vitest, Testing Library and jest-dom rules, and import boundaries between app, features and shared code. `yarn verify` now fails on any lint warning and on unformatted files.
+- Prettier sorts imports by layer; `.editorconfig` sets the same basics for every editor.
+- React 19 context syntax (`<Context value>`), keys on the CV's inline links, the logo links to `/`, and clearer test helpers.
+- `package.json` names Karolina as the author and the site as the homepage.
+
 ### 2.0.3 - 2026-10-13
 
 #### Changed

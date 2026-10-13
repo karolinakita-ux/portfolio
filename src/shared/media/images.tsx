@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { ImageOff, Maximize2 } from "#shared/ui/icons.tsx";
-import { useImageStatus } from "./useImageStatus.ts";
+
 import { cn, FOCUS_RING } from "#shared/lib/ui.utils.ts";
+import { ImageOff, Maximize2 } from "#shared/ui/icons.tsx";
+
+import { useImageStatus } from "./useImageStatus.ts";
 
 /** Geometric wireframe shown while a thumbnail loads, or if it fails. */
 export function ThumbnailScaffold({ failed = false }: { failed?: boolean }) {

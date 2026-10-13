@@ -8,7 +8,7 @@ export interface Milestone {
   focus: string;
   /** Optional reflection quote. */
   lesson?: string;
-  tags: ReadonlyArray<string>;
+  tags: readonly string[];
 }
 
 export interface Principle {

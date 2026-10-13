@@ -14,8 +14,8 @@ export interface LightboxItem {
  *   const openImage = useLightbox();
  *   openImage(items, index, triggerElement);
  */
-export type OpenLightbox = (items: ReadonlyArray<LightboxItem>, index: number, trigger?: HTMLElement | null) => void;
+export type OpenLightbox = (items: readonly LightboxItem[], index: number, trigger?: HTMLElement | null) => void;
 
-export const LightboxContext = createContext<OpenLightbox>(() => {});
+export const LightboxContext = createContext<OpenLightbox>(() => undefined);
 
 export const useLightbox = (): OpenLightbox => useContext(LightboxContext);

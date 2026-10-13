@@ -8,7 +8,7 @@ const parseIso = (iso: string) => {
   return { year: Number(year), month: month ? Number(month) : null, day: day ? Number(day) : null };
 };
 
-const monthName = (names: ReadonlyArray<string>, month: number, iso: string) => {
+const monthName = (names: readonly string[], month: number, iso: string) => {
   const name = names[month - 1];
   if (!name) throw new Error(`Invalid month in ISO date: "${iso}"`);
   return name;
