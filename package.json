@@ -1,10 +1,14 @@
 {
-  "name": "kkita-portfolio",
+  "name": "portfolio",
   "private": true,
-  "version": "3.5.0",
+  "version": "3.5.1",
   "description": "Karolina Kita - Senior Product Designer portfolio (karolina.kita.company)",
   "author": "Karolina Kita",
   "homepage": "https://karolina.kita.company",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/karolinakita-ux/portfolio.git"
+  },
   "license": "UNLICENSED",
   "type": "module",
   "imports": {
