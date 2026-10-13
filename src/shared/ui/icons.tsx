@@ -116,6 +116,10 @@ export const ImageOff = createIcon("image-off", [
   ["path", { d: "M3.59 3.59A1.99 1.99 0 0 0 3 5v14a2 2 0 0 0 2 2h14c.55 0 1.052-.22 1.41-.59" }],
   ["path", { d: "M21 15V5a2 2 0 0 0-2-2H9" }],
 ]);
+export const Link = createIcon("link", [
+  ["path", { d: "M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" }],
+  ["path", { d: "M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" }],
+]);
 export const Linkedin = createIcon("linkedin", [
   ["path", { d: "M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" }],
   ["rect", { width: 4, height: 12, x: 2, y: 9 }],

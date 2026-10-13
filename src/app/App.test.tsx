@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
@@ -12,8 +12,8 @@ import { App } from "./App.tsx";
 
 vi.mock("#shared/media/image-preload.ts", () => ({ preloadImages: vi.fn() }));
 
-const renderApp = (hash = "") => {
-  window.history.replaceState(null, "", "/" + hash);
+const renderApp = (url = "/") => {
+  window.history.replaceState(null, "", url);
   const user = userEvent.setup();
   render(<App />);
   return { user };
@@ -39,7 +39,7 @@ describe("App", () => {
 
     await user.click(screen.getByRole("link", { name: "Explore Case Studies" }));
     expect(screen.getByRole("heading", { name: "Selected Work & Case Studies" })).toHaveFocus();
-    expect(window.location.hash).toBe("");
+    expect(window.location.pathname + window.location.hash).toBe("/#enterprise-cases");
 
     expect(
       within(screen.getByRole("contentinfo")).getByText(/prototyped & built with Claude AI assistance/),
@@ -81,13 +81,24 @@ describe("App", () => {
   });
 
   it.each([
-    ["#about", "Designing clarity for complex software"],
-    ["#contact", "Let’s connect"],
-    ["#cv", "Karolina Kita"],
-    ["#case-theming", "Multi-Tenant Theme Customizer"],
-  ])("deep-links %s", (hash, heading) => {
-    renderApp(hash);
+    ["/about", "Designing clarity for complex software"],
+    ["/contact", "Let’s connect"],
+    ["/cv", "Karolina Kita"],
+    ["/work/data-governance", "Multi-Tenant Theme Customizer"],
+    ["/#about", "Designing clarity for complex software"], // old hash link (before 3.0.0)
+  ])("deep-links %s", (url, heading) => {
+    renderApp(url);
     expect(h1()).toHaveTextContent(heading);
+  });
+
+  it("lands on a section from a deep link and gives each section a copyable link", async () => {
+    renderApp("/about#career");
+    const heading = screen.getByRole("heading", { level: 2, name: "Career Progression" });
+    await waitFor(() => expect(heading).toHaveFocus());
+    expect(screen.getByRole("link", { name: "Copy link to section: Career Progression" })).toHaveAttribute(
+      "href",
+      "#career",
+    );
   });
 
   it("navigates with the primary nav and updates URL, title and active pill", async () => {
@@ -96,7 +107,7 @@ describe("App", () => {
     await user.click(within(primaryNav()).getByRole("link", { name: "About" }));
 
     expect(h1()).toHaveTextContent("Designing clarity for complex software");
-    expect(window.location.hash).toBe("#about");
+    expect(window.location.pathname).toBe("/about");
     expect(document.title).toBe("About - Karolina Kita");
     expect(within(primaryNav()).getByRole("link", { name: "About" })).toHaveAttribute("aria-current", "page");
   });
@@ -113,12 +124,13 @@ describe("App", () => {
     const thumbnail = screen.getByRole("img", { name: /^Three Edit Theme panels/ });
     expect(thumbnail.closest("a")).toBeNull();
     // Only the CTA reaches the theming case from the keyboard / accessibility tree.
-    expect(screen.getAllByRole("link").filter((link) => link.getAttribute("href") === "#case-theming")).toHaveLength(1);
+    const themingPath = "/work/data-governance";
+    expect(screen.getAllByRole("link").filter((link) => link.getAttribute("href") === themingPath)).toHaveLength(1);
 
-    const themingLink = [...thumbnailLinks].find((link) => link.getAttribute("href") === "#case-theming");
+    const themingLink = [...thumbnailLinks].find((link) => link.getAttribute("href") === themingPath);
     await user.click(themingLink!);
     expect(h1()).toHaveTextContent("Multi-Tenant Theme Customizer");
-    expect(window.location.hash).toBe("#case-theming");
+    expect(window.location.pathname).toBe(themingPath);
   });
 
   it("walks the case studies from the Work page", async () => {
@@ -161,7 +173,7 @@ describe("App", () => {
   });
 
   it("opens screenshots in the image viewer and browses with the arrow keys", async () => {
-    const { user } = renderApp("#case-automotive");
+    const { user } = renderApp("/work/automotive");
     const [firstScreenshot] = screen.getAllByRole("button", { name: /View full size/ });
     if (!firstScreenshot) throw new Error("no screenshots rendered");
 
@@ -179,7 +191,7 @@ describe("App", () => {
   });
 
   it("queues every case study's screenshots for background loading from any page", () => {
-    renderApp("#about");
+    renderApp("/about");
     const all = [AUTOMOTIVE_CASE, MEETESTIM_CASE, THEMING_CASE].flatMap((c) =>
       caseCards(c).map((card) => "/assets/" + card.asset),
     );
@@ -187,7 +199,7 @@ describe("App", () => {
   });
 
   it("expands FAQ answers on the About page", async () => {
-    const { user } = renderApp("#about");
+    const { user } = renderApp("/about");
     const question = screen.getByRole("button", { name: /How does a background in psychology/ });
     expect(question).toHaveAttribute("aria-expanded", "false");
 
