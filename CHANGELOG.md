@@ -4,6 +4,15 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Unreleased
+
+### 3.5.1 - 2026-10-13
+
+#### Changed
+
+- `package.json` is named `portfolio` like the repository and links to it; `CLAUDE.md` names the public repo.
+- Docs and comments follow the latest changes: what `yarn verify` runs, where `## Unreleased` goes after a release, and that only a new view remounts (a jump within a page only scrolls).
+
 ## Release v3.5.0 - 2026-10-13
 
 - The code behind the site is now public on GitHub, linked from the Work page next to the Figma workspace.

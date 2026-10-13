@@ -58,7 +58,7 @@ const VIEW_RENDERERS: Record<View, (ctx: ViewContext) => ReactNode> = {
 };
 
 /**
- * KitaPortfolio - Senior UX Portfolio
+ * Karolina Kita's portfolio: the app shell.
  * Views and their URLs: VIEW and VIEW_PATHS in src/shared/lib/routes.ts.
  *
  * Styling: every colour, space, radius, shadow and type style resolves to a
@@ -71,6 +71,7 @@ const VIEW_RENDERERS: Record<View, (ctx: ViewContext) => ReactNode> = {
  *
  * Routing: src/app/useHistoryRoute.ts. Navigating resets scroll to the top
  * (or to a section anchor, e.g. /#enterprise-cases) and moves focus to the new view;
+ * a new view remounts and fades in, a jump within the same view only scrolls;
  * Back / Forward restore the scroll position of that entry. A deep link with a hash
  * (/about#career) lands on that section; useSectionHash keeps the hash on the
  * section in view while scrolling.
