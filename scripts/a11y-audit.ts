@@ -17,7 +17,7 @@ import { AxeBuilder } from "@axe-core/playwright";
 import type { Virtual } from "@guidepup/virtual-screen-reader";
 import { chromium, type Browser, type Page } from "playwright";
 import { createServer } from "vite";
-import { VIEWS, type View } from "../src/lib/routes.ts";
+import { VIEWS, type View } from "#shared/lib/routes.ts";
 
 declare global {
   interface Window {

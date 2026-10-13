@@ -26,11 +26,9 @@ yarn dev           # http://localhost:5173
 ```
 index.html                     <head>: title, description, link-preview tags, theme script
 public/                        copied as-is: favicon.svg, _headers, assets/ (images)
-src/content/                   all copy (typed in types.ts) - most edits happen here
-src/views/                     the pages: Work, About, Contact, case studies, CV
-src/components/                ui/, layout/, media/, case/, icons.tsx
-src/hooks/                     theme, history routing, image loading, scroll position
-src/lib/                       routes, class helpers, dates, gallery, image preload
+src/app/                       shell: App, routing, cross-feature copy tests
+src/features/<name>/           one slice per page: view, components, copy (*.content.ts), types, tests
+src/shared/                    ui/, layout/, media/, hooks/, lib/, content/ - used by several slices
 src/styles/tokens.css          KitaBranding tokens (light / dark)
 src/styles/app.css             Tailwind theme mapped to the tokens
 src/styles/kita-branding.tokens.json   Figma Variables export (tests keep tokens.css in sync)
@@ -39,10 +37,9 @@ docs/                          project docs, e.g. the design source in Figma
 
 ## Tests
 
-- `src/content/content.test.ts` - copy rules (hyphens, bold lead-ins, no trailing period on H1s), navigation links, image file names.
+- `src/app/content-rules.test.ts` - copy rules (hyphens, bold lead-ins, no trailing period on H1s), navigation links, image file names.
 - `src/styles/tokens.test.ts` - every CSS token matches the Figma export, in both modes.
-- `src/lib/*.test.ts`, `src/hooks/*.test.ts` - routing, dates, theme, history.
-- `src/App.test.tsx`, `src/components/**` - navigation, theme toggle, image viewer, copy-email, buttons.
+- `src/app/App.test.tsx` - navigation, theme toggle, history; other tests sit next to the file they cover.
 
 ## Close-up images on case-study cards
 

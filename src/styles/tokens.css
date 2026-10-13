@@ -5,7 +5,7 @@
 
    Theme: the `dark` class sits on <html>. An inline script in index.html sets
    it before the first paint (stored choice, else the system setting), and
-   src/hooks/useTheme.js keeps it in sync afterwards.
+   src/shared/hooks/useTheme.ts keeps it in sync afterwards.
 
    Scopes:
    - .kb-theme-light re-declares the light values on a subtree, so a document
