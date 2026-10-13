@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
-import { readRoute, VIEW, VIEW_PATHS, type Navigate, type View } from "#shared/lib/routes.ts";
+import { readRoute, urlForView, VIEW, type Navigate, type View } from "#shared/lib/routes.ts";
 
 /**
  * View routing backed by the browser history and real URL paths (/about, /work/meetestim).
@@ -38,8 +38,7 @@ interface HistoryState {
 const SCROLL_SAVE_DELAY = 300; // ms after scrolling stops (keeps replaceState calls rare)
 
 /** URL of a view; keeps the query string (e.g. ?ref=cv) and adds the section anchor. */
-const urlFor = (view: View, anchor: string | null): string =>
-  VIEW_PATHS[view] + window.location.search + (anchor ? "#" + anchor : "");
+const urlFor = (view: View, anchor: string | null): string => urlForView(view, anchor, window.location);
 
 const nextViewKey = (current: Route, view: View): number =>
   view === current.view ? current.viewKey : current.viewKey + 1;

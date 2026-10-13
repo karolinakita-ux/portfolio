@@ -9,7 +9,18 @@
  * swipe-back on phones) move between views. The URL hash is a section anchor
  * (/about#career); it follows the section in view while scrolling.
  * Before 3.0.0 views lived in the hash (/#about): those links still resolve.
+ *
+ * A one-page build (relative base, `vite build --base ./`, e.g. the claude.ai artifact) has
+ * no other paths to load, so there the path travels in the hash: #/about, #/about#career.
+ * src/main.tsx switches this on with setHashRouting(true).
  */
+
+let hashRouting = false;
+
+/** Path in the hash (#/about) instead of the URL path. Set once, before the app renders. */
+export const setHashRouting = (on: boolean): void => {
+  hashRouting = on;
+};
 
 /** View ids, used everywhere in code instead of string literals. */
 export const VIEW = {
@@ -97,8 +108,22 @@ const decodeHash = (hash: string): string => {
   }
 };
 
+type PathAndHash = Pick<Location, "pathname" | "hash">;
+
+/** The path and section hash a location stands for; with hash routing both come from the hash. */
+const routedLocation = ({ pathname, hash }: PathAndHash): PathAndHash => {
+  if (!hashRouting) return { pathname, hash };
+  const fragment = hash.replace(/^#/, "");
+  if (!fragment.startsWith("/")) return { pathname: "/", hash }; // empty, or an old view hash (#about)
+  const split = fragment.indexOf("#");
+  return split < 0
+    ? { pathname: fragment, hash: "" }
+    : { pathname: fragment.slice(0, split), hash: fragment.slice(split) };
+};
+
 /** Reads view and anchor from a location; an old view hash on the root (/#about) wins over the path. */
-export const readRoute = ({ pathname, hash }: Pick<Location, "pathname" | "hash">): LocationRoute => {
+export const readRoute = (location: PathAndHash): LocationRoute => {
+  const { pathname, hash } = routedLocation(location);
   const view = viewForPath(pathname);
   const fragment = decodeHash(hash);
   if (view === VIEW.work && fragment) {
@@ -108,9 +133,31 @@ export const readRoute = ({ pathname, hash }: Pick<Location, "pathname" | "hash"
   return { view, anchor: fragment || null };
 };
 
-/** Link target of a view, with an optional section anchor. */
-export const hrefForView = (view: View, anchor?: string | null): string =>
-  VIEW_PATHS[view] + (anchor ? "#" + anchor : "");
+/** Link target of a view, with an optional section anchor (#/about#career with hash routing). */
+export const hrefForView = (view: View, anchor?: string | null): string => {
+  const target = VIEW_PATHS[view] + (anchor ? "#" + anchor : "");
+  return hashRouting ? "#" + target : target;
+};
+
+/** Address-bar URL of a view on the current page; keeps the query string (e.g. ?ref=cv). */
+export const urlForView = (
+  view: View,
+  anchor: string | null,
+  { pathname, search }: Pick<Location, "pathname" | "search">,
+): string =>
+  hashRouting
+    ? pathname + search + hrefForView(view, anchor)
+    : VIEW_PATHS[view] + search + (anchor ? "#" + anchor : "");
+
+/** The current URL with its section anchor swapped (null drops it). */
+export const urlWithAnchor = (
+  location: Pick<Location, "pathname" | "search" | "hash">,
+  anchor: string | null,
+): string => {
+  const { pathname, search } = location;
+  if (!hashRouting) return pathname + search + (anchor ? "#" + anchor : "");
+  return pathname + search + "#" + routedLocation(location).pathname + (anchor ? "#" + anchor : "");
+};
 
 /** Case studies live under Work, so the Work pill stays active there. */
 export const navSectionFor = (view: View): View => (view.startsWith("case-") ? VIEW.work : view);

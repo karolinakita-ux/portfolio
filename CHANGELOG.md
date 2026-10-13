@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.5.2 - 2026-10-13
+
+#### Fixed
+
+- One-page builds with a relative base (`vite build --base ./`, used for the claude.ai artifact copy of the site) work again: there the page path travels in the hash (`#/about`, `#/about#career`), because such a build has no other paths to load. The site itself is unchanged.
+
 ### 3.5.1 - 2026-10-13
 
 #### Changed
