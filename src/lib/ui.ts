@@ -14,7 +14,7 @@ export const BULLET_LIST =
   "flex list-disc flex-col gap-xs pl-lg text-body-md text-text-secondary marker:text-text-secondary";
 
 /**
- * Inline links in printable documents (CV, cover letter): denim on screen,
+ * Inline links in printable documents (the CV): denim on screen,
  * plain dark text on paper (the URL is the visible label).
  */
 export const DOC_LINK = cn(

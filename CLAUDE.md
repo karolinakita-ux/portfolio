@@ -18,6 +18,7 @@ Karolina Kita's portfolio (karolina.kita.company). React 19 + TypeScript (strict
 - `src/styles/tokens.css` - KitaBranding tokens as CSS variables (light + dark); `app.css` maps them into Tailwind's theme.
 - `src/styles/kita-branding.tokens.json` - Figma Variables export; `tokens.test.ts` keeps `tokens.css` 1:1 with it.
 - `public/assets/` - images, referenced by file name from content (`/assets/<name>`). Lowercase kebab-case names.
+- `docs/` - public project docs (design source, Figma links). Files and folders whose name starts with `_` (`docs/_*`) are private local notes: gitignored, never commit, quote or publish them.
 
 ## Design tokens (strict)
 

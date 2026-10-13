@@ -68,8 +68,8 @@ const SITE_NAME = "Karolina Kita";
 
 /**
  * Document title per view (shown in the tab and in the history menu).
- * The CV and cover letter titles lead with the name: browsers use the title
- * as the default PDF file name.
+ * The CV title leads with the name: browsers use the title as the default
+ * PDF file name.
  */
 const VIEW_TITLES: Readonly<Record<View, string>> = {
   work: SITE_NAME + " - Senior Product Designer",
