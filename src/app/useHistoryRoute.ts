@@ -13,8 +13,9 @@ import { readRoute, VIEW, VIEW_PATHS, type Navigate, type View } from "#shared/l
  * - The first load normalises the URL: old hash links (/#about) and aliases (/resume)
  *   become their path, an unknown path becomes /, a section hash (/about#career) stays.
  *
- * route.key changes on every navigation; App uses it to remount the view and
- * to apply scroll / focus once the new view has rendered.
+ * route.key changes on every navigation; App uses it to apply scroll / focus once
+ * the view has rendered. route.viewKey changes only when the view changes; App
+ * remounts the view on it, so a jump within the page (same view, new anchor) only scrolls.
  */
 export interface Route {
   view: View;
@@ -25,6 +26,8 @@ export interface Route {
   restoreY: number | null;
   /** Increments on every navigation; 0 is the initial page load. */
   key: number;
+  /** Increments when the view changes; 0 is the first view. */
+  viewKey: number;
 }
 
 interface HistoryState {
@@ -37,6 +40,9 @@ const SCROLL_SAVE_DELAY = 300; // ms after scrolling stops (keeps replaceState c
 /** URL of a view; keeps the query string (e.g. ?ref=cv) and adds the section anchor. */
 const urlFor = (view: View, anchor: string | null): string =>
   VIEW_PATHS[view] + window.location.search + (anchor ? "#" + anchor : "");
+
+const nextViewKey = (current: Route, view: View): number =>
+  view === current.view ? current.viewKey : current.viewKey + 1;
 
 const saveScrollPosition = (view: View) => {
   try {
@@ -51,7 +57,7 @@ const saveScrollPosition = (view: View) => {
 export function useHistoryRoute(initialView: View = VIEW.work): [Route, Navigate] {
   const [route, setRoute] = useState<Route>(() => {
     const { view, anchor } = readRoute(window.location);
-    return { view: view ?? initialView, anchor, smooth: false, restoreY: null, key: 0 };
+    return { view: view ?? initialView, anchor, smooth: false, restoreY: null, key: 0, viewKey: 0 };
   });
 
   // The committed view, read by event handlers and navigate().
@@ -81,7 +87,14 @@ export function useHistoryRoute(initialView: View = VIEW.work): [Route, Navigate
       const view = readRoute(window.location).view ?? VIEW.work;
       const state = event.state as HistoryState | null;
       const restoreY = typeof state?.scrollY === "number" ? state.scrollY : 0;
-      setRoute((current) => ({ view, anchor: null, smooth: false, restoreY, key: current.key + 1 }));
+      setRoute((current) => ({
+        view,
+        anchor: null,
+        smooth: false,
+        restoreY,
+        key: current.key + 1,
+        viewKey: nextViewKey(current, view),
+      }));
     };
 
     const onScroll = () => {
@@ -117,6 +130,7 @@ export function useHistoryRoute(initialView: View = VIEW.work): [Route, Navigate
       smooth: Boolean(options.smooth),
       restoreY: null,
       key: current.key + 1,
+      viewKey: nextViewKey(current, view),
     }));
   }, []);
 

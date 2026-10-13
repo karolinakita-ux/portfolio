@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useId, type ReactNode } from "react";
 
 import { PROFILE } from "#shared/content/profile.ts";
 import { hrefForView, SECTION, VIEW, type Navigate } from "#shared/lib/routes.ts";
@@ -14,6 +14,7 @@ import {
   Github,
   Linkedin,
   Quote,
+  type IconComponent,
 } from "#shared/ui/icons.tsx";
 import { Container, Eyebrow, Section } from "#shared/ui/layout.tsx";
 import { ViewLink } from "#shared/ui/navigation.tsx";
@@ -236,30 +237,44 @@ function CaseCard({ item, resolveAsset, onNavigate }: CaseCardProps) {
   );
 }
 
+/** External text link in the banner: brand icon, label, arrow (opens in a new tab). */
+function BannerLink({ href, icon: Icon, children }: { href: string; icon: IconComponent; children: ReactNode }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={cn(
+        "group/link inline-flex items-center gap-2xs rounded-sm text-label-lg font-semibold decoration-1 underline-offset-4 hover:underline",
+        FOCUS_RING,
+      )}
+    >
+      <Icon aria-hidden="true" size={16} className="shrink-0" />
+      {children}
+      <ArrowUpRight
+        aria-hidden="true"
+        size={16}
+        className="shrink-0 transition-transform duration-150 motion-safe:group-hover/link:translate-x-3xs motion-safe:group-hover/link:-translate-y-3xs"
+      />
+      <span className="sr-only"> (opens in a new tab)</span>
+    </a>
+  );
+}
+
 function ProcessBanner() {
-  const href = PROFILE.figmaWorkspaceUrl;
   return (
     <Callout tone="info" label="How this portfolio was built" title={PROCESS_BANNER.title}>
       <p>{PROCESS_BANNER.body}</p>
-      {/* Rhythm: body → 12px → link (same at every width) */}
-      <div className="flex">
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={cn(
-            "group/fig inline-flex items-center gap-2xs rounded-sm text-label-lg font-semibold decoration-1 underline-offset-4 hover:underline",
-            FOCUS_RING,
-          )}
-        >
+      {/* Rhythm: body → 12px → links (same at every width); they wrap on narrow screens */}
+      <div className="flex flex-wrap gap-x-lg gap-y-xs">
+        <BannerLink href={PROFILE.figmaWorkspaceUrl} icon={Figma}>
           {PROCESS_BANNER.linkLabel}
-          <ArrowUpRight
-            aria-hidden="true"
-            size={16}
-            className="shrink-0 transition-transform duration-150 motion-safe:group-hover/fig:translate-x-3xs motion-safe:group-hover/fig:-translate-y-3xs"
-          />
-          <span className="sr-only"> (opens in a new tab)</span>
-        </a>
+        </BannerLink>
+        {PROFILE.repositoryUrl ? (
+          <BannerLink href={PROFILE.repositoryUrl} icon={Github}>
+            {PROCESS_BANNER.sourceLinkLabel}
+          </BannerLink>
+        ) : null}
       </div>
     </Callout>
   );

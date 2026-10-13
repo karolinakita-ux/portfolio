@@ -6,6 +6,16 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.4.0 - 2026-10-13
+
+#### Added
+
+- The "Behind the Design" banner on the Work page links the code on GitHub next to the Figma workspace, both with their brand icon. Like the hero button, the GitHub link shows once the repository is public.
+
+#### Fixed
+
+- "Explore Case Studies" no longer makes the page flicker: a jump within the same page now only scrolls smoothly to the section, without re-rendering and fading in the whole page.
+
 ### 3.3.1 - 2026-10-13
 
 #### Added
