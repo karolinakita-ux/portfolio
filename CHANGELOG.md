@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.4.1 - 2026-10-13
+
+#### Changed
+
+- "Behind the Design" banner: more space between the text and its links (16px instead of 12px).
+
 ### 3.4.0 - 2026-10-13
 
 #### Added
