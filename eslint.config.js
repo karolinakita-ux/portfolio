@@ -80,7 +80,7 @@ export default defineConfig([
   {
     // Content modules export data (some with JSX): Fast Refresh does not apply, and the views
     // add keys when they render these arrays.
-    files: ["src/**/*.content.{ts,tsx}", "src/features/*/index.ts"],
+    files: ["src/**/*.content.{ts,tsx}", "src/features/*/index.ts", "src/app/prerender.entry.tsx"],
     rules: { "react-refresh/only-export-components": "off", "@eslint-react/no-missing-key": "off" },
   },
   {

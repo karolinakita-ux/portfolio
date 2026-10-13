@@ -37,12 +37,14 @@ function assetSizes(): Plugin {
 }
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ isSsrBuild }) => ({
   plugins: [react(), tailwindcss(), assetSizes()],
   build: {
     // Hashed bundles go to /static/*, which public/_headers caches for a year.
     // Content images stay in /assets under their own names.
     assetsDir: "static",
+    // The SSR build (scripts/prerender.ts) only needs the render code, not a copy of public/.
+    copyPublicDir: !isSsrBuild,
   },
   test: {
     environment: "jsdom",
@@ -52,4 +54,4 @@ export default defineConfig({
     restoreMocks: true,
     unstubGlobals: true,
   },
-});
+}));

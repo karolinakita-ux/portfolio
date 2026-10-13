@@ -6,6 +6,21 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.1.0 - 2026-10-13
+
+#### Added
+
+- Every page is prerendered to its own HTML file at build time (`scripts/prerender.ts`), so search engines, link previews, recruiting tools and AI assistants read the full content without running JavaScript. The app then takes over as before.
+- Each page has its own title, description, canonical address, link-preview tags and structured data: a profile page for Work, About and CV, and each case study as Karolina's creative work, with breadcrumbs.
+- `/llms.txt`: a short, plain-text map of the site for AI assistants, built from the site's own copy.
+- `robots.txt` names the main AI crawlers and assistants as welcome.
+
+#### Changed
+
+- Unknown addresses return a real 404 status (the page shows Work) instead of the Work page with status 200; `/work` redirects to `/`.
+- The first page no longer fades in, because it is already on screen as HTML.
+- The "needs JavaScript" fallback note is gone: the content is there without it.
+
 ### 3.0.0 - 2026-10-13
 
 #### Changed
