@@ -9,7 +9,7 @@ import { ViewLink } from "#shared/ui/navigation.tsx";
 
 /** K.KITA wordmark. Letters take textPrimary, the dot takes bgAccentBrand. */
 function Logo() {
-  const letter = "fill-text-primary transition-colors duration-150";
+  const letter = "fill-text-primary transition-colors duration-fast";
   return (
     <svg
       viewBox="0 0 102 28"
@@ -66,7 +66,7 @@ function ThemeToggle({ theme, onChange }: { theme: Theme; onChange: (theme: Them
             title={label}
             onClick={() => onChange(value)}
             className={cn(
-              "inline-flex items-center justify-center rounded-sm px-md py-xs transition-colors duration-150 ease-out",
+              "inline-flex items-center justify-center rounded-sm px-md py-xs transition-colors duration-fast ease-standard",
               active
                 ? "bg-bg-accent-brand text-text-on-accent shadow-sm"
                 : "text-text-secondary hover:bg-bg-surface-default hover:text-text-primary",
@@ -129,7 +129,7 @@ export function SiteHeader({ activeView, onNavigate, onHome, theme, onThemeChang
       style={{ top: "env(safe-area-inset-top, 0px)" }}
       className={cn(
         "sticky z-header border-b border-border-subtle bg-bg-canvas px-lg pt-sm pb-xs md:px-2xl md:py-sm lg:px-4xl short:static",
-        "transition-[box-shadow,background-color,border-color] duration-200 ease-out",
+        "transition-[box-shadow,background-color,border-color] duration-medium ease-standard",
         scrolled ? "shadow-sm" : "shadow-none",
       )}
     >
@@ -159,7 +159,7 @@ export function SiteHeader({ activeView, onNavigate, onHome, theme, onThemeChang
                     // On a case study, Work is the current section ("true"); the breadcrumb names the page.
                     aria-current={active ? (item.view === activeView ? "page" : "true") : undefined}
                     className={cn(
-                      "block rounded-md px-sm py-xs text-label-lg transition-colors duration-150",
+                      "block rounded-md px-sm py-xs text-label-lg transition-colors duration-fast",
                       active
                         ? "bg-bg-accent-brand text-text-on-accent"
                         : "text-text-primary hover:bg-bg-surface-default",

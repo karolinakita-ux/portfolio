@@ -1,6 +1,11 @@
-@import "tailwindcss";
+@import "tailwindcss" source("../");
 @import "./tokens.css";
 @import "./print.css";
+
+/* Tailwind collects class names from src only (source above), and not from tests: the
+   motion guard's fixtures and docs that quote banned utilities (duration-150) would
+   otherwise compile into the site's CSS. */
+@source not "../**/*.test.{ts,tsx}";
 
 /* ==========================================================================
    KitaBranding → Tailwind bridge (Tailwind v4, CSS-first config).
@@ -168,8 +173,19 @@
   --aspect-thumb: 4 / 3;
   --aspect-portrait: 3 / 5;
 
-  /* Motion */
-  --animate-view-in: view-in 240ms cubic-bezier(0.2, 0, 0, 1) both;
+  /* Motion (motionDuration* / motionEasing* tokens). Tailwind's own durations and
+     easings are reset, so only duration-fast|medium|slow and ease-standard compile
+     (bare numbers like duration-150 still would: motion-tokens.test.ts blocks them).
+     A transition without a duration utility gets the fast duration and the standard easing. */
+  --transition-duration-*: initial;
+  --transition-duration-fast: var(--motion-duration-fast);
+  --transition-duration-medium: var(--motion-duration-medium);
+  --transition-duration-slow: var(--motion-duration-slow);
+  --ease-*: initial;
+  --ease-standard: var(--motion-easing-standard);
+  --default-transition-duration: var(--motion-duration-fast);
+  --default-transition-timing-function: var(--motion-easing-standard);
+  --animate-view-in: view-in var(--motion-duration-medium) var(--motion-easing-standard) both;
   @keyframes view-in {
     from {
       opacity: 0;
@@ -181,8 +197,8 @@
     }
   }
   /* Image viewer: the next image comes in from the right, the previous from the left. */
-  --animate-slide-in-next: slide-in-next 240ms cubic-bezier(0.2, 0, 0, 1) both;
-  --animate-slide-in-prev: slide-in-prev 240ms cubic-bezier(0.2, 0, 0, 1) both;
+  --animate-slide-in-next: slide-in-next var(--motion-duration-medium) var(--motion-easing-standard) both;
+  --animate-slide-in-prev: slide-in-prev var(--motion-duration-medium) var(--motion-easing-standard) both;
   @keyframes slide-in-next {
     from {
       opacity: 0;
@@ -294,7 +310,9 @@
   background: #1a1a1ab2; /* bgOverlay (dark) */
 }
 /* Backdrop fades in with the panel. The reduced-motion rule below does not
-   reach ::backdrop, hence the media query. */
+   reach ::backdrop, hence the media query. For the same reason as bgOverlay above,
+   the motionDurationMedium and motionEasingStandard values are written out here.
+   motion-tokens.test.ts allows exactly this declaration and checks it matches tokens.css. */
 @media (prefers-reduced-motion: no-preference) {
   .kb-lightbox[open]::backdrop {
     animation: backdrop-in 240ms cubic-bezier(0.2, 0, 0, 1);
@@ -339,6 +357,8 @@
   width: calc(min(100%, max(12rem, 100dvh - 208px) * var(--kb-aspect), var(--kb-natural-width)) * var(--kb-zoom));
 }
 
+/* Reduced motion: 0.01ms is a near-zero reset, not a design value, so it stays a
+   literal (allowlisted in motion-tokens.test.ts). */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

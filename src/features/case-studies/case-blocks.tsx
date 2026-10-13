@@ -202,7 +202,7 @@ function CaseNavLink({
       aria-hidden="true"
       size={16}
       className={cn(
-        "shrink-0 transition-transform duration-150 ease-out",
+        "shrink-0 transition-transform duration-fast ease-standard",
         isNext ? "motion-safe:group-hover/nav:translate-x-2xs" : "motion-safe:group-hover/nav:-translate-x-2xs",
       )}
     />
@@ -226,7 +226,7 @@ function CaseNavLink({
         {isNext && arrow}
       </span>
       {target.label && (
-        <span className="text-body-sm text-text-secondary transition-colors duration-150 group-hover/nav:text-text-primary">
+        <span className="text-body-sm text-text-secondary transition-colors duration-fast group-hover/nav:text-text-primary">
           {target.label}
         </span>
       )}

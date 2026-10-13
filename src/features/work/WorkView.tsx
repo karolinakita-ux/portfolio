@@ -254,7 +254,7 @@ function BannerLink({ href, icon: Icon, children }: { href: string; icon: IconCo
       <ArrowUpRight
         aria-hidden="true"
         size={16}
-        className="shrink-0 transition-transform duration-150 motion-safe:group-hover/link:translate-x-3xs motion-safe:group-hover/link:-translate-y-3xs"
+        className="shrink-0 transition-transform duration-fast motion-safe:group-hover/link:translate-x-3xs motion-safe:group-hover/link:-translate-y-3xs"
       />
       <span className="sr-only"> (opens in a new tab)</span>
     </a>

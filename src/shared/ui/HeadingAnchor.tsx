@@ -53,7 +53,7 @@ export function HeadingAnchor({ id, headingId, label }: HeadingAnchorProps) {
         }}
         className={cn(
           "inline-flex size-lg shrink-0 items-center justify-center rounded-sm text-text-secondary",
-          "transition-opacity duration-150 hover:text-text-primary print:hidden",
+          "transition-opacity duration-fast hover:text-text-primary print:hidden",
           copied
             ? "opacity-100"
             : "opacity-0 group-hover:opacity-100 focus-visible:opacity-100 pointer-coarse:opacity-100",
