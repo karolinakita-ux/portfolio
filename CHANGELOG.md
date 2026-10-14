@@ -6,6 +6,14 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.5.4 - 2026-10-14
+
+#### Added
+
+- End-to-end tests with Playwright: `yarn e2e` runs them in Chromium, Firefox and WebKit against a fresh production build with prerendered pages. A smoke test opens every page (the right title, one `<main>` and one `<h1>` before and after React takes over, no console errors).
+- A theme test checks that the site follows the system light / dark setting at first paint and after React, follows live system changes, keeps a visitor's pick (also after a reload) and still works when storage is blocked.
+- `CLAUDE.md`, `CONTRIBUTING.md` and the README describe `yarn e2e`: run it after UI, motion or theme changes. It is not part of `yarn verify` or the Netlify build.
+
 ### 3.5.3 - 2026-10-14
 
 #### Changed

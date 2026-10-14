@@ -1,12 +1,13 @@
 # portfolio
 
-Karolina Kita's portfolio (karolina.kita.company), public repo github.com/karolinakita-ux/portfolio. React 19 + TypeScript (strict) + Tailwind v4 on Vite, tested with Vitest + Testing Library, work on `develop`, deployed by Netlify from `main` on release. Package manager: **yarn** (v1). Dev machine: Windows 11, Node via fnm (`.node-version`).
+Karolina Kita's portfolio (karolina.kita.company), public repo github.com/karolinakita-ux/portfolio. React 19 + TypeScript (strict) + Tailwind v4 on Vite, tested with Vitest + Testing Library and Playwright, work on `develop`, deployed by Netlify from `main` on release. Package manager: **yarn** (v1). Dev machine: Windows 11, Node via fnm (`.node-version`).
 
 ## Commands
 
 - `yarn dev` - local server at http://localhost:5173
 - `yarn verify` - typecheck, lint (zero warnings), Prettier check, tests, production build. Run before every commit.
 - `yarn test` - Vitest in watch mode; `yarn test:run` once
+- `yarn e2e` - Playwright tests (`e2e/*.e2e.ts`) in Chromium, Firefox and WebKit against a fresh production build with prerendered pages on 127.0.0.1:5190. Run it after UI, motion or theme changes; it is not part of `yarn verify` or the Netlify build. `E2E_DEV=1 yarn e2e` tests the dev server; `--project chromium` or a spec name (`yarn e2e header-motion`) narrows a run. One run at a time (shared port and `test-results/`; `E2E_PORT` picks another port). First time: `yarn playwright install chromium firefox webkit`.
 - `yarn typecheck`, `yarn lint`, `yarn format` (writes), `yarn format:check`
 
 ## Layout
@@ -20,6 +21,7 @@ Vertical slices: `app` → `features` → `shared`, never the other way.
 - Every `Section` heading gets a copy-link anchor (`HeadingAnchor`); its `id` is the URL hash. Keep section ids stable: they are shared links.
 - Imports: `#app/*`, `#features/*`, `#shared/*`, `#test/*` (subpath imports in `package.json`), `./x` within the same folder.
 - File names: components `PascalCase.tsx`, hooks `useX.ts`, other modules kebab-case with a role suffix (`*.content.ts`, `*.types.ts`, `*.constants.ts`, `*.context.ts`, `*.utils.ts`), tests `*.test.ts(x)` next to the file.
+- `e2e/` - Playwright specs (`*.e2e.ts`) and `helpers.ts` (in-page frame sampler, pill animation log, theme setup), type-checked by `tsconfig.e2e.json`. Vitest only collects `src/**/*.test.ts(x)`.
 - `src/styles/tokens.css` - KitaBranding tokens as CSS variables (light + dark); `app.css` maps them into Tailwind's theme.
 - `src/styles/kita-branding.tokens.json` - Figma Variables export; `tokens.test.ts` keeps `tokens.css` 1:1 with it.
 - `public/assets/` - images: `site/` (portrait, link-preview image) and `cases/<case>/` (screenshots, `thumbnail.webp`), referenced from content by their path under `/assets` (`cases/project-planning/thumbnail.webp`). Lowercase kebab-case. Screenshots are WebP (`sharp`, quality 90); the link-preview image stays PNG. `/assets/*` is cached for a week, so a changed image gets a new file name.

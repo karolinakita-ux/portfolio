@@ -14,7 +14,7 @@ How work moves from a commit to the live site at karolina.kita.company.
 
 ## Every commit
 
-1. Run `yarn verify` (typecheck, lint, format check, tests, build and prerender). Fix anything that fails.
+1. Run `yarn verify` (typecheck, lint, format check, tests, build and prerender). Fix anything that fails. After UI, motion or theme changes, also run `yarn e2e` (Playwright in Chromium, Firefox and WebKit); it is not part of `yarn verify` or the Netlify build.
 2. Bump `version` in `package.json` (rules below).
 3. Add an entry for that version under `## Unreleased` in `CHANGELOG.md`. Create the heading above the newest release if it is missing.
 4. Stage only the files you changed, by name. Do not use `git add -A`: someone may have unfinished edits in the same folder.
