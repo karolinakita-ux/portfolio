@@ -24,7 +24,8 @@ src/shared     ui · layout · media · hooks · lib · content
 ## Routing
 
 - `src/shared/lib/routes.ts` is the single source: `VIEW` (ids), `VIEW_PATHS` (URLs), `SECTION` (anchors other pages link to), titles and nav items. They are `as const` objects with derived union types, so a wrong id is a type error.
-- `src/app/useHistoryRoute.ts` keeps the view in browser history: one entry per view change, scroll position restored on Back and Forward. On first load it normalises the URL: old hash links (`/#about`, used before 3.0.0) and aliases (`/resume`) become their path; unknown paths become `/`.
+- `src/app/useHistoryRoute.ts` keeps the view in browser history: one entry per view change, scroll position restored on Back and Forward. A new view remounts and fades in; a jump within the same view (Explore Case Studies) only scrolls. On first load it normalises the URL: old hash links (`/#about`, used before 3.0.0) and aliases (`/resume`) become their path; unknown paths become `/`.
+- A one-page build with a relative base (`vite build --base ./`, e.g. a claude.ai artifact) has no other paths to load, so `src/main.tsx` turns on hash routing: the path travels in the hash (`#/about`, `#/about#career`). The site itself always uses real paths.
 - The URL hash is a **section anchor** (`/about#career`). `Section` (`src/shared/ui/layout.tsx`) gives every section heading a `HeadingAnchor` link that copies the section's address. `src/app/useSectionHash.ts` keeps the hash on the section in view while scrolling, with `replaceState` (no history entries).
 
 ## Rendering and SEO

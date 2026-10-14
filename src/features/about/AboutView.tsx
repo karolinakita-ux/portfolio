@@ -74,7 +74,7 @@ function PortraitCard({ src }: { src: string }) {
             onLoad={() => setStatus("loaded")}
             onError={() => setStatus("error")}
             className={cn(
-              "absolute inset-0 h-full w-full object-cover object-top transition-opacity duration-300 ease-out",
+              "absolute inset-0 h-full w-full object-cover object-top transition-opacity duration-slow ease-standard",
               status === "loaded" ? "opacity-100" : "opacity-0",
             )}
           />
@@ -102,7 +102,7 @@ function PhilosophySection({ portraitSrc }: { portraitSrc: string }) {
           {PRINCIPLES.map((principle) => (
             <li
               key={principle.id}
-              className="flex flex-col gap-sm rounded-md border border-border-subtle bg-bg-surface-raised p-lg shadow-sm"
+              className="flex reveal-on-scroll flex-col gap-sm rounded-md border border-border-subtle bg-bg-surface-raised p-lg shadow-sm"
             >
               <h3 className="text-title-md text-balance text-text-primary">{principle.title}</h3>
               <p className="text-body-md text-text-secondary">{principle.body}</p>
@@ -120,7 +120,7 @@ function MilestoneCard({ milestone }: { milestone: Milestone }) {
   return (
     <article
       aria-labelledby={titleId}
-      className="flex flex-col gap-sm rounded-md border border-border-subtle bg-bg-surface-raised p-lg shadow-sm"
+      className="flex reveal-on-scroll flex-col gap-sm rounded-md border border-border-subtle bg-bg-surface-raised p-lg shadow-sm"
     >
       <p className="text-body-sm text-text-secondary">{milestone.period}</p>
       <div className="flex flex-col gap-2xs">
@@ -204,7 +204,7 @@ function FaqItem({ item }: { item: FaqEntry }) {
           onClick={() => setOpen((value) => !value)}
           className={cn(
             "flex w-full items-center justify-between gap-md rounded-md px-lg py-md text-left",
-            "transition-colors duration-150 hover:text-text-secondary",
+            "transition-[color] duration-fast hover:text-text-secondary",
             FOCUS_RING,
           )}
         >
@@ -213,7 +213,7 @@ function FaqItem({ item }: { item: FaqEntry }) {
             aria-hidden="true"
             size={20}
             className={cn(
-              "shrink-0 text-text-secondary transition-transform duration-200 ease-out",
+              "shrink-0 text-text-secondary transition-transform duration-medium ease-standard",
               open && "rotate-180",
             )}
           />
@@ -225,7 +225,7 @@ function FaqItem({ item }: { item: FaqEntry }) {
         aria-labelledby={buttonId}
         inert={!open}
         className={cn(
-          "grid transition-[grid-template-rows] duration-200 ease-out",
+          "grid transition-[grid-template-rows] duration-medium ease-standard",
           open ? "grid-rows-expanded" : "grid-rows-collapsed",
         )}
       >

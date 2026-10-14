@@ -60,3 +60,35 @@ describe("tokens.css light / dark", () => {
     expect([...MODES.dark.keys()].sort()).toEqual([...MODES.light.keys()].sort());
   });
 });
+
+/**
+ * Motion tokens are the same in both modes, so tokens.css declares them once, in their own
+ * :root block. Figma stores durations as a number of milliseconds (motionDurationFast: 150).
+ */
+const MOTION = readBlock("/* Motion: the same in light and dark */", ":root,");
+
+/** The CSS value a Figma motion variable stands for: durations get their unit. */
+const motionCssValue = (cssName: string, figmaValue: string | number) =>
+  cssName.startsWith("motion-duration-") ? `${String(figmaValue)}ms` : String(figmaValue);
+
+describe("tokens.css (motion)", () => {
+  const { light, dark } = figmaTokens.kitaBranding as Record<keyof typeof MODES, Record<string, string | number>>;
+
+  it("declares the duration and easing tokens", () => {
+    expect([...MOTION.keys()]).toEqual(
+      expect.arrayContaining(["motion-duration-fast", "motion-duration-medium", "motion-easing-standard"]),
+    );
+  });
+
+  it.each([...MOTION])("--%s matches Figma in light and dark", (name, value) => {
+    const figmaName = toFigmaName(name);
+    expect(light[figmaName], `no Figma variable for --${name} (${figmaName})`).toBeDefined();
+    expect(dark[figmaName], `${figmaName} differs between Figma modes`).toBe(light[figmaName]);
+    expect(value.toLowerCase()).toBe(motionCssValue(name, light[figmaName] ?? "").toLowerCase());
+  });
+
+  it("declares every Figma motion variable", () => {
+    const figmaMotion = Object.keys(light).filter((key) => key.startsWith("motion"));
+    expect(figmaMotion.sort()).toEqual([...MOTION.keys()].map(toFigmaName).sort());
+  });
+});

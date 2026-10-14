@@ -25,7 +25,20 @@ const boundaries = (...patterns) => ({
 
 export default defineConfig([
   // Build output, reports and local-only files (see .gitignore)
-  globalIgnores(["dist", "coverage", "a11y-report", ".claude", "docs/_*", "notes", "private", "scratch", "tmp"]),
+  globalIgnores([
+    "dist",
+    "coverage",
+    "a11y-report",
+    "test-results",
+    "playwright-report",
+    "blob-report",
+    ".claude",
+    "docs/_*",
+    "notes",
+    "private",
+    "scratch",
+    "tmp",
+  ]),
   { linterOptions: { reportUnusedDisableDirectives: "error" } },
   {
     files: ["**/*.{ts,tsx}"],
@@ -106,7 +119,7 @@ export default defineConfig([
     rules: { "vitest/no-conditional-expect": "off" },
   },
   {
-    files: ["*.config.{js,ts}", "scripts/**/*.ts"],
+    files: ["*.config.{js,ts}", "scripts/**/*.ts", "e2e/**/*.ts"],
     languageOptions: { globals: globals.node },
   },
   // Last: turns off stylistic rules that would fight Prettier.

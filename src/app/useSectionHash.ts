@@ -1,5 +1,7 @@
 import { useEffect } from "react";
 
+import { urlWithAnchor } from "#shared/lib/routes.ts";
+
 /** A section counts as "current" once its top passes this share of the viewport height. */
 const READING_LINE = 0.3;
 
@@ -25,10 +27,10 @@ export function useSectionHash(routeKey: number): void {
         current = section.id;
       }
       const { pathname, search, hash } = window.location;
-      const next = current ? "#" + current : "";
-      if (hash === next) return;
+      const next = urlWithAnchor(window.location, current);
+      if (pathname + search + hash === next) return;
       try {
-        window.history.replaceState(window.history.state, "", pathname + search + next);
+        window.history.replaceState(window.history.state, "", next);
       } catch {
         /* sandboxed frames */
       }

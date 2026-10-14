@@ -1,10 +1,14 @@
 {
-  "name": "kkita-portfolio",
+  "name": "portfolio",
   "private": true,
-  "version": "3.5.0",
+  "version": "3.7.3",
   "description": "Karolina Kita - Senior Product Designer portfolio (karolina.kita.company)",
   "author": "Karolina Kita",
   "homepage": "https://karolina.kita.company",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/karolinakita-ux/portfolio.git"
+  },
   "license": "UNLICENSED",
   "type": "module",
   "imports": {
@@ -23,6 +27,7 @@
     "test": "vitest",
     "test:run": "vitest run",
     "a11y": "node scripts/a11y-audit.ts",
+    "e2e": "playwright test",
     "verify": "tsc -b && eslint . --max-warnings 0 && prettier --check . && vitest run && vite build && yarn -s prerender",
     "format:check": "prettier --check .",
     "prerender": "vite build --ssr src/app/prerender.entry.tsx --outDir node_modules/.tmp/ssr --emptyOutDir --logLevel warn && node scripts/prerender.ts"
@@ -41,6 +46,7 @@
     "@eslint/js": "^10.0.1",
     "@guidepup/virtual-screen-reader": "^0.33.0",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",
+    "@playwright/test": "^1.64.0",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",

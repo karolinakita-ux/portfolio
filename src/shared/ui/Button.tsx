@@ -46,7 +46,7 @@ export function Button(props: ButtonProps) {
 
   const classes = cn(
     "group/button inline-flex cursor-pointer items-center justify-center gap-xs rounded-md px-md py-xs text-label-lg",
-    "transition-[background-color,border-color,color,box-shadow] duration-150 ease-out disabled:cursor-not-allowed",
+    "transition-[background-color,border-color,color,box-shadow] duration-fast ease-standard disabled:cursor-not-allowed",
     FOCUS_RING,
     BUTTON_VARIANTS[props.variant ?? "primary"],
     props.className,
@@ -60,7 +60,7 @@ export function Button(props: ButtonProps) {
         <IconRight
           aria-hidden="true"
           size={16}
-          className="shrink-0 transition-transform duration-150 ease-out motion-safe:group-hover/button:translate-x-2xs"
+          className="shrink-0 transition-transform duration-fast ease-standard motion-safe:group-hover/button:translate-x-2xs"
         />
       )}
     </>
@@ -100,7 +100,7 @@ export function IconButton({ label, icon: Icon, className, ...props }: IconButto
       title={label}
       className={cn(
         "inline-flex size-xl shrink-0 cursor-pointer items-center justify-center rounded-md border border-border-subtle",
-        "bg-bg-surface-raised text-text-primary shadow-sm transition-[color,background-color,border-color,scale] duration-150 ease-out",
+        "bg-bg-surface-raised text-text-primary shadow-sm transition-[color,background-color,border-color,scale] duration-fast ease-standard",
         // Pressed feedback: touch screens have no tap highlight (Tailwind removes it).
         "motion-safe:not-aria-disabled:active:scale-95",
         "hover:border-border-interactive-hover hover:bg-bg-surface-default",
