@@ -271,10 +271,12 @@
    scrolled past, the animation lets go and the card is exactly its own state again (fill both
    would leave a 0px translate and an animated opacity on every card for good).
    animation-timeline comes after the shorthand, which resets it.
-   Only with motion allowed and where the browser supports it; anywhere else (and in print, see
-   print.css) the card simply shows. */
+   Only with motion allowed, no forced colours (Windows high contrast) and no request for more
+   or less contrast, and where the browser supports it; anywhere else (and in print, see
+   print.css) the card simply shows. A browser that does not know one of these media features
+   treats the query as false, so the card shows there too. */
 @utility reveal-on-scroll {
-  @media (prefers-reduced-motion: no-preference) {
+  @media (prefers-reduced-motion: no-preference) and (forced-colors: none) and (prefers-contrast: no-preference) {
     @supports (animation-timeline: view()) {
       animation: reveal-on-scroll var(--motion-easing-standard) backwards;
       animation-timeline: view();
