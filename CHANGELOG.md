@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.7.1 - 2026-10-14
+
+#### Fixed
+
+- The header motion test "a second click mid-way" no longer fails now and then in WebKit. WebKit starts a new animation from the last painted frame, so under load the first move could already be over before the test paused it; the test now holds the move the moment the app starts it (new `nextPillAnimation` helper). 400 of 400 runs passed under the load that failed it before.
+
 ### 3.7.0 - 2026-10-14
 
 #### Added

@@ -116,6 +116,11 @@ export interface Toolkit {
   waitActive: (selector: string, key: string | null, timeoutMs: number) => Promise<void>;
   /** Resolves once nothing under `selector` has run or waited to run for three frames in a row. */
   waitIdle: (selector: string, timeoutMs: number) => Promise<void>;
+  /**
+   * Resolves with the next animation the page starts with element.animate() on the pill of `key`'s
+   * control, a microtask after that call: still in the same task, before any frame paints it.
+   */
+  nextPillAnimation: (key: string, timeoutMs: number) => Promise<Animation>;
 }
 
 declare global {
@@ -167,6 +172,8 @@ function installToolkit({ removeViewTransitions }: ToolkitOptions): void {
     const current = control.getAttribute("aria-current");
     return (current !== null && current !== "false") || control.getAttribute("aria-pressed") === "true";
   };
+  /** nextPillAnimation() callers, by key, waiting for the next element.animate() on that pill. */
+  const pillWaiters = new Map<string, Array<(animation: Animation) => void>>();
   const TIMING_KEYS = new Set(["offset", "computedOffset", "easing", "composite"]);
   const measured = new WeakMap<Animation, AnimationPoints>();
   const pointsOf = (animation: Animation, element: Element): AnimationPoints | null => {
@@ -285,6 +292,17 @@ function installToolkit({ removeViewTransitions }: ToolkitOptions): void {
         await nextFrame();
       }
     },
+    nextPillAnimation: (key, timeoutMs) =>
+      new Promise((resolve, reject) => {
+        const timer = setTimeout(() => {
+          reject(new Error(`no animation started on the ${key} pill within ${timeoutMs}ms`));
+        }, timeoutMs);
+        const settle = (animation: Animation) => {
+          clearTimeout(timer);
+          resolve(animation);
+        };
+        pillWaiters.set(key, [...(pillWaiters.get(key) ?? []), settle]);
+      }),
   };
   window.__kb = toolkit;
 
@@ -299,7 +317,13 @@ function installToolkit({ removeViewTransitions }: ToolkitOptions): void {
   const nativeAnimate = Element.prototype.animate;
   Element.prototype.animate = function (this: Element, ...args: Parameters<Element["animate"]>): Animation {
     const animation = nativeAnimate.apply(this, args);
-    if (this.hasAttribute("data-pill")) logPill(animation, this, "animate()");
+    if (this.hasAttribute("data-pill")) {
+      logPill(animation, this, "animate()");
+      const key = keyOf(this);
+      const waiting = pillWaiters.get(key) ?? [];
+      pillWaiters.delete(key);
+      for (const settle of waiting) settle(animation);
+    }
     return animation;
   };
   // ...and any other Web Animation on one (new Animation(), a KeyframeEffect), checked every frame.
