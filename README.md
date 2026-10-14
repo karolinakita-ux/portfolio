@@ -2,7 +2,7 @@
 
 Source of **[karolina.kita.company](https://karolina.kita.company)**, the portfolio of Karolina Kita, Senior Product Designer. Three case studies (an automotive B2B marketplace, the MeetEstim planning platform and a white-label theme generator), an About page, a printable CV and contact details.
 
-Designed by Karolina in Figma and built with [Claude Code](docs/claude-code.md): React 19, TypeScript (strict), Tailwind CSS v4 with her KitaBranding design tokens, Vite, Vitest. Deployed on Netlify.
+Designed by Karolina in Figma and built with [Claude Code](docs/claude-code.md): React 19, TypeScript (strict), Tailwind CSS v4 with her KitaBranding design tokens, Vite, Vitest and Playwright. Deployed on Netlify.
 
 ## What is inside
 
@@ -31,6 +31,7 @@ yarn dev       # http://localhost:5173
 | `yarn dev`     | Dev server with hot reload                                                        |
 | `yarn verify`  | Typecheck, lint (zero warnings), format check, tests, build and prerender         |
 | `yarn test`    | Vitest in watch mode (`yarn test:run` for a single run)                           |
+| `yarn e2e`     | Playwright tests in Chromium, Firefox and WebKit against the production build     |
 | `yarn build`   | Typecheck, build to `dist/`, then prerender every page (`yarn prerender`)         |
 | `yarn preview` | Serve the production build locally                                                |
 | `yarn lint`    | ESLint, zero warnings allowed                                                     |
