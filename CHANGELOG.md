@@ -6,6 +6,16 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.7.0 - 2026-10-14
+
+#### Added
+
+- Cards fade up as they scroll into view: the case cards and testimonials on Work, the principle and career cards on About, and the screenshot rows and problem cards in the case studies. The fade follows the scroll position (a CSS scroll-driven animation, no script): it starts when a card's top enters the screen and ends 96px of scrolling later. Nothing moves on the first screen, with reduced motion or in print, and browsers without support (Firefox today) simply show the cards.
+
+#### Changed
+
+- Tests: Vitest checks the CSS guards and exactly which cards carry the fade; a Playwright `scroll-reveal` spec checks every card while scrolling at 390 and 1280 px, the first screen on load, anchor jumps, reduced motion, print, Firefox, and axe at several scroll positions in both themes.
+
 ### 3.6.0 - 2026-10-14
 
 #### Added

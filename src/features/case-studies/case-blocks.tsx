@@ -104,7 +104,7 @@ export function ShowcaseRow({ src, previewSrc, item, onExpand }: ShowcaseRowProp
   return (
     <article
       aria-labelledby={titleId}
-      className="grid gap-lg rounded-md border border-border-subtle bg-bg-surface-raised p-md shadow-sm md:grid-cols-showcase md:items-center md:p-lg"
+      className="grid reveal-on-scroll gap-lg rounded-md border border-border-subtle bg-bg-surface-raised p-md shadow-sm md:grid-cols-showcase md:items-center md:p-lg"
     >
       <Screenshot
         src={previewSrc ?? src}
