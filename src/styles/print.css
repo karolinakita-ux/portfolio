@@ -48,8 +48,9 @@
     widows: 3;
   }
 
-  /* No entrance animation in the print snapshot. */
-  .motion-safe\:animate-view-in {
+  /* No entrance animation in the print snapshot, and no card left faded out by the scroll reveal. */
+  .motion-safe\:animate-view-in,
+  .reveal-on-scroll {
     animation: none !important;
   }
 }

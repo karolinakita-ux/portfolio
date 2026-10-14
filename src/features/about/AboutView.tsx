@@ -102,7 +102,7 @@ function PhilosophySection({ portraitSrc }: { portraitSrc: string }) {
           {PRINCIPLES.map((principle) => (
             <li
               key={principle.id}
-              className="flex flex-col gap-sm rounded-md border border-border-subtle bg-bg-surface-raised p-lg shadow-sm"
+              className="flex reveal-on-scroll flex-col gap-sm rounded-md border border-border-subtle bg-bg-surface-raised p-lg shadow-sm"
             >
               <h3 className="text-title-md text-balance text-text-primary">{principle.title}</h3>
               <p className="text-body-md text-text-secondary">{principle.body}</p>
@@ -120,7 +120,7 @@ function MilestoneCard({ milestone }: { milestone: Milestone }) {
   return (
     <article
       aria-labelledby={titleId}
-      className="flex flex-col gap-sm rounded-md border border-border-subtle bg-bg-surface-raised p-lg shadow-sm"
+      className="flex reveal-on-scroll flex-col gap-sm rounded-md border border-border-subtle bg-bg-surface-raised p-lg shadow-sm"
     >
       <p className="text-body-sm text-text-secondary">{milestone.period}</p>
       <div className="flex flex-col gap-2xs">

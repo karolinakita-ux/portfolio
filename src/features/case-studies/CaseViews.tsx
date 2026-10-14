@@ -94,11 +94,11 @@ export function CaseThemingView({ c, resolveAsset, onNavigate }: CaseViewProps<T
 
       <Section id="case-problem" title="The Core Problem: Management Assumption vs. Usability Reality">
         <div className="grid gap-md md:grid-cols-2">
-          <article className="flex flex-col gap-sm rounded-md border border-border-subtle bg-bg-surface-raised p-lg shadow-sm">
+          <article className="flex reveal-on-scroll flex-col gap-sm rounded-md border border-border-subtle bg-bg-surface-raised p-lg shadow-sm">
             <h3 className="text-title-md text-text-primary">The Assumption</h3>
             <p className="text-body-md text-text-secondary">{c.assumption}</p>
           </article>
-          <article className="flex flex-col gap-sm rounded-md border border-border-subtle bg-bg-surface-raised p-lg shadow-sm">
+          <article className="flex reveal-on-scroll flex-col gap-sm rounded-md border border-border-subtle bg-bg-surface-raised p-lg shadow-sm">
             <h3 className="text-title-md text-text-primary">The Reality</h3>
             <ul className={BULLET_LIST}>
               {c.reality.map((point, index) => (
