@@ -90,7 +90,7 @@ export function CopyEmail({ email, textClassName = "text-body-md", icon = null }
           aria-label={copied ? "Email address copied to clipboard" : "Copy email address"}
           title={copied ? "Copied to clipboard!" : "Copy email address"}
           className={cn(
-            "inline-flex size-xl items-center justify-center rounded-sm text-text-link-default transition-colors duration-150",
+            "inline-flex size-xl items-center justify-center rounded-sm text-text-link-default transition-[color,background-color] duration-fast",
             "hover:bg-bg-accent-brand-subtle hover:text-text-link-hover",
             FOCUS_RING,
           )}

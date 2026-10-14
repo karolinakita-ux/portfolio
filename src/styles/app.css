@@ -1,6 +1,11 @@
-@import "tailwindcss";
+@import "tailwindcss" source("../");
 @import "./tokens.css";
 @import "./print.css";
+
+/* Tailwind collects class names from src only (source above), and not from tests: the
+   motion guard's fixtures and docs that quote banned utilities (duration-150) would
+   otherwise compile into the site's CSS. */
+@source not "../**/*.test.{ts,tsx}";
 
 /* ==========================================================================
    KitaBranding → Tailwind bridge (Tailwind v4, CSS-first config).
@@ -168,8 +173,19 @@
   --aspect-thumb: 4 / 3;
   --aspect-portrait: 3 / 5;
 
-  /* Motion */
-  --animate-view-in: view-in 240ms cubic-bezier(0.2, 0, 0, 1) both;
+  /* Motion (motionDuration* / motionEasing* tokens). Tailwind's own durations and
+     easings are reset, so only duration-fast|medium|slow and ease-standard compile
+     (bare numbers like duration-150 still would: motion-tokens.test.ts blocks them).
+     A transition without a duration utility gets the fast duration and the standard easing. */
+  --transition-duration-*: initial;
+  --transition-duration-fast: var(--motion-duration-fast);
+  --transition-duration-medium: var(--motion-duration-medium);
+  --transition-duration-slow: var(--motion-duration-slow);
+  --ease-*: initial;
+  --ease-standard: var(--motion-easing-standard);
+  --default-transition-duration: var(--motion-duration-fast);
+  --default-transition-timing-function: var(--motion-easing-standard);
+  --animate-view-in: view-in var(--motion-duration-medium) var(--motion-easing-standard) both;
   @keyframes view-in {
     from {
       opacity: 0;
@@ -181,8 +197,8 @@
     }
   }
   /* Image viewer: the next image comes in from the right, the previous from the left. */
-  --animate-slide-in-next: slide-in-next 240ms cubic-bezier(0.2, 0, 0, 1) both;
-  --animate-slide-in-prev: slide-in-prev 240ms cubic-bezier(0.2, 0, 0, 1) both;
+  --animate-slide-in-next: slide-in-next var(--motion-duration-medium) var(--motion-easing-standard) both;
+  --animate-slide-in-prev: slide-in-prev var(--motion-duration-medium) var(--motion-easing-standard) both;
   @keyframes slide-in-next {
     from {
       opacity: 0;
@@ -245,6 +261,36 @@
     radial-gradient(120% 70% at 50% 100%, var(--bg-avatar-glow-warm), transparent 72%);
 }
 
+/* Cards in a list fade up as they scroll into view: a CSS scroll-driven animation, no script.
+   It follows the scroll position, not the clock, so it works on the prerendered HTML, does not
+   replay when React takes the page over, and nothing moves until the visitor scrolls.
+   The range starts when the card's top enters the viewport and ends 96px (spacing4xl) of
+   scrolling later, so even a card taller than the screen is fully shown long before it is read.
+   No duration: a scroll timeline sets the pace (duration auto).
+   Fill backwards: below the viewport the card waits transparent and 16px low; once the range is
+   scrolled past, the animation lets go and the card is exactly its own state again (fill both
+   would leave a 0px translate and an animated opacity on every card for good).
+   animation-timeline comes after the shorthand, which resets it.
+   Only with motion allowed, no forced colours (Windows high contrast) and no request for more
+   or less contrast, and where the browser supports it; anywhere else (and in print, see
+   print.css) the card simply shows. A browser that does not know one of these media features
+   treats the query as false, so the card shows there too. */
+@utility reveal-on-scroll {
+  @media (prefers-reduced-motion: no-preference) and (forced-colors: none) and (prefers-contrast: no-preference) {
+    @supports (animation-timeline: view()) {
+      animation: reveal-on-scroll var(--motion-easing-standard) backwards;
+      animation-timeline: view();
+      animation-range: entry 0% entry var(--spacing-4xl);
+    }
+  }
+}
+@keyframes reveal-on-scroll {
+  from {
+    opacity: 0;
+    translate: 0 var(--spacing-md);
+  }
+}
+
 @layer base {
   html {
     background: var(--bg-canvas);
@@ -294,7 +340,9 @@
   background: #1a1a1ab2; /* bgOverlay (dark) */
 }
 /* Backdrop fades in with the panel. The reduced-motion rule below does not
-   reach ::backdrop, hence the media query. */
+   reach ::backdrop, hence the media query. For the same reason as bgOverlay above,
+   the motionDurationMedium and motionEasingStandard values are written out here.
+   motion-tokens.test.ts allows exactly this declaration and checks it matches tokens.css. */
 @media (prefers-reduced-motion: no-preference) {
   .kb-lightbox[open]::backdrop {
     animation: backdrop-in 240ms cubic-bezier(0.2, 0, 0, 1);
@@ -339,6 +387,39 @@
   width: calc(min(100%, max(12rem, 100dvh - 208px) * var(--kb-aspect), var(--kb-natural-width)) * var(--kb-zoom));
 }
 
+/* Theme change (useTheme.ts). For two frames after the switch every CSS transition is off,
+   so the header, buttons and text take their new colours in the same frame as the page
+   instead of trailing behind it. Web Animations (the sliding pill) are not transitions:
+   they keep running. */
+.kb-theme-switching,
+.kb-theme-switching *,
+.kb-theme-switching *::before,
+.kb-theme-switching *::after {
+  transition: none !important;
+}
+/* Where the browser has view transitions, the old page cross-fades into the new one. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--motion-duration-medium);
+  animation-timing-function: var(--motion-easing-standard);
+}
+/* The theme switch is its own live layer: no snapshot of the old state and no fade, so its
+   yellow pill slides to the new button instead of cross-fading with the page. */
+.kb-theme-toggle {
+  view-transition-name: theme-toggle;
+}
+::view-transition-old(theme-toggle) {
+  animation: none;
+  opacity: 0;
+}
+::view-transition-group(theme-toggle),
+::view-transition-new(theme-toggle) {
+  animation: none;
+}
+
+/* Reduced motion: 0.01ms is a near-zero reset, not a design value, so it stays a
+   literal (allowlisted in motion-tokens.test.ts). The view-transition pseudo-elements are
+   not matched by *, so they are listed (useTheme skips the transition then anyway). */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -347,5 +428,10 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }

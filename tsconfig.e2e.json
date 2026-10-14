@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.node.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.e2e.tsbuildinfo",
+    "noUncheckedIndexedAccess": true
+  },
+  "include": ["playwright.config.ts", "e2e"]
+}

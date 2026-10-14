@@ -137,7 +137,11 @@
       "bgFooter": "#fef8e6",
       "bgBgAvatarBase": "#f4f1ea",
       "bgBgAvatarGlowWarm": "#f973162d",
-      "bgBgAvatarColdGlow": "#38bdf823"
+      "bgBgAvatarColdGlow": "#38bdf823",
+      "motionDurationFast": 150,
+      "motionDurationMedium": 240,
+      "motionDurationSlow": 300,
+      "motionEasingStandard": "cubic-bezier(0.2, 0, 0, 1)"
     },
     "dark": {
       "neutralsGray900": "#1a1a1a",
@@ -276,7 +280,11 @@
       "bgFooter": "#2b2b2b",
       "bgBgAvatarBase": "#16171b",
       "bgBgAvatarGlowWarm": "#ef444459",
-      "bgBgAvatarColdGlow": "#0ea5e94c"
+      "bgBgAvatarColdGlow": "#0ea5e94c",
+      "motionDurationFast": 150,
+      "motionDurationMedium": 240,
+      "motionDurationSlow": 300,
+      "motionEasingStandard": "cubic-bezier(0.2, 0, 0, 1)"
     }
   }
 }

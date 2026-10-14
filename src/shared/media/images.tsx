@@ -5,14 +5,21 @@ import { ImageOff, Maximize2 } from "#shared/ui/icons.tsx";
 
 import { useImageStatus } from "./useImageStatus.ts";
 
-/** Geometric wireframe shown while a thumbnail loads, or if it fails. */
+/**
+ * Geometric wireframe shown while a thumbnail loads, or if it fails.
+ * While loading it pulses twice (2 x 2s) and then holds still, so nothing loops past 5 s on a
+ * slow connection (WCAG 2.2.2).
+ */
 export function ThumbnailScaffold({ failed = false }: { failed?: boolean }) {
   return (
     <div aria-hidden="true" className="absolute inset-0 flex flex-col items-center justify-center gap-xs p-md">
       <svg
         viewBox="0 0 160 120"
         preserveAspectRatio="xMidYMid meet"
-        className={cn("h-full w-full", !failed && "motion-safe:animate-pulse")}
+        className={cn(
+          "h-full w-full",
+          !failed && "motion-safe:animate-pulse motion-safe:[animation-iteration-count:2]",
+        )}
       >
         <rect x="0.5" y="0.5" width="159" height="119" rx="4" className="fill-bg-surface-raised stroke-border-subtle" />
         <rect x="0.5" y="0.5" width="159" height="14" rx="4" className="fill-bg-accent-brand-subtle" />
@@ -57,7 +64,7 @@ export function CaseThumbnail({ src, alt, interactive = false }: { src: string; 
     <div
       className={cn(
         "relative aspect-thumb w-full max-w-full overflow-hidden rounded-sm border border-border-subtle bg-bg-surface-default",
-        interactive && "transition-colors duration-150 group-hover/thumb:border-border-interactive-hover",
+        interactive && "transition-colors duration-fast group-hover/thumb:border-border-interactive-hover",
       )}
     >
       {status !== "loaded" && <ThumbnailScaffold failed={status === "error"} />}
@@ -71,7 +78,7 @@ export function CaseThumbnail({ src, alt, interactive = false }: { src: string; 
           onLoad={() => setStatus("loaded")}
           onError={() => setStatus("error")}
           className={cn(
-            "absolute inset-0 h-full w-full object-contain p-xs transition-[opacity,scale] duration-300 ease-out",
+            "absolute inset-0 h-full w-full object-contain p-xs transition-[opacity,scale] duration-slow ease-standard",
             status === "loaded" ? "opacity-100" : "opacity-0",
             interactive && "motion-safe:group-hover/thumb:scale-[1.02]",
           )}
@@ -122,7 +129,7 @@ export function Screenshot({ src, fallbackSrc, alt, onExpand }: ScreenshotProps)
       onLoad={() => setStatus("loaded")}
       onError={handleError}
       className={cn(
-        "block h-auto w-full transition-transform duration-300 ease-out",
+        "block h-auto w-full transition-transform duration-slow ease-standard",
         onExpand && "motion-safe:group-hover/zoom:scale-[1.02]",
       )}
     />

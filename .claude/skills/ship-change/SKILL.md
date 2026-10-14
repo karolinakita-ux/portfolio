@@ -13,7 +13,7 @@ Every commit is one version. Rules in `CONTRIBUTING.md` ("Every commit"); the sh
    - major: removed or renamed pages, changed URLs, a redesign
    - minor: new visible content or features
    - patch: fixes, copy, images, styling, dependencies, config, tests, docs
-4. **Changelog.** Add `### X.Y.Z - YYYY-MM-DD` under the single `## Unreleased` heading, with `Added` / `Changed` / `Fixed` / `Removed` groups, one plain line each, short hyphens only.
+4. **Changelog.** Add `### X.Y.Z - YYYY-MM-DD` under the single `## Unreleased` heading (after a release it is gone: add it above the newest `## Release`), with `Added` / `Changed` / `Fixed` / `Removed` groups, one plain line each, short hyphens only.
 5. **Commit** the listed files by name: `git commit -- <files>` with the subject `<what changed, imperative> (X.Y.Z)`, a short body, and the co-author trailer if Claude wrote it.
 6. **Check the commit** against its message: `git show --stat HEAD`. Then push `develop`.
 

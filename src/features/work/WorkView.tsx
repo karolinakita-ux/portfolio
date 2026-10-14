@@ -137,7 +137,7 @@ function TestimonialsSection() {
       <ul className="grid gap-md md:grid-cols-2">
         {TESTIMONIALS.map((item) => (
           <li key={item.id} className="min-w-0">
-            <figure className="flex h-full flex-col gap-md rounded-md border border-border-subtle bg-bg-surface-raised p-lg shadow-sm">
+            <figure className="flex h-full reveal-on-scroll flex-col gap-md rounded-md border border-border-subtle bg-bg-surface-raised p-lg shadow-sm">
               <Quote aria-hidden="true" size={24} className="text-bg-accent-brand" />
               <blockquote cite={PROFILE.linkedinRecommendationsUrl} className="flex-1 text-body-md text-text-secondary">
                 <p>{item.quote}</p>
@@ -194,7 +194,7 @@ function CaseCard({ item, resolveAsset, onNavigate }: CaseCardProps) {
   return (
     <article
       aria-labelledby={titleId}
-      className="grid gap-lg rounded-md border border-border-subtle bg-bg-surface-raised p-md shadow-sm md:grid-cols-case-md md:items-center md:p-lg lg:grid-cols-case-lg"
+      className="grid reveal-on-scroll gap-lg rounded-md border border-border-subtle bg-bg-surface-raised p-md shadow-sm md:grid-cols-case-md md:items-center md:p-lg lg:grid-cols-case-lg"
     >
       {/* The thumbnail opens the case study too (mouse and touch). Keyboard and screen reader users get the
           "View Case Study" link below, so this overlay is out of the Tab order and hidden from assistive tech;
@@ -254,7 +254,7 @@ function BannerLink({ href, icon: Icon, children }: { href: string; icon: IconCo
       <ArrowUpRight
         aria-hidden="true"
         size={16}
-        className="shrink-0 transition-transform duration-150 motion-safe:group-hover/link:translate-x-3xs motion-safe:group-hover/link:-translate-y-3xs"
+        className="shrink-0 transition-transform duration-fast motion-safe:group-hover/link:translate-x-3xs motion-safe:group-hover/link:-translate-y-3xs"
       />
       <span className="sr-only"> (opens in a new tab)</span>
     </a>

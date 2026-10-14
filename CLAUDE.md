@@ -1,12 +1,13 @@
-# kkita-portfolio
+# portfolio
 
-Karolina Kita's portfolio (karolina.kita.company). React 19 + TypeScript (strict) + Tailwind v4 on Vite, tested with Vitest + Testing Library, work on `develop`, deployed by Netlify from `main` on release. Package manager: **yarn** (v1). Dev machine: Windows 11, Node via fnm (`.node-version`).
+Karolina Kita's portfolio (karolina.kita.company), public repo github.com/karolinakita-ux/portfolio. React 19 + TypeScript (strict) + Tailwind v4 on Vite, tested with Vitest + Testing Library and Playwright, work on `develop`, deployed by Netlify from `main` on release. Package manager: **yarn** (v1). Dev machine: Windows 11, Node via fnm (`.node-version`).
 
 ## Commands
 
 - `yarn dev` - local server at http://localhost:5173
 - `yarn verify` - typecheck, lint (zero warnings), Prettier check, tests, production build. Run before every commit.
 - `yarn test` - Vitest in watch mode; `yarn test:run` once
+- `yarn e2e` - Playwright tests (`e2e/*.e2e.ts`) in Chromium, Firefox and WebKit against a fresh production build with prerendered pages on 127.0.0.1:5190. Run it after UI, motion or theme changes; it is not part of `yarn verify` or the Netlify build. `E2E_DEV=1 yarn e2e` tests the dev server; `--project chromium` or a spec name (`yarn e2e header-motion`) narrows a run. One run at a time (shared port and `test-results/`; `E2E_PORT` picks another port). First time: `yarn playwright install chromium firefox webkit`.
 - `yarn typecheck`, `yarn lint`, `yarn format` (writes), `yarn format:check`
 
 ## Layout
@@ -20,6 +21,7 @@ Vertical slices: `app` → `features` → `shared`, never the other way.
 - Every `Section` heading gets a copy-link anchor (`HeadingAnchor`); its `id` is the URL hash. Keep section ids stable: they are shared links.
 - Imports: `#app/*`, `#features/*`, `#shared/*`, `#test/*` (subpath imports in `package.json`), `./x` within the same folder.
 - File names: components `PascalCase.tsx`, hooks `useX.ts`, other modules kebab-case with a role suffix (`*.content.ts`, `*.types.ts`, `*.constants.ts`, `*.context.ts`, `*.utils.ts`), tests `*.test.ts(x)` next to the file.
+- `e2e/` - Playwright specs (`*.e2e.ts`) and `helpers.ts` (in-page frame sampler, pill animation log, theme setup), type-checked by `tsconfig.e2e.json`. Vitest only collects `src/**/*.test.ts(x)`.
 - `src/styles/tokens.css` - KitaBranding tokens as CSS variables (light + dark); `app.css` maps them into Tailwind's theme.
 - `src/styles/kita-branding.tokens.json` - Figma Variables export; `tokens.test.ts` keeps `tokens.css` 1:1 with it.
 - `public/assets/` - images: `site/` (portrait, link-preview image) and `cases/<case>/` (screenshots, `thumbnail.webp`), referenced from content by their path under `/assets` (`cases/project-planning/thumbnail.webp`). Lowercase kebab-case. Screenshots are WebP (`sharp`, quality 90); the link-preview image stays PNG. `/assets/*` is cached for a week, so a changed image gets a new file name.
@@ -30,8 +32,10 @@ Vertical slices: `app` → `features` → `shared`, never the other way.
 - Style only with token utilities: `bg-bg-canvas`, `text-text-secondary`, `border-border-subtle`, spacing `p-md` / `gap-lg` (3xs 2px … 4xl 96px), radius `rounded-sm|md|lg|xl|full`, shadows `shadow-sm…xl`, type `text-display-*`, `text-headline-*`, `text-title-*`, `text-label-*`, `text-body-*`.
 - `app.css` resets Tailwind's default colours, radii, shadows and font sizes, so `bg-gray-100` or `text-lg` do not exist. Never add hex values or arbitrary values where a token exists.
 - Dark mode swaps CSS variables via `.dark` on `<html>`. Do not use `dark:` variants.
-- New token: add it in Figma, re-export `kita-branding.tokens.json`, then add the variable to `tokens.css` (both modes) and the mapping in `app.css`.
+- Motion: `duration-fast|medium|slow` (150 / 240 / 300ms) and `ease-standard`, from the `--motion-*` tokens. Never `duration-150`, `ease-out` or a raw ms value (`src/styles/motion-tokens.test.ts`). Motion stays calm: nothing moves on the first screen at load, nothing loops past 5 s, and `prefers-reduced-motion` makes every change instant (the CSS rule in `app.css`; animations started from JS check `prefersReducedMotion()`).
+- New token: add it in Figma, re-export `kita-branding.tokens.json`, then add the variable to `tokens.css` (both modes; motion tokens once, they have no mode) and the mapping in `app.css`. Mirror it in the KitaBranding design system on claude.ai.
 - WCAG 2.1 AA minimum: keyboard focus (`FOCUS_RING`), labelled controls, semantic headings and landmarks.
+- On focusable elements, list the transitioned properties (`transition-[color,background-color]`, as `Button.tsx` does). `transition-colors` also animates `outline-color`, so the focus ring would fade in instead of appearing at once (`e2e/motion-a11y.e2e.ts` checks it).
 
 ## Copy rules (Karolina's, enforced by `src/app/content-rules.test.ts`)
 

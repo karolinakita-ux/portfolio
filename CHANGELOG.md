@@ -4,6 +4,94 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Release v3.7.3 - 2026-10-14
+
+- The yellow marker in the menu now slides to the page you open, and the light / dark switch moves the same way.
+- Switching between light and dark mode fades the whole page instead of jumping.
+- Cards on the Work, About and case study pages fade in gently as you scroll to them.
+- Motion stays short and calm, and it switches off when your device asks for reduced motion; keyboard focus outlines appear at once.
+
+Versions: 3.5.1 - 3.7.3.
+
+### 3.7.3 - 2026-10-14
+
+#### Changed
+
+- `CLAUDE.md`: focusable elements list the properties they transition (`transition-[color,background-color]`), because `transition-colors` also animates the outline and makes the focus ring fade in.
+
+### 3.7.2 - 2026-10-14
+
+#### Fixed
+
+- Keyboard focus rings appear at once in their final colour. The menu links, theme buttons, the copy-email button and the FAQ questions animated their outline colour together with their text colour, so the ring faded in over up to 240ms and started almost invisible on the yellow marker in dark mode.
+- The scroll fade on cards stays off with forced colours (Windows high contrast) or when the visitor asks for more contrast.
+- The loading skeleton on thumbnails pulses twice and then holds still, so nothing on the site loops longer than 5 seconds (WCAG 2.2.2).
+- `yarn a11y` reads each Tab stop's focus style after it settles, so its Tab report shows the real ring.
+
+#### Changed
+
+- Tests: a Playwright `motion-a11y` spec checks that no focusable element animates its outline, that every timed animation ends within 5 seconds while images are still loading, and that the scroll fade respects both contrast settings. These fixes come from a WCAG 2.1 AA review of the motion work, which found no AA failures.
+
+### 3.7.1 - 2026-10-14
+
+#### Fixed
+
+- The header motion test "a second click mid-way" no longer fails now and then in WebKit. WebKit starts a new animation from the last painted frame, so under load the first move could already be over before the test paused it; the test now holds the move the moment the app starts it (new `nextPillAnimation` helper). 400 of 400 runs passed under the load that failed it before.
+
+### 3.7.0 - 2026-10-14
+
+#### Added
+
+- Cards fade up as they scroll into view: the case cards and testimonials on Work, the principle and career cards on About, and the screenshot rows and problem cards in the case studies. The fade follows the scroll position (a CSS scroll-driven animation, no script): it starts when a card's top enters the screen and ends 96px of scrolling later. Nothing moves on the first screen, with reduced motion or in print, and browsers without support (Firefox today) simply show the cards.
+
+#### Changed
+
+- Tests: Vitest checks the CSS guards and exactly which cards carry the fade; a Playwright `scroll-reveal` spec checks every card while scrolling at 390 and 1280 px, the first screen on load, anchor jumps, reduced motion, print, Firefox, and axe at several scroll positions in both themes.
+
+### 3.6.0 - 2026-10-14
+
+#### Added
+
+- The yellow marker in the header moves: when the page changes, it slides from the old menu item to the new one (240ms, standard easing), whether the change came from the menu, a link on the page, the footer or Back / Forward. The light / dark switch slides the same way. To or from the CV, which is not in the menu, the marker fades out or in. Nothing moves on the first page load or with reduced motion.
+- A theme change cross-fades the page where the browser supports view transitions. In older browsers every colour changes in the same frame, so the header no longer lags behind the page.
+- In Windows high-contrast mode the active menu item and the selected theme keep a visible outline.
+
+#### Changed
+
+- Menu and theme labels change colour together with the marker (240ms), so their hover background fades at that speed too.
+- Tests: Vitest for the sliding marker, the motion token reader, the header and the theme change; a Playwright `header-motion` spec in three browsers (travel, interruption, fade in and out, first load, reduced motion, cross-fade and its fallback, high contrast).
+
+### 3.5.4 - 2026-10-14
+
+#### Added
+
+- End-to-end tests with Playwright: `yarn e2e` runs them in Chromium, Firefox and WebKit against a fresh production build with prerendered pages. A smoke test opens every page (the right title, one `<main>` and one `<h1>` before and after React takes over, no console errors).
+- A theme test checks that the site follows the system light / dark setting at first paint and after React, follows live system changes, keeps a visitor's pick (also after a reload) and still works when storage is blocked.
+- `CLAUDE.md`, `CONTRIBUTING.md` and the README describe `yarn e2e`: run it after UI, motion or theme changes. It is not part of `yarn verify` or the Netlify build.
+
+### 3.5.3 - 2026-10-14
+
+#### Changed
+
+- Motion has design tokens: `motion/duration/fast`, `medium` and `slow` (150, 240 and 300ms) and `motion/easing/standard` in Figma, exported to `kita-branding.tokens.json` and declared once in `tokens.css` (they are the same in both modes). The KitaBranding design system on claude.ai has them too.
+- Every transition and animation uses them through `duration-fast|medium|slow` and `ease-standard`; Tailwind's own easings are switched off. A new test (`motion-tokens.test.ts`) fails on a raw duration, delay or easing, and `tokens.test.ts` checks the motion tokens against Figma in both modes.
+- Small visible change: four transitions that took 200ms (FAQ chevron and answer, header shadow, back to top) now take 240ms, and eight transitions without an easing use the standard easing instead of Tailwind's default.
+- Tailwind reads class names from `src/` only, without test files, so utilities quoted in tests and docs no longer end up in the site's CSS.
+- `CLAUDE.md` and `docs/design.md` describe the motion tokens and where they are mirrored.
+
+### 3.5.2 - 2026-10-13
+
+#### Fixed
+
+- One-page builds with a relative base (`vite build --base ./`, used for the claude.ai artifact copy of the site) work again: there the page path travels in the hash (`#/about`, `#/about#career`), because such a build has no other paths to load. The site itself is unchanged.
+
+### 3.5.1 - 2026-10-13
+
+#### Changed
+
+- `package.json` is named `portfolio` like the repository and links to it; `CLAUDE.md` names the public repo.
+- Docs and comments follow the latest changes: what `yarn verify` runs, where `## Unreleased` goes after a release, and that only a new view remounts (a jump within a page only scrolls).
+
 ## Release v3.5.0 - 2026-10-13
 
 - The code behind the site is now public on GitHub, linked from the Work page next to the Figma workspace.
