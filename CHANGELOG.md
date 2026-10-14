@@ -6,6 +6,19 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.6.0 - 2026-10-14
+
+#### Added
+
+- The yellow marker in the header moves: when the page changes, it slides from the old menu item to the new one (240ms, standard easing), whether the change came from the menu, a link on the page, the footer or Back / Forward. The light / dark switch slides the same way. To or from the CV, which is not in the menu, the marker fades out or in. Nothing moves on the first page load or with reduced motion.
+- A theme change cross-fades the page where the browser supports view transitions. In older browsers every colour changes in the same frame, so the header no longer lags behind the page.
+- In Windows high-contrast mode the active menu item and the selected theme keep a visible outline.
+
+#### Changed
+
+- Menu and theme labels change colour together with the marker (240ms), so their hover background fades at that speed too.
+- Tests: Vitest for the sliding marker, the motion token reader, the header and the theme change; a Playwright `header-motion` spec in three browsers (travel, interruption, fade in and out, first load, reduced motion, cross-fade and its fallback, high contrast).
+
 ### 3.5.4 - 2026-10-14
 
 #### Added
