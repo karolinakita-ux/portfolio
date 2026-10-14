@@ -4,7 +4,14 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v3.7.3 - 2026-10-14
+
+- The yellow marker in the menu now slides to the page you open, and the light / dark switch moves the same way.
+- Switching between light and dark mode fades the whole page instead of jumping.
+- Cards on the Work, About and case study pages fade in gently as you scroll to them.
+- Motion stays short and calm, and it switches off when your device asks for reduced motion; keyboard focus outlines appear at once.
+
+Versions: 3.5.1 - 3.7.3.
 
 ### 3.7.3 - 2026-10-14
 
