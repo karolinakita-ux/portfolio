@@ -15,6 +15,7 @@ import { expect, test, type Page } from "@playwright/test";
 import { NAV_ITEMS, VIEW, VIEW_PATHS, type View } from "#shared/lib/routes.ts";
 
 import {
+  activeKeys,
   CANVAS,
   controlOf,
   expectBoxNear,
@@ -152,16 +153,24 @@ for (const viewport of ["phone", "desktop"] as const) {
         const motion = await motionTokens(page);
         const run = await clickTwice(page, ABOUT, CONTACT);
 
-        // The first move was under way when the second click came...
-        expect(run.firstBefore, `the ${ABOUT} pill animation when the second click comes`).toEqual(["running"]);
+        // The first click started a move, which was still under way (held mid-way) when the second click came...
+        expect(run.firstStarted, `the ${ABOUT} pill animation the first click starts`).toEqual(["running"]);
+        expect(run.firstBefore, `the ${ABOUT} pill animation when the second click comes`).toEqual(["paused"]);
         const baseline = run.frames[0];
-        if (!baseline || !run.interruptedAt) throw new Error("no baseline frame or no pill to measure");
+        const shown = run.frames.filter((frame) => activeKeys(frame).join() === ABOUT).at(-1);
+        if (!baseline || !shown || !run.interruptedAt) throw new Error("no baseline frame, no About frame or no pill");
         const progress = progressOf(run.interruptedAt, itemOf(baseline, WORK), controlOf(itemOf(baseline, ABOUT)));
         expect(
           progress > 0.02 && progress < 0.98,
           `pill between ${WORK} and ${ABOUT} at the second click (${formatBox(run.interruptedAt)}, progress ${progress})`,
         ).toBe(true);
-        // ...the second click cancelled it (not finished: no jump to the end; the test held it paused)...
+        expectBoxNear(
+          itemOf(shown, ABOUT),
+          run.interruptedAt,
+          0.5,
+          `the last frame before the second click shows it there`,
+        );
+        // ...the second click cancelled it (not finished: no jump to the end)...
         expect(run.firstAfter, `the first animation after the second click`).toEqual(["idle"]);
         // ...and the new animation starts where the pill was on screen.
         expectTravel(run.frames, { from: run.interruptedAt, to: CONTACT, motion });
@@ -397,14 +406,15 @@ interface InterruptRun {
   frames: FrameSample[];
   /** The first pill's box on screen right before the second click. */
   interruptedAt: Box | null;
-  /** playState of the first pill's animations right before / after the second click. */
+  /** playState of the first pill's animations as the app starts them, right before / after the second click. */
+  firstStarted: string[];
   firstBefore: string[];
   firstAfter: string[];
 }
 
 /**
- * Clicks `first`, then `second` three frames later, inside the page (so the gap is exact),
- * sampling the nav pills throughout.
+ * Clicks `first`, holds the move it starts at a fifth of its time, then clicks `second` two
+ * frames later, inside the page (so the gap is exact), sampling the nav pills throughout.
  */
 async function clickTwice(page: Page, first: string, second: string): Promise<InterruptRun> {
   return page.evaluate(
@@ -419,19 +429,16 @@ async function clickTwice(page: Page, first: string, second: string): Promise<In
         return found;
       };
       kb.startSampling(pills);
-      link(first).click();
-      // Wait for the first move to run (a few frames at most; none at all: the test reports it).
       const firstPill = link(first).querySelector("[data-pill]");
-      for (let frame = 0; frame < 10; frame++) {
-        await kb.nextFrames(1);
-        const [animation] = firstPill?.getAnimations() ?? [];
-        if (animation?.playState === "running" && !animation.pending) break;
-      }
-      // Click from a task, like a real click, not from inside a frame callback: an animation created
-      // during a frame callback starts with that frame, so the next sample would already be one frame in.
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      const started = kb.nextPillAnimation(first, 2000);
+      link(first).click();
+      // Take hold of the first move in the click's own task, before any frame. WebKit starts an
+      // animation at the time of the last frame, so the first frame that paints it can already be
+      // most of the way through; one slow frame and a task more, and it would be over before a
+      // hold that waits for frames.
+      await started;
       const firstAnimations = firstPill?.getAnimations() ?? [];
-      const firstBefore = firstAnimations.map((animation) => animation.playState);
+      const firstStarted = firstAnimations.map((animation) => animation.playState);
       // Hold the pill at a fifth of the move's time (about half-way with the standard easing), so the
       // spot depends neither on how busy the machine is nor on when exactly the app reads it.
       for (const animation of firstAnimations) {
@@ -439,6 +446,12 @@ async function clickTwice(page: Page, first: string, second: string): Promise<In
         animation.pause();
         if (typeof duration === "number") animation.currentTime = duration / 5;
       }
+      // Let the held pill paint, then click from a task, like a real click, not from inside a frame
+      // callback: an animation created during a frame callback starts with that frame, so the next
+      // sample would already be one frame in.
+      await kb.nextFrames(2);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      const firstBefore = firstAnimations.map((animation) => animation.playState);
       const rect = firstPill?.getBoundingClientRect();
       const interruptedAt = rect ? { x: rect.x, y: rect.y, width: rect.width, height: rect.height } : null;
       link(second).click();
@@ -446,7 +459,7 @@ async function clickTwice(page: Page, first: string, second: string): Promise<In
       await kb.waitIdle(pills, 4000);
       const frames = await kb.stopSampling();
       const firstAfter = firstAnimations.map((animation) => animation.playState);
-      return { frames, interruptedAt, firstBefore, firstAfter };
+      return { frames, interruptedAt, firstStarted, firstBefore, firstAfter };
     },
     { nav: SELECTOR.primaryNav, pills: SELECTOR.navPills, first, second },
   );
