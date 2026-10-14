@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.7.3 - 2026-10-14
+
+#### Changed
+
+- `CLAUDE.md`: focusable elements list the properties they transition (`transition-[color,background-color]`), because `transition-colors` also animates the outline and makes the focus ring fade in.
+
 ### 3.7.2 - 2026-10-14
 
 #### Fixed
