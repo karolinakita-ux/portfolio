@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 
 import { useScrolledPast } from "#shared/hooks/useScrolledPast.ts";
+import { useSlidingPill } from "#shared/hooks/useSlidingPill.ts";
 import type { Theme } from "#shared/hooks/useTheme.ts";
 import { NAV_ITEMS, navSectionFor, type Navigate, type View } from "#shared/lib/routes.ts";
 import { cn, FOCUS_RING } from "#shared/lib/ui.utils.ts";
@@ -43,17 +44,35 @@ function Logo() {
   );
 }
 
+/**
+ * The yellow marker of the active item, behind its label (useSlidingPill moves it). Every item
+ * has one; only the active one is visible. The transparent border shows in forced-colours
+ * mode (Windows high contrast), where the background is dropped, so the active item stays marked.
+ * transition-none: the hook does all of its motion (it fades a pill in or out when there is no
+ * other to slide from); a CSS transition would only add stray ones, such as the near-zero
+ * transitions the reduced-motion reset in app.css gives every changed property. Its own text
+ * colour (it has no text) keeps it from inheriting the label's colour transition, which WebKit
+ * otherwise copies onto it even with transition-property: none.
+ */
+const PILL =
+  "pointer-events-none absolute inset-0 -z-10 border border-transparent bg-bg-accent-brand text-text-on-accent transition-none";
+const pillVisibility = (active: boolean) => (active ? "opacity-100" : "opacity-0");
+
 const THEME_OPTIONS = [
   { value: "light", label: "Light theme", Icon: Sun },
   { value: "dark", label: "Dark theme", Icon: Moon },
 ] as const;
 
 function ThemeToggle({ theme, onChange }: { theme: Theme; onChange: (theme: Theme) => void }) {
+  const groupRef = useSlidingPill<HTMLDivElement>(theme);
   return (
+    // isolate: the pills (-z-10) sit above the group's background. kb-theme-toggle names the
+    // group's own view-transition layer, so on a theme change its pill slides instead of fading.
     <div
+      ref={groupRef}
       role="group"
       aria-label="Color theme"
-      className="inline-flex items-center gap-2xs rounded-md border border-border-subtle bg-bg-surface-raised p-2xs shadow-sm"
+      className="kb-theme-toggle isolate inline-flex items-center gap-2xs rounded-md border border-border-subtle bg-bg-surface-raised p-2xs shadow-sm"
     >
       {THEME_OPTIONS.map(({ value, label, Icon }) => {
         const active = theme === value;
@@ -66,13 +85,18 @@ function ThemeToggle({ theme, onChange }: { theme: Theme; onChange: (theme: Them
             title={label}
             onClick={() => onChange(value)}
             className={cn(
-              "inline-flex items-center justify-center rounded-sm px-md py-xs transition-colors duration-fast ease-standard",
+              "relative inline-flex items-center justify-center rounded-sm px-md py-xs transition-colors duration-medium ease-standard",
               active
-                ? "bg-bg-accent-brand text-text-on-accent shadow-sm"
+                ? "text-text-on-accent"
                 : "text-text-secondary hover:bg-bg-surface-default hover:text-text-primary",
               FOCUS_RING,
             )}
           >
+            <span
+              data-pill={value}
+              aria-hidden="true"
+              className={cn(PILL, "rounded-sm shadow-sm", pillVisibility(active))}
+            />
             <Icon aria-hidden="true" size={16} />
           </button>
         );
@@ -105,6 +129,9 @@ interface SiteHeaderProps {
 export function SiteHeader({ activeView, onNavigate, onHome, theme, onThemeChange }: SiteHeaderProps) {
   const headerRef = useRef<HTMLElement>(null);
   const scrolled = useScrolledPast(4);
+  // The nav section of the view (Work on a case study); null on a page outside the nav (the CV).
+  const activeNav = NAV_ITEMS.find((item) => item.view === navSectionFor(activeView))?.view ?? null;
+  const navRef = useSlidingPill<HTMLUListElement>(activeNav);
 
   useEffect(() => {
     const node = headerRef.current;
@@ -148,9 +175,10 @@ export function SiteHeader({ activeView, onNavigate, onHome, theme, onThemeChang
         </a>
 
         <nav aria-label="Primary" className="order-last w-full md:order-none md:w-auto">
-          <ul className="flex flex-wrap items-center justify-center gap-2xs">
+          {/* isolate: every pill (-z-10) stays below every label while one slides past the others. */}
+          <ul ref={navRef} className="isolate flex flex-wrap items-center justify-center gap-2xs">
             {NAV_ITEMS.map((item) => {
-              const active = navSectionFor(activeView) === item.view;
+              const active = item.view === activeNav;
               return (
                 <li key={item.view}>
                   <ViewLink
@@ -158,14 +186,18 @@ export function SiteHeader({ activeView, onNavigate, onHome, theme, onThemeChang
                     onNavigate={onNavigate}
                     // On a case study, Work is the current section ("true"); the breadcrumb names the page.
                     aria-current={active ? (item.view === activeView ? "page" : "true") : undefined}
+                    // The label colour changes with the pill (medium), so it is never dark on dark for long.
                     className={cn(
-                      "block rounded-md px-sm py-xs text-label-lg transition-colors duration-fast",
-                      active
-                        ? "bg-bg-accent-brand text-text-on-accent"
-                        : "text-text-primary hover:bg-bg-surface-default",
+                      "relative block rounded-md px-sm py-xs text-label-lg transition-colors duration-medium ease-standard",
+                      active ? "text-text-on-accent" : "text-text-primary hover:bg-bg-surface-default",
                       FOCUS_RING,
                     )}
                   >
+                    <span
+                      data-pill={item.view}
+                      aria-hidden="true"
+                      className={cn(PILL, "rounded-md", pillVisibility(active))}
+                    />
                     {item.label}
                   </ViewLink>
                 </li>
