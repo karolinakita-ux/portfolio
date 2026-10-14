@@ -6,6 +6,19 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.7.2 - 2026-10-14
+
+#### Fixed
+
+- Keyboard focus rings appear at once in their final colour. The menu links, theme buttons, the copy-email button and the FAQ questions animated their outline colour together with their text colour, so the ring faded in over up to 240ms and started almost invisible on the yellow marker in dark mode.
+- The scroll fade on cards stays off with forced colours (Windows high contrast) or when the visitor asks for more contrast.
+- The loading skeleton on thumbnails pulses twice and then holds still, so nothing on the site loops longer than 5 seconds (WCAG 2.2.2).
+- `yarn a11y` reads each Tab stop's focus style after it settles, so its Tab report shows the real ring.
+
+#### Changed
+
+- Tests: a Playwright `motion-a11y` spec checks that no focusable element animates its outline, that every timed animation ends within 5 seconds while images are still loading, and that the scroll fade respects both contrast settings. These fixes come from a WCAG 2.1 AA review of the motion work, which found no AA failures.
+
 ### 3.7.1 - 2026-10-14
 
 #### Fixed

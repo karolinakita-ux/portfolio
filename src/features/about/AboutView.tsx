@@ -204,7 +204,7 @@ function FaqItem({ item }: { item: FaqEntry }) {
           onClick={() => setOpen((value) => !value)}
           className={cn(
             "flex w-full items-center justify-between gap-md rounded-md px-lg py-md text-left",
-            "transition-colors duration-fast hover:text-text-secondary",
+            "transition-[color] duration-fast hover:text-text-secondary",
             FOCUS_RING,
           )}
         >

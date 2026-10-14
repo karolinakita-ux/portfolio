@@ -73,7 +73,9 @@ function rules(block: Block, path: readonly string[] = []): Array<{ path: string
 const APP = parse(read("app.css"));
 const PRINT = parse(read("print.css"));
 const UTILITY = "@utility reveal-on-scroll";
-const MOTION_ALLOWED = "@media (prefers-reduced-motion: no-preference)";
+/** Motion allowed, no forced colours, no contrast preference: a fading card never fights a contrast setting. */
+const MOTION_ALLOWED =
+  "@media (prefers-reduced-motion: no-preference) and (forced-colors: none) and (prefers-contrast: no-preference)";
 const SUPPORTED = "@supports (animation-timeline: view())";
 
 /** Rules that mention the reveal anywhere: in the path (selector, utility) or a declaration. */
@@ -85,7 +87,7 @@ describe("reveal-on-scroll (app.css)", () => {
   const revealRules = rules(APP).filter(mentionsReveal);
   const utility = revealRules.filter(({ path }) => path[0] === UTILITY);
 
-  it("declares its animation only with motion allowed and view timelines supported", () => {
+  it("declares its animation only with motion allowed, no contrast settings and view timelines supported", () => {
     expect(utility.map(({ path }) => path)).toEqual([[UTILITY, MOTION_ALLOWED, SUPPORTED]]);
     // Nothing applies outside those conditions: no declarations directly in the utility or the media query.
     const top = APP.blocks.filter((block) => block.prelude === UTILITY);

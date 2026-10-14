@@ -139,6 +139,10 @@ async function tabOrder(page: Page): Promise<TabStop[]> {
   const stops: TabStop[] = [];
   for (let index = 0; index < MAX_TAB_STOPS; index++) {
     await page.keyboard.press("Tab");
+    // Let focus styles settle (two frames) so the report shows the ring as it ends, not the first frame of a transition.
+    await page.evaluate(
+      () => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))),
+    );
     const stop = await page.evaluate((index) => {
       const el = document.activeElement as HTMLElement | null;
       if (!el || el === document.body) return null;

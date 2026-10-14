@@ -85,7 +85,7 @@ function ThemeToggle({ theme, onChange }: { theme: Theme; onChange: (theme: Them
             title={label}
             onClick={() => onChange(value)}
             className={cn(
-              "relative inline-flex items-center justify-center rounded-sm px-md py-xs transition-colors duration-medium ease-standard",
+              "relative inline-flex items-center justify-center rounded-sm px-md py-xs transition-[color,background-color] duration-medium ease-standard",
               active
                 ? "text-text-on-accent"
                 : "text-text-secondary hover:bg-bg-surface-default hover:text-text-primary",
@@ -188,7 +188,7 @@ export function SiteHeader({ activeView, onNavigate, onHome, theme, onThemeChang
                     aria-current={active ? (item.view === activeView ? "page" : "true") : undefined}
                     // The label colour changes with the pill (medium), so it is never dark on dark for long.
                     className={cn(
-                      "relative block rounded-md px-sm py-xs text-label-lg transition-colors duration-medium ease-standard",
+                      "relative block rounded-md px-sm py-xs text-label-lg transition-[color,background-color] duration-medium ease-standard",
                       active ? "text-text-on-accent" : "text-text-primary hover:bg-bg-surface-default",
                       FOCUS_RING,
                     )}
