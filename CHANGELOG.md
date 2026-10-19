@@ -4,6 +4,23 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Release v3.12.0 - 2026-10-19
+
+- A new button on the Work page, "View Components in Storybook", opens the library of the buttons, cards and other parts this site is built from.
+- The component library no longer shows a loading error when it was left open during an update.
+
+Versions: 3.12.0.
+
+### 3.12.0 - 2026-10-19
+
+#### Added
+
+- "View Components in Storybook", a secondary button after "View Code on GitHub" in the Work page hero, opens the component library in a new tab (`PROFILE.storybookUrl`, an absolute link because only production builds Storybook). A `Blocks` icon (Lucide) marks it.
+
+#### Fixed
+
+- Storybook: a tab opened before a deploy showed "Failed to fetch dynamically imported module" for a story whose file the deploy had renamed. The preview now reloads once on Vite's `vite:preloadError` (at most once in 10 s); checked by serving one build, switching to another under the open tab and opening Section's docs. All 79 live entries render.
+
 ## Release v3.11.3 - 2026-10-19
 
 - The statistics question uses the site's calm outlined buttons again; both answers still look exactly the same.
