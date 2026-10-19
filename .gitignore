@@ -62,6 +62,8 @@ originals/
 *.tar.gz
 
 # Test and browser-automation output, tool caches
+storybook-static/
+*storybook.log
 test-results/
 playwright-report/
 blob-report/

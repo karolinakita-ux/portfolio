@@ -8,6 +8,10 @@
 /assets/*
   Cache-Control: public, max-age=604800, stale-while-revalidate=86400
 
+# The component library (Storybook, production only): not for search engines, linked from nowhere.
+/storybook/*
+  X-Robots-Tag: noindex, nofollow
+
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin

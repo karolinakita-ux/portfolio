@@ -6,6 +6,18 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.11.0 - 2026-10-19
+
+#### Added
+
+- Storybook 10 for the component library: a story for every shared component (buttons, badges, cards, callouts, dialog, accordion, links, header, footer, theme toggle, images) and the consent box, with the Figma variants, real copy and a light/dark toolbar. `yarn storybook` runs it on port 6006.
+- `src/test/stories.test.tsx`: every story renders in Vitest, runs its interaction checks and passes axe (WCAG 2.1 A/AA); a shared component without a story fails the test.
+- Production deploys build Storybook into `/storybook/`: a separate build, so the site's pages load none of it, with `noindex, nofollow` and no link from the site. Branch deploys skip it.
+
+#### Changed
+
+- `react` and `react-dom` are pinned to one copy with yarn `resolutions` (Storybook's docs addon pulled in a second one).
+
 ### 3.10.0 - 2026-10-19
 
 #### Added

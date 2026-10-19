@@ -12,3 +12,5 @@
    motion guard's fixtures and docs that quote banned utilities (duration-150) would
    otherwise compile into the site's CSS. */
 @source not "../**/*.test.{ts,tsx}";
+/* Stories (Storybook) are not part of the site either. */
+@source not "../**/*.stories.tsx";
