@@ -1,0 +1,79 @@
+/* Named utilities and variants: layout grids, layers, glows, accordion rows, the scroll reveal. */
+
+/* Named layout utilities */
+@utility grid-cols-case-md {
+  grid-template-columns: 224px minmax(0, 1fr);
+}
+@utility grid-cols-case-lg {
+  grid-template-columns: 300px minmax(0, 1fr);
+}
+@utility grid-cols-about-lg {
+  grid-template-columns: minmax(0, 1fr) 376px;
+}
+@utility grid-cols-showcase {
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+}
+@utility grid-cols-term {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+/* Site header from md: logo | nav (centred on the page) | theme switch */
+@utility grid-cols-header {
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+}
+
+/* Short viewports: landscape phones, or 200-400% browser zoom on a laptop.
+   The sticky header lets go there so it never covers a large share of the screen. */
+@custom-variant short (@media (max-height: 30rem));
+/* Accordion: animating grid rows 0fr → 1fr gives a smooth auto-height expand */
+@utility grid-rows-collapsed {
+  grid-template-rows: 0fr;
+}
+@utility grid-rows-expanded {
+  grid-template-rows: 1fr;
+}
+@utility z-header {
+  z-index: 50;
+}
+@utility z-skip {
+  z-index: 60;
+}
+@utility bg-avatar-glow {
+  background-image:
+    radial-gradient(circle at 28% 24%, var(--bg-avatar-glow-warm), transparent 62%),
+    radial-gradient(circle at 76% 80%, var(--bg-avatar-glow-cold), transparent 58%);
+}
+@utility bg-portrait-glow {
+  background-image:
+    radial-gradient(120% 70% at 50% 0%, var(--bg-avatar-glow-cold), transparent 70%),
+    radial-gradient(120% 70% at 50% 100%, var(--bg-avatar-glow-warm), transparent 72%);
+}
+
+/* Cards in a list fade up as they scroll into view: a CSS scroll-driven animation, no script.
+   It follows the scroll position, not the clock, so it works on the prerendered HTML, does not
+   replay when React takes the page over, and nothing moves until the visitor scrolls.
+   The range starts when the card's top enters the viewport and ends 96px (spacing4xl) of
+   scrolling later, so even a card taller than the screen is fully shown long before it is read.
+   No duration: a scroll timeline sets the pace (duration auto).
+   Fill backwards: below the viewport the card waits transparent and 16px low; once the range is
+   scrolled past, the animation lets go and the card is exactly its own state again (fill both
+   would leave a 0px translate and an animated opacity on every card for good).
+   animation-timeline comes after the shorthand, which resets it.
+   Only with motion allowed, no forced colours (Windows high contrast) and no request for more
+   or less contrast, and where the browser supports it; anywhere else (and in print, see
+   print.css) the card simply shows. A browser that does not know one of these media features
+   treats the query as false, so the card shows there too. */
+@utility reveal-on-scroll {
+  @media (prefers-reduced-motion: no-preference) and (forced-colors: none) and (prefers-contrast: no-preference) {
+    @supports (animation-timeline: view()) {
+      animation: reveal-on-scroll var(--motion-easing-standard) backwards;
+      animation-timeline: view();
+      animation-range: entry 0% entry var(--spacing-4xl);
+    }
+  }
+}
+@keyframes reveal-on-scroll {
+  from {
+    opacity: 0;
+    translate: 0 var(--spacing-md);
+  }
+}

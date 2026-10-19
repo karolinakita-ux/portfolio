@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
 /**
- * The scroll reveal on cards (`reveal-on-scroll` in app.css): a scroll-driven CSS animation that
+ * The scroll reveal on cards (`reveal-on-scroll` in utilities.css): a scroll-driven CSS animation that
  * may only run with motion allowed and where the browser supports view timelines, so anywhere
  * else the cards simply show. Print switches it off (print.css). The browsers' side (what a card
  * looks like at each scroll position) is checked in e2e/scroll-reveal.e2e.ts.
@@ -22,7 +22,7 @@ interface Block {
 
 const collapse = (text: string) => text.replace(/\s+/g, " ").trim();
 
-/** A small CSS reader: nested blocks and their declarations, enough for app.css and print.css. */
+/** A small CSS reader: nested blocks and their declarations, enough for the app stylesheet and print.css. */
 function parse(css: string): Block {
   const root: Block = { prelude: "", declarations: [], blocks: [] };
   const stack = [root];
@@ -70,7 +70,8 @@ function rules(block: Block, path: readonly string[] = []): Array<{ path: string
   return [...here, ...block.blocks.flatMap((child) => rules(child, [...path, child.prelude]))];
 }
 
-const APP = parse(read("app.css"));
+/** The app stylesheet: the partials app.css imports after tokens.css and print.css. */
+const APP = parse(["theme.css", "utilities.css", "base.css", "lightbox.css", "motion.css"].map(read).join("\n"));
 const PRINT = parse(read("print.css"));
 const UTILITY = "@utility reveal-on-scroll";
 /** Motion allowed, no forced colours, no contrast preference: a fading card never fights a contrast setting. */
@@ -83,7 +84,7 @@ const mentionsReveal = ({ path, block }: { path: string[]; block: Block }) =>
   path.some((prelude) => prelude.includes("reveal-on-scroll")) ||
   block.declarations.some(([, value]) => value.includes("reveal-on-scroll"));
 
-describe("reveal-on-scroll (app.css)", () => {
+describe("reveal-on-scroll (app stylesheet)", () => {
   const revealRules = rules(APP).filter(mentionsReveal);
   const utility = revealRules.filter(({ path }) => path[0] === UTILITY);
 
@@ -130,7 +131,7 @@ describe("reveal-on-scroll (app.css)", () => {
     expect(theme?.declarations).toContainEqual(["--spacing-4xl", "96px"]);
   });
 
-  it("is not animated from anywhere else in app.css", () => {
+  it("is not animated from anywhere else in the app stylesheet", () => {
     expect(revealRules.filter(({ path }) => path[0] !== UTILITY).map(({ path }) => path)).toEqual([
       ["@keyframes reveal-on-scroll", "from"],
     ]);

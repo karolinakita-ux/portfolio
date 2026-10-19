@@ -31,7 +31,7 @@ const stripCssComments = (css: string) => css.replace(/\/\*[\s\S]*?\*\//g, (comm
 /** "animation:   x\n    240ms" → "animation: x 240ms": how declarations are compared. */
 const normalize = (property: string, value: string) => `${property}: ${value}`.replace(/\s+/g, " ").trim();
 
-/** The files to scan, by repo-relative path with forward slashes ("src/shared/ui/Button.tsx"). */
+/** The files to scan, by repo-relative path with forward slashes ("src/shared/ui/Button/Button.styles.ts"). */
 const SOURCES = readdirSync(join(ROOT, "src"), { recursive: true, withFileTypes: true })
   .filter((entry) => entry.isFile())
   .map((entry) => relative(ROOT, join(entry.parentPath, entry.name)).split(sep).join("/"))
@@ -46,8 +46,8 @@ const MOTION_TOKENS = new Map(
 );
 const token = (name: string) => MOTION_TOKENS.get(name) ?? `<no --${name} in tokens.css>`;
 
-/** Every custom property app.css declares (the Tailwind theme), by name. */
-const APP_CSS = stripCssComments(read("src/styles/app.css"));
+/** Every custom property the Tailwind theme declares (theme.css), by name. */
+const APP_CSS = stripCssComments(read("src/styles/theme.css"));
 const APP_VARS = new Map(
   [...APP_CSS.matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)].map(([, name = "", value = ""]) => [name, value.trim()]),
 );
@@ -73,18 +73,18 @@ const BACKDROP_ANIMATION = `animation: backdrop-in ${token("motion-duration-medi
  */
 const ALLOWED: ReadonlyArray<{ file: string; declaration: string }> = [
   // The image viewer's backdrop fade. ::backdrop does not reliably inherit custom properties, so
-  // app.css writes out motionDurationMedium and motionEasingStandard. The expected text is built
-  // from tokens.css: when a token changes, the app.css line has to change with it.
-  { file: "src/styles/app.css", declaration: BACKDROP_ANIMATION },
+  // lightbox.css writes out motionDurationMedium and motionEasingStandard. The expected text is built
+  // from tokens.css: when a token changes, the lightbox.css line has to change with it.
+  { file: "src/styles/lightbox.css", declaration: BACKDROP_ANIMATION },
   // The prefers-reduced-motion reset: a near-zero override that switches motion off, not a design value.
-  { file: "src/styles/app.css", declaration: "animation-duration: 0.01ms !important" },
-  { file: "src/styles/app.css", declaration: "transition-duration: 0.01ms !important" },
+  { file: "src/styles/motion.css", declaration: "animation-duration: 0.01ms !important" },
+  { file: "src/styles/motion.css", declaration: "transition-duration: 0.01ms !important" },
 ];
 
 const RULES = {
   rawUtility: "raw Tailwind time utility: use duration-fast|medium|slow",
   builtinEase: "Tailwind's own easing: use ease-standard",
-  notInTheme: "not defined in app.css's theme",
+  notInTheme: "not defined in the theme (theme.css)",
   easingFunction: "easing function written out: use var(--motion-easing-standard)",
   cssTime: "time written out: use var(--motion-duration-…)",
   cssKeyword: "CSS easing keyword: use var(--motion-easing-standard)",
@@ -159,7 +159,7 @@ describe("motion tokens", () => {
   it("scans the app's styles and components, not the token definitions", () => {
     const paths = SOURCES.map((file) => file.path);
     expect(paths).toContain("src/styles/app.css");
-    expect(paths).toContain("src/shared/ui/Button.tsx");
+    expect(paths).toContain("src/shared/ui/Button/Button.styles.ts");
     expect(paths).not.toContain("src/styles/tokens.css");
   });
 
@@ -227,7 +227,7 @@ const BAD: ReadonlyArray<[match: string, file: string, snippet: string]> = [
   ["duration-200", "src/styles/app.css", `.a { @apply transition-colors duration-200; }`],
   // The allowed literals pass only where they are allowed, and only with the token values.
   ["0.01ms", "src/styles/print.css", `.a { transition-duration: 0.01ms !important; }`],
-  ["200ms", "src/styles/app.css", `.kb-lightbox[open]::backdrop { animation: backdrop-in 200ms ease; }`],
+  ["200ms", "src/styles/lightbox.css", `.kb-lightbox[open]::backdrop { animation: backdrop-in 200ms ease; }`],
 ];
 
 /** Snippets the scanner must leave alone: [file, snippet]. */
@@ -239,15 +239,21 @@ const GOOD: ReadonlyArray<[file: string, snippet: string]> = [
   ["src/shared/hooks/useFade.ts", `interface Options { duration: number }`],
   ["src/shared/hooks/useFade.ts", `el.animate(frames, { duration: cssMs("--motion-duration-medium") });`],
   ["src/styles/app.css", `/* was duration-150 ease-out: 240ms cubic-bezier(0.2, 0, 0, 1) */`],
-  ["src/styles/app.css", `--transition-duration-*: initial;\n--transition-duration-fast: var(--motion-duration-fast);`],
-  ["src/styles/app.css", `--ease-*: initial;\n--ease-standard: var(--motion-easing-standard);`],
+  [
+    "src/styles/theme.css",
+    `--transition-duration-*: initial;\n--transition-duration-fast: var(--motion-duration-fast);`,
+  ],
+  ["src/styles/theme.css", `--ease-*: initial;\n--ease-standard: var(--motion-easing-standard);`],
   [
     "src/styles/app.css",
     `--animate-view-in: view-in var(--motion-duration-medium) var(--motion-easing-standard) both;`,
   ],
   ["src/styles/app.css", `.a { transform: translateY(8px); background-image: linear-gradient(red, blue); }`],
-  ["src/styles/app.css", `@media (prefers-reduced-motion: reduce) { * { transition-duration: 0.01ms !important; } }`],
-  ["src/styles/app.css", `.kb-lightbox[open]::backdrop {\n  ${BACKDROP_ANIMATION};\n}`],
+  [
+    "src/styles/motion.css",
+    `@media (prefers-reduced-motion: reduce) { * { transition-duration: 0.01ms !important; } }`,
+  ],
+  ["src/styles/lightbox.css", `.kb-lightbox[open]::backdrop {\n  ${BACKDROP_ANIMATION};\n}`],
 ];
 
 describe("motion tokens scanner", () => {

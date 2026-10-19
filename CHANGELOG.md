@@ -6,6 +6,22 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.8.1 - 2026-10-19
+
+#### Changed
+
+- One component per folder: `Button/Button.tsx` with `Button.types.ts` (props), `Button.styles.ts` (all its Tailwind classes) and `Button.test.tsx`. Views and their sections are split the same way in every feature; the image viewer's dialog is split into hooks (`useZoom`, `useSwipe`, `useModalDialog`, `usePreloadNeighbours`, `useRevealedImage`) and smaller components.
+- Mixed modules are split by role and grouped in one folder per domain: `shared/lib/routes/` (constants, types, utils), `lib/analytics/`, `lib/ui/`, `lib/motion/`, `hooks/theme/`, `media/image-preload/`, the case-study `content/` and `gallery/`, `app/routing/`, `app/seo/`.
+- `app.css` is split into `theme.css`, `utilities.css`, `base.css`, `lightbox.css` and `motion.css`; `e2e/helpers.ts` into `e2e/helpers/`; the accessibility audit into `scripts/a11y/`.
+- Prettier sorts classes inside `cn()`; ESLint rejects class strings in `className` and files over 200 lines of code (tests and copy excepted).
+- `CLAUDE.md`, `CONTRIBUTING.md` and `docs/architecture.md` describe the file rules, the co-author trailer for engineering commits and a list of recurring pitfalls.
+
+#### Fixed
+
+- The ESLint slice boundaries never matched: in gitignore-style patterns a leading `#` starts a comment, so `"#app/*"` matched nothing. They are regular expressions now, and a slice may import its own files across folders but no other slice. No code had crossed them.
+
+The built pages and CSS are the same as in 3.8.0 (compared page by page).
+
 ### 3.8.0 - 2026-10-19
 
 #### Added

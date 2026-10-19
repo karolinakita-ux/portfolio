@@ -1,3 +1,5 @@
+import { readdirSync } from "node:fs";
+import { join } from "node:path";
 import eslintReact from "@eslint-react/eslint-plugin";
 import js from "@eslint/js";
 import vitest from "@vitest/eslint-plugin";
@@ -14,14 +16,34 @@ import tseslint from "typescript-eslint";
 /**
  * Vertical-slice boundaries (see CLAUDE.md, Layout): app -> features -> shared, never back.
  * Features never import each other, and the app reaches a feature only through its index.ts.
+ * Patterns are regular expressions: in the gitignore-style `group` syntax a leading "#" starts a
+ * comment, so "#app/*" matched nothing (the boundaries were silently off until 3.8.1).
  */
 const NO_PARENT_IMPORTS = {
-  group: ["../*"],
+  regex: String.raw`^\.\./`,
   message: "Import across folders with #app/*, #features/* or #shared/* instead of ../",
 };
 const boundaries = (...patterns) => ({
   "no-restricted-imports": ["error", { patterns: [...patterns, NO_PARENT_IMPORTS] }],
 });
+
+/**
+ * One block per feature slice: a slice may import its own files across folders
+ * (#features/about/about.content.ts from components/FaqItem/), never another slice.
+ */
+const FEATURES = readdirSync(join(import.meta.dirname, "src", "features"), { withFileTypes: true })
+  .filter((entry) => entry.isDirectory())
+  .map((entry) => entry.name);
+const featureBoundaries = FEATURES.map((name) => ({
+  files: [`src/features/${name}/**/*.{ts,tsx}`],
+  rules: boundaries(
+    { regex: "^#app/", message: "Features must not depend on the app shell." },
+    {
+      regex: `^#features/(?!${name}/)`,
+      message: "Features never import each other: move shared code to #shared, compose in #app.",
+    },
+  ),
+}));
 
 export default defineConfig([
   // Build output, reports and local-only files (see .gitignore)
@@ -70,23 +92,39 @@ export default defineConfig([
     extends: [eslintReact.configs["recommended-type-checked"], jsxA11y.flatConfigs.recommended],
   },
   {
-    files: ["src/shared/**/*.{ts,tsx}"],
-    rules: boundaries({ group: ["#app/*", "#features/*"], message: "Shared code must not depend on app or features." }),
+    // Component files hold structure and behaviour; their classes live in the *.styles.ts next to them.
+    files: ["src/**/*.tsx"],
+    ignores: ["src/**/*.test.tsx"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: String.raw`JSXAttribute[name.name=/[cC]lassName$/] Literal[raw=/^["']/]`,
+          message: "Put class names in the component's *.styles.ts (CLAUDE.md, Components).",
+        },
+        {
+          selector: String.raw`JSXAttribute[name.name=/[cC]lassName$/] TemplateLiteral`,
+          message: "Put class names in the component's *.styles.ts (CLAUDE.md, Components).",
+        },
+      ],
+    },
   },
   {
-    files: ["src/features/**/*.{ts,tsx}"],
-    rules: boundaries(
-      { group: ["#app/*"], message: "Features must not depend on the app shell." },
-      {
-        group: ["#features/*"],
-        message: "Features never import each other: move shared code to #shared, compose in #app.",
-      },
-    ),
+    // Short files: split a long module by role (component, *.types, *.styles, *.utils, *.constants, useX).
+    // Content (copy) and tests may run longer.
+    files: ["src/**/*.{ts,tsx}", "scripts/**/*.ts", "e2e/helpers/**/*.ts"],
+    ignores: ["src/**/*.test.{ts,tsx}", "src/**/*.content.{ts,tsx}"],
+    rules: { "max-lines": ["error", { max: 200, skipBlankLines: true, skipComments: true }] },
   },
+  {
+    files: ["src/shared/**/*.{ts,tsx}"],
+    rules: boundaries({ regex: "^#(?:app|features)/", message: "Shared code must not depend on app or features." }),
+  },
+  ...featureBoundaries,
   {
     files: ["src/app/**/*.{ts,tsx}"],
     rules: boundaries({
-      group: ["#features/*/*", "!#features/*/index.ts"],
+      regex: String.raw`^#features/[^/]+/(?!index\.ts$)`,
       message: "Import a feature through its index.ts.",
     }),
   },

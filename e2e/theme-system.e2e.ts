@@ -7,20 +7,11 @@
  */
 import { expect, test, type Page } from "@playwright/test";
 
-import { VIEW, VIEW_PATHS } from "#shared/lib/routes.ts";
+import { VIEW, VIEW_PATHS } from "#shared/lib/routes/routes.constants.ts";
 
-import {
-  appRan,
-  blockScriptFiles,
-  CANVAS,
-  nextFrames,
-  openView,
-  THEME_STORAGE_KEY,
-  themeButton,
-  THEMES,
-  waitForApp,
-  type Theme,
-} from "./helpers.ts";
+import { CANVAS, THEME_STORAGE_KEY, THEMES } from "./helpers/helpers.constants.ts";
+import type { Theme } from "./helpers/helpers.types.ts";
+import { appRan, blockScriptFiles, nextFrames, openView, themeButton, waitForApp } from "./helpers/page.utils.ts";
 
 const PATH = VIEW_PATHS[VIEW.about];
 

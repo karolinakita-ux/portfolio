@@ -1,0 +1,75 @@
+import { HERO_ACTIONS } from "#features/work/work.content.ts";
+import { PROFILE } from "#shared/content/profile.ts";
+import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
+import { track } from "#shared/lib/analytics/analytics.utils.ts";
+import { SECTION, VIEW } from "#shared/lib/routes/routes.constants.ts";
+import { hrefForView } from "#shared/lib/routes/routes.utils.ts";
+import { Button } from "#shared/ui/Button/Button.tsx";
+import { Container } from "#shared/ui/Container/Container.tsx";
+import { Eyebrow } from "#shared/ui/Eyebrow/Eyebrow.tsx";
+import { ArrowDown, ArrowUpRight, Figma, Github } from "#shared/ui/icons/icons.tsx";
+
+import { styles } from "./HeroSection.styles.ts";
+import type { HeroSectionProps } from "./HeroSection.types.ts";
+
+export function HeroSection({ onNavigate }: HeroSectionProps) {
+  return (
+    <section aria-labelledby="hero-title" className={styles.root}>
+      <Container>
+        <div className={styles.body}>
+          <Eyebrow parts={[PROFILE.name, PROFILE.role]} />
+          {/* No trailing period. Kept short (~40 characters) so it fits one line on desktop from 1024px. */}
+          <h1 id="hero-title" className={styles.title}>
+            Clarity for complex enterprise software
+          </h1>
+          <p className={styles.lead}>
+            I have 8+ years of experience turning data-heavy B2B platforms and messy workflows into clear, usable
+            digital products. With a background in psychology, I focus on how people actually think and work - combining
+            practical research with solid design systems that engineers can easily build.
+          </p>
+          <div className={styles.actions}>
+            <Button
+              as="a"
+              href={hrefForView(VIEW.work, SECTION.workCases)}
+              iconRight={ArrowDown}
+              onClick={(event) => {
+                event.preventDefault();
+                onNavigate(VIEW.work, SECTION.workCases, { smooth: true });
+              }}
+            >
+              {HERO_ACTIONS.cases}
+            </Button>
+            <Button
+              as="a"
+              href={PROFILE.figmaWorkspaceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="secondary"
+              iconLeft={Figma}
+              iconRight={ArrowUpRight}
+              onClick={() => track(EVENT.figmaClick, { place: "hero" })}
+            >
+              {HERO_ACTIONS.figma}
+              <span className={styles.srOnly}> (opens in a new tab)</span>
+            </Button>
+            {PROFILE.repositoryUrl ? (
+              <Button
+                as="a"
+                href={PROFILE.repositoryUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="secondary"
+                iconLeft={Github}
+                iconRight={ArrowUpRight}
+                onClick={() => track(EVENT.githubClick, { place: "hero" })}
+              >
+                {HERO_ACTIONS.source}
+                <span className={styles.srOnly}> (opens in a new tab)</span>
+              </Button>
+            ) : null}
+          </div>
+        </div>
+      </Container>
+    </section>
+  );
+}

@@ -1,11 +1,6 @@
 import { PROFILE } from "#shared/content/profile.ts";
 
-export interface Engagement {
-  /** primary: highlighted pill; selective: deliberately quieter. */
-  tier: "primary" | "selective";
-  label: string;
-  body: string;
-}
+import type { Engagement } from "./contact.types.ts";
 
 export const CONTACT = {
   eyebrow: "Get in touch",
@@ -24,7 +19,7 @@ export const CONTACT = {
   collaboration:
     "Available for remote work worldwide. Comfortable collaborating across European time zones and overlapping with US East Coast (EST) working hours.",
   /**
-   * Privacy note (GDPR Art. 13) for the visitor statistics in src/shared/lib/analytics.utils.ts.
+   * Privacy note (GDPR Art. 13) for the visitor statistics in src/shared/lib/analytics/analytics.utils.ts.
    * Keep it true to the code: what is counted, the vendor, how long, how to opt out.
    */
   privacy: {

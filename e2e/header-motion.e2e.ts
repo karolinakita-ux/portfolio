@@ -12,40 +12,25 @@
  */
 import { expect, test, type Page } from "@playwright/test";
 
-import { NAV_ITEMS, VIEW, VIEW_PATHS, type View } from "#shared/lib/routes.ts";
+import { NAV_ITEMS, VIEW, VIEW_PATHS } from "#shared/lib/routes/routes.constants.ts";
+import type { View } from "#shared/lib/routes/routes.types.ts";
 
+import { summariseAnimations } from "./helpers/animations.utils.ts";
+import { expectFade, expectJump, expectResting, expectTravel } from "./helpers/expectations.utils.ts";
+import { activeKeys, controlOf, expectBoxNear, formatBox, itemOf, progressOf } from "./helpers/geometry.utils.ts";
+import { CANVAS, SELECTOR, THEME_LABEL, THEMES, VIEWPORTS } from "./helpers/helpers.constants.ts";
+import type { Box, FrameSample, Theme } from "./helpers/helpers.types.ts";
+import { motionTokens } from "./helpers/motion.utils.ts";
+import { navLink, openView, themeButton } from "./helpers/page.utils.ts";
 import {
-  activeKeys,
-  CANVAS,
-  controlOf,
-  expectBoxNear,
-  expectFade,
-  expectJump,
-  expectResting,
-  expectTravel,
   finishSampling,
-  formatBox,
-  itemOf,
-  motionTokens,
-  navLink,
-  openView,
   pillLog,
-  progressOf,
   sampleNow,
-  SELECTOR,
   startSampling,
-  summariseAnimations,
-  THEME_LABEL,
-  themeButton,
-  THEMES,
-  VIEWPORTS,
   viewTransitionCalls,
   viewTransitionFinished,
   waitIdle,
-  type Box,
-  type FrameSample,
-  type Theme,
-} from "./helpers.ts";
+} from "./helpers/sampling.utils.ts";
 
 const labelOf = (view: View): string => {
   const item = NAV_ITEMS.find((candidate) => candidate.view === view);
