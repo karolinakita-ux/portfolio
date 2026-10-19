@@ -12,6 +12,11 @@ export const PROFILE = {
    * (hero button, Behind the Design banner), e.g. if the repo goes private again.
    */
   repositoryUrl: "https://github.com/karolinakita-ux/portfolio" as string | null,
+  /**
+   * The component library (Storybook), built by production deploys only, so the link is absolute: it
+   * works from dev, branch deploys and the artifact too. null hides the Work page hero button.
+   */
+  storybookUrl: "https://karolina.kita.company/storybook/" as string | null,
   /** Discreet footer note on how the site was made. */
   builtWith: "Designed in Figma, prototyped & built with Claude AI assistance",
 } as const;

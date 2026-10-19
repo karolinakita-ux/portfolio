@@ -7,6 +7,7 @@ export const HERO_ACTIONS = {
   cases: "Explore Case Studies",
   figma: "Inspect Figma Workspace",
   source: "View Code on GitHub",
+  components: "View Components in Storybook",
 };
 
 export const WORK_INTRO =
