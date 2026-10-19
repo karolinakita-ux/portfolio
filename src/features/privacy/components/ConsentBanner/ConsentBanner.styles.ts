@@ -15,8 +15,9 @@ export const styles = {
   /** The choice first, the link to the details apart from it: at the end of the row from sm, below on phones. */
   actions: clsx("flex flex-col items-start gap-sm pt-2xs sm:flex-row sm:items-center sm:justify-between"),
   /**
-   * Allow and decline look the same, both primary: refusing is as easy as accepting, and neither is
-   * pushed (EDPB cookie banner taskforce report, para. 13 and 17; the GOV.UK cookie banner does the same).
+   * Allow and decline look the same: refusing is as easy as accepting, and neither is pushed (EDPB cookie
+   * banner taskforce report, para. 13 and 17). Both secondary: the page keeps its one primary action, and
+   * the raised card already makes the box stand out.
    */
   choices: clsx("flex flex-wrap gap-sm"),
   link: clsx("text-body-md", TEXT_LINK),

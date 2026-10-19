@@ -17,12 +17,14 @@ import "./styles/app.css";
 setHashRouting(import.meta.env.BASE_URL === "./");
 
 // Visitor statistics (Umami): the live site only, never in dev, previews or the artifact build, and only
-// after the visitor allows them (the consent box).
+// after the visitor allows them (the consent box). The dev server shows the box on every load (preview),
+// except in automated browsers (Playwright e2e and yarn a11y), whose checks expect the page alone.
 initStatistics({
   production: import.meta.env.PROD,
   base: import.meta.env.BASE_URL,
   hostname: window.location.hostname,
   privacy: browserSignals(),
+  preview: import.meta.env.DEV && !navigator.webdriver,
 });
 
 const root = document.getElementById("root");

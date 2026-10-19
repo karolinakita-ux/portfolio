@@ -36,6 +36,12 @@ export const statisticsState = (): StatisticsState =>
 /** True when the consent box should ask: the live site, no browser signal, no choice yet. */
 export const consentNeeded = (): boolean => site !== null && analyticsAllowed(site) && statisticsState() === "unset";
 
+/**
+ * True on the dev server (`yarn dev`): the consent box shows on every page load, whatever was chosen
+ * before, so its design can be checked. Nothing loads there: analyticsAllowed() needs a production build.
+ */
+export const consentPreview = (): boolean => site?.preview === true;
+
 /** Called once from src/main.tsx: remembers the site, and loads the script if the visitor already allowed it. */
 export function initStatistics(current: AnalyticsSite): void {
   site = current;
