@@ -4,6 +4,18 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Unreleased
+
+### 3.11.2 - 2026-10-19
+
+#### Changed
+
+- On the dev server (`yarn dev`) the consent box shows on every page load, whatever was chosen before, so its design can be checked; an answer hides it until the next load, and Umami never loads there. Automated browsers (Playwright e2e, `yarn a11y`) do not get it.
+
+#### Fixed
+
+- With storage blocked, an answer in the consent box now hides it for the page instead of the box staying open.
+
 ## Release v3.11.1 - 2026-10-19
 
 - The statistics question shows "Allow statistics" and "No, thanks" as two equal buttons, and says that you can change your choice at any time on the Privacy page.

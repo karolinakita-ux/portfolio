@@ -61,4 +61,22 @@ describe("StatisticsConsent", () => {
     await user.click(screen.getByRole("link", { name: copy.details }));
     expect(navigate).toHaveBeenCalledWith("privacy", undefined);
   });
+
+  it("on the dev server asks on every page load, even after a choice, and loads nothing", async () => {
+    initStatistics({ production: false, base: "/", hostname: "localhost", privacy: {}, preview: true });
+    window.localStorage.setItem(STATISTICS_CHOICE_KEY, "off");
+    const user = userEvent.setup();
+    // Earlier tests in this file may have added the script already: nothing new may be added here.
+    const scripts = () => document.querySelectorAll(`script[src="${UMAMI.script}"]`).length;
+    const before = scripts();
+    const { unmount } = render(<StatisticsConsent onNavigate={() => undefined} />);
+    await user.click(screen.getByRole("button", { name: copy.allow }));
+    expect(screen.queryByRole("region", { name: copy.title })).not.toBeInTheDocument();
+    expect(scripts()).toBe(before);
+    unmount();
+
+    // The next page load asks again.
+    render(<StatisticsConsent onNavigate={() => undefined} />);
+    expect(screen.getByRole("region", { name: copy.title })).toBeInTheDocument();
+  });
 });

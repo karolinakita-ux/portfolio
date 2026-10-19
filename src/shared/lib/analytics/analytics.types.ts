@@ -76,6 +76,8 @@ export interface AnalyticsSite {
   base: string;
   hostname: string;
   privacy: PrivacySignals;
+  /** The dev server in a person's browser: the consent box shows on every page load, to check its design. */
+  preview?: boolean;
 }
 
 /** What the module remembers for the page's lifetime. */
