@@ -1,7 +1,7 @@
-import { cn } from "#shared/lib/ui/ui.utils.ts";
+import { clsx } from "clsx";
 
 export const styles = {
-  root: cn(
+  root: clsx(
     "inline-flex size-2xl shrink-0 items-center justify-center rounded-full bg-bg-avatar-base bg-avatar-glow text-title-sm text-text-primary",
   ),
 };

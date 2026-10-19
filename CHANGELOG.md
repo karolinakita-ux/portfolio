@@ -6,6 +6,23 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.8.2 - 2026-10-19
+
+#### Added
+
+- A component library in `src/shared/ui`, named after the Figma components: `Card` (layout stack / media, gap), `Badge`, `Avatar`, `PageTitle`, `Dialog` (the native modal: inert page, Escape, backdrop click, scroll lock), `Accordion` / `AccordionItem`, `VisuallyHidden` and `NewTabNote`. `docs/architecture.md` maps each Figma component to its code.
+- `clsx` for composing classes and `cva` (class-variance-authority) for variant sets: Button `variant`, Callout `tone`, Card `layout` and `gap`, Badge `weight`, Section `gap`, the engagement tier.
+
+#### Changed
+
+- Repeated markup now uses the library: six hand-written card class lists become `Card`, the four page titles `PageTitle`, the skill tags and detail badges `Badge`, seven "(opens in a new tab)" spans `NewTabNote`, new-tab attributes `EXTERNAL_LINK`, link styles `TEXT_LINK`. The image viewer runs on `Dialog`, the FAQ on `Accordion`.
+- `isCaseView()` replaces three copies of the case-study check.
+- The dialog backdrop CSS moved to `dialog.css` as `.kb-dialog`.
+
+#### Removed
+
+- The project's own `cn()`; `clsx` does the same. `tailwind-merge` stays out: it reads token type styles (`text-body-md`) as colours and drops them.
+
 ### 3.8.1 - 2026-10-19
 
 #### Changed

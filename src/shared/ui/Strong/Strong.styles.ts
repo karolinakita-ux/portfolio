@@ -1,5 +1,5 @@
-import { cn } from "#shared/lib/ui/ui.utils.ts";
+import { clsx } from "clsx";
 
 export const styles = {
-  root: cn("font-semibold text-text-primary"),
+  root: clsx("font-semibold text-text-primary"),
 };

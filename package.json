@@ -1,7 +1,7 @@
 {
   "name": "portfolio",
   "private": true,
-  "version": "3.8.1",
+  "version": "3.8.2",
   "description": "Karolina Kita - Senior Product Designer portfolio (karolina.kita.company)",
   "author": "Karolina Kita",
   "homepage": "https://karolina.kita.company",
@@ -36,6 +36,8 @@
     "@fontsource/inter": "5.3.0",
     "@fontsource/zilla-slab": "5.3.0",
     "@tailwindcss/vite": "^4.3.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "tailwindcss": "^4.3.3"

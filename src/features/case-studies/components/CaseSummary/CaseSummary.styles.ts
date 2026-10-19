@@ -1,6 +1,6 @@
-import { cn } from "#shared/lib/ui/ui.utils.ts";
+import { clsx } from "clsx";
 
 export const styles = {
-  body: cn("flex flex-col gap-md"),
-  paragraph: cn("text-body-lg text-text-secondary"),
+  body: clsx("flex flex-col gap-md"),
+  paragraph: clsx("text-body-lg text-text-secondary"),
 };

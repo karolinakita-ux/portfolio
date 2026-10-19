@@ -2,6 +2,7 @@ import { useId } from "react";
 
 import { BULLET_LIST } from "#shared/lib/ui/ui.styles.ts";
 import { Screenshot } from "#shared/media/Screenshot/Screenshot.tsx";
+import { Card } from "#shared/ui/Card/Card.tsx";
 
 import { styles } from "./ShowcaseRow.styles.ts";
 import type { ShowcaseRowProps } from "./ShowcaseRow.types.ts";
@@ -10,7 +11,7 @@ import type { ShowcaseRowProps } from "./ShowcaseRow.types.ts";
 export function ShowcaseRow({ src, previewSrc, item, onExpand }: ShowcaseRowProps) {
   const titleId = useId();
   return (
-    <article aria-labelledby={titleId} className={styles.root}>
+    <Card layout="media" gap="lg" aria-labelledby={titleId} className={styles.root}>
       <Screenshot
         src={previewSrc ?? src}
         fallbackSrc={previewSrc ? src : undefined}
@@ -38,6 +39,6 @@ export function ShowcaseRow({ src, previewSrc, item, onExpand }: ShowcaseRowProp
           </ul>
         )}
       </div>
-    </article>
+    </Card>
   );
 }

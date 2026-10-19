@@ -1,16 +1,18 @@
-import { cn } from "#shared/lib/ui/ui.utils.ts";
+import { cva } from "class-variance-authority";
+import { clsx } from "clsx";
 
 import type { SectionBodyGap } from "./Section.types.ts";
 
-const BODY_GAP: Record<SectionBodyGap, string> = { lg: cn("gap-lg"), xl: cn("gap-xl") };
+const BODY_GAP: Record<SectionBodyGap, string> = { lg: "gap-lg", xl: "gap-xl" };
+
+export const sectionBody = cva("flex flex-col", { variants: { gap: BODY_GAP }, defaultVariants: { gap: "lg" } });
 
 export const styles = {
-  root: cn("pt-3xl"),
-  body: (gap: SectionBodyGap) => cn("flex flex-col", BODY_GAP[gap]),
-  header: cn("flex flex-col gap-xs"),
-  titleRow: cn("group flex items-center gap-xs"),
-  title: cn(
+  root: clsx("pt-3xl"),
+  header: clsx("flex flex-col gap-xs"),
+  titleRow: clsx("group flex items-center gap-xs"),
+  title: clsx(
     "scroll-mt-lg font-display text-headline-lg text-balance text-text-primary focus:outline-none lg:text-display-sm",
   ),
-  paragraph: (index: number) => cn("text-body-lg text-text-secondary", index > 0 && "mt-xs"),
+  paragraph: (index: number) => clsx("text-body-lg text-text-secondary", { "mt-xs": index > 0 }),
 };

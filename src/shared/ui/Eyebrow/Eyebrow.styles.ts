@@ -1,6 +1,5 @@
-import { cn } from "#shared/lib/ui/ui.utils.ts";
+import { clsx } from "clsx";
 
 export const styles = {
-  root: (className?: string) => cn("text-label-md text-text-secondary uppercase", className),
-  separatorText: cn("sr-only"),
+  root: (className?: string) => clsx("text-label-md text-text-secondary uppercase", className),
 };

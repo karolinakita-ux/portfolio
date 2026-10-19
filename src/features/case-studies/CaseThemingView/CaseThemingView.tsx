@@ -8,6 +8,7 @@ import { DetailList } from "#features/case-studies/components/DetailList/DetailL
 import { ShowcaseRows } from "#features/case-studies/components/ShowcaseRows/ShowcaseRows.tsx";
 import { caseCards } from "#features/case-studies/gallery/gallery.utils.ts";
 import { useCaseGallery } from "#features/case-studies/gallery/useCaseGallery.ts";
+import { Card } from "#shared/ui/Card/Card.tsx";
 import { Section } from "#shared/ui/Section/Section.tsx";
 
 import { styles } from "./CaseThemingView.styles.ts";
@@ -26,11 +27,11 @@ export function CaseThemingView({ c, resolveAsset, onNavigate }: CaseViewProps<T
 
       <Section id="case-problem" title="The Core Problem: Management Assumption vs. Usability Reality">
         <div className={styles.problemGrid}>
-          <article className={styles.problemCard}>
+          <Card>
             <h3 className={styles.problemTitle}>The Assumption</h3>
             <p className={styles.problemBody}>{c.assumption}</p>
-          </article>
-          <article className={styles.problemCard}>
+          </Card>
+          <Card>
             <h3 className={styles.problemTitle}>The Reality</h3>
             <ul className={styles.problemList}>
               {c.reality.map((point, index) => (
@@ -38,7 +39,7 @@ export function CaseThemingView({ c, resolveAsset, onNavigate }: CaseViewProps<T
                 <li key={index}>{point}</li>
               ))}
             </ul>
-          </article>
+          </Card>
         </div>
       </Section>
 

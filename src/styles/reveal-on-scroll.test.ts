@@ -71,7 +71,9 @@ function rules(block: Block, path: readonly string[] = []): Array<{ path: string
 }
 
 /** The app stylesheet: the partials app.css imports after tokens.css and print.css. */
-const APP = parse(["theme.css", "utilities.css", "base.css", "lightbox.css", "motion.css"].map(read).join("\n"));
+const APP = parse(
+  ["theme.css", "utilities.css", "base.css", "dialog.css", "lightbox.css", "motion.css"].map(read).join("\n"),
+);
 const PRINT = parse(read("print.css"));
 const UTILITY = "@utility reveal-on-scroll";
 /** Motion allowed, no forced colours, no contrast preference: a fading card never fights a contrast setting. */

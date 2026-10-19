@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useImageStatus } from "#shared/media/image-status/useImageStatus.ts";
 import { ThumbnailScaffold } from "#shared/media/ThumbnailScaffold/ThumbnailScaffold.tsx";
 import { Maximize2 } from "#shared/ui/icons/icons.tsx";
+import { VisuallyHidden } from "#shared/ui/VisuallyHidden/VisuallyHidden.tsx";
 
 import { styles } from "./Screenshot.styles.ts";
 import type { ScreenshotProps } from "./Screenshot.types.ts";
@@ -23,7 +24,7 @@ export function Screenshot({ src, fallbackSrc, alt, onExpand }: ScreenshotProps)
     return (
       <div className={styles.failed}>
         <ThumbnailScaffold failed />
-        <span className={styles.srOnly}>{alt}</span>
+        <VisuallyHidden>{alt}</VisuallyHidden>
       </div>
     );
   }
@@ -50,7 +51,7 @@ export function Screenshot({ src, fallbackSrc, alt, onExpand }: ScreenshotProps)
       onClick={(event) => onExpand(event.currentTarget)}
       className={styles.button}
     >
-      <span className={styles.srOnly}>View full size: </span>
+      <VisuallyHidden>View full size: </VisuallyHidden>
       {image}
       <span aria-hidden="true" className={styles.badge}>
         <Maximize2 size={12} />

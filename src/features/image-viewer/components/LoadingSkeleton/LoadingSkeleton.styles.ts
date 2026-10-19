@@ -1,8 +1,8 @@
-import { cn } from "#shared/lib/ui/ui.utils.ts";
+import { clsx } from "clsx";
 
 export const styles = {
   root: (sized: boolean, className?: string) =>
-    cn(
+    clsx(
       "relative overflow-hidden rounded-sm border border-border-subtle bg-bg-surface-raised",
       sized ? "kb-lightbox-skeleton" : "h-full w-full",
       className,

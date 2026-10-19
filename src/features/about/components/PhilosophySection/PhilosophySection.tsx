@@ -1,5 +1,6 @@
 import { PRINCIPLES } from "#features/about/about.content.ts";
 import { PortraitCard } from "#features/about/components/PortraitCard/PortraitCard.tsx";
+import { Card } from "#shared/ui/Card/Card.tsx";
 import { Section } from "#shared/ui/Section/Section.tsx";
 
 import { styles } from "./PhilosophySection.styles.ts";
@@ -16,10 +17,10 @@ export function PhilosophySection({ portraitSrc }: PhilosophySectionProps) {
       <div className={styles.grid}>
         <ul className={styles.list}>
           {PRINCIPLES.map((principle) => (
-            <li key={principle.id} className={styles.card}>
+            <Card as="li" key={principle.id}>
               <h3 className={styles.title}>{principle.title}</h3>
               <p className={styles.body}>{principle.body}</p>
-            </li>
+            </Card>
           ))}
         </ul>
         <PortraitCard src={portraitSrc} />

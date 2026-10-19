@@ -1,12 +1,16 @@
-import { Avatar } from "#features/work/components/Avatar/Avatar.tsx";
 import { LinkedInTextLink } from "#features/work/components/LinkedInTextLink/LinkedInTextLink.tsx";
 import { RECOMMENDATIONS_LINK_LABEL, TESTIMONIALS } from "#features/work/work.content.ts";
 import { PROFILE } from "#shared/content/profile.ts";
 import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import { track } from "#shared/lib/analytics/analytics.utils.ts";
+import { EXTERNAL_LINK } from "#shared/lib/ui/ui.constants.ts";
+import { Avatar } from "#shared/ui/Avatar/Avatar.tsx";
 import { Button } from "#shared/ui/Button/Button.tsx";
+import { Card } from "#shared/ui/Card/Card.tsx";
 import { ArrowUpRight, Linkedin, Quote } from "#shared/ui/icons/icons.tsx";
+import { NewTabNote } from "#shared/ui/NewTabNote/NewTabNote.tsx";
 import { Section } from "#shared/ui/Section/Section.tsx";
+import { VisuallyHidden } from "#shared/ui/VisuallyHidden/VisuallyHidden.tsx";
 
 import { styles } from "./TestimonialsSection.styles.ts";
 
@@ -17,7 +21,7 @@ export function TestimonialsSection() {
       <ul className={styles.list}>
         {TESTIMONIALS.map((item) => (
           <li key={item.id} className={styles.item}>
-            <figure className={styles.card}>
+            <Card as="figure" gap="md" className={styles.card}>
               <Quote aria-hidden="true" size={24} className={styles.quoteMark} />
               <blockquote cite={PROFILE.linkedinRecommendationsUrl} className={styles.quote}>
                 <p>{item.quote}</p>
@@ -36,7 +40,7 @@ export function TestimonialsSection() {
                   <span className={styles.role}>
                     {item.role}
                     <span aria-hidden="true"> | </span>
-                    <span className={styles.srOnly}> at </span>
+                    <VisuallyHidden> at </VisuallyHidden>
                     <LinkedInTextLink
                       href={item.company.url}
                       label={item.company.name}
@@ -46,7 +50,7 @@ export function TestimonialsSection() {
                   </span>
                 </span>
               </figcaption>
-            </figure>
+            </Card>
           </li>
         ))}
       </ul>
@@ -54,15 +58,14 @@ export function TestimonialsSection() {
         <Button
           as="a"
           href={PROFILE.linkedinRecommendationsUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+          {...EXTERNAL_LINK}
           variant="secondary"
           iconLeft={Linkedin}
           iconRight={ArrowUpRight}
           onClick={() => track(EVENT.linkedinClick, { target: "recommendations", place: "testimonials" })}
         >
           {RECOMMENDATIONS_LINK_LABEL}
-          <span className={styles.srOnly}> (opens in a new tab)</span>
+          <NewTabNote />
         </Button>
       </div>
     </Section>

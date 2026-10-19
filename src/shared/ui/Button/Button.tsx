@@ -1,11 +1,11 @@
-import { styles } from "./Button.styles.ts";
+import { button, styles } from "./Button.styles.ts";
 import type { ButtonProps } from "./Button.types.ts";
 
 /** Button - variant × state, optional leading/trailing icon, text label. Renders <button> or, with as="a", <a>. */
 export function Button(props: ButtonProps) {
   const IconLeft = props.iconLeft;
   const IconRight = props.iconRight;
-  const classes = styles.root(props.variant ?? "primary", props.className);
+  const classes = button({ variant: props.variant, className: props.className });
 
   const content = (
     <>

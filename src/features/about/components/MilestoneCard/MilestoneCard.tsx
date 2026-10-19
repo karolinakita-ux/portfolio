@@ -1,12 +1,15 @@
 import { useId } from "react";
 
+import { Badge } from "#shared/ui/Badge/Badge.tsx";
+import { Card } from "#shared/ui/Card/Card.tsx";
+
 import { styles } from "./MilestoneCard.styles.ts";
 import type { MilestoneCardProps } from "./MilestoneCard.types.ts";
 
 export function MilestoneCard({ milestone }: MilestoneCardProps) {
   const titleId = useId();
   return (
-    <article aria-labelledby={titleId} className={styles.root}>
+    <Card aria-labelledby={titleId}>
       <p className={styles.period}>{milestone.period}</p>
       <div className={styles.heading}>
         <h3 id={titleId} className={styles.title}>
@@ -26,11 +29,11 @@ export function MilestoneCard({ milestone }: MilestoneCardProps) {
       )}
       <ul aria-label="Skills" className={styles.tags}>
         {milestone.tags.map((tag) => (
-          <li key={tag} className={styles.tag}>
+          <Badge as="li" key={tag}>
             {tag}
-          </li>
+          </Badge>
         ))}
       </ul>
-    </article>
+    </Card>
   );
 }

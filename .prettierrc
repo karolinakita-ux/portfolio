@@ -14,5 +14,5 @@
   ],
   "importOrderTypeScriptVersion": "6.0.0",
   "tailwindStylesheet": "./src/styles/app.css",
-  "tailwindFunctions": ["cn"]
+  "tailwindFunctions": ["clsx", "cva"]
 }

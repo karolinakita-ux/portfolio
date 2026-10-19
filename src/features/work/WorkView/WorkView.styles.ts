@@ -1,6 +1,6 @@
-import { cn } from "#shared/lib/ui/ui.utils.ts";
+import { clsx } from "clsx";
 
 export const styles = {
-  emphasis: cn("font-semibold"),
-  cases: cn("flex flex-col gap-md"),
+  emphasis: clsx("font-semibold"),
+  cases: clsx("flex flex-col gap-md"),
 };

@@ -4,6 +4,7 @@ import { Breadcrumb } from "#shared/ui/Breadcrumb/Breadcrumb.tsx";
 import { Callout } from "#shared/ui/Callout/Callout.tsx";
 import { Container } from "#shared/ui/Container/Container.tsx";
 import { Eyebrow } from "#shared/ui/Eyebrow/Eyebrow.tsx";
+import { PageTitle } from "#shared/ui/PageTitle/PageTitle.tsx";
 
 import { styles } from "./CaseIntro.styles.ts";
 import type { CaseIntroProps } from "./CaseIntro.types.ts";
@@ -16,9 +17,7 @@ export function CaseIntro({ c, onNavigate }: CaseIntroProps) {
         <Breadcrumb onNavigate={onNavigate} items={[WORK_CRUMB, { label: c.shortTitle }]} />
         <div className={styles.heading}>
           <Eyebrow parts={c.eyebrow} />
-          <h1 id="case-title" className={styles.title}>
-            {c.title}
-          </h1>
+          <PageTitle id="case-title">{c.title}</PageTitle>
         </div>
         <MetaMatrix entries={c.meta} />
         {c.notice && (

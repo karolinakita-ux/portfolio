@@ -1,8 +1,7 @@
-import { cn } from "#shared/lib/ui/ui.utils.ts";
+import { clsx } from "clsx";
 
 export const styles = {
-  root: cn("pt-xl"),
-  heading: cn("mt-xl flex flex-col gap-sm"),
-  title: cn("font-display text-display-sm font-normal text-balance text-text-primary md:text-display-md"),
-  notice: cn("mt-lg"),
+  root: clsx("pt-xl"),
+  heading: clsx("mt-xl flex flex-col gap-sm"),
+  notice: clsx("mt-lg"),
 };
