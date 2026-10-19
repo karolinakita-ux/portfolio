@@ -1,1 +1,18 @@
 <meta name="robots" content="noindex, nofollow" />
+<script>
+  // A deploy renames the story files and removes the old ones, so a Storybook tab opened before it
+  // fails with "Failed to fetch dynamically imported module". Vite reports that as vite:preloadError:
+  // reload the preview once to get the new files (at most once in 10 s, so a real error cannot loop).
+  window.addEventListener("vite:preloadError", function (event) {
+    var key = "kb-storybook-reloaded";
+    try {
+      var last = Number(sessionStorage.getItem(key) || 0);
+      if (Date.now() - last < 10000) return;
+      sessionStorage.setItem(key, String(Date.now()));
+    } catch (error) {
+      return; // no storage: no guard against a loop, so leave the error on screen
+    }
+    event.preventDefault();
+    window.location.reload();
+  });
+</script>

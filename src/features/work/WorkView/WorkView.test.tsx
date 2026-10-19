@@ -17,6 +17,15 @@ describe("WorkView", () => {
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
   });
 
+  it("links the component library (Storybook on the live site) after the code, in a new tab", () => {
+    renderWork();
+    const link = screen.getByRole("link", { name: /^View Components in Storybook.*opens in a new tab/ });
+    expect(link).toHaveAttribute("href", "https://karolina.kita.company/storybook/");
+    expect(link).toHaveAttribute("target", "_blank");
+    const hero = screen.getByRole("link", { name: /^View Code on GitHub/ }).parentElement;
+    expect(link.parentElement).toBe(hero);
+  });
+
   it("links the Figma workspace and the code from the Behind the Design banner", () => {
     renderWork();
     const figma = screen.getByRole("link", { name: /^Explore the Figma Workspace.*opens in a new tab/ });
