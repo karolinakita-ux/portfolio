@@ -1,0 +1,15 @@
+import { clsx } from "clsx";
+
+export const styles = {
+  root: clsx("absolute inset-0 flex flex-col items-center justify-center gap-xs p-md"),
+  /** Pulses twice (2 x 2s) while loading, then holds still: nothing loops past 5 s (WCAG 2.2.2). */
+  wireframe: (failed: boolean) =>
+    clsx("h-full w-full", !failed && "motion-safe:animate-pulse motion-safe:[animation-iteration-count:2]"),
+  frame: clsx("fill-bg-surface-raised stroke-border-subtle"),
+  titleBar: clsx("fill-bg-accent-brand-subtle"),
+  mark: clsx("fill-border-default"),
+  panel: clsx("fill-bg-surface-default stroke-border-subtle"),
+  line: clsx("fill-border-subtle"),
+  accentPanel: clsx("fill-bg-accent-brand-subtle stroke-border-subtle"),
+  label: clsx("inline-flex items-center gap-2xs text-label-sm text-text-secondary"),
+};

@@ -1,0 +1,41 @@
+/* Element defaults on top of Tailwind's preflight. */
+
+@layer base {
+  html {
+    background: var(--bg-canvas);
+    color: var(--text-primary);
+    /* Reserve the scrollbar so locking scroll (image viewer) does not shift the layout. */
+    scrollbar-gutter: stable;
+    /* In-page anchors land below the sticky header (height measured at runtime). */
+    scroll-padding-top: calc(env(safe-area-inset-top, 0px) + var(--kb-header-h, 0px) + 16px);
+  }
+  body {
+    margin: 0;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: var(--bg-canvas);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* Tailwind v4 resets buttons to the default cursor; keep the pointer. */
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  /* Quick taps on controls (e.g. Next image) are not read as double-tap zoom on
+     touch screens. Pinch-zoom still works. */
+  a,
+  button,
+  summary,
+  [role="button"] {
+    touch-action: manipulation;
+  }
+  /* Scroll lock while the image viewer is open; overscroll off too, so a
+     downward swipe does not pull-to-refresh the page behind it. */
+  html.kb-scroll-locked {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+}

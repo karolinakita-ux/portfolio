@@ -19,6 +19,9 @@ How work moves from a commit to the live site at karolina.kita.company.
 3. Add an entry for that version under `## Unreleased` in `CHANGELOG.md`. Create the heading above the newest release if it is missing.
 4. Stage only the files you changed, by name. Do not use `git add -A`: someone may have unfinished edits in the same folder.
 5. Commit to `develop` and push. Put the version in the commit subject, e.g. `Add zoom to the image viewer (1.1.0)`.
+6. Credit co-authors with trailers at the end of the message. Engineering commits (code structure, refactors, tooling, libraries) carry `Co-authored-by: Mateusz Kita <mkita.webdev@gmail.com>`; commits written with Claude carry its trailer too.
+
+New code follows the file and folder rules in [docs/architecture.md](docs/architecture.md#files-and-folders): one component per folder with its `*.types.ts` and `*.styles.ts`, one folder per domain for other modules, files under 200 lines. ESLint enforces the slice boundaries, the class rule and the length cap. A new shared component gets a story next to it (`Name.stories.tsx`); `src/test/stories.test.tsx` fails without one.
 
 ### Version rules ([Semantic Versioning](https://semver.org/))
 

@@ -26,17 +26,18 @@ yarn dev       # http://localhost:5173
 
 ## Scripts
 
-| Command        | What it does                                                                      |
-| -------------- | --------------------------------------------------------------------------------- |
-| `yarn dev`     | Dev server with hot reload                                                        |
-| `yarn verify`  | Typecheck, lint (zero warnings), format check, tests, build and prerender         |
-| `yarn test`    | Vitest in watch mode (`yarn test:run` for a single run)                           |
-| `yarn e2e`     | Playwright tests in Chromium, Firefox and WebKit against the production build     |
-| `yarn build`   | Typecheck, build to `dist/`, then prerender every page (`yarn prerender`)         |
-| `yarn preview` | Serve the production build locally                                                |
-| `yarn lint`    | ESLint, zero warnings allowed                                                     |
-| `yarn format`  | Prettier: formats files, sorts imports and Tailwind classes (`yarn format:check`) |
-| `yarn a11y`    | Accessibility audit in real Chromium; report in `a11y-report/`                    |
+| Command          | What it does                                                                      |
+| ---------------- | --------------------------------------------------------------------------------- |
+| `yarn dev`       | Dev server with hot reload                                                        |
+| `yarn verify`    | Typecheck, lint (zero warnings), format check, tests, build and prerender         |
+| `yarn test`      | Vitest in watch mode (`yarn test:run` for a single run)                           |
+| `yarn e2e`       | Playwright tests in Chromium, Firefox and WebKit against the production build     |
+| `yarn build`     | Typecheck, build to `dist/`, then prerender every page (`yarn prerender`)         |
+| `yarn preview`   | Serve the production build locally                                                |
+| `yarn lint`      | ESLint, zero warnings allowed                                                     |
+| `yarn format`    | Prettier: formats files, sorts imports and Tailwind classes (`yarn format:check`) |
+| `yarn a11y`      | Accessibility audit in real Chromium; report in `a11y-report/`                    |
+| `yarn storybook` | The component library (Storybook) on port 6006                                    |
 
 ## Where things live
 
@@ -51,6 +52,7 @@ src/shared/                    ui/, layout/, media/, hooks/, lib/ (routes), cont
 src/styles/                    tokens.css (light/dark), app.css (Tailwind theme), Figma export
 scripts/                       prerender.ts (static HTML per page), a11y-audit.ts
 docs/                          architecture, design source, working with Claude Code
+.storybook/                    Storybook config (stories sit next to their component)
 .claude/                       Claude Code skills (/release, ship-change) and review agents
 ```
 
@@ -72,7 +74,7 @@ Images are cached for a week, so a changed image gets a new file name.
 
 ## Deploy and releases
 
-Work happens on `develop`; `main` is the live site and changes only in a release. Every commit bumps the version and adds a `CHANGELOG.md` entry. Branches, versions and the release steps: [CONTRIBUTING.md](CONTRIBUTING.md). Netlify builds with `yarn test:run && yarn build` and publishes `dist/`; a failing test blocks the deploy.
+Work happens on `develop`; `main` is the live site and changes only in a release. Every commit bumps the version and adds a `CHANGELOG.md` entry. Branches, versions and the release steps: [CONTRIBUTING.md](CONTRIBUTING.md). Netlify builds with `yarn test:run && yarn build` and publishes `dist/`; a failing test blocks the deploy. Production builds add `yarn build-storybook`.
 
 Link previews are cached by apps: check LinkedIn at https://www.linkedin.com/post-inspector after changing the link-preview image.
 

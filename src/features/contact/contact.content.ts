@@ -1,9 +1,4 @@
-export interface Engagement {
-  /** primary: highlighted pill; selective: deliberately quieter. */
-  tier: "primary" | "selective";
-  label: string;
-  body: string;
-}
+import type { Engagement } from "./contact.types.ts";
 
 export const CONTACT = {
   eyebrow: "Get in touch",

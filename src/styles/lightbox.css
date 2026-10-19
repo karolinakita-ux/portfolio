@@ -1,0 +1,35 @@
+/* The image viewer (features/image-viewer): pane, image and skeleton sizes. Its backdrop: dialog.css. */
+
+/* Zoomed pane: thin scrollbars in the border colour instead of the heavy defaults. */
+.kb-lightbox-viewport {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-default) transparent;
+}
+/* Image pane: the window height minus the panel chrome (title row, controls and
+   paddings), fixed rather than following each image, so the panel and its
+   Previous / Next buttons stay in place from image to image and when zooming.
+   The fitted image stays inside it. Never below 12rem: on short screens or at
+   400% browser zoom the dialog scrolls instead of shrinking the image away
+   (WCAG 1.4.10; the panel is centred with auto margins so nothing is clipped). */
+.kb-lightbox-pane {
+  height: max(12rem, calc(100vh - 208px));
+  height: max(12rem, calc(100dvh - 208px));
+}
+.kb-lightbox-image {
+  max-height: max(12rem, calc(100vh - 208px));
+  max-height: max(12rem, calc(100dvh - 208px));
+}
+/* Loading skeleton: the size the fitted image will have (as .kb-lightbox-image:
+   pane width, height limit or natural width, whichever is smallest), from the
+   image's known size. Variables are set inline (lightbox.utils.ts). */
+.kb-lightbox-skeleton {
+  width: min(100%, max(12rem, 100vh - 208px) * var(--kb-aspect), var(--kb-natural-width));
+  width: min(100%, max(12rem, 100dvh - 208px) * var(--kb-aspect), var(--kb-natural-width));
+  aspect-ratio: var(--kb-aspect);
+}
+/* Zoomed image: the fitted width (pane width, height limit or natural width,
+   whichever is smallest, as .kb-lightbox-image) times the zoom level. In CSS so
+   it follows window resizes. Variables are set inline (lightbox.utils.ts). */
+.kb-lightbox-image-zoomed {
+  width: calc(min(100%, max(12rem, 100dvh - 208px) * var(--kb-aspect), var(--kb-natural-width)) * var(--kb-zoom));
+}

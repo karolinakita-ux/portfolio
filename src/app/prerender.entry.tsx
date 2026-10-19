@@ -5,10 +5,10 @@
  */
 import { renderToString } from "react-dom/server";
 
-import { App } from "./App.tsx";
+import { App } from "./App/App.tsx";
 
-export { VIEW_PATHS, VIEWS } from "#shared/lib/routes.ts";
-export { headFor, llmsTxt } from "./seo.utils.ts";
+export { VIEW_PATHS, VIEWS } from "#shared/lib/routes/routes.constants.ts";
+export { headFor, llmsTxt } from "./seo/seo.utils.ts";
 
 /** HTML of the page at window.location (the prerender script sets it per page). */
 export const renderPage = (): string => renderToString(<App />);
