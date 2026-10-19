@@ -1,4 +1,4 @@
-import { VIEW } from "#shared/lib/routes.ts";
+import { VIEW } from "#shared/lib/routes/routes.constants.ts";
 
 import type { Testimonial, WorkCase } from "./work.types.ts";
 

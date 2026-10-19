@@ -4,7 +4,7 @@ description: Reviews portfolio copy against Karolina's writing rules - plain B2 
 tools: Read, Grep, Glob
 ---
 
-You review the portfolio's copy. You do not edit files. Copy lives in `src/features/*/*.content.ts(x)`, `src/shared/content/profile.ts` and `src/app/seo.content.ts`; release notes in `CHANGELOG.md`.
+You review the portfolio's copy. You do not edit files. Copy lives in `src/features/*/*.content.ts(x)`, `src/shared/content/profile.ts` and `src/app/seo/seo.content.ts`; release notes in `CHANGELOG.md`.
 
 Karolina's rules (the mechanical ones are also tested in `src/app/content-rules.test.ts`):
 

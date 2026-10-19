@@ -14,15 +14,16 @@ Karolina Kita's portfolio (karolina.kita.company), public repo github.com/karoli
 
 Vertical slices: `app` → `features` → `shared`, never the other way.
 
-- `src/app/` - the shell: `App.tsx` maps every `View` to its feature's view, `useHistoryRoute.ts` routing (real paths, old `/#view` links redirect), `useSectionHash.ts` (the hash follows the section in view), `seo.content.ts` + `seo.utils.ts` (descriptions, head tags, structured data, llms.txt), `prerender.entry.tsx`, `content-rules.test.ts` cross-feature copy checks.
+- `src/app/` - the shell: `App/` (`App.constants.tsx` maps every `View` to its feature's view), `routing/` (`useHistoryRoute.ts`: real paths, old `/#view` links redirect; `useSectionHash.ts`: the hash follows the section in view; `useRouteFocus.ts`), `seo/` (`seo.content.ts` descriptions, `seo.utils.ts` head tags, structured data, llms.txt; `useDocumentHead.ts`), `analytics/` (pageviews), `prerender.entry.tsx`, `content-rules.test.ts` cross-feature copy checks.
 - `src/features/<name>/` - one slice per page or capability: `work`, `about`, `contact`, `cv`, `case-studies`, `image-viewer`. A slice owns its view, components, hooks, copy (`*.content.ts`), types (`*.types.ts`) and tests. The app imports a feature only through its `index.ts`; features never import each other. Most copy edits happen in `*.content.ts`.
-- `src/shared/` - used by several slices: `ui/` primitives, `layout/` header/footer, `media/` images, preload and the viewer context, `hooks/`, `lib/` (`routes.ts`: `VIEW` ids, `VIEW_PATHS`, `SECTION` anchors, routing helpers, page titles; `ui.utils.ts`: `cn`, `FOCUS_RING`), `content/profile.ts`. Shared code never imports `app` or `features`.
+- `src/shared/` - used by several slices: `ui/` primitives, `layout/` header/footer, `media/` images, preload and the viewer context, `hooks/`, `lib/` (one folder per domain: `routes/` with `VIEW` ids, `VIEW_PATHS`, `SECTION` anchors, page titles and URL helpers; `ui/` with `cn` and the shared class lists `FOCUS_RING`, `BULLET_LIST`, `DOC_LINK`; `analytics/`, `motion/`, `clipboard/`), `content/profile.ts`. Shared code never imports `app` or `features`.
 - Repeated values (view ids, paths, section anchors, storage keys) are `as const` objects with a derived union type, never `enum` (`erasableSyntaxOnly`) and never repeated string literals.
 - Every `Section` heading gets a copy-link anchor (`HeadingAnchor`); its `id` is the URL hash. Keep section ids stable: they are shared links.
-- Imports: `#app/*`, `#features/*`, `#shared/*`, `#test/*` (subpath imports in `package.json`), `./x` within the same folder.
-- File names: components `PascalCase.tsx`, hooks `useX.ts`, other modules kebab-case with a role suffix (`*.content.ts`, `*.types.ts`, `*.constants.ts`, `*.context.ts`, `*.utils.ts`), tests `*.test.ts(x)` next to the file.
-- `e2e/` - Playwright specs (`*.e2e.ts`) and `helpers.ts` (in-page frame sampler, pill animation log, theme setup), type-checked by `tsconfig.e2e.json`. Vitest only collects `src/**/*.test.ts(x)`.
-- `src/styles/tokens.css` - KitaBranding tokens as CSS variables (light + dark); `app.css` maps them into Tailwind's theme.
+- Imports: `#app/*`, `#features/*`, `#shared/*`, `#test/*` (subpath imports in `package.json`); `./x` within the same folder or below it; never `../`. A slice imports its own files across folders as `#features/<slice>/...`, never another slice's (ESLint, regex patterns).
+- Files and folders (details and an example tree: `docs/architecture.md`, Files and folders): one component per folder, `Button/Button.tsx` + `Button.types.ts` (props) + `Button.styles.ts` (all its classes) + `Button.test.tsx`; one folder per domain for other modules (`lib/routes/routes.constants.ts`, `.types.ts`, `.utils.ts`); hooks `useX.ts`; other modules kebab-case with a role suffix (`*.content.ts`, `*.types.ts`, `*.styles.ts`, `*.constants.ts`, `*.context.ts`, `*.utils.ts`). No per-component barrel `index.ts`; only a feature's `index.ts` (its public API). ESLint caps files at 200 lines of code (tests and copy excepted).
+- `e2e/` - Playwright specs (`*.e2e.ts`) and `helpers/` (in-page toolkit with the frame sampler and pill animation log, page setup, motion expectations), type-checked by `tsconfig.e2e.json`. Vitest only collects `src/**/*.test.ts(x)`.
+- `scripts/` - `prerender.ts`, `a11y-audit.ts` (checks in `scripts/a11y/`).
+- `src/styles/tokens.css` - KitaBranding tokens as CSS variables (light + dark); `theme.css` maps them into Tailwind's theme; `app.css` imports both plus `utilities.css`, `base.css`, `lightbox.css`, `motion.css`, `print.css`.
 - `src/styles/kita-branding.tokens.json` - Figma Variables export; `tokens.test.ts` keeps `tokens.css` 1:1 with it.
 - `public/assets/` - images: `site/` (portrait, link-preview image) and `cases/<case>/` (screenshots, `thumbnail.webp`), referenced from content by their path under `/assets` (`cases/meetestim/thumbnail.webp`). Lowercase kebab-case. Screenshots are WebP (`sharp`, quality 90); the link-preview image stays PNG. `/assets/*` is cached for a week, so a changed image gets a new file name.
 - `docs/` - public project docs (design source, Figma links). Files and folders whose name starts with `_` (`docs/_*`) are private local notes: gitignored, never commit, quote or publish them.
@@ -30,17 +31,17 @@ Vertical slices: `app` → `features` → `shared`, never the other way.
 ## Design tokens (strict)
 
 - Style only with token utilities: `bg-bg-canvas`, `text-text-secondary`, `border-border-subtle`, spacing `p-md` / `gap-lg` (3xs 2px … 4xl 96px), radius `rounded-sm|md|lg|xl|full`, shadows `shadow-sm…xl`, type `text-display-*`, `text-headline-*`, `text-title-*`, `text-label-*`, `text-body-*`.
-- `app.css` resets Tailwind's default colours, radii, shadows and font sizes, so `bg-gray-100` or `text-lg` do not exist. Never add hex values or arbitrary values where a token exists.
+- `theme.css` resets Tailwind's default colours, radii, shadows and font sizes, so `bg-gray-100` or `text-lg` do not exist. Never add hex values or arbitrary values where a token exists.
 - Dark mode swaps CSS variables via `.dark` on `<html>`. Do not use `dark:` variants.
-- Motion: `duration-fast|medium|slow` (150 / 240 / 300ms) and `ease-standard`, from the `--motion-*` tokens. Never `duration-150`, `ease-out` or a raw ms value (`src/styles/motion-tokens.test.ts`). Motion stays calm: nothing moves on the first screen at load, nothing loops past 5 s, and `prefers-reduced-motion` makes every change instant (the CSS rule in `app.css`; animations started from JS check `prefersReducedMotion()`).
-- New token: add it in Figma, re-export `kita-branding.tokens.json`, then add the variable to `tokens.css` (both modes; motion tokens once, they have no mode) and the mapping in `app.css`. Mirror it in the KitaBranding design system on claude.ai.
+- Motion: `duration-fast|medium|slow` (150 / 240 / 300ms) and `ease-standard`, from the `--motion-*` tokens. Never `duration-150`, `ease-out` or a raw ms value (`src/styles/motion-tokens.test.ts`). Motion stays calm: nothing moves on the first screen at load, nothing loops past 5 s, and `prefers-reduced-motion` makes every change instant (the CSS rule in `motion.css`; animations started from JS check `prefersReducedMotion()`).
+- New token: add it in Figma, re-export `kita-branding.tokens.json`, then add the variable to `tokens.css` (both modes; motion tokens once, they have no mode) and the mapping in `theme.css`. Mirror it in the KitaBranding design system on claude.ai.
 - WCAG 2.1 AA minimum: keyboard focus (`FOCUS_RING`), labelled controls, semantic headings and landmarks.
-- On focusable elements, list the transitioned properties (`transition-[color,background-color]`, as `Button.tsx` does). `transition-colors` also animates `outline-color`, so the focus ring would fade in instead of appearing at once (`e2e/motion-a11y.e2e.ts` checks it).
+- On focusable elements, list the transitioned properties (`transition-[color,background-color]`, as `Button.styles.ts` does). `transition-colors` also animates `outline-color`, so the focus ring would fade in instead of appearing at once (`e2e/motion-a11y.e2e.ts` checks it).
 
 ## Copy rules (Karolina's, enforced by `src/app/content-rules.test.ts`)
 
 - Short hyphen with spaces (`word - word`, `2019 - 2026`). Never en or em dashes.
-- Every case-study bullet opens with a bold lead-in and colon: build bullets with `lead("Term", "text")` from `shared/ui/lead.tsx`.
+- Every case-study bullet opens with a bold lead-in and colon: build bullets with `lead("Term", "text")` from `shared/ui/lead/lead.tsx`.
 - H1 headings never end with a period.
 - Plain, grounded B2-level English. No buzzwords or corporate fluff. Keep claims honest about team roles and verified outcomes; reflections stay general.
 - The CV is ATS plain text: no curly quotes or long dashes, ISO dates.
@@ -48,9 +49,10 @@ Vertical slices: `app` → `features` → `shared`, never the other way.
 ## Code conventions
 
 - TypeScript strict with `noUncheckedIndexedAccess`; no `any`. Import with explicit extensions (`./App.tsx`), `import type` for types.
-- Files that export components export only components (Fast Refresh); helpers live in `*.utils.ts` (slice) or `src/shared/lib/`, contexts in `*.context.ts`.
-- ESLint: typescript-eslint `strictTypeChecked` + `stylisticTypeChecked`, `@eslint-react`, `jsx-a11y`, Vitest + Testing Library rules, and the slice boundaries (`no-restricted-imports`). Fix the code rather than disabling a rule; a needed exception is a one-line disable with a reason after `--`. Prettier sorts imports by layer.
-- React Compiler lint rules are on: no `setState` inside effects, no ref reads during render. Derive state instead (see `useImageStatus`, `useScrolledPast`).
+- Files that export components export only components (Fast Refresh); helpers live in `*.utils.ts`, constants in `*.constants.ts`, types in `*.types.ts`, contexts in `*.context.ts`.
+- Classes: a component's Tailwind classes live in its `*.styles.ts` as a `styles` object (one key per element; state-dependent ones are functions, `styles.pill(active)`), every value through `cn()` so Prettier sorts it. ESLint rejects class strings inside `className`; compute state before the JSX (`const loaded = status === "loaded"`) rather than in the attribute. `cn` stays a one-liner: `tailwind-merge` would merge away token classes (`text-body-md` vs `text-text-primary`).
+- ESLint: typescript-eslint `strictTypeChecked` + `stylisticTypeChecked`, `@eslint-react`, `jsx-a11y`, Vitest + Testing Library rules, and the slice boundaries (`no-restricted-imports` with `regex` patterns: in gitignore-style `group` patterns a leading `#` is a comment, which once switched the boundaries off unnoticed). Fix the code rather than disabling a rule; a needed exception is a one-line disable with a reason after `--`. Prettier sorts imports by layer.
+- React Compiler lint rules are on: no `setState` inside effects, no ref reads during render. Derive state instead (see `useImageStatus`, `useScrolledPast`). An object returned by a hook that holds a ref counts as a ref: destructure it (`const { status, setImage } = useRevealedImage(src)`).
 - Tests sit next to the code (`*.test.ts(x)`); query by role and accessible name. jsdom gaps are polyfilled in `src/test/setup.ts`.
 - Line endings are LF (`.gitattributes`). Netlify builds on Linux, so file names are case-sensitive.
 
@@ -59,6 +61,7 @@ Vertical slices: `app` → `features` → `shared`, never the other way.
 - Work on `develop`. Never commit or push to `main` except in a release the user asked for.
 - Every commit: `yarn verify`, bump `version` in `package.json` (semver rules in `CONTRIBUTING.md`), add a `###` entry under `## Unreleased` in `CHANGELOG.md`, all in the same commit. Put the version in the subject: `... (1.2.0)`.
 - Stage files by name, only the ones you changed. Never `git add -A` or `git commit -a`: the user often has unfinished edits in the tree. Check `git status` before committing and leave anything you did not write unstaged.
+- Engineering commits (structure, refactors, tooling, libraries) carry `Co-authored-by: Mateusz Kita <mkita.webdev@gmail.com>` beside the Claude trailer (`CONTRIBUTING.md`).
 
 ### Skills and agents (`.claude/`)
 
@@ -71,3 +74,12 @@ Uncommitted user edits stay out of commits and releases. If `git switch` refuses
 ## Deploy
 
 Netlify project `karolina-kita`. Production deploys from `main` (releases only); `develop` gets a branch deploy at `develop--karolina-kita.netlify.app`. Each build runs `yarn test:run && yarn build` and publishes `dist/` (see `netlify.toml`). `yarn build` ends with `yarn prerender`: an SSR build of `src/app/prerender.entry.tsx` and `scripts/prerender.ts`, which writes static HTML per page (`about.html` + `about/index.html`), `404.html` and `llms.txt`. A new view needs its path in `VIEW_PATHS`, a description in `seo.content.ts` and a line in `public/sitemap.xml`; tests check all three. Hashed bundles go to `/static/` (cached for a year by `public/_headers`).
+
+## Pitfalls (learned; details in Claude's local lessons log)
+
+- Write files that contain backslashes (regexes, `\n` in strings) with the Write or Edit tool, or `String.raw` in JS. Bash heredocs on this Windows machine have silently eaten backslashes or failed to parse several times.
+- Prove a new guard (lint rule, test) works: one probe that must fail and one that must pass, in NEW temporary files deleted afterwards, never edits to real files. No `|| true` after a restore step.
+- Before wrapping a third-party script or library, read its current source for what each option does (the Umami tracker keeps a stale URL when its auto-tracking is off).
+- Releases compare against `origin/main` after `git fetch`, and a deploy counts only when Netlify's current deploy points at the release commit (the Netlify MCP, then `curl` the live site).
+- Check that a running dev or preview server serves the change before measuring; start your own on a spare port rather than trusting one already running.
+- Check a pure restructure by building before and after and comparing every prerendered page and the CSS, not only by tests.

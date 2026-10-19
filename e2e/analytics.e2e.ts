@@ -1,5 +1,5 @@
 /**
- * Visitor statistics (src/shared/lib/analytics.utils.ts) in real browsers.
+ * Visitor statistics (src/shared/lib/analytics/analytics.utils.ts) in real browsers.
  *
  * The production build is served as https://karolina.kita.company: page.route answers those requests
  * from the local preview server. The real Umami script loads from cloud.umami.is (this spec needs the
@@ -9,9 +9,10 @@
  */
 import { expect, test, type Page, type Request } from "@playwright/test";
 
-import { EVENT, UMAMI } from "#shared/lib/analytics.utils.ts";
+import { EVENT, UMAMI } from "#shared/lib/analytics/analytics.constants.ts";
 
-import { THEME_STORAGE_KEY, themeButton, waitForApp } from "./helpers.ts";
+import { THEME_STORAGE_KEY } from "./helpers/helpers.constants.ts";
+import { themeButton, waitForApp } from "./helpers/page.utils.ts";
 
 const SITE = "https://" + UMAMI.host;
 const COLLECTOR = "https://gateway.umami.is/**";

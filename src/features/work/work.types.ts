@@ -1,4 +1,4 @@
-import type { View } from "#shared/lib/routes.ts";
+import type { View } from "#shared/lib/routes/routes.types.ts";
 
 /** Content model of the Work page (copy in work.content.ts). */
 

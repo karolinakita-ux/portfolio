@@ -4,17 +4,19 @@ import { isValidElement, type ReactElement, type ReactNode } from "react";
 import { describe, expect, it } from "vitest";
 
 import { ABOUT_INTRO, FAQ, MILESTONES, PRINCIPLES } from "#features/about/about.content.ts";
-import { AUTOMOTIVE_CASE } from "#features/case-studies/automotive.content.ts";
 import type { CaseStudy, ShowcaseCard, ThemingCaseStudy } from "#features/case-studies/case-studies.types.ts";
-import { MEETESTIM_CASE } from "#features/case-studies/meetestim.content.tsx";
-import { THEMING_CASE } from "#features/case-studies/theming.content.tsx";
+import { AUTOMOTIVE_CASE } from "#features/case-studies/content/automotive.content.ts";
+import { MEETESTIM_CASE } from "#features/case-studies/content/meetestim.content.tsx";
+import { THEMING_CASE } from "#features/case-studies/content/theming.content.tsx";
 import { CONTACT } from "#features/contact/contact.content.ts";
 import { CV } from "#features/cv/cv.content.ts";
-import { formatMonthYear } from "#features/cv/dates.utils.ts";
+import { formatMonthYear } from "#features/cv/dates/dates.utils.ts";
 import { PROCESS_BANNER, TESTIMONIALS, WORK_CASES, WORK_INTRO } from "#features/work/work.content.ts";
 import { PROFILE } from "#shared/content/profile.ts";
-import { isView, VIEW_PATHS, VIEWS } from "#shared/lib/routes.ts";
-import { Lang, Strong } from "#shared/ui/text.tsx";
+import { VIEW_PATHS, VIEWS } from "#shared/lib/routes/routes.constants.ts";
+import { isView } from "#shared/lib/routes/routes.utils.ts";
+import { Lang } from "#shared/ui/Lang/Lang.tsx";
+import { Strong } from "#shared/ui/Strong/Strong.tsx";
 
 /** Image path under /assets: lowercase kebab-case folders and file name, web image formats. */
 const ASSET_PATH = /^(?:[a-z0-9-]+\/)*[a-z0-9-]+\.(png|jpe?g|webp)$/;

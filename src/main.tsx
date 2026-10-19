@@ -1,10 +1,10 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
-import { App } from "#app/App.tsx";
-import { startAnalytics } from "#shared/lib/analytics.utils.ts";
-import { setHashRouting } from "#shared/lib/routes.ts";
+import { App } from "#app/App/App.tsx";
 
+import { startAnalytics } from "./shared/lib/analytics/analytics.utils.ts";
+import { setHashRouting } from "./shared/lib/routes/routes.utils.ts";
 // Self-hosted fonts (no request to Google): only the weights the type scale uses.
 import "@fontsource/inter/400.css";
 import "@fontsource/inter/500.css";

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import type { View } from "#shared/lib/routes.ts";
-import type { CalloutTone } from "#shared/ui/text.tsx";
+import type { Navigate, View } from "#shared/lib/routes/routes.types.ts";
+import type { CalloutTone } from "#shared/ui/Callout/Callout.types.ts";
 
 /**
  * Content model of the case studies. Copy lives in *.content.ts(x) next to this file;
@@ -105,4 +105,24 @@ export interface ThemingCaseStudy extends CaseBase {
   engineeringIntro: string;
   engineering: readonly DetailItem[];
   takeaways: readonly DetailItem[];
+}
+
+export type AnyCase = CaseStudy | ThemingCaseStudy;
+
+/** Props of a case-study view (CaseStudyView, CaseThemingView). */
+export interface CaseViewProps<C extends AnyCase> {
+  c: C;
+  resolveAsset: (name: string) => string;
+  onNavigate: Navigate;
+}
+
+/** One screenshot card with its image URLs and the viewer opener (useCaseGallery). */
+export interface GalleryRow {
+  card: ShowcaseCard;
+  /** Full screenshot (opened in the viewer). */
+  src: string;
+  /** Optional close-up shown on the card (card.detail). */
+  previewSrc?: string;
+  /** Opens the viewer at this card. */
+  onExpand: (trigger: HTMLElement) => void;
 }

@@ -1,0 +1,50 @@
+/* Theme-change cross-fade and the reduced-motion reset. */
+
+/* Theme change (useTheme.ts). For two frames after the switch every CSS transition is off,
+   so the header, buttons and text take their new colours in the same frame as the page
+   instead of trailing behind it. Web Animations (the sliding pill) are not transitions:
+   they keep running. */
+.kb-theme-switching,
+.kb-theme-switching *,
+.kb-theme-switching *::before,
+.kb-theme-switching *::after {
+  transition: none !important;
+}
+/* Where the browser has view transitions, the old page cross-fades into the new one. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--motion-duration-medium);
+  animation-timing-function: var(--motion-easing-standard);
+}
+/* The theme switch is its own live layer: no snapshot of the old state and no fade, so its
+   yellow pill slides to the new button instead of cross-fading with the page. */
+.kb-theme-toggle {
+  view-transition-name: theme-toggle;
+}
+::view-transition-old(theme-toggle) {
+  animation: none;
+  opacity: 0;
+}
+::view-transition-group(theme-toggle),
+::view-transition-new(theme-toggle) {
+  animation: none;
+}
+
+/* Reduced motion: 0.01ms is a near-zero reset, not a design value, so it stays a
+   literal (allowlisted in motion-tokens.test.ts). The view-transition pseudo-elements are
+   not matched by *, so they are listed (useTheme skips the transition then anyway). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

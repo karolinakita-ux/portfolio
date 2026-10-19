@@ -9,9 +9,9 @@
  */
 import { expect, test, type Page } from "@playwright/test";
 
-import { VIEW, VIEW_PATHS } from "#shared/lib/routes.ts";
+import { VIEW, VIEW_PATHS } from "#shared/lib/routes/routes.constants.ts";
 
-import { nextFrames, openView } from "./helpers.ts";
+import { nextFrames, openView } from "./helpers/page.utils.ts";
 
 /** WCAG 2.2.2: moving content that starts on its own must stop within 5 seconds. */
 const MAX_LOOP_MS = 5000;
