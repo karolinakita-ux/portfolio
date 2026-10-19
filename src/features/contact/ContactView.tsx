@@ -1,12 +1,14 @@
 import type { ReactNode } from "react";
 
 import { PROFILE } from "#shared/content/profile.ts";
-import type { Navigate } from "#shared/lib/routes.ts";
-import { cn, FOCUS_RING } from "#shared/lib/ui.utils.ts";
+import { EVENT, track } from "#shared/lib/analytics.utils.ts";
+import { SECTION, type Navigate } from "#shared/lib/routes.ts";
+import { BULLET_LIST, cn, FOCUS_RING } from "#shared/lib/ui.utils.ts";
 import { CopyEmail } from "#shared/ui/CopyEmail.tsx";
 import { WORK_CRUMB } from "#shared/ui/crumbs.constants.ts";
 import { ExternalLink } from "#shared/ui/icons.tsx";
 import { Container, Eyebrow, Section } from "#shared/ui/layout.tsx";
+import { lead } from "#shared/ui/lead.tsx";
 import { Breadcrumb } from "#shared/ui/navigation.tsx";
 
 import { CONTACT, type Engagement } from "./contact.content.ts";
@@ -86,7 +88,7 @@ export function ContactView({ onNavigate }: { onNavigate: Navigate }) {
         <InfoPanel>
           <InfoCell label="Direct Email">
             <span className="flex items-center gap-xs">
-              <CopyEmail email={PROFILE.email} textClassName="text-body-lg" />
+              <CopyEmail email={PROFILE.email} place="contact" textClassName="text-body-lg" />
             </span>
           </InfoCell>
           <InfoCell label="LinkedIn Profile">
@@ -94,6 +96,7 @@ export function ContactView({ onNavigate }: { onNavigate: Navigate }) {
               href={PROFILE.linkedinUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => track(EVENT.linkedinClick, { target: "profile", place: "contact" })}
               className={cn(
                 "inline-flex items-center gap-xs rounded-sm text-text-link-default underline underline-offset-2 hover:text-text-link-hover",
                 FOCUS_RING,
@@ -127,6 +130,15 @@ export function ContactView({ onNavigate }: { onNavigate: Navigate }) {
           <InfoCell label="Location">{CONTACT.location}</InfoCell>
           <InfoCell label="Collaboration">{CONTACT.collaboration}</InfoCell>
         </InfoPanel>
+      </Section>
+
+      {/* Linked from the footer on every page: keep the section id stable. */}
+      <Section id={SECTION.privacy} title={CONTACT.privacy.title} description={CONTACT.privacy.intro}>
+        <ul className={BULLET_LIST}>
+          {CONTACT.privacy.points.map(([term, text]) => (
+            <li key={term}>{lead(term, text)}</li>
+          ))}
+        </ul>
       </Section>
     </>
   );

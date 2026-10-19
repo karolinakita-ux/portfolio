@@ -2,7 +2,8 @@ import { useState } from "react";
 
 import { PROFILE } from "#shared/content/profile.ts";
 import { useScrolledPast } from "#shared/hooks/useScrolledPast.ts";
-import { NAV_ITEMS, type Navigate } from "#shared/lib/routes.ts";
+import { EVENT, track } from "#shared/lib/analytics.utils.ts";
+import { NAV_ITEMS, SECTION, VIEW, type Navigate } from "#shared/lib/routes.ts";
 import { cn, FOCUS_RING } from "#shared/lib/ui.utils.ts";
 import { CopyEmail } from "#shared/ui/CopyEmail.tsx";
 import { ArrowUp, Linkedin, Mail } from "#shared/ui/icons.tsx";
@@ -50,6 +51,7 @@ export function SiteFooter({ onNavigate }: { onNavigate: Navigate }) {
                   href={PROFILE.linkedinUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => track(EVENT.linkedinClick, { target: "profile", place: "footer" })}
                   className={cn(
                     "rounded-sm text-body-md text-text-link-default underline underline-offset-2 hover:text-text-link-hover",
                     FOCUS_RING,
@@ -62,6 +64,7 @@ export function SiteFooter({ onNavigate }: { onNavigate: Navigate }) {
               <li className="flex flex-wrap items-center gap-xs">
                 <CopyEmail
                   email={PROFILE.email}
+                  place="footer"
                   icon={<Mail aria-hidden="true" size={16} className="shrink-0 text-text-secondary" />}
                 />
               </li>
@@ -74,6 +77,19 @@ export function SiteFooter({ onNavigate }: { onNavigate: Navigate }) {
             © {CURRENT_YEAR} {PROFILE.name} | All Rights Reserved
           </p>
           <p>{PROFILE.builtWith}</p>
+          <p>
+            <ViewLink
+              view={VIEW.contact}
+              anchor={SECTION.privacy}
+              onNavigate={onNavigate}
+              className={cn(
+                "rounded-sm text-text-link-default underline underline-offset-2 hover:text-text-link-hover",
+                FOCUS_RING,
+              )}
+            >
+              Privacy
+            </ViewLink>
+          </p>
         </div>
       </Container>
     </footer>

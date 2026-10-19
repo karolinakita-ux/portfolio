@@ -1,5 +1,6 @@
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
+import { EVENT, track } from "#shared/lib/analytics.utils.ts";
 import type { Navigate } from "#shared/lib/routes.ts";
 import { cn, DOC_LINK, telHref } from "#shared/lib/ui.utils.ts";
 import { Button } from "#shared/ui/Button.tsx";
@@ -78,13 +79,23 @@ function CvHeader({ header }: { header: CvHeaderData }) {
         {header.phone}
       </a>
     ),
-    <a key="email" href={"mailto:" + header.email} className={DOC_LINK}>
+    <a
+      key="email"
+      href={"mailto:" + header.email}
+      onClick={() => track(EVENT.emailClick, { action: "mailto", place: "cv" })}
+      className={DOC_LINK}
+    >
       {header.email}
     </a>,
     <a key="portfolio" href={header.portfolio.href} className={DOC_LINK}>
       {header.portfolio.label}
     </a>,
-    <a key="linkedin" href={header.linkedin.href} className={DOC_LINK}>
+    <a
+      key="linkedin"
+      href={header.linkedin.href}
+      onClick={() => track(EVENT.linkedinClick, { target: "profile", place: "cv" })}
+      className={DOC_LINK}
+    >
       {header.linkedin.label}
     </a>,
   ];
@@ -204,7 +215,38 @@ export function CvSheet({ cv = CV }: { cv?: Cv }) {
   );
 }
 
+/**
+ * Counts printing the CV (cv-print): the Download PDF button, or the browser's own print (Ctrl+P).
+ * The button's print also fires beforeprint; the flag keeps that from counting twice.
+ */
+function usePrintCount(): () => void {
+  const fromButtonRef = useRef(false);
+
+  useEffect(() => {
+    const onBeforePrint = () => {
+      if (!fromButtonRef.current) track(EVENT.cvPrint, { method: "browser" });
+      fromButtonRef.current = false;
+    };
+    const onAfterPrint = () => {
+      fromButtonRef.current = false;
+    };
+    window.addEventListener("beforeprint", onBeforePrint);
+    window.addEventListener("afterprint", onAfterPrint);
+    return () => {
+      window.removeEventListener("beforeprint", onBeforePrint);
+      window.removeEventListener("afterprint", onAfterPrint);
+    };
+  }, []);
+
+  return () => {
+    track(EVENT.cvPrint, { method: "button" });
+    fromButtonRef.current = true;
+    window.print();
+  };
+}
+
 export function CvView({ onNavigate }: { onNavigate: Navigate }) {
+  const print = usePrintCount();
   return (
     <Container className="pt-xl print:p-0">
       <div className="flex flex-col gap-lg print:hidden">
@@ -217,7 +259,7 @@ export function CvView({ onNavigate }: { onNavigate: Navigate }) {
               as PDF, paper size A4, and turn off Headers and footers.
             </p>
           </div>
-          <Button onClick={() => window.print()} className="self-start md:self-auto">
+          <Button onClick={print} className="self-start md:self-auto">
             Download PDF
           </Button>
         </div>

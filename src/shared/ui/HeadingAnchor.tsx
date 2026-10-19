@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import { EVENT, track } from "#shared/lib/analytics.utils.ts";
 import { writeClipboard } from "#shared/lib/clipboard.utils.ts";
 import { urlWithAnchor } from "#shared/lib/routes.ts";
 import { cn, FOCUS_RING, isPlainLeftClick, prefersReducedMotion } from "#shared/lib/ui.utils.ts";
@@ -41,6 +42,7 @@ export function HeadingAnchor({ id, headingId, label }: HeadingAnchorProps) {
         onClick={(event) => {
           if (!isPlainLeftClick(event)) return;
           event.preventDefault();
+          track(EVENT.sectionLinkCopy, { section: id });
           const url = urlWithAnchor(window.location, id);
           window.history.replaceState(window.history.state, "", url);
           document

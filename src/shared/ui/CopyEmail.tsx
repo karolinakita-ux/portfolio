@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
+import { EVENT, track, type EmailPlace } from "#shared/lib/analytics.utils.ts";
 import { writeClipboard } from "#shared/lib/clipboard.utils.ts";
 import { cn, FOCUS_RING } from "#shared/lib/ui.utils.ts";
 
@@ -15,6 +16,8 @@ const FEEDBACK: Record<CopyStatus, string> = {
 
 interface CopyEmailProps {
   email: string;
+  /** Where it sits, for the email-click count. */
+  place: EmailPlace;
   textClassName?: string;
   icon?: ReactNode;
 }
@@ -26,8 +29,9 @@ interface CopyEmailProps {
  * the polite live region. If the clipboard is blocked, the address is selected
  * so the visitor can copy it with the keyboard; that instruction stays until
  * focus leaves the button, since it tells the visitor what to do next.
+ * Both the link and the button are counted (email-click).
  */
-export function CopyEmail({ email, textClassName = "text-body-md", icon = null }: CopyEmailProps) {
+export function CopyEmail({ email, place, textClassName = "text-body-md", icon = null }: CopyEmailProps) {
   const [status, setStatus] = useState<CopyStatus>("idle");
   const emailRef = useRef<HTMLSpanElement>(null);
 
@@ -53,6 +57,7 @@ export function CopyEmail({ email, textClassName = "text-body-md", icon = null }
   };
 
   const handleCopy = () => {
+    track(EVENT.emailClick, { action: "copy", place });
     // writeText must start inside the click handler (user activation).
     const write = writeClipboard(email);
     if (!write) {
@@ -69,6 +74,7 @@ export function CopyEmail({ email, textClassName = "text-body-md", icon = null }
     <span className="relative inline-flex min-w-0 flex-wrap items-center gap-xs">
       <a
         href={"mailto:" + email}
+        onClick={() => track(EVENT.emailClick, { action: "mailto", place })}
         className={cn(
           "inline-flex min-w-0 items-center gap-sm rounded-sm text-text-link-default underline underline-offset-2 hover:text-text-link-hover",
           FOCUS_RING,

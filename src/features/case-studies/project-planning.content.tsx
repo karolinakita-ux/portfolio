@@ -1,9 +1,11 @@
+import { VIEW } from "#shared/lib/routes.ts";
 import { Lang, Strong, Swatch } from "#shared/ui/text.tsx";
 
 import type { CaseStudy } from "./case-studies.types.ts";
 
 /* Case study - Project Planning (Project Planning & Cost Management). Screenshot fields: see ShowcaseCard in case-studies.types.ts. */
 export const PROJECT_PLANNING_CASE: CaseStudy = {
+  view: VIEW.caseProjectPlanning,
   id: "me",
   shortTitle: "Project Planning",
   eyebrow: ["B2B SaaS", "Design System & Web Application"],

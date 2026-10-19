@@ -4,6 +4,7 @@ import type { CaseStudy } from "./case-studies.types.ts";
 
 /* Case study - Automotive B2B Marketplace. Screenshot fields: see ShowcaseCard in case-studies.types.ts. */
 export const AUTOMOTIVE_CASE: CaseStudy = {
+  view: VIEW.caseAutomotive,
   id: "auto",
   shortTitle: "Automotive Marketplace",
   eyebrow: ["European Automotive B2B", "Discovery, Research & Product Strategy"],

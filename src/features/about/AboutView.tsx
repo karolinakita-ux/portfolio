@@ -1,6 +1,7 @@
 import { useId, useState } from "react";
 
 import { PROFILE } from "#shared/content/profile.ts";
+import { EVENT, track } from "#shared/lib/analytics.utils.ts";
 import { hrefForView, SECTION, VIEW, type Navigate } from "#shared/lib/routes.ts";
 import { BULLET_LIST, cn, FOCUS_RING } from "#shared/lib/ui.utils.ts";
 import { useImageStatus } from "#shared/media/useImageStatus.ts";
@@ -201,7 +202,10 @@ function FaqItem({ item }: { item: FaqEntry }) {
           type="button"
           aria-expanded={open}
           aria-controls={panelId}
-          onClick={() => setOpen((value) => !value)}
+          onClick={() => {
+            if (!open) track(EVENT.faqOpen, { question: item.id });
+            setOpen(!open);
+          }}
           className={cn(
             "flex w-full items-center justify-between gap-md rounded-md px-lg py-md text-left",
             "transition-[color] duration-fast hover:text-text-secondary",

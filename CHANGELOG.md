@@ -4,6 +4,23 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Unreleased
+
+### 3.8.0 - 2026-10-19
+
+#### Added
+
+- Visitor statistics with Umami Cloud, on the live site only: no cookies and nothing stored on the visitor's device. The script loads from code (`src/shared/lib/analytics.utils.ts`) only for a production build served from karolina.kita.company, never in dev, on branch deploys or in the claude.ai artifact, and not for visitors with Do Not Track or Global Privacy Control.
+- One pageview per page, sent by the app: first load and every view change, Back / Forward included; section jumps and the scroll-following hash are not counted, and addresses go without the hash.
+- 12 typed click events: case-open, case-nav, image-open, figma-click, github-click, linkedin-click, email-click, cv-print, faq-open, section-link-copy, theme-switch, and link-ref for tagged links (`?ref=acme`).
+- A Privacy section on the Contact page (`/contact#privacy`), linked from the footer: what is counted, the vendor, 6 months of history, the legal basis, tagged links, how to opt out and the visitor's rights.
+- `e2e/analytics.e2e.ts`: serves the build as the live site with the real Umami script, catches every call to Umami's collector and checks events, addresses, cookies and storage; no script on other hosts or with Global Privacy Control.
+
+#### Changed
+
+- The CV's portfolio link ends in `?ref=cv`, so visits from the CV show up as tagged.
+- Each case study names its own view (`view` in the case content); the content tests check it against the screenshot folder.
+
 ## Release v3.7.3 - 2026-10-14
 
 - The yellow marker in the menu now slides to the page you open, and the light / dark switch moves the same way.

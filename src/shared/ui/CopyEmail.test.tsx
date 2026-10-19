@@ -15,7 +15,7 @@ afterEach(() => {
 
 describe("CopyEmail", () => {
   it("links to the mail app", () => {
-    render(<CopyEmail email={EMAIL} />);
+    render(<CopyEmail email={EMAIL} place="contact" />);
     expect(screen.getByRole("link", { name: /karolina\.kita\.zg@gmail\.com/ })).toHaveAttribute(
       "href",
       "mailto:" + EMAIL,
@@ -25,7 +25,7 @@ describe("CopyEmail", () => {
   it("copies the address and confirms in a live region", async () => {
     const writeText = vi.fn(() => Promise.resolve());
     stubClipboard(writeText);
-    render(<CopyEmail email={EMAIL} />);
+    render(<CopyEmail email={EMAIL} place="contact" />);
 
     fireEvent.click(screen.getByRole("button", { name: "Copy email address" }));
 
@@ -36,7 +36,7 @@ describe("CopyEmail", () => {
 
   it("selects the address when the clipboard is blocked", async () => {
     stubClipboard(() => Promise.reject(new Error("denied")));
-    render(<CopyEmail email={EMAIL} />);
+    render(<CopyEmail email={EMAIL} place="contact" />);
 
     fireEvent.click(screen.getByRole("button", { name: "Copy email address" }));
 
@@ -45,7 +45,7 @@ describe("CopyEmail", () => {
   });
 
   it("selects the address when there is no clipboard API", () => {
-    render(<CopyEmail email={EMAIL} />);
+    render(<CopyEmail email={EMAIL} place="contact" />);
     fireEvent.click(screen.getByRole("button", { name: "Copy email address" }));
     expect(screen.getByRole("status")).toHaveTextContent(/Selected/);
   });
@@ -53,7 +53,7 @@ describe("CopyEmail", () => {
   it("keeps the copy instruction until focus leaves the button, in words a screen reader can say", () => {
     vi.useFakeTimers();
     try {
-      render(<CopyEmail email={EMAIL} />);
+      render(<CopyEmail email={EMAIL} place="contact" />);
       const button = screen.getByRole("button", { name: "Copy email address" });
       act(() => button.focus());
       fireEvent.click(button);
@@ -74,7 +74,7 @@ describe("CopyEmail", () => {
     vi.useFakeTimers();
     try {
       stubClipboard(() => Promise.resolve());
-      render(<CopyEmail email={EMAIL} />);
+      render(<CopyEmail email={EMAIL} place="contact" />);
       fireEvent.click(screen.getByRole("button", { name: "Copy email address" }));
       await act(() => Promise.resolve()); // let the clipboard promise settle
       expect(screen.getByRole("status")).toHaveTextContent("Copied to clipboard!");
