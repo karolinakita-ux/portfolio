@@ -22,9 +22,11 @@ import { AxeBuilder } from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
 import { WORK_CASES } from "#features/work/work.content.ts";
-import { VIEW, VIEW_PATHS } from "#shared/lib/routes.ts";
+import { VIEW, VIEW_PATHS } from "#shared/lib/routes/routes.constants.ts";
 
-import { openView, THEMES, VIEWPORTS, type Theme } from "./helpers.ts";
+import { THEMES, VIEWPORTS } from "./helpers/helpers.constants.ts";
+import type { Theme } from "./helpers/helpers.types.ts";
+import { openView } from "./helpers/page.utils.ts";
 
 /** The cards that reveal (the utility's class: the Vitest component tests pin which elements get it). */
 const CARD = ".reveal-on-scroll";

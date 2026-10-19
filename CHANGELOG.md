@@ -4,6 +4,98 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Release v3.11.0 - 2026-10-19
+
+- A new Privacy page, linked from the footer, says who runs the site, which services receive data (hosting, statistics, email) and what your rights are.
+- The site can count visits with Umami, a statistics tool without cookies, but only after you allow it in a short box; "No, thanks" is just as easy.
+- You can switch statistics on or off at any time on the Privacy page, and the site respects Do Not Track and Global Privacy Control.
+- Behind the scenes: the code follows the Figma components more closely, and each shared part has its own tested example.
+
+Versions: 3.8.0 - 3.11.0.
+
+### 3.11.0 - 2026-10-19
+
+#### Added
+
+- Storybook 10 for the component library: a story for every shared component (buttons, badges, cards, callouts, dialog, accordion, links, header, footer, theme toggle, images) and the consent box, with the Figma variants, real copy and a light/dark toolbar. `yarn storybook` runs it on port 6006.
+- `src/test/stories.test.tsx`: every story renders in Vitest, runs its interaction checks and passes axe (WCAG 2.1 A/AA); a shared component without a story fails the test.
+- Production deploys build Storybook into `/storybook/`: a separate build, so the site's pages load none of it, with `noindex, nofollow` and no link from the site. Branch deploys skip it.
+
+#### Changed
+
+- `react` and `react-dom` are pinned to one copy with yarn `resolutions` (Storybook's docs addon pulled in a second one).
+
+### 3.10.0 - 2026-10-19
+
+#### Added
+
+- A consent box for visitor statistics on the live site: "Can I count your visit?" with "Allow statistics" and "No, thanks" side by side and a link to the privacy page. Umami's script loads only after "Allow". It is not shown with Do Not Track or Global Privacy Control, on other hosts, or once the visitor has decided (kept in `kb-statistics`).
+
+#### Changed
+
+- Statistics need consent: Umami's script reads screen size and language and sends them, which needs prior consent under Art. 5(3) of the ePrivacy Directive (EDPB Guidelines 2/2023, para. 33) and Art. 399 of the Polish Prawo komunikacji elektronicznej, cookies or not. The EU's planned exemption for audience measurement (Digital Omnibus) is still in committee.
+- The privacy page names consent as the legal basis for statistics, adds the right to withdraw it, and its switch now allows or switches off statistics.
+
+### 3.9.0 - 2026-10-19
+
+#### Added
+
+- A Privacy page (`/privacy`), linked from the footer: who is responsible, hosting logs (Netlify), visitor statistics (Umami), email, cookies and storage, who receives data and under which transfer rules, the visitor's rights with the right to object shown on its own, the complaint address of UODO, and the date of this version. Facts checked against Netlify's and Umami's data processing agreements, Google's framework page and uodo.gov.pl.
+- A switch on that page that turns visitor statistics off for the browser (Umami's own `umami.disabled` key): counting stops at once, and the script no longer loads.
+- `InfoTable` / `InfoTableCell` (Figma: Info Table) and `TextLink` in `shared/ui`; a reading-width token `--container-reading`.
+
+#### Removed
+
+- The privacy section on the Contact page (unreleased; the page replaces it).
+
+### 3.8.2 - 2026-10-19
+
+#### Added
+
+- A component library in `src/shared/ui`, named after the Figma components: `Card` (layout stack / media, gap), `Badge`, `Avatar`, `PageTitle`, `Dialog` (the native modal: inert page, Escape, backdrop click, scroll lock), `Accordion` / `AccordionItem`, `VisuallyHidden` and `NewTabNote`. `docs/architecture.md` maps each Figma component to its code.
+- `clsx` for composing classes and `cva` (class-variance-authority) for variant sets: Button `variant`, Callout `tone`, Card `layout` and `gap`, Badge `weight`, Section `gap`, the engagement tier.
+
+#### Changed
+
+- Repeated markup now uses the library: six hand-written card class lists become `Card`, the four page titles `PageTitle`, the skill tags and detail badges `Badge`, seven "(opens in a new tab)" spans `NewTabNote`, new-tab attributes `EXTERNAL_LINK`, link styles `TEXT_LINK`. The image viewer runs on `Dialog`, the FAQ on `Accordion`.
+- `isCaseView()` replaces three copies of the case-study check.
+- The dialog backdrop CSS moved to `dialog.css` as `.kb-dialog`.
+
+#### Removed
+
+- The project's own `cn()`; `clsx` does the same. `tailwind-merge` stays out: it reads token type styles (`text-body-md`) as colours and drops them.
+
+### 3.8.1 - 2026-10-19
+
+#### Changed
+
+- One component per folder: `Button/Button.tsx` with `Button.types.ts` (props), `Button.styles.ts` (all its Tailwind classes) and `Button.test.tsx`. Views and their sections are split the same way in every feature; the image viewer's dialog is split into hooks (`useZoom`, `useSwipe`, `useModalDialog`, `usePreloadNeighbours`, `useRevealedImage`) and smaller components.
+- Mixed modules are split by role and grouped in one folder per domain: `shared/lib/routes/` (constants, types, utils), `lib/analytics/`, `lib/ui/`, `lib/motion/`, `hooks/theme/`, `media/image-preload/`, the case-study `content/` and `gallery/`, `app/routing/`, `app/seo/`.
+- `app.css` is split into `theme.css`, `utilities.css`, `base.css`, `lightbox.css` and `motion.css`; `e2e/helpers.ts` into `e2e/helpers/`; the accessibility audit into `scripts/a11y/`.
+- Prettier sorts classes inside `cn()`; ESLint rejects class strings in `className` and files over 200 lines of code (tests and copy excepted).
+- `CLAUDE.md`, `CONTRIBUTING.md` and `docs/architecture.md` describe the file rules, the co-author trailer for engineering commits and a list of recurring pitfalls.
+
+#### Fixed
+
+- The ESLint slice boundaries never matched: in gitignore-style patterns a leading `#` starts a comment, so `"#app/*"` matched nothing. They are regular expressions now, and a slice may import its own files across folders but no other slice. No code had crossed them.
+
+The built pages and CSS are the same as in 3.8.0 (compared page by page).
+
+### 3.8.0 - 2026-10-19
+
+#### Added
+
+- Visitor statistics with Umami Cloud, on the live site only: no cookies and nothing stored on the visitor's device. The script loads from code (`src/shared/lib/analytics.utils.ts`) only for a production build served from karolina.kita.company, never in dev, on branch deploys or in the claude.ai artifact, and not for visitors with Do Not Track or Global Privacy Control.
+- One pageview per page, sent by the app: first load and every view change, Back / Forward included; section jumps and the scroll-following hash are not counted, and addresses go without the hash.
+- 12 typed click events: case-open, case-nav, image-open, figma-click, github-click, linkedin-click, email-click, cv-print, faq-open, section-link-copy, theme-switch, and link-ref for tagged links (`?ref=acme`).
+- A Privacy section on the Contact page (`/contact#privacy`), linked from the footer: what is counted, the vendor, 6 months of history, the legal basis, tagged links, how to opt out and the visitor's rights.
+- `e2e/analytics.e2e.ts`: serves the build as the live site with the real Umami script, catches every call to Umami's collector and checks events, addresses, cookies and storage; no script on other hosts or with Global Privacy Control.
+
+#### Changed
+
+- The CV's portfolio link ends in `?ref=cv`, so visits from the CV show up as tagged.
+- Each case study names its own view (`view` in the case content); the content tests check it against the screenshot folder.
+
 ## Release v3.7.3 - 2026-10-14
 
 - The yellow marker in the menu now slides to the page you open, and the light / dark switch moves the same way.

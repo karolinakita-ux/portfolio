@@ -1,8 +1,9 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
-import { App } from "#app/App.tsx";
-import { setHashRouting } from "#shared/lib/routes.ts";
+import { App } from "#app/App/App.tsx";
+import { browserSignals, initStatistics } from "#shared/lib/analytics/statistics-consent.utils.ts";
+import { setHashRouting } from "#shared/lib/routes/routes.utils.ts";
 
 // Self-hosted fonts (no request to Google): only the weights the type scale uses.
 import "@fontsource/inter/400.css";
@@ -14,6 +15,15 @@ import "./styles/app.css";
 
 // A one-page build (relative base, e.g. a claude.ai artifact) has no other paths: the view goes in the hash.
 setHashRouting(import.meta.env.BASE_URL === "./");
+
+// Visitor statistics (Umami): the live site only, never in dev, previews or the artifact build, and only
+// after the visitor allows them (the consent box).
+initStatistics({
+  production: import.meta.env.PROD,
+  base: import.meta.env.BASE_URL,
+  hostname: window.location.hostname,
+  privacy: browserSignals(),
+});
 
 const root = document.getElementById("root");
 if (!root) throw new Error('Missing <div id="root"> in index.html');

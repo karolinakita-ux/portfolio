@@ -4,17 +4,20 @@ import { isValidElement, type ReactElement, type ReactNode } from "react";
 import { describe, expect, it } from "vitest";
 
 import { ABOUT_INTRO, FAQ, MILESTONES, PRINCIPLES } from "#features/about/about.content.ts";
-import { AUTOMOTIVE_CASE } from "#features/case-studies/automotive.content.ts";
 import type { CaseStudy, ShowcaseCard, ThemingCaseStudy } from "#features/case-studies/case-studies.types.ts";
-import { MEETESTIM_CASE } from "#features/case-studies/meetestim.content.tsx";
-import { THEMING_CASE } from "#features/case-studies/theming.content.tsx";
+import { AUTOMOTIVE_CASE } from "#features/case-studies/content/automotive.content.ts";
+import { MEETESTIM_CASE } from "#features/case-studies/content/meetestim.content.tsx";
+import { THEMING_CASE } from "#features/case-studies/content/theming.content.tsx";
 import { CONTACT } from "#features/contact/contact.content.ts";
 import { CV } from "#features/cv/cv.content.ts";
-import { formatMonthYear } from "#features/cv/dates.utils.ts";
+import { formatMonthYear } from "#features/cv/dates/dates.utils.ts";
+import { PRIVACY } from "#features/privacy/privacy.content.tsx";
 import { PROCESS_BANNER, TESTIMONIALS, WORK_CASES, WORK_INTRO } from "#features/work/work.content.ts";
 import { PROFILE } from "#shared/content/profile.ts";
-import { isView, VIEW, VIEW_PATHS, VIEWS, type View } from "#shared/lib/routes.ts";
-import { Lang, Strong } from "#shared/ui/text.tsx";
+import { VIEW_PATHS, VIEWS } from "#shared/lib/routes/routes.constants.ts";
+import { isCaseView, isView } from "#shared/lib/routes/routes.utils.ts";
+import { Lang } from "#shared/ui/Lang/Lang.tsx";
+import { Strong } from "#shared/ui/Strong/Strong.tsx";
 
 /** Image path under /assets: lowercase kebab-case folders and file name, web image formats. */
 const ASSET_PATH = /^(?:[a-z0-9-]+\/)*[a-z0-9-]+\.(png|jpe?g|webp)$/;
@@ -50,6 +53,7 @@ const ALL_CONTENT = {
   PRINCIPLES,
   CONTACT,
   CV,
+  PRIVACY,
   PROFILE,
   PROCESS_BANNER,
   TESTIMONIALS,
@@ -70,22 +74,20 @@ describe("copy style", () => {
   });
 
   it("never ends an H1 with a period", () => {
-    const h1s = [...CASES.map((c) => c.title), CONTACT.title];
+    const h1s = [...CASES.map((c) => c.title), CONTACT.title, PRIVACY.title];
     for (const title of h1s) expect(title.trimEnd()).not.toMatch(/\.$/);
   });
 });
 
 const CASE_TABLE = CASES.map((c): [string, CaseStudy | ThemingCaseStudy] => [c.shortTitle, c]);
 
-const CASE_VIEWS = new Map<CaseStudy | ThemingCaseStudy, View>([
-  [AUTOMOTIVE_CASE, VIEW.caseAutomotive],
-  [MEETESTIM_CASE, VIEW.caseMeetestim],
-  [THEMING_CASE, VIEW.caseTheming],
-]);
-
 describe.each(CASE_TABLE)("case study: %s", (_name, c) => {
   const cards = caseCards(c);
-  const view = CASE_VIEWS.get(c) ?? VIEW.work;
+  const { view } = c;
+
+  it("names its own case view (the screenshot folder below checks which one)", () => {
+    expect(view.startsWith("case-")).toBe(true);
+  });
 
   it("opens every bullet with a bold lead-in term and a colon", () => {
     const bullets: ReactNode[] = [...cards.flatMap((card) => card.bullets ?? []), ...("reality" in c ? c.reality : [])];
@@ -143,7 +145,7 @@ describe.each(CASE_TABLE)("case study: %s", (_name, c) => {
 
 describe("work page", () => {
   it("lists every case study exactly once, each pointing at a case view", () => {
-    const caseViews = VIEWS.filter((view) => view.startsWith("case-"));
+    const caseViews = VIEWS.filter(isCaseView);
     expect(WORK_CASES.map((item) => item.view).sort()).toEqual([...caseViews].sort());
   });
 

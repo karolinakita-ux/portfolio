@@ -4,9 +4,10 @@
  */
 import { expect, test } from "@playwright/test";
 
-import { titleForView, VIEW_PATHS, VIEWS } from "#shared/lib/routes.ts";
+import { VIEW_PATHS, VIEWS } from "#shared/lib/routes/routes.constants.ts";
+import { titleForView } from "#shared/lib/routes/routes.utils.ts";
 
-import { waitForApp } from "./helpers.ts";
+import { waitForApp } from "./helpers/page.utils.ts";
 
 const DEV = process.env.E2E_DEV === "1";
 const count = (html: string, tag: string): number => html.match(new RegExp(`<${tag}[\\s>]`, "g"))?.length ?? 0;

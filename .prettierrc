@@ -13,5 +13,6 @@
     "^[.]"
   ],
   "importOrderTypeScriptVersion": "6.0.0",
-  "tailwindStylesheet": "./src/styles/app.css"
+  "tailwindStylesheet": "./src/styles/app.css",
+  "tailwindFunctions": ["clsx", "cva"]
 }

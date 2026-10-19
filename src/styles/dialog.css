@@ -1,0 +1,23 @@
+/* Modal dialogs (shared/ui/Dialog): the dimmed backdrop and its fade. */
+
+/* ::backdrop does not reliably inherit custom properties, so the bgOverlay token values are written out here. */
+.kb-dialog::backdrop {
+  background: #1a1a1a7f; /* bgOverlay (light) */
+}
+:root.dark .kb-dialog::backdrop {
+  background: #1a1a1ab2; /* bgOverlay (dark) */
+}
+/* Backdrop fades in with the panel. The reduced-motion rule (motion.css) does not
+   reach ::backdrop, hence the media query. For the same reason as bgOverlay above,
+   the motionDurationMedium and motionEasingStandard values are written out here.
+   motion-tokens.test.ts allows exactly this declaration and checks it matches tokens.css. */
+@media (prefers-reduced-motion: no-preference) {
+  .kb-dialog[open]::backdrop {
+    animation: backdrop-in 240ms cubic-bezier(0.2, 0, 0, 1);
+  }
+}
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
