@@ -23,10 +23,10 @@ export function ConsentBanner({ onAllow, onDecline, onNavigate }: ConsentBannerP
       <p className={styles.text}>{copy.text}</p>
       <div className={styles.actions}>
         <div className={styles.choices}>
-          <Button variant="primary" onClick={onAllow}>
+          <Button variant="secondary" onClick={onAllow}>
             {copy.allow}
           </Button>
-          <Button variant="primary" onClick={onDecline}>
+          <Button variant="secondary" onClick={onDecline}>
             {copy.decline}
           </Button>
         </div>
