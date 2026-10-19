@@ -1,13 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { cn, isPlainLeftClick, telHref } from "./ui.utils.ts";
-
-describe("cn", () => {
-  it("joins classes and skips falsy values", () => {
-    expect(cn("a", false, null, undefined, "", "b")).toBe("a b");
-    expect(cn()).toBe("");
-  });
-});
+import { isPlainLeftClick, telHref } from "./ui.utils.ts";
 
 describe("telHref", () => {
   it("keeps only digits and the leading +", () => {

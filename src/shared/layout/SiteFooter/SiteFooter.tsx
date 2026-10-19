@@ -2,9 +2,11 @@ import { PROFILE } from "#shared/content/profile.ts";
 import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import { track } from "#shared/lib/analytics/analytics.utils.ts";
 import { NAV_ITEMS, SECTION, VIEW } from "#shared/lib/routes/routes.constants.ts";
+import { EXTERNAL_LINK } from "#shared/lib/ui/ui.constants.ts";
 import { Container } from "#shared/ui/Container/Container.tsx";
 import { CopyEmail } from "#shared/ui/CopyEmail/CopyEmail.tsx";
 import { Linkedin, Mail } from "#shared/ui/icons/icons.tsx";
+import { NewTabNote } from "#shared/ui/NewTabNote/NewTabNote.tsx";
 import { ViewLink } from "#shared/ui/ViewLink/ViewLink.tsx";
 
 import { CURRENT_YEAR } from "./SiteFooter.constants.ts";
@@ -37,23 +39,22 @@ export function SiteFooter({ onNavigate }: SiteFooterProps) {
             </h2>
             <ul className={styles.contactList}>
               <li className={styles.linkedinItem}>
-                <Linkedin aria-hidden="true" size={16} className={styles.linkedinIcon} />
+                <Linkedin aria-hidden="true" size={16} className={styles.icon} />
                 <a
                   href={PROFILE.linkedinUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  {...EXTERNAL_LINK}
                   onClick={() => track(EVENT.linkedinClick, { target: "profile", place: "footer" })}
                   className={styles.linkedinLink}
                 >
                   {PROFILE.name} | LinkedIn
-                  <span className={styles.srOnly}> (opens in a new tab)</span>
+                  <NewTabNote />
                 </a>
               </li>
               <li className={styles.emailItem}>
                 <CopyEmail
                   email={PROFILE.email}
                   place="footer"
-                  icon={<Mail aria-hidden="true" size={16} className={styles.emailIcon} />}
+                  icon={<Mail aria-hidden="true" size={16} className={styles.icon} />}
                 />
               </li>
             </ul>

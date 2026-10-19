@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 
 import type { LightboxItem } from "#shared/media/lightbox/lightbox.types.ts";
 
-import { SCROLL_LOCKED_CLASS, SWIPE_MIN_DISTANCE, ZOOM_QUERY } from "./lightbox.constants.ts";
+import { SWIPE_MIN_DISTANCE, ZOOM_QUERY } from "./lightbox.constants.ts";
 import type { ScrollCenter, ZoomState } from "./lightbox.types.ts";
 
 export const canZoom = (): boolean => typeof window.matchMedia !== "function" || window.matchMedia(ZOOM_QUERY).matches;
@@ -16,10 +16,6 @@ export const scrollToCenter = (pane: HTMLElement, center: ScrollCenter): void =>
   pane.scrollLeft = center.x * pane.scrollWidth - pane.clientWidth / 2;
   pane.scrollTop = center.y * pane.scrollHeight - pane.clientHeight / 2;
 };
-
-export const lockScroll = (): void => document.documentElement.classList.add(SCROLL_LOCKED_CLASS);
-
-export const unlockScroll = (): void => document.documentElement.classList.remove(SCROLL_LOCKED_CLASS);
 
 /** `index + delta`, wrapping around both ends. */
 export const wrapIndex = (index: number, delta: number, length: number): number => (index + delta + length) % length;

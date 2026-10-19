@@ -1,5 +1,5 @@
-import { cn } from "#shared/lib/ui/ui.utils.ts";
+import { clsx } from "clsx";
 
 export const styles = {
-  root: cn("mr-2xs inline-block size-sm rounded-sm border border-border-subtle align-[-1px]"),
+  root: clsx("mr-2xs inline-block size-sm rounded-sm border border-border-subtle align-[-1px]"),
 };

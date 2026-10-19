@@ -11,6 +11,3 @@ export const ZOOM_QUERY = "(min-width: 768px), (pointer: fine)";
 
 /** Shortest horizontal finger travel, in px, that counts as a swipe. */
 export const SWIPE_MIN_DISTANCE = 50;
-
-/** On <html> while the viewer is open: app.css stops the page behind from scrolling. */
-export const SCROLL_LOCKED_CLASS = "kb-scroll-locked";

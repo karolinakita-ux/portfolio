@@ -1,7 +1,9 @@
+import { VisuallyHidden } from "#shared/ui/VisuallyHidden/VisuallyHidden.tsx";
+
 import { styles } from "./Eyebrow.styles.ts";
 import type { EyebrowProps } from "./Eyebrow.types.ts";
 
-/** Uppercase Label Medium kicker; parts are joined by a decorative bullet. */
+/** Uppercase Label Medium kicker; parts are joined by a decorative bullet (a comma for screen readers). */
 export function Eyebrow({ parts, className }: EyebrowProps) {
   return (
     <p className={styles.root(className)}>
@@ -10,7 +12,7 @@ export function Eyebrow({ parts, className }: EyebrowProps) {
           {index > 0 && (
             <>
               <span aria-hidden="true"> • </span>
-              <span className={styles.separatorText}>, </span>
+              <VisuallyHidden>, </VisuallyHidden>
             </>
           )}
           {part}

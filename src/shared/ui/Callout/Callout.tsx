@@ -1,4 +1,4 @@
-import { styles } from "./Callout.styles.ts";
+import { callout, styles } from "./Callout.styles.ts";
 import type { CalloutProps } from "./Callout.types.ts";
 
 /**
@@ -8,7 +8,7 @@ import type { CalloutProps } from "./Callout.types.ts";
  */
 export function Callout({ tone, label, title, children }: CalloutProps) {
   return (
-    <aside aria-label={label} className={styles.root(tone)}>
+    <aside aria-label={label} className={callout({ tone })}>
       {title ? (
         <div className={styles.titled}>
           <h3 className={styles.title}>{title}</h3>

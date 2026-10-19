@@ -1,5 +1,5 @@
-import { cn } from "#shared/lib/ui/ui.utils.ts";
+import { clsx } from "clsx";
 
 export const styles = {
-  list: cn("flex flex-col gap-sm"),
+  list: clsx("flex flex-col gap-sm"),
 };

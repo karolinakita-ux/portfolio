@@ -40,8 +40,32 @@ src/features/about/
 ```
 
 - Components: `PascalCase/PascalCase.tsx`, one component per file. Hooks: `useX.ts` next to what uses them, or in the slice's `hooks/`. Other modules: kebab-case with a role suffix: `*.types.ts`, `*.styles.ts`, `*.constants.ts`, `*.utils.ts`, `*.content.ts`, `*.context.ts`.
-- Classes: a `*.styles.ts` exports `styles`, one key per styled element; state-dependent classes are functions (`styles.pill(active)`). Values go through `cn()`, so Prettier sorts them. ESLint rejects class strings written into `className` in a component.
-- Shared class lists (`FOCUS_RING`, `BULLET_LIST`, `DOC_LINK`) live in `src/shared/lib/ui/ui.styles.ts`.
+- Classes: a `*.styles.ts` exports `styles`, one key per styled element; state-dependent classes are functions (`styles.pill(active)`). Values are composed with [`clsx`](https://github.com/lukeed/clsx); variant sets use [`cva`](https://cva.style) (`button({ variant })`) with the variant names from Figma. Prettier sorts classes inside both. ESLint rejects class strings written into `className` in a component. There is no `tailwind-merge`: it reads the token type styles as colours and drops them.
+- Shared class lists (`FOCUS_RING`, `TEXT_LINK`, `BULLET_LIST`, `DOC_LINK`) live in `src/shared/lib/ui/ui.styles.ts`; `EXTERNAL_LINK` (target and rel of a new-tab link) in `ui.constants.ts`.
+
+## Component library (`src/shared/ui`)
+
+Built from the Figma components (Karolina Kita Branding, page Components) and the patterns the pages repeat:
+
+| Figma                                     | Code                                           | Notes                                                         |
+| ----------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------- |
+| Button (Primary, Secondary, Subtle, Link) | `Button`                                       | `as="a"` for links; icon left / right                         |
+| Emoji button                              | `IconButton`                                   | square, icon only (image viewer)                              |
+| Badge                                     | `Badge`                                        | skill tags, status next to a title                            |
+| Card (Big Card)                           | `Card`                                         | `layout` stack / media, `gap`; cards fade up on scroll        |
+| Banner (Info, Warning)                    | `Callout`                                      | `tone`                                                        |
+| Breadcrumbs                               | `Breadcrumb`                                   |                                                               |
+| Avatar                                    | `Avatar`                                       | initials on the avatar glow                                   |
+| Toggle                                    | `ThemeToggle` (layout)                         | light / dark                                                  |
+| Header, Navigation menu, Footer           | `SiteHeader`, `SiteFooter` (layout)            |                                                               |
+| Info Table                                | `InfoPanel`, `MetaMatrix` (features)           | contact and case-study details                                |
+| -                                         | `Dialog`                                       | native modal: inert page, Escape, backdrop click, scroll lock |
+| -                                         | `Accordion`, `AccordionItem`                   | WAI-ARIA disclosure list (the FAQ)                            |
+| -                                         | `PageTitle`, `Section`, `Container`, `Eyebrow` | page structure                                                |
+| -                                         | `VisuallyHidden`, `NewTabNote`                 | screen reader text                                            |
+
+Figma's Tabs and Tile have no use on the site yet, so there is no code for them (YAGNI).
+
 - No barrel `index.ts` per component: imports name the file (`#shared/ui/Button/Button.tsx`). Barrels add nothing with explicit extensions and slow the dev server; only a feature's `index.ts` exists, as its public API.
 
 ## Routing

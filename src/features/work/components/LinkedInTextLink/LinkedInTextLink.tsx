@@ -1,5 +1,6 @@
 import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import { track } from "#shared/lib/analytics/analytics.utils.ts";
+import { EXTERNAL_LINK } from "#shared/lib/ui/ui.constants.ts";
 import { ExternalLink } from "#shared/ui/icons/icons.tsx";
 
 import { styles } from "./LinkedInTextLink.styles.ts";
@@ -15,8 +16,7 @@ export function LinkedInTextLink({ href, label, destination, target }: LinkedInT
   return (
     <a
       href={href}
-      target="_blank"
-      rel="noopener noreferrer"
+      {...EXTERNAL_LINK}
       aria-label={`${label}, ${destination} (opens in a new tab)`}
       onClick={() => track(EVENT.linkedinClick, { target, place: "testimonials" })}
       className={styles.root}

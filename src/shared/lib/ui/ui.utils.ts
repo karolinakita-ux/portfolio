@@ -1,8 +1,5 @@
 import type { ClickModifiers } from "./ui.types.ts";
 
-/** Joins class names, skipping falsy values. */
-export const cn = (...classes: Array<string | false | null | undefined>): string => classes.filter(Boolean).join(" ");
-
 /** True when the visitor asked the system for reduced motion. */
 export const prefersReducedMotion = (): boolean =>
   typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;

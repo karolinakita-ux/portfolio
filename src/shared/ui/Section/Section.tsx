@@ -1,20 +1,20 @@
 import { Container } from "#shared/ui/Container/Container.tsx";
 import { HeadingAnchor } from "#shared/ui/HeadingAnchor/HeadingAnchor.tsx";
 
-import { styles } from "./Section.styles.ts";
+import { sectionBody, styles } from "./Section.styles.ts";
 import type { SectionProps } from "./Section.types.ts";
 
 /**
  * Page section: Headline Large / Display Small heading with a copy-link anchor, optional lead, content.
  * `id` is the section's URL hash (/about#career); the URL follows it while scrolling (useSectionHash).
  */
-export function Section({ id, title, description, children, headingProps, bodyGap = "lg" }: SectionProps) {
+export function Section({ id, title, description, children, headingProps, bodyGap }: SectionProps) {
   const titleId = id + "-title";
   const paragraphs = description === undefined ? [] : typeof description === "string" ? [description] : description;
   return (
     <section id={id} aria-labelledby={titleId} data-anchor="" className={styles.root}>
       <Container>
-        <div className={styles.body(bodyGap)}>
+        <div className={sectionBody({ gap: bodyGap })}>
           <div className={styles.header}>
             <div className={styles.titleRow}>
               <h2 id={titleId} tabIndex={-1} className={styles.title} {...headingProps}>

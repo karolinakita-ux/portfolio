@@ -73,9 +73,9 @@ const BACKDROP_ANIMATION = `animation: backdrop-in ${token("motion-duration-medi
  */
 const ALLOWED: ReadonlyArray<{ file: string; declaration: string }> = [
   // The image viewer's backdrop fade. ::backdrop does not reliably inherit custom properties, so
-  // lightbox.css writes out motionDurationMedium and motionEasingStandard. The expected text is built
-  // from tokens.css: when a token changes, the lightbox.css line has to change with it.
-  { file: "src/styles/lightbox.css", declaration: BACKDROP_ANIMATION },
+  // dialog.css writes out motionDurationMedium and motionEasingStandard. The expected text is built
+  // from tokens.css: when a token changes, the dialog.css line has to change with it.
+  { file: "src/styles/dialog.css", declaration: BACKDROP_ANIMATION },
   // The prefers-reduced-motion reset: a near-zero override that switches motion off, not a design value.
   { file: "src/styles/motion.css", declaration: "animation-duration: 0.01ms !important" },
   { file: "src/styles/motion.css", declaration: "transition-duration: 0.01ms !important" },
@@ -227,7 +227,7 @@ const BAD: ReadonlyArray<[match: string, file: string, snippet: string]> = [
   ["duration-200", "src/styles/app.css", `.a { @apply transition-colors duration-200; }`],
   // The allowed literals pass only where they are allowed, and only with the token values.
   ["0.01ms", "src/styles/print.css", `.a { transition-duration: 0.01ms !important; }`],
-  ["200ms", "src/styles/lightbox.css", `.kb-lightbox[open]::backdrop { animation: backdrop-in 200ms ease; }`],
+  ["200ms", "src/styles/dialog.css", `.kb-dialog[open]::backdrop { animation: backdrop-in 200ms ease; }`],
 ];
 
 /** Snippets the scanner must leave alone: [file, snippet]. */
@@ -253,7 +253,7 @@ const GOOD: ReadonlyArray<[file: string, snippet: string]> = [
     "src/styles/motion.css",
     `@media (prefers-reduced-motion: reduce) { * { transition-duration: 0.01ms !important; } }`,
   ],
-  ["src/styles/lightbox.css", `.kb-lightbox[open]::backdrop {\n  ${BACKDROP_ANIMATION};\n}`],
+  ["src/styles/dialog.css", `.kb-dialog[open]::backdrop {\n  ${BACKDROP_ANIMATION};\n}`],
 ];
 
 describe("motion tokens scanner", () => {

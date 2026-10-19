@@ -1,5 +1,6 @@
 import { useImageStatus } from "#shared/media/image-status/useImageStatus.ts";
 import { ThumbnailScaffold } from "#shared/media/ThumbnailScaffold/ThumbnailScaffold.tsx";
+import { VisuallyHidden } from "#shared/ui/VisuallyHidden/VisuallyHidden.tsx";
 
 import { styles } from "./CaseThumbnail.styles.ts";
 import type { CaseThumbnailProps } from "./CaseThumbnail.types.ts";
@@ -25,7 +26,7 @@ export function CaseThumbnail({ src, alt, interactive = false }: CaseThumbnailPr
           className={styles.image(status, interactive)}
         />
       )}
-      {status === "error" && <span className={styles.srOnly}>{alt}</span>}
+      {status === "error" && <VisuallyHidden>{alt}</VisuallyHidden>}
     </div>
   );
 }

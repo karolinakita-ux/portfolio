@@ -1,7 +1,7 @@
 import { PROFILE } from "#shared/content/profile.ts";
 import { VIEW, VIEW_PATHS, VIEWS } from "#shared/lib/routes/routes.constants.ts";
 import type { View } from "#shared/lib/routes/routes.types.ts";
-import { titleForView } from "#shared/lib/routes/routes.utils.ts";
+import { isCaseView, titleForView } from "#shared/lib/routes/routes.utils.ts";
 
 import { PERSON_ID, PROFILE_PAGES, SITE_URL, WEBSITE_ID } from "./seo.constants.ts";
 import { PAGE_DESCRIPTIONS, PAGE_NAMES } from "./seo.content.ts";
@@ -14,8 +14,6 @@ import type { PageHead } from "./seo.types.ts";
  */
 /** Absolute URL of a page ("https://karolina.kita.company/about"). */
 export const absoluteUrl = (view: View): string => SITE_URL + VIEW_PATHS[view];
-
-const isCaseStudy = (view: View): boolean => view.startsWith("case-");
 
 export function headFor(view: View): PageHead {
   const title = titleForView(view);
@@ -42,7 +40,7 @@ export function headFor(view: View): PageHead {
       })),
     },
   };
-  const caseStudy = isCaseStudy(view)
+  const caseStudy = isCaseView(view)
     ? {
         "@type": "CreativeWork",
         "@id": url + "#case-study",
@@ -67,7 +65,7 @@ export function headFor(view: View): PageHead {
 /** /llms.txt (llmstxt.org): a plain-text map of the site for AI assistants and agents. */
 export function llmsTxt(): string {
   const line = (view: View) => `- [${PAGE_NAMES[view]}](${absoluteUrl(view)}): ${PAGE_DESCRIPTIONS[view]}`;
-  const cases = VIEWS.filter(isCaseStudy);
+  const cases = VIEWS.filter(isCaseView);
   const pages = [VIEW.about, VIEW.cv, VIEW.contact];
   return [
     `# ${PROFILE.name} - ${PROFILE.role}`,

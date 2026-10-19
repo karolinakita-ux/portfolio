@@ -1,3 +1,5 @@
+import { Badge } from "#shared/ui/Badge/Badge.tsx";
+
 import { styles } from "./DetailList.styles.ts";
 import type { DetailListProps } from "./DetailList.types.ts";
 
@@ -14,7 +16,7 @@ export function DetailList({ items }: DetailListProps) {
         <li key={item.title} className={styles.item}>
           <h3 className={styles.title}>
             {item.title}
-            {item.badge && <span className={styles.badge}>{item.badge}</span>}
+            {item.badge && <Badge weight="medium">{item.badge}</Badge>}
           </h3>
           <p className={styles.body}>{item.body}</p>
         </li>

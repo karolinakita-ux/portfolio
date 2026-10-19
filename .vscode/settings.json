@@ -6,5 +6,5 @@
   },
   "typescript.tsdk": "node_modules/typescript/lib",
   "files.eol": "\n",
-  "tailwindCSS.classFunctions": ["cn"]
+  "tailwindCSS.classFunctions": ["clsx", "cva"]
 }

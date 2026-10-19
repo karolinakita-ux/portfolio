@@ -1,4 +1,4 @@
-import { cn } from "#shared/lib/ui/ui.utils.ts";
+import { clsx } from "clsx";
 
 /**
  * The yellow marker of the active item, behind its label (useSlidingPill moves it). Every item
@@ -10,7 +10,7 @@ import { cn } from "#shared/lib/ui/ui.utils.ts";
  * colour (it has no text) keeps it from inheriting the label's colour transition, which WebKit
  * otherwise copies onto it even with transition-property: none.
  */
-export const PILL = cn(
+export const PILL = clsx(
   "pointer-events-none absolute inset-0 -z-10 border border-transparent bg-bg-accent-brand text-text-on-accent transition-none",
 );
 

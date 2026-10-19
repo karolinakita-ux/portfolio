@@ -6,6 +6,7 @@ import { PROFILE } from "#shared/content/profile.ts";
 import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import { track } from "#shared/lib/analytics/analytics.utils.ts";
 import { SECTION } from "#shared/lib/routes/routes.constants.ts";
+import { EXTERNAL_LINK } from "#shared/lib/ui/ui.constants.ts";
 import { WORK_CRUMB } from "#shared/ui/Breadcrumb/Breadcrumb.constants.ts";
 import { Breadcrumb } from "#shared/ui/Breadcrumb/Breadcrumb.tsx";
 import { Container } from "#shared/ui/Container/Container.tsx";
@@ -13,6 +14,8 @@ import { CopyEmail } from "#shared/ui/CopyEmail/CopyEmail.tsx";
 import { Eyebrow } from "#shared/ui/Eyebrow/Eyebrow.tsx";
 import { ExternalLink } from "#shared/ui/icons/icons.tsx";
 import { lead } from "#shared/ui/lead/lead.tsx";
+import { NewTabNote } from "#shared/ui/NewTabNote/NewTabNote.tsx";
+import { PageTitle } from "#shared/ui/PageTitle/PageTitle.tsx";
 import { Section } from "#shared/ui/Section/Section.tsx";
 
 import { styles } from "./ContactView.styles.ts";
@@ -26,9 +29,7 @@ export function ContactView({ onNavigate }: ContactViewProps) {
           <Breadcrumb onNavigate={onNavigate} items={[WORK_CRUMB, { label: "Contact" }]} />
           <div className={styles.heading}>
             <Eyebrow parts={[CONTACT.eyebrow]} />
-            <h1 id="contact-title" className={styles.title}>
-              {CONTACT.title}
-            </h1>
+            <PageTitle id="contact-title">{CONTACT.title}</PageTitle>
             <p className={styles.intro}>{CONTACT.intro}</p>
           </div>
         </Container>
@@ -44,14 +45,13 @@ export function ContactView({ onNavigate }: ContactViewProps) {
           <InfoCell label="LinkedIn Profile">
             <a
               href={PROFILE.linkedinUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+              {...EXTERNAL_LINK}
               onClick={() => track(EVENT.linkedinClick, { target: "profile", place: "contact" })}
               className={styles.linkedinLink}
             >
               {PROFILE.name} | LinkedIn
               <ExternalLink aria-hidden="true" size={16} className={styles.linkedinIcon} />
-              <span className={styles.srOnly}> (opens in a new tab)</span>
+              <NewTabNote />
             </a>
           </InfoCell>
         </InfoPanel>

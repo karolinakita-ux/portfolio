@@ -14,7 +14,7 @@ import { formatMonthYear } from "#features/cv/dates/dates.utils.ts";
 import { PROCESS_BANNER, TESTIMONIALS, WORK_CASES, WORK_INTRO } from "#features/work/work.content.ts";
 import { PROFILE } from "#shared/content/profile.ts";
 import { VIEW_PATHS, VIEWS } from "#shared/lib/routes/routes.constants.ts";
-import { isView } from "#shared/lib/routes/routes.utils.ts";
+import { isCaseView, isView } from "#shared/lib/routes/routes.utils.ts";
 import { Lang } from "#shared/ui/Lang/Lang.tsx";
 import { Strong } from "#shared/ui/Strong/Strong.tsx";
 
@@ -143,7 +143,7 @@ describe.each(CASE_TABLE)("case study: %s", (_name, c) => {
 
 describe("work page", () => {
   it("lists every case study exactly once, each pointing at a case view", () => {
-    const caseViews = VIEWS.filter((view) => view.startsWith("case-"));
+    const caseViews = VIEWS.filter(isCaseView);
     expect(WORK_CASES.map((item) => item.view).sort()).toEqual([...caseViews].sort());
   });
 

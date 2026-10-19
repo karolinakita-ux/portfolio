@@ -1,8 +1,8 @@
-import { cn } from "#shared/lib/ui/ui.utils.ts";
+import { clsx } from "clsx";
 
 export const styles = {
-  root: cn("flex items-start justify-between gap-md"),
-  heading: cn("flex min-w-0 flex-col gap-3xs"),
-  counter: cn("text-label-md text-text-secondary"),
-  title: cn("text-title-md text-balance text-text-primary"),
+  root: clsx("flex items-start justify-between gap-md"),
+  heading: clsx("flex min-w-0 flex-col gap-3xs"),
+  counter: clsx("text-label-md text-text-secondary"),
+  title: clsx("text-title-md text-balance text-text-primary"),
 };

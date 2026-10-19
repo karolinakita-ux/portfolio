@@ -1,23 +1,23 @@
-import { useId, useRef, type KeyboardEvent, type MouseEvent } from "react";
+import { useId, useRef, type KeyboardEvent } from "react";
 
 import { LightboxHeader } from "#features/image-viewer/components/LightboxHeader/LightboxHeader.tsx";
 import { LightboxToolbar } from "#features/image-viewer/components/LightboxToolbar/LightboxToolbar.tsx";
 import { LoadingSkeleton } from "#features/image-viewer/components/LoadingSkeleton/LoadingSkeleton.tsx";
-import { useModalDialog } from "#features/image-viewer/hooks/useModalDialog.ts";
 import { usePreloadNeighbours } from "#features/image-viewer/hooks/usePreloadNeighbours.ts";
 import { useRevealedImage } from "#features/image-viewer/hooks/useRevealedImage.ts";
 import { useSwipe } from "#features/image-viewer/hooks/useSwipe.ts";
 import { useZoom } from "#features/image-viewer/hooks/useZoom.ts";
 import { IMAGE_ENTRY } from "#features/image-viewer/lightbox.styles.ts";
-import { unlockScroll, zoomStyle } from "#features/image-viewer/lightbox.utils.ts";
+import { zoomStyle } from "#features/image-viewer/lightbox.utils.ts";
+import { Dialog } from "#shared/ui/Dialog/Dialog.tsx";
 import { ImageOff } from "#shared/ui/icons/icons.tsx";
 
 import { styles } from "./LightboxDialog.styles.ts";
 import type { LightboxDialogProps } from "./LightboxDialog.types.ts";
 
 /**
- * The viewer itself, on the native <dialog> (showModal): the page behind becomes inert,
- * Escape closes it, and focus stays inside. Page scroll is locked while it is open.
+ * The viewer itself, in a modal Dialog (shared/ui/Dialog: the page behind becomes inert,
+ * Escape and a backdrop click close it, focus stays inside, page scroll is locked).
  *
  * Controls: close button, Escape, click on the dimmed backdrop; with more than
  * one image, Previous / Next buttons, the ← / → keys and, on touch screens,
@@ -47,7 +47,6 @@ export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps)
     loaded,
   });
 
-  useModalDialog(dialogRef, state !== null);
   usePreloadNeighbours(state);
 
   const close = () => {
@@ -55,7 +54,6 @@ export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps)
   };
 
   const handleClose = () => {
-    unlockScroll();
     resetZoom();
     onClosed();
   };
@@ -83,21 +81,13 @@ export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps)
     }
   };
 
-  // A click that lands on the dialog element itself (not its panel) is a backdrop click.
-  const handleClick = (event: MouseEvent<HTMLDialogElement>) => {
-    if (event.target === dialogRef.current) close();
-  };
-
   return (
-    // A native modal <dialog>: backdrop clicks land on the element itself, keys apply to the whole viewer.
-    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-    <dialog
-      ref={dialogRef}
-      aria-labelledby={titleId}
+    <Dialog
+      dialogRef={dialogRef}
+      open={state !== null}
+      labelledBy={titleId}
       onClose={handleClose}
       onKeyDown={handleKeyDown}
-      onClick={handleClick}
-      className={styles.dialog}
     >
       {state && item && (
         <figure {...swipe} className={styles.figure}>
@@ -159,6 +149,6 @@ export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps)
           </p>
         </figure>
       )}
-    </dialog>
+    </Dialog>
   );
 }

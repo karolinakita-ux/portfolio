@@ -5,6 +5,7 @@ import { track } from "#shared/lib/analytics/analytics.utils.ts";
 import { hrefForView } from "#shared/lib/routes/routes.utils.ts";
 import { CaseThumbnail } from "#shared/media/CaseThumbnail/CaseThumbnail.tsx";
 import { Button } from "#shared/ui/Button/Button.tsx";
+import { Card } from "#shared/ui/Card/Card.tsx";
 import { Eyebrow } from "#shared/ui/Eyebrow/Eyebrow.tsx";
 import { ArrowRight } from "#shared/ui/icons/icons.tsx";
 import { ViewLink } from "#shared/ui/ViewLink/ViewLink.tsx";
@@ -16,7 +17,7 @@ import type { CaseCardProps } from "./CaseCard.types.ts";
 export function CaseCard({ item, resolveAsset, onNavigate }: CaseCardProps) {
   const titleId = useId();
   return (
-    <article aria-labelledby={titleId} className={styles.root}>
+    <Card layout="media" gap="lg" aria-labelledby={titleId} className={styles.root}>
       {/* The thumbnail opens the case study too (mouse and touch). Keyboard and screen reader users get the
           "View Case Study" link below, so this overlay is out of the Tab order and hidden from assistive tech;
           the image itself, and its alt text, stay readable. */}
@@ -55,6 +56,6 @@ export function CaseCard({ item, resolveAsset, onNavigate }: CaseCardProps) {
           {item.cta}
         </Button>
       </div>
-    </article>
+    </Card>
   );
 }
