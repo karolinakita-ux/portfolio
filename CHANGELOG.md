@@ -4,7 +4,14 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v3.11.0 - 2026-10-19
+
+- A new Privacy page, linked from the footer, says who runs the site, which services receive data (hosting, statistics, email) and what your rights are.
+- The site can count visits with Umami, a statistics tool without cookies, but only after you allow it in a short box; "No, thanks" is just as easy.
+- You can switch statistics on or off at any time on the Privacy page, and the site respects Do Not Track and Global Privacy Control.
+- Behind the scenes: the code follows the Figma components more closely, and each shared part has its own tested example.
+
+Versions: 3.8.0 - 3.11.0.
 
 ### 3.11.0 - 2026-10-19
 
