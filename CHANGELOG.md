@@ -6,6 +6,17 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.10.0 - 2026-10-19
+
+#### Added
+
+- A consent box for visitor statistics on the live site: "Can I count your visit?" with "Allow statistics" and "No, thanks" side by side and a link to the privacy page. Umami's script loads only after "Allow". It is not shown with Do Not Track or Global Privacy Control, on other hosts, or once the visitor has decided (kept in `kb-statistics`).
+
+#### Changed
+
+- Statistics need consent: Umami's script reads screen size and language and sends them, which needs prior consent under Art. 5(3) of the ePrivacy Directive (EDPB Guidelines 2/2023, para. 33) and Art. 399 of the Polish Prawo komunikacji elektronicznej, cookies or not. The EU's planned exemption for audience measurement (Digital Omnibus) is still in committee.
+- The privacy page names consent as the legal basis for statistics, adds the right to withdraw it, and its switch now allows or switches off statistics.
+
 ### 3.9.0 - 2026-10-19
 
 #### Added

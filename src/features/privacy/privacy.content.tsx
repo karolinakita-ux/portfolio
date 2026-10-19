@@ -6,12 +6,14 @@ import { TextLink } from "#shared/ui/TextLink/TextLink.tsx";
 import type { PrivacyContent } from "./privacy.types.ts";
 
 /**
- * The privacy policy (GDPR Art. 13 and 21; Polish law: UODO). Keep it true to the code and the vendors'
+ * The privacy policy (GDPR Art. 7, 13 and 21; Polish law: Art. 399 of Prawo komunikacji elektronicznej, UODO). Keep it true to the code and the vendors'
  * terms: analytics in shared/lib/analytics, hosting on Netlify (netlify.toml), the theme key in
  * shared/hooks/theme. Sources checked 2026-10-19: Netlify privacy policy and DPA (visitors of customer
  * sites, Data Privacy Framework, logs 90 days online and 1 year offline), Umami DPA and subprocessors
  * (Standard Contractual Clauses Module Two, servers in the USA and the EU), Google's frameworks page
- * (Data Privacy Framework), uodo.gov.pl (address, complaints). Change `updated` with every edit.
+ * (Data Privacy Framework), uodo.gov.pl (address, complaints). Consent for statistics: EDPB Guidelines
+ * 2/2023 para. 33 (JavaScript that makes the browser send device information is in scope of ePrivacy
+ * Art. 5(3), cookies or not) and Art. 399 PKE (no exception for analytics). Change `updated` with every edit.
  */
 
 const email = <TextLink href={"mailto:" + PROFILE.email}>{PROFILE.email}</TextLink>;
@@ -27,7 +29,7 @@ export const PRIVACY: PrivacyContent = {
       title: "In short",
       points: [
         "No cookies, no ads, and nothing that follows you to other websites.",
-        "I count visits with Umami, without cookies. You can switch this off below or in your browser.",
+        "I count visits with Umami only if you allow it. It sets no cookies, and you can change your choice at any time.",
         "The host, Netlify, logs each request to keep the site running and safe.",
         "If you email me, I use your message only to reply and to talk about work.",
       ],
@@ -56,7 +58,7 @@ export const PRIVACY: PrivacyContent = {
       id: "statistics",
       title: "Visitor statistics",
       paragraphs: [
-        "I use Umami Cloud to see which pages and links are useful, so I can improve this portfolio. The legal basis is my legitimate interest (GDPR Art. 6(1)(f)). The statistics show counts and trends; I do not try to find out who you are.",
+        "I use Umami Cloud to see which pages and links are useful, so I can improve this portfolio. It counts your visit only if you allow it. The legal basis is your consent (GDPR Art. 6(1)(a)). The statistics show counts and trends; I do not try to find out who you are.",
       ],
       points: [
         lead(
@@ -67,7 +69,11 @@ export const PRIVACY: PrivacyContent = {
           "What is recorded with it",
           "Your browser, operating system, device type, screen size, language and approximate location (country, region and city). Umami uses your IP address only to work out the location; its data processing agreement does not list the IP address among the data it keeps.",
         ),
-        lead("No cookies", "The statistics set no cookies and save nothing on your device."),
+        lead(
+          "Why I ask first",
+          "The statistics script reads your screen size and language and sends them. European law and the Polish Electronic Communications Law (Art. 399) need your consent for that, even without cookies.",
+        ),
+        lead("No cookies", "The statistics set no cookies. Only your choice is kept in your browser."),
         lead("How long", "Umami keeps the statistics for 6 months, then deletes them."),
         lead(
           "Tagged links",
@@ -75,7 +81,7 @@ export const PRIVACY: PrivacyContent = {
         ),
       ],
       intro: [
-        "If your browser sends Do Not Track or Global Privacy Control, the statistics script does not load at all. You can also switch statistics off for this browser:",
+        "Without your consent the statistics script does not load. If your browser sends Do Not Track or Global Privacy Control, I do not ask and do not count. You can change your choice here at any time; switching off is as easy as allowing:",
       ],
     },
     {
@@ -94,8 +100,8 @@ export const PRIVACY: PrivacyContent = {
       points: [
         lead("Your theme", "when you pick light or dark mode, your browser keeps that choice (kb-theme)."),
         lead(
-          "Statistics off",
-          "when you switch statistics off on this page, your browser keeps that choice (umami.disabled).",
+          "Your statistics choice",
+          "when you allow or decline statistics, your browser keeps that choice (kb-statistics), so I do not ask again.",
         ),
       ],
       after: [
@@ -117,6 +123,10 @@ export const PRIVACY: PrivacyContent = {
         lead("Deletion", "delete it (Art. 17)."),
         lead("Restriction", "limit how I use it (Art. 18)."),
         lead("Portability", "give you the messages you sent me in a common file format (Art. 20)."),
+        lead(
+          "Withdraw consent",
+          "switch statistics off on this page at any time. It does not change what was counted before (Art. 7(3)).",
+        ),
       ],
       intro: [<>Write to {email}. I answer within one month.</>],
       after: [
@@ -164,15 +174,23 @@ export const PRIVACY: PrivacyContent = {
   ],
   objection: {
     title: "Your right to object",
-    text: "You can object at any time to the use of your data based on my legitimate interest: the statistics and the server logs (GDPR Art. 21). For the statistics, the switch on this page or your browser's Do Not Track or Global Privacy Control setting stops them at once.",
+    text: "You can object at any time to the use of your data based on my legitimate interest: the server logs, and emails that are not about work (GDPR Art. 21). The statistics run only with your consent, which you can withdraw with the switch on this page.",
   },
   statisticsSwitch: {
-    on: "Statistics are on in this browser.",
-    off: "Statistics are off in this browser. Switch them back on to count your visits again from the next page you open.",
+    on: "Statistics are on in this browser: you allowed them.",
+    off: "Statistics are off in this browser.",
+    unset: "You have not decided yet, so statistics are off.",
     browser:
       "Your browser asks websites not to track you (Do Not Track or Global Privacy Control), so this site does not count your visits.",
     noScript: "Without JavaScript, this site does not count your visits.",
     switchOff: "Switch statistics off",
-    switchOn: "Switch statistics back on",
+    switchOn: "Allow statistics",
+  },
+  consent: {
+    title: "Can I count your visit?",
+    text: "I use Umami to see which pages and links are useful. It sets no cookies and does not follow you to other websites. It reads your screen size and language, so I ask first.",
+    allow: "Allow statistics",
+    decline: "No, thanks",
+    details: "Privacy details",
   },
 };

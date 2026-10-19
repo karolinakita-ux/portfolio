@@ -6,6 +6,7 @@ import { useRouteFocus } from "#app/routing/useRouteFocus.ts";
 import { useSectionHash } from "#app/routing/useSectionHash.ts";
 import { useDocumentHead } from "#app/seo/useDocumentHead.ts";
 import { LightboxProvider } from "#features/image-viewer/index.ts";
+import { StatisticsConsent } from "#features/privacy/index.ts";
 import { useTheme } from "#shared/hooks/theme/useTheme.ts";
 import { BackToTop } from "#shared/layout/BackToTop/BackToTop.tsx";
 import { SiteFooter } from "#shared/layout/SiteFooter/SiteFooter.tsx";
@@ -78,6 +79,9 @@ export function App({ assetBase = "/assets", portraitSrc = assetBase + "/site/po
         >
           Skip to main content
         </a>
+
+        {/* Early in the DOM so keyboard and screen reader users meet it first; it sits at the bottom of the screen. */}
+        <StatisticsConsent onNavigate={navigate} />
 
         <div className={styles.chrome}>
           <SiteHeader

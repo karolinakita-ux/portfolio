@@ -22,13 +22,10 @@ export const EVENT = {
   themeSwitch: "theme-switch",
 } as const;
 
-/**
- * The visitor's own off switch (the privacy page). Umami's tracker reads the same localStorage key
- * and sends nothing while it is set; the app does not even load the script then.
- */
-export const STATISTICS_OFF_KEY = "umami.disabled";
+/** The visitor's statistics choice ("on" | "off"), kept in this browser only (statistics-consent.utils.ts). */
+export const STATISTICS_CHOICE_KEY = "kb-statistics";
 
-/** Fired on window when the switch changes, so the privacy page can show the new state. */
+/** Fired on window when the choice changes, so the consent box and the privacy page update. */
 export const STATISTICS_CHANGE_EVENT = "kb-statistics-change";
 
 /** Calls waiting for the script; a blocked script never arrives, so the queue stays short. */
