@@ -4,7 +4,12 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v3.12.0 - 2026-10-19
+
+- A new button on the Work page, "View Components in Storybook", opens the library of the buttons, cards and other parts this site is built from.
+- The component library no longer shows a loading error when it was left open during an update.
+
+Versions: 3.12.0.
 
 ### 3.12.0 - 2026-10-19
 
