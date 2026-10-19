@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.11.3 - 2026-10-19
+
+#### Changed
+
+- The consent box's two answers are secondary buttons again, still identical: the page keeps its one primary (yellow) action, and the raised card already makes the box stand out. The layout and text from 3.11.1 stay.
+
 ### 3.11.2 - 2026-10-19
 
 #### Changed
