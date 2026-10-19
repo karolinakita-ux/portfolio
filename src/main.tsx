@@ -2,9 +2,10 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
 import { App } from "#app/App/App.tsx";
+import { startAnalytics } from "#shared/lib/analytics/analytics.utils.ts";
+import { visitorPrivacy } from "#shared/lib/analytics/statistics-switch.utils.ts";
+import { setHashRouting } from "#shared/lib/routes/routes.utils.ts";
 
-import { startAnalytics } from "./shared/lib/analytics/analytics.utils.ts";
-import { setHashRouting } from "./shared/lib/routes/routes.utils.ts";
 // Self-hosted fonts (no request to Google): only the weights the type scale uses.
 import "@fontsource/inter/400.css";
 import "@fontsource/inter/500.css";
@@ -21,7 +22,7 @@ startAnalytics({
   production: import.meta.env.PROD,
   base: import.meta.env.BASE_URL,
   hostname: window.location.hostname,
-  privacy: navigator,
+  privacy: visitorPrivacy(),
 });
 
 const root = document.getElementById("root");

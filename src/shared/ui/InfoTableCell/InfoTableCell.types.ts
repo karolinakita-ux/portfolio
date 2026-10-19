@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-export interface InfoCellProps {
-  label: string;
+export interface InfoTableCellProps {
+  label: ReactNode;
   children: ReactNode;
 }

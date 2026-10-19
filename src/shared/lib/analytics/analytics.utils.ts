@@ -11,11 +11,12 @@ import type {
 
 /**
  * Visitor statistics with Umami Cloud (umami.is): no cookies, nothing written to the visitor's device.
- * What visitors are told: the Privacy section on the Contact page (/contact#privacy).
+ * What visitors are told: the privacy page (/privacy, features/privacy).
  *
  * - Only the live site counts: a production build at the site root, served from karolina.kita.company.
  *   Dev, Netlify branch deploys, local previews, tests and the claude.ai artifact never load the script.
- * - Visitors with Do Not Track or Global Privacy Control switched on are not counted; the script does not load.
+ * - Visitors with Do Not Track or Global Privacy Control on, or who switched statistics off on the privacy
+ *   page (statistics-switch.utils.ts), are not counted; the script does not load.
  * - The tracker's own page tracking is off (data-auto-track="false"): it misses Back / Forward and would count
  *   every scroll hash change (useSectionHash). App sends one pageview per view instead (trackPageview).
  * - With page tracking off, the tracker keeps the landing page as the current page forever, so every call
@@ -24,8 +25,8 @@ import type {
  * - Never send names or email addresses, and never call umami.identify().
  */
 
-export const optedOut = ({ doNotTrack, globalPrivacyControl }: PrivacySignals): boolean =>
-  globalPrivacyControl === true || doNotTrack === "1" || doNotTrack === "yes";
+export const optedOut = ({ doNotTrack, globalPrivacyControl, statisticsOff }: PrivacySignals): boolean =>
+  statisticsOff === true || globalPrivacyControl === true || doNotTrack === "1" || doNotTrack === "yes";
 
 /** True only on the live site, for a visitor who has not asked not to be tracked. */
 export const analyticsAllowed = ({ production, base, hostname, privacy }: AnalyticsSite): boolean =>
@@ -33,7 +34,8 @@ export const analyticsAllowed = ({ production, base, hostname, privacy }: Analyt
 
 const state: AnalyticsState = { on: false, queue: [], lastPage: null, referrer: null };
 
-const stop = () => {
+/** Sends nothing more on this page (the script is blocked, or the visitor switched statistics off). */
+export const stopAnalytics = (): void => {
   state.on = false;
   state.queue.length = 0;
 };
@@ -41,7 +43,7 @@ const stop = () => {
 const flush = () => {
   const tracker = window.umami;
   if (!tracker) {
-    stop();
+    stopAnalytics();
     return;
   }
   for (const build of state.queue.splice(0)) tracker.track(build);
@@ -96,7 +98,7 @@ export function startAnalytics(site: AnalyticsSite): boolean {
   script.dataset.excludeHash = "true";
   script.dataset.doNotTrack = "true";
   script.addEventListener("load", flush);
-  script.addEventListener("error", stop);
+  script.addEventListener("error", stopAnalytics);
   document.head.append(script);
   return true;
 }

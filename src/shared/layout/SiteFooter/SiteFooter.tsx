@@ -1,7 +1,7 @@
 import { PROFILE } from "#shared/content/profile.ts";
 import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import { track } from "#shared/lib/analytics/analytics.utils.ts";
-import { NAV_ITEMS, SECTION, VIEW } from "#shared/lib/routes/routes.constants.ts";
+import { NAV_ITEMS, VIEW } from "#shared/lib/routes/routes.constants.ts";
 import { EXTERNAL_LINK } from "#shared/lib/ui/ui.constants.ts";
 import { Container } from "#shared/ui/Container/Container.tsx";
 import { CopyEmail } from "#shared/ui/CopyEmail/CopyEmail.tsx";
@@ -67,12 +67,7 @@ export function SiteFooter({ onNavigate }: SiteFooterProps) {
           </p>
           <p>{PROFILE.builtWith}</p>
           <p>
-            <ViewLink
-              view={VIEW.contact}
-              anchor={SECTION.privacy}
-              onNavigate={onNavigate}
-              className={styles.privacyLink}
-            >
+            <ViewLink view={VIEW.privacy} onNavigate={onNavigate} className={styles.privacyLink}>
               Privacy
             </ViewLink>
           </p>

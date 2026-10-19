@@ -6,6 +6,18 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.9.0 - 2026-10-19
+
+#### Added
+
+- A Privacy page (`/privacy`), linked from the footer: who is responsible, hosting logs (Netlify), visitor statistics (Umami), email, cookies and storage, who receives data and under which transfer rules, the visitor's rights with the right to object shown on its own, the complaint address of UODO, and the date of this version. Facts checked against Netlify's and Umami's data processing agreements, Google's framework page and uodo.gov.pl.
+- A switch on that page that turns visitor statistics off for the browser (Umami's own `umami.disabled` key): counting stops at once, and the script no longer loads.
+- `InfoTable` / `InfoTableCell` (Figma: Info Table) and `TextLink` in `shared/ui`; a reading-width token `--container-reading`.
+
+#### Removed
+
+- The privacy section on the Contact page (unreleased; the page replaces it).
+
 ### 3.8.2 - 2026-10-19
 
 #### Added

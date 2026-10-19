@@ -11,6 +11,7 @@ import { THEMING_CASE } from "#features/case-studies/content/theming.content.tsx
 import { CONTACT } from "#features/contact/contact.content.ts";
 import { CV } from "#features/cv/cv.content.ts";
 import { formatMonthYear } from "#features/cv/dates/dates.utils.ts";
+import { PRIVACY } from "#features/privacy/privacy.content.tsx";
 import { PROCESS_BANNER, TESTIMONIALS, WORK_CASES, WORK_INTRO } from "#features/work/work.content.ts";
 import { PROFILE } from "#shared/content/profile.ts";
 import { VIEW_PATHS, VIEWS } from "#shared/lib/routes/routes.constants.ts";
@@ -52,6 +53,7 @@ const ALL_CONTENT = {
   PRINCIPLES,
   CONTACT,
   CV,
+  PRIVACY,
   PROFILE,
   PROCESS_BANNER,
   TESTIMONIALS,
@@ -72,7 +74,7 @@ describe("copy style", () => {
   });
 
   it("never ends an H1 with a period", () => {
-    const h1s = [...CASES.map((c) => c.title), CONTACT.title];
+    const h1s = [...CASES.map((c) => c.title), CONTACT.title, PRIVACY.title];
     for (const title of h1s) expect(title.trimEnd()).not.toMatch(/\.$/);
   });
 });
