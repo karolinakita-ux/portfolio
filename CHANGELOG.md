@@ -4,7 +4,12 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v3.11.1 - 2026-10-19
+
+- The statistics question shows "Allow statistics" and "No, thanks" as two equal buttons, and says that you can change your choice at any time on the Privacy page.
+- The Privacy page explains more precisely how Google handles emails sent to Gmail.
+
+Versions: 3.11.1.
 
 ### 3.11.1 - 2026-10-19
 
