@@ -4,7 +4,11 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v3.11.3 - 2026-10-19
+
+- The statistics question uses the site's calm outlined buttons again; both answers still look exactly the same.
+
+Versions: 3.11.2 - 3.11.3.
 
 ### 3.11.3 - 2026-10-19
 
