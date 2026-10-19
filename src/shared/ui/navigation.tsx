@@ -5,7 +5,7 @@ import { cn, FOCUS_RING, isPlainLeftClick } from "#shared/lib/ui.utils.ts";
 
 import { ChevronRight, type IconComponent } from "./icons.tsx";
 
-interface ViewLinkProps extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href" | "onClick"> {
+interface ViewLinkProps extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href"> {
   view: View;
   anchor?: string | null;
   onNavigate: Navigate;
@@ -14,13 +14,15 @@ interface ViewLinkProps extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "h
 
 /**
  * <a> with a real href (/about, /work#cases) for semantics, middle-click and "open in new
- * tab"; a plain click navigates through app state and browser history.
+ * tab"; a plain click navigates through app state and browser history. `onClick` runs first,
+ * on every click (e.g. to count it).
  */
-export function ViewLink({ view, anchor, onNavigate, className, children, ...props }: ViewLinkProps) {
+export function ViewLink({ view, anchor, onNavigate, onClick, className, children, ...props }: ViewLinkProps) {
   return (
     <a
       href={hrefForView(view, anchor)}
       onClick={(event) => {
+        onClick?.(event);
         if (!isPlainLeftClick(event)) return; // let the browser open a new tab / window
         event.preventDefault();
         onNavigate(view, anchor);

@@ -20,7 +20,8 @@ export const CV: Cv = {
     location: "Poland (CET / UTC+1) - Remote",
     phone: "",
     email: PROFILE.email,
-    portfolio: { label: "karolina.kita.company", href: "https://karolina.kita.company" },
+    // ?ref=cv: visits from the CV (PDF) show up in the site statistics (link-ref).
+    portfolio: { label: "karolina.kita.company", href: "https://karolina.kita.company/?ref=cv" },
     linkedin: { label: "linkedin.com/in/karolinakita", href: PROFILE.linkedinUrl },
   },
 

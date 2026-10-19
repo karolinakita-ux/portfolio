@@ -55,6 +55,8 @@ export const VIEW_PATHS = {
 /** Section anchors that other views link to (the section's element id). */
 export const SECTION = {
   workCases: "enterprise-cases",
+  /** The privacy note on the Contact page; the footer links to it. */
+  privacy: "privacy",
 } as const;
 
 export interface NavigateOptions {

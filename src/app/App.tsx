@@ -16,6 +16,7 @@ import { WorkView } from "#features/work/index.ts";
 import { useTheme } from "#shared/hooks/useTheme.ts";
 import { BackToTop, SiteFooter } from "#shared/layout/SiteFooter.tsx";
 import { SiteHeader } from "#shared/layout/SiteHeader.tsx";
+import { trackPageview } from "#shared/lib/analytics.utils.ts";
 import { VIEW, type Navigate, type View } from "#shared/lib/routes.ts";
 import { cn, FOCUS_RING, prefersReducedMotion } from "#shared/lib/ui.utils.ts";
 import { preloadImages } from "#shared/media/image-preload.ts";
@@ -104,6 +105,12 @@ export function App({ assetBase = "/assets", portraitSrc = assetBase + "/site/po
     const pageData = document.querySelector('script[type="application/ld+json"][data-page]');
     if (pageData) pageData.textContent = JSON.stringify(head.jsonLd);
   }, [route.view]);
+
+  // One pageview per page: the first load and every view change, Back / Forward included. A jump to a
+  // section and the hash that follows scrolling are not pages. After the title effect: it sends the new title.
+  useEffect(() => {
+    trackPageview();
+  }, [route.viewKey]);
 
   useSectionHash(route.key);
 

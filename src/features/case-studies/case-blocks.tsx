@@ -1,6 +1,7 @@
 import { useId } from "react";
 
-import { hrefForView, type Navigate } from "#shared/lib/routes.ts";
+import { EVENT, track } from "#shared/lib/analytics.utils.ts";
+import { hrefForView, type Navigate, type View } from "#shared/lib/routes.ts";
 import { BULLET_LIST, cn, FOCUS_RING } from "#shared/lib/ui.utils.ts";
 import { Screenshot } from "#shared/media/images.tsx";
 import { WORK_CRUMB } from "#shared/ui/crumbs.constants.ts";
@@ -187,10 +188,12 @@ export function KeyOutcomes({ items, labelId }: { items: readonly DetailItem[]; 
 }
 
 function CaseNavLink({
+  from,
   target,
   direction,
   onNavigate,
 }: {
+  from: View;
   target: CaseNavTarget;
   direction: "prev" | "next";
   onNavigate: Navigate;
@@ -212,6 +215,7 @@ function CaseNavLink({
       href={hrefForView(target.view)}
       onClick={(event) => {
         event.preventDefault();
+        track(EVENT.caseNav, { from, to: target.view, direction });
         onNavigate(target.view);
       }}
       className={cn(
@@ -240,10 +244,13 @@ function CaseNavLink({
  * Wraps on narrow screens; Next keeps right alignment via ml-auto.
  */
 export function CaseNav({
+  from,
   prev,
   next,
   onNavigate,
 }: {
+  /** The case study these links leave. */
+  from: View;
   prev?: CaseNavTarget;
   next?: CaseNavTarget;
   onNavigate: Navigate;
@@ -258,8 +265,8 @@ export function CaseNav({
             prev && next ? "justify-between" : next ? "justify-end" : "justify-start",
           )}
         >
-          {prev && <CaseNavLink target={prev} direction="prev" onNavigate={onNavigate} />}
-          {next && <CaseNavLink target={next} direction="next" onNavigate={onNavigate} />}
+          {prev && <CaseNavLink from={from} target={prev} direction="prev" onNavigate={onNavigate} />}
+          {next && <CaseNavLink from={from} target={next} direction="next" onNavigate={onNavigate} />}
         </nav>
       </Container>
     </section>

@@ -55,6 +55,8 @@ export interface CaseNavTarget {
 }
 
 interface CaseBase {
+  /** The view that shows this case study (its URL, the screenshot folder, analytics). */
+  view: View;
   /** Prefix for section ids. */
   id: string;
   shortTitle: string;

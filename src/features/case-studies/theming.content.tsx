@@ -5,6 +5,7 @@ import type { ThemingCaseStudy } from "./case-studies.types.ts";
 
 /* Case study - Multi-Tenant Theme Customizer (Data Governance). Screenshot fields: see ShowcaseCard in case-studies.types.ts. */
 export const THEMING_CASE: ThemingCaseStudy = {
+  view: VIEW.caseTheming,
   id: "case",
   shortTitle: "Data Governance",
   eyebrow: ["Enterprise Systems", "Multi-Tenant Architecture & Accessibility"],

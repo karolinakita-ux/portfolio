@@ -29,7 +29,7 @@ function ShowcaseRows({ rows }: { rows: readonly GalleryRow[] }) {
  */
 export function CaseStudyView({ c, resolveAsset, onNavigate }: CaseViewProps<CaseStudy>) {
   const cards = useMemo(() => caseCards(c), [c]);
-  const rows = useCaseGallery(cards, resolveAsset);
+  const rows = useCaseGallery(cards, resolveAsset, c.view);
 
   // Start index of each section's cards in the shared gallery.
   const sectionStarts = useMemo(() => {
@@ -75,7 +75,7 @@ export function CaseStudyView({ c, resolveAsset, onNavigate }: CaseViewProps<Cas
         </Section>
       )}
 
-      <CaseNav prev={c.prev} next={c.next} onNavigate={onNavigate} />
+      <CaseNav from={c.view} prev={c.prev} next={c.next} onNavigate={onNavigate} />
     </>
   );
 }
@@ -83,7 +83,7 @@ export function CaseStudyView({ c, resolveAsset, onNavigate }: CaseViewProps<Cas
 /** Multi-Tenant Theme Customizer: problem cards, solution and safety rows, delivery, handoff, takeaways. */
 export function CaseThemingView({ c, resolveAsset, onNavigate }: CaseViewProps<ThemingCaseStudy>) {
   const cards = useMemo(() => caseCards(c), [c]);
-  const rows = useCaseGallery(cards, resolveAsset);
+  const rows = useCaseGallery(cards, resolveAsset, c.view);
   const solutionRows = rows.slice(0, c.solution.length);
   const safetyRows = rows.slice(c.solution.length);
 
@@ -142,7 +142,7 @@ export function CaseThemingView({ c, resolveAsset, onNavigate }: CaseViewProps<T
         <DetailList items={c.takeaways} />
       </Section>
 
-      <CaseNav prev={c.prev} next={c.next} onNavigate={onNavigate} />
+      <CaseNav from={c.view} prev={c.prev} next={c.next} onNavigate={onNavigate} />
     </>
   );
 }

@@ -13,7 +13,7 @@ import { CV } from "#features/cv/cv.content.ts";
 import { formatMonthYear } from "#features/cv/dates.utils.ts";
 import { PROCESS_BANNER, TESTIMONIALS, WORK_CASES, WORK_INTRO } from "#features/work/work.content.ts";
 import { PROFILE } from "#shared/content/profile.ts";
-import { isView, VIEW, VIEW_PATHS, VIEWS, type View } from "#shared/lib/routes.ts";
+import { isView, VIEW_PATHS, VIEWS } from "#shared/lib/routes.ts";
 import { Lang, Strong } from "#shared/ui/text.tsx";
 
 /** Image path under /assets: lowercase kebab-case folders and file name, web image formats. */
@@ -77,15 +77,13 @@ describe("copy style", () => {
 
 const CASE_TABLE = CASES.map((c): [string, CaseStudy | ThemingCaseStudy] => [c.shortTitle, c]);
 
-const CASE_VIEWS = new Map<CaseStudy | ThemingCaseStudy, View>([
-  [AUTOMOTIVE_CASE, VIEW.caseAutomotive],
-  [MEETESTIM_CASE, VIEW.caseMeetestim],
-  [THEMING_CASE, VIEW.caseTheming],
-]);
-
 describe.each(CASE_TABLE)("case study: %s", (_name, c) => {
   const cards = caseCards(c);
-  const view = CASE_VIEWS.get(c) ?? VIEW.work;
+  const { view } = c;
+
+  it("names its own case view (the screenshot folder below checks which one)", () => {
+    expect(view.startsWith("case-")).toBe(true);
+  });
 
   it("opens every bullet with a bold lead-in term and a colon", () => {
     const bullets: ReactNode[] = [...cards.flatMap((card) => card.bullets ?? []), ...("reality" in c ? c.reality : [])];

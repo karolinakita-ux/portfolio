@@ -18,7 +18,7 @@ const resolveAsset = (name: string) => "/assets/" + name;
 const renderGallery = () => {
   const open = vi.fn<OpenLightbox>();
   const wrapper = ({ children }: { children: ReactNode }) => <LightboxContext value={open}>{children}</LightboxContext>;
-  const { result } = renderHook(() => useCaseGallery(cards, resolveAsset), { wrapper });
+  const { result } = renderHook(() => useCaseGallery(cards, resolveAsset, AUTOMOTIVE_CASE.view), { wrapper });
   return { rows: result.current, open };
 };
 

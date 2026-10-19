@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 
+import { EVENT, track } from "#shared/lib/analytics.utils.ts";
 import { prefersReducedMotion } from "#shared/lib/ui.utils.ts";
 
 /**
@@ -102,9 +103,12 @@ export function useTheme(): [Theme, (theme: Theme) => void] {
   const pickTheme = useCallback(
     (value: Theme) => {
       const update = () => setState({ theme: value, picked: true });
-      // Picking the theme already shown only stores it: nothing to cross-fade.
+      // Picking the theme already shown only stores it: nothing to cross-fade, nothing to count.
       if (value === state.theme) update();
-      else changeTheme(update);
+      else {
+        track(EVENT.themeSwitch, { theme: value });
+        changeTheme(update);
+      }
       try {
         window.localStorage.setItem(THEME_STORAGE_KEY, value);
       } catch {

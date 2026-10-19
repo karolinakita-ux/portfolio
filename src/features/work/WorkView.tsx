@@ -1,6 +1,7 @@
 import { useId, type ReactNode } from "react";
 
 import { PROFILE } from "#shared/content/profile.ts";
+import { EVENT, track } from "#shared/lib/analytics.utils.ts";
 import { hrefForView, SECTION, VIEW, type Navigate } from "#shared/lib/routes.ts";
 import { cn, FOCUS_RING } from "#shared/lib/ui.utils.ts";
 import { CaseThumbnail } from "#shared/media/images.tsx";
@@ -69,6 +70,7 @@ function HeroSection({ onNavigate }: { onNavigate: Navigate }) {
               variant="secondary"
               iconLeft={Figma}
               iconRight={ArrowUpRight}
+              onClick={() => track(EVENT.figmaClick, { place: "hero" })}
             >
               {HERO_ACTIONS.figma}
               <span className="sr-only"> (opens in a new tab)</span>
@@ -82,6 +84,7 @@ function HeroSection({ onNavigate }: { onNavigate: Navigate }) {
                 variant="secondary"
                 iconLeft={Github}
                 iconRight={ArrowUpRight}
+                onClick={() => track(EVENT.githubClick, { place: "hero" })}
               >
                 {HERO_ACTIONS.source}
                 <span className="sr-only"> (opens in a new tab)</span>
@@ -112,13 +115,24 @@ function Avatar({ initials }: { initials: string }) {
  * sr-only text: Chrome puts a space before a comma in an absolutely positioned span.
  * At least 24px tall, so the stacked links stay easy to tap (WCAG 2.5.8).
  */
-function LinkedInTextLink({ href, label, destination }: { href: string; label: string; destination: string }) {
+function LinkedInTextLink({
+  href,
+  label,
+  destination,
+  target,
+}: {
+  href: string;
+  label: string;
+  destination: string;
+  target: "author" | "company";
+}) {
   return (
     <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
       aria-label={`${label}, ${destination} (opens in a new tab)`}
+      onClick={() => track(EVENT.linkedinClick, { target, place: "testimonials" })}
       className={cn(
         "inline-flex min-h-lg items-center gap-2xs rounded-sm text-text-link-default underline underline-offset-2 hover:text-text-link-hover",
         FOCUS_RING,
@@ -146,7 +160,12 @@ function TestimonialsSection() {
                 <Avatar initials={item.initials} />
                 <span className="flex min-w-0 flex-col items-start gap-3xs">
                   <span className="text-title-sm">
-                    <LinkedInTextLink href={item.profileUrl} label={item.name} destination="LinkedIn profile" />
+                    <LinkedInTextLink
+                      href={item.profileUrl}
+                      label={item.name}
+                      destination="LinkedIn profile"
+                      target="author"
+                    />
                   </span>
                   <span className="text-body-sm text-text-secondary">
                     {item.role}
@@ -156,6 +175,7 @@ function TestimonialsSection() {
                       href={item.company.url}
                       label={item.company.name}
                       destination="company page on LinkedIn"
+                      target="company"
                     />
                   </span>
                 </span>
@@ -173,6 +193,7 @@ function TestimonialsSection() {
           variant="secondary"
           iconLeft={Linkedin}
           iconRight={ArrowUpRight}
+          onClick={() => track(EVENT.linkedinClick, { target: "recommendations", place: "testimonials" })}
         >
           {RECOMMENDATIONS_LINK_LABEL}
           <span className="sr-only"> (opens in a new tab)</span>
@@ -207,6 +228,7 @@ function CaseCard({ item, resolveAsset, onNavigate }: CaseCardProps) {
           tabIndex={-1}
           aria-hidden="true"
           data-case-thumbnail-link=""
+          onClick={() => track(EVENT.caseOpen, { case: item.view, from: "thumbnail" })}
           className="absolute inset-0 rounded-sm"
         >
           {null}
@@ -227,6 +249,7 @@ function CaseCard({ item, resolveAsset, onNavigate }: CaseCardProps) {
           className="mt-xs"
           onClick={(event) => {
             event.preventDefault();
+            track(EVENT.caseOpen, { case: item.view, from: "card-link" });
             onNavigate(item.view);
           }}
         >
@@ -238,12 +261,24 @@ function CaseCard({ item, resolveAsset, onNavigate }: CaseCardProps) {
 }
 
 /** External text link in the banner: brand icon, label, arrow (opens in a new tab). */
-function BannerLink({ href, icon: Icon, children }: { href: string; icon: IconComponent; children: ReactNode }) {
+function BannerLink({
+  href,
+  icon: Icon,
+  event,
+  children,
+}: {
+  href: string;
+  icon: IconComponent;
+  /** Counted on click, with place: "banner". */
+  event: typeof EVENT.figmaClick | typeof EVENT.githubClick;
+  children: ReactNode;
+}) {
   return (
     <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={() => track(event, { place: "banner" })}
       className={cn(
         "group/link inline-flex items-center gap-2xs rounded-sm text-label-lg font-semibold decoration-1 underline-offset-4 hover:underline",
         FOCUS_RING,
@@ -268,11 +303,11 @@ function ProcessBanner() {
       <div className="flex flex-col gap-md">
         <p>{PROCESS_BANNER.body}</p>
         <div className="flex flex-wrap gap-x-lg gap-y-xs">
-          <BannerLink href={PROFILE.figmaWorkspaceUrl} icon={Figma}>
+          <BannerLink href={PROFILE.figmaWorkspaceUrl} icon={Figma} event={EVENT.figmaClick}>
             {PROCESS_BANNER.linkLabel}
           </BannerLink>
           {PROFILE.repositoryUrl ? (
-            <BannerLink href={PROFILE.repositoryUrl} icon={Github}>
+            <BannerLink href={PROFILE.repositoryUrl} icon={Github} event={EVENT.githubClick}>
               {PROCESS_BANNER.sourceLinkLabel}
             </BannerLink>
           ) : null}
