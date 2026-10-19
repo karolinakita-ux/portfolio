@@ -4,6 +4,24 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Release v3.11.1 - 2026-10-19
+
+- The statistics question shows "Allow statistics" and "No, thanks" as two equal buttons, and says that you can change your choice at any time on the Privacy page.
+- The Privacy page explains more precisely how Google handles emails sent to Gmail.
+
+Versions: 3.11.1.
+
+### 3.11.1 - 2026-10-19
+
+#### Changed
+
+- The consent box: "Allow statistics" and "No, thanks" are both primary buttons, so the choice stands out and neither answer is pushed (EDPB cookie banner taskforce, para. 13 and 17). "Privacy details" moves to the end of the row, below the buttons on phones. The story checks that both buttons look the same.
+
+#### Fixed
+
+- The consent box names who asks and says that the choice can be changed at any time on the privacy page: both belong to valid consent (EDPB Guidelines 05/2020 on consent, para. 64; GDPR Art. 7(3)).
+- The privacy page no longer says that every company in the list processes data for Karolina: with a free Gmail account, Google handles mail under its own privacy policy.
+
 ## Release v3.11.0 - 2026-10-19
 
 - A new Privacy page, linked from the footer, says who runs the site, which services receive data (hosting, statistics, email) and what your rights are.
