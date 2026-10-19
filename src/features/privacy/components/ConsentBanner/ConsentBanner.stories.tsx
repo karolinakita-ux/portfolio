@@ -17,6 +17,10 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   play: async ({ canvas, args }) => {
     await expect(canvas.getByRole("region", { name: "Can I count your visit?" })).toBeInTheDocument();
+    // Equal weight: declining must look exactly like allowing.
+    await expect(canvas.getByRole("button", { name: "No, thanks" }).className).toBe(
+      canvas.getByRole("button", { name: "Allow statistics" }).className,
+    );
     await userEvent.click(canvas.getByRole("button", { name: "No, thanks" }));
     await expect(args.onDecline).toHaveBeenCalledOnce();
     await userEvent.click(canvas.getByRole("button", { name: "Allow statistics" }));

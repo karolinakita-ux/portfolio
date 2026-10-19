@@ -12,7 +12,12 @@ export const styles = {
   ),
   title: clsx("text-title-md text-text-primary"),
   text: clsx("text-body-md text-text-secondary"),
-  /** Allow and decline look the same: refusing is as easy as accepting. */
-  actions: clsx("flex flex-wrap items-center gap-sm pt-2xs"),
+  /** The choice first, the link to the details apart from it: at the end of the row from sm, below on phones. */
+  actions: clsx("flex flex-col items-start gap-sm pt-2xs sm:flex-row sm:items-center sm:justify-between"),
+  /**
+   * Allow and decline look the same, both primary: refusing is as easy as accepting, and neither is
+   * pushed (EDPB cookie banner taskforce report, para. 13 and 17; the GOV.UK cookie banner does the same).
+   */
+  choices: clsx("flex flex-wrap gap-sm"),
   link: clsx("text-body-md", TEXT_LINK),
 };

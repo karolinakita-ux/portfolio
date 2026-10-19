@@ -22,12 +22,14 @@ export function ConsentBanner({ onAllow, onDecline, onNavigate }: ConsentBannerP
       </p>
       <p className={styles.text}>{copy.text}</p>
       <div className={styles.actions}>
-        <Button variant="secondary" onClick={onAllow}>
-          {copy.allow}
-        </Button>
-        <Button variant="secondary" onClick={onDecline}>
-          {copy.decline}
-        </Button>
+        <div className={styles.choices}>
+          <Button variant="primary" onClick={onAllow}>
+            {copy.allow}
+          </Button>
+          <Button variant="primary" onClick={onDecline}>
+            {copy.decline}
+          </Button>
+        </div>
         <ViewLink view={VIEW.privacy} onNavigate={onNavigate} className={styles.link}>
           {copy.details}
         </ViewLink>
