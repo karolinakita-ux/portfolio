@@ -111,7 +111,9 @@ export const PRIVACY: PrivacyContent = {
     {
       id: "recipients",
       title: "Who receives data",
-      paragraphs: ["These companies process data for me. I do not sell data, and I do not share it with anyone else."],
+      paragraphs: [
+        "These companies receive data when you visit this website or email me. I do not sell data, and I do not share it with anyone else.",
+      ],
     },
     {
       id: "rights",
@@ -168,7 +170,8 @@ export const PRIVACY: PrivacyContent = {
     },
     {
       name: "Google LLC (USA)",
-      text: "Email (Gmail). Transfers to the USA rely on the EU-U.S. Data Privacy Framework.",
+      // A free Gmail account: Google is not a processor here, it handles mail under its own policy.
+      text: "Email (Gmail). Google handles the messages under its own privacy policy. Transfers to the USA rely on the EU-U.S. Data Privacy Framework.",
       policy: { label: "Google privacy policy", href: "https://policies.google.com/privacy" },
     },
   ],
@@ -188,7 +191,8 @@ export const PRIVACY: PrivacyContent = {
   },
   consent: {
     title: "Can I count your visit?",
-    text: "I use Umami to see which pages and links are useful. It sets no cookies and does not follow you to other websites. It reads your screen size and language, so I ask first.",
+    // Valid consent names who asks, what for, which data and that it can be withdrawn (EDPB Guidelines 05/2020, para. 64).
+    text: "I, Karolina Kita, use Umami to see which pages and links are useful. It sets no cookies and does not follow you to other websites. It reads your screen size and language, so I ask first. You can change your choice at any time on the privacy page.",
     allow: "Allow statistics",
     decline: "No, thanks",
     details: "Privacy details",
