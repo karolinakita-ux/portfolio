@@ -34,6 +34,8 @@ export interface Recipient {
 export interface StatisticsSwitchCopy {
   on: string;
   off: string;
+  /** Not decided yet: statistics stay off until the visitor allows them. */
+  unset: string;
   browser: string;
   /** In the prerendered HTML, before the script runs (and for visitors without JavaScript). */
   noScript: string;
@@ -50,4 +52,6 @@ export interface PrivacyContent {
   recipients: readonly Recipient[];
   objection: { title: string; text: string };
   statisticsSwitch: StatisticsSwitchCopy;
+  /** The consent box at the bottom of every page, until the visitor decides. */
+  consent: { title: string; text: string; allow: string; decline: string; details: string };
 }

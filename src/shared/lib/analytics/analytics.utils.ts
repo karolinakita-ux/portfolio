@@ -15,8 +15,8 @@ import type {
  *
  * - Only the live site counts: a production build at the site root, served from karolina.kita.company.
  *   Dev, Netlify branch deploys, local previews, tests and the claude.ai artifact never load the script.
- * - Visitors with Do Not Track or Global Privacy Control on, or who switched statistics off on the privacy
- *   page (statistics-switch.utils.ts), are not counted; the script does not load.
+ * - The script loads only after the visitor allows statistics (statistics-consent.utils.ts: the consent box
+ *   or the switch on /privacy). With Do Not Track or Global Privacy Control on, nobody is asked.
  * - The tracker's own page tracking is off (data-auto-track="false"): it misses Back / Forward and would count
  *   every scroll hash change (useSectionHash). App sends one pageview per view instead (trackPageview).
  * - With page tracking off, the tracker keeps the landing page as the current page forever, so every call
@@ -25,8 +25,8 @@ import type {
  * - Never send names or email addresses, and never call umami.identify().
  */
 
-export const optedOut = ({ doNotTrack, globalPrivacyControl, statisticsOff }: PrivacySignals): boolean =>
-  statisticsOff === true || globalPrivacyControl === true || doNotTrack === "1" || doNotTrack === "yes";
+export const optedOut = ({ doNotTrack, globalPrivacyControl }: PrivacySignals): boolean =>
+  globalPrivacyControl === true || doNotTrack === "1" || doNotTrack === "yes";
 
 /** True only on the live site, for a visitor who has not asked not to be tracked. */
 export const analyticsAllowed = ({ production, base, hostname, privacy }: AnalyticsSite): boolean =>
@@ -83,8 +83,8 @@ const linkRef = (search: string): string | null => {
 };
 
 /**
- * Loads the tracker when analyticsAllowed(site); returns whether it did. Called once from src/main.tsx,
- * before the first render, so App's first pageview is counted. An added script never blocks the page.
+ * Loads the tracker when analyticsAllowed(site); returns whether it did. Called by statistics-consent.utils.ts
+ * once the visitor has allowed statistics. An added script never blocks the page.
  */
 export function startAnalytics(site: AnalyticsSite): boolean {
   if (!analyticsAllowed(site)) return false;

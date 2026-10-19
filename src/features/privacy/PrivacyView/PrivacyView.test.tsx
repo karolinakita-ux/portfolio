@@ -50,6 +50,6 @@ describe("PrivacyView", () => {
   it("gives the contact address as a mail link and offers the statistics switch", () => {
     renderPrivacy();
     expect(screen.getAllByRole("link", { name: PROFILE.email })[0]).toHaveAttribute("href", "mailto:" + PROFILE.email);
-    expect(screen.getByRole("button", { name: PRIVACY.statisticsSwitch.switchOff })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: PRIVACY.statisticsSwitch.switchOn })).toBeInTheDocument();
   });
 });

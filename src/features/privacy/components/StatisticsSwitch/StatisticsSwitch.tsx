@@ -1,13 +1,14 @@
+import { useStatisticsState } from "#features/privacy/hooks/useStatisticsState.ts";
 import { PRIVACY } from "#features/privacy/privacy.content.tsx";
-import { setStatisticsOff } from "#shared/lib/analytics/statistics-switch.utils.ts";
+import { setStatisticsChoice } from "#shared/lib/analytics/statistics-consent.utils.ts";
 import { Button } from "#shared/ui/Button/Button.tsx";
 
 import { styles } from "./StatisticsSwitch.styles.ts";
-import { useStatisticsState } from "./useStatisticsState.ts";
 
 /**
- * Switches visitor statistics off (or back on) for this browser. The state line is a live region,
- * so the change is announced. With Do Not Track or Global Privacy Control there is nothing to switch.
+ * The visitor's statistics choice on the privacy page: allow, or switch off (withdraw consent, as easy
+ * as giving it). The state line is a live region, so a change is announced. With Do Not Track or
+ * Global Privacy Control there is nothing to choose.
  */
 export function StatisticsSwitch() {
   const state = useStatisticsState();
@@ -21,14 +22,14 @@ export function StatisticsSwitch() {
     );
   }
 
-  const off = state === "off";
+  const on = state === "on";
   return (
     <div className={styles.root}>
       <p role="status" className={styles.text}>
-        {off ? copy.off : copy.on}
+        {copy[state]}
       </p>
-      <Button variant="secondary" onClick={() => setStatisticsOff(!off)}>
-        {off ? copy.switchOn : copy.switchOff}
+      <Button variant="secondary" onClick={() => setStatisticsChoice(on ? "off" : "on")}>
+        {on ? copy.switchOff : copy.switchOn}
       </Button>
     </div>
   );

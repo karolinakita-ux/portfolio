@@ -34,6 +34,10 @@
 @utility z-header {
   z-index: 50;
 }
+/* The statistics consent box: over the back-to-top button (z-20), under the header and dialogs. */
+@utility z-consent {
+  z-index: 40;
+}
 @utility z-skip {
   z-index: 60;
 }
