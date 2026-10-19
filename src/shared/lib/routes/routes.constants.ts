@@ -6,6 +6,7 @@ import type { NavItem, View } from "./routes.types.ts";
  *                       ├─ /work/project-planning
  *                       └─ /work/automotive
  *   About /about · Contact /contact · CV /cv (print-ready, not in the primary nav)
+ *   Privacy /privacy (linked from the footer)
  *
  * Every view has its own path and browser-history entry, so Back / Forward (and
  * swipe-back on phones) move between views. The URL hash is a section anchor
@@ -23,6 +24,7 @@ export const VIEW = {
   caseAutomotive: "case-automotive",
   contact: "contact",
   cv: "cv",
+  privacy: "privacy",
 } as const;
 
 /** Every view, in page order (sitemap, prerendering, audits). */
@@ -37,6 +39,7 @@ export const VIEW_PATHS = {
   [VIEW.about]: "/about",
   [VIEW.contact]: "/contact",
   [VIEW.cv]: "/cv",
+  [VIEW.privacy]: "/privacy",
   [VIEW.caseTheming]: "/work/data-governance",
   [VIEW.caseProjectPlanning]: "/work/project-planning",
   [VIEW.caseAutomotive]: "/work/automotive",
@@ -45,8 +48,6 @@ export const VIEW_PATHS = {
 /** Section anchors that other views link to (the section's element id). */
 export const SECTION = {
   workCases: "enterprise-cases",
-  /** The privacy note on the Contact page; the footer links to it. */
-  privacy: "privacy",
 } as const;
 
 /** Short names that resolve to a view: as a hash (old links, /#resume) or as a path (/resume). */
@@ -76,6 +77,7 @@ export const VIEW_TITLES: Readonly<Record<View, string>> = {
   [VIEW.about]: "About - " + SITE_NAME,
   [VIEW.contact]: "Contact - " + SITE_NAME,
   [VIEW.cv]: SITE_NAME + " - CV",
+  [VIEW.privacy]: "Privacy - " + SITE_NAME,
   [VIEW.caseTheming]: "Data Governance Case Study - " + SITE_NAME,
   [VIEW.caseProjectPlanning]: "Project Planning Case Study - " + SITE_NAME,
   [VIEW.caseAutomotive]: "Automotive Ecosystem Case Study - " + SITE_NAME,

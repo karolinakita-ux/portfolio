@@ -134,7 +134,7 @@ describe("events on the Work page", () => {
 });
 
 describe("events in the footer and on the Contact page", () => {
-  it("counts the footer's LinkedIn and email links, and links to the privacy note", async () => {
+  it("counts the footer's LinkedIn and email links, and links to the privacy page", async () => {
     const { user } = renderApp("/");
     const footer = within(screen.getByRole("contentinfo"));
     clickLink(footer.getByRole("link", { name: /LinkedIn/ }));
@@ -147,11 +147,11 @@ describe("events in the footer and on the Contact page", () => {
     ]);
 
     await user.click(footer.getByRole("link", { name: "Privacy" }));
-    expect(window.location.pathname + window.location.hash).toBe("/contact#privacy");
-    expect(screen.getByRole("heading", { level: 2, name: "Privacy" })).toHaveFocus();
+    expect(window.location.pathname).toBe("/privacy");
+    expect(screen.getByRole("heading", { level: 1, name: "Privacy" })).toBeInTheDocument();
   });
 
-  it("counts the Contact page's LinkedIn and email links, and explains what is counted", () => {
+  it("counts the Contact page's LinkedIn and email links", () => {
     renderApp("/contact");
     const channels = within(screen.getByRole("region", { name: "Primary Channels" }));
     clickLink(channels.getByRole("link", { name: /LinkedIn/ }));
@@ -162,11 +162,6 @@ describe("events in the footer and on the Contact page", () => {
       [EVENT.emailClick, { action: "mailto", place: "contact" }],
       [EVENT.emailClick, { action: "copy", place: "contact" }],
     ]);
-
-    const privacy = within(screen.getByRole("region", { name: "Privacy" }));
-    expect(privacy.getByText(/sets no cookies/)).toBeInTheDocument();
-    expect(privacy.getByText(/Umami Software, Inc\./)).toBeInTheDocument();
-    expect(privacy.getByText(/Do Not Track or Global Privacy Control/)).toBeInTheDocument();
   });
 });
 

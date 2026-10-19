@@ -9,7 +9,7 @@
  */
 import { expect, test, type Page, type Request } from "@playwright/test";
 
-import { EVENT, UMAMI } from "#shared/lib/analytics/analytics.constants.ts";
+import { EVENT, STATISTICS_OFF_KEY, UMAMI } from "#shared/lib/analytics/analytics.constants.ts";
 
 import { THEME_STORAGE_KEY } from "./helpers/helpers.constants.ts";
 import { themeButton, waitForApp } from "./helpers/page.utils.ts";
@@ -154,4 +154,29 @@ test("loads nothing for a visitor with Global Privacy Control", async ({ page, b
   await page.waitForTimeout(500);
   expect(requests).toEqual([]);
   await expect(page.locator(`script[src="${UMAMI.script}"]`)).toHaveCount(0);
+});
+
+test("stops counting at once when switched off on the privacy page, and does not load after a reload", async ({
+  page,
+  baseURL,
+}) => {
+  const sent = await openAsLiveSite(page, baseURL, "/privacy");
+  await expect.poll(() => pageviews(sent).length).toBe(1);
+
+  await page.getByRole("button", { name: "Switch statistics off" }).click();
+  await expect(page.getByRole("status").filter({ hasText: "Statistics are off" })).toBeVisible();
+  expect(await page.evaluate((key) => localStorage.getItem(key), STATISTICS_OFF_KEY)).toBe("1");
+
+  // A new view and a click: nothing more is sent.
+  await page.locator('nav[aria-label="Primary"]').getByRole("link", { name: "About", exact: true }).click();
+  await page.locator("#faq").getByRole("button").first().click();
+  await page.waitForTimeout(800);
+  expect(sent).toHaveLength(1);
+
+  // After a reload the script is not even requested.
+  const requests = umamiRequests(page);
+  await page.reload();
+  await waitForApp(page);
+  await page.waitForTimeout(500);
+  expect(requests).toEqual([]);
 });

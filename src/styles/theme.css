@@ -159,6 +159,8 @@
   --container-content: 1120px;
   --container-header: 1248px;
   --container-footer: 608px;
+  /* Reading width for long text (the privacy page): about 75 characters per line at Body Medium. */
+  --container-reading: 576px;
 
   /* Aspect ratios */
   --aspect-thumb: 4 / 3;

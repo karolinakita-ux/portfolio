@@ -61,7 +61,12 @@ declare global {
 export interface PrivacySignals {
   doNotTrack?: string | null;
   globalPrivacyControl?: boolean;
+  /** The visitor turned statistics off on the privacy page (STATISTICS_OFF_KEY). */
+  statisticsOff?: boolean;
 }
+
+/** on: counted; off: switched off on the privacy page; browser: Do Not Track or Global Privacy Control. */
+export type StatisticsState = "on" | "off" | "browser";
 
 export interface AnalyticsSite {
   /** A production build (import.meta.env.PROD). */

@@ -1,6 +1,6 @@
 import { clsx } from "clsx";
 
-import { BULLET_LIST, TEXT_LINK } from "#shared/lib/ui/ui.styles.ts";
+import { TEXT_LINK } from "#shared/lib/ui/ui.styles.ts";
 
 export const styles = {
   hero: clsx("pt-xl"),
@@ -11,5 +11,4 @@ export const styles = {
   linkedinLink: clsx("inline-flex items-center gap-xs", TEXT_LINK),
   linkedinIcon: clsx("shrink-0"),
   roles: clsx("flex list-disc flex-col gap-xs pl-lg marker:text-text-primary"),
-  privacyList: BULLET_LIST,
 };
