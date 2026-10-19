@@ -2,7 +2,7 @@ import type { StorybookConfig } from "@storybook/react-vite";
 
 /**
  * The component library in Storybook: `yarn storybook` locally. Netlify's production deploy builds it
- * into dist/storybook (`yarn build-storybook`), served at /storybook/ with noindex, linked from nowhere.
+ * into dist/storybook (`yarn build-storybook`), served at /storybook/ with noindex, linked from the Work page hero.
  * It is a separate build: the site's pages never load any of it. Stories sit next to their component
  * (`Button/Button.stories.tsx`); src/test/stories.test.tsx runs every story in Vitest.
  */

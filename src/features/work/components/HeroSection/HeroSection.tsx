@@ -8,7 +8,7 @@ import { EXTERNAL_LINK } from "#shared/lib/ui/ui.constants.ts";
 import { Button } from "#shared/ui/Button/Button.tsx";
 import { Container } from "#shared/ui/Container/Container.tsx";
 import { Eyebrow } from "#shared/ui/Eyebrow/Eyebrow.tsx";
-import { ArrowDown, ArrowUpRight, Figma, Github } from "#shared/ui/icons/icons.tsx";
+import { ArrowDown, ArrowUpRight, Blocks, Figma, Github } from "#shared/ui/icons/icons.tsx";
 import { NewTabNote } from "#shared/ui/NewTabNote/NewTabNote.tsx";
 import { PageTitle } from "#shared/ui/PageTitle/PageTitle.tsx";
 
@@ -63,6 +63,19 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
                 onClick={() => track(EVENT.githubClick, { place: "hero" })}
               >
                 {HERO_ACTIONS.source}
+                <NewTabNote />
+              </Button>
+            ) : null}
+            {PROFILE.storybookUrl ? (
+              <Button
+                as="a"
+                href={PROFILE.storybookUrl}
+                {...EXTERNAL_LINK}
+                variant="secondary"
+                iconLeft={Blocks}
+                iconRight={ArrowUpRight}
+              >
+                {HERO_ACTIONS.components}
                 <NewTabNote />
               </Button>
             ) : null}
