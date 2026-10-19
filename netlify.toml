@@ -3,3 +3,8 @@
 [build]
   command = "yarn test:run && yarn build"
   publish = "dist"
+
+# Production (main) also builds the component library into dist/storybook, served at /storybook/
+# (noindex: public/_headers). Branch deploys skip it to stay fast.
+[context.production]
+  command = "yarn test:run && yarn build && yarn build-storybook"

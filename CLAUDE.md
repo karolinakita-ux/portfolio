@@ -8,6 +8,7 @@ Karolina Kita's portfolio (karolina.kita.company), public repo github.com/karoli
 - `yarn verify` - typecheck, lint (zero warnings), Prettier check, tests, production build. Run before every commit.
 - `yarn test` - Vitest in watch mode; `yarn test:run` once
 - `yarn e2e` - Playwright tests (`e2e/*.e2e.ts`) in Chromium, Firefox and WebKit against a fresh production build with prerendered pages on 127.0.0.1:5190. Run it after UI, motion or theme changes; it is not part of `yarn verify` or the Netlify build. `E2E_DEV=1 yarn e2e` tests the dev server; `--project chromium` or a spec name (`yarn e2e header-motion`) narrows a run. One run at a time (shared port and `test-results/`; `E2E_PORT` picks another port). First time: `yarn playwright install chromium firefox webkit`.
+- `yarn storybook` - the component library at http://localhost:6006; `yarn build-storybook` builds it into `dist/storybook` (run after `yarn build`, which empties `dist/`)
 - `yarn typecheck`, `yarn lint`, `yarn format` (writes), `yarn format:check`
 
 ## Layout
@@ -23,7 +24,8 @@ Vertical slices: `app` → `features` → `shared`, never the other way.
 - Files and folders (details and an example tree: `docs/architecture.md`, Files and folders): one component per folder, `Button/Button.tsx` + `Button.types.ts` (props) + `Button.styles.ts` (all its classes) + `Button.test.tsx`; one folder per domain for other modules (`lib/routes/routes.constants.ts`, `.types.ts`, `.utils.ts`); hooks `useX.ts`; other modules kebab-case with a role suffix (`*.content.ts`, `*.types.ts`, `*.styles.ts`, `*.constants.ts`, `*.context.ts`, `*.utils.ts`). No per-component barrel `index.ts`; only a feature's `index.ts` (its public API). ESLint caps files at 200 lines of code (tests and copy excepted).
 - `e2e/` - Playwright specs (`*.e2e.ts`) and `helpers/` (in-page toolkit with the frame sampler and pill animation log, page setup, motion expectations), type-checked by `tsconfig.e2e.json`. Vitest only collects `src/**/*.test.ts(x)`.
 - `scripts/` - `prerender.ts`, `a11y-audit.ts` (checks in `scripts/a11y/`).
-- `src/styles/tokens.css` - KitaBranding tokens as CSS variables (light + dark); `theme.css` maps them into Tailwind's theme; `app.css` imports both plus `utilities.css`, `base.css`, `lightbox.css`, `motion.css`, `print.css`.
+- `.storybook/` - Storybook: `main.ts` (stories, addons, the one image folder the stories use), `preview.tsx` (site CSS and fonts, light/dark toolbar, axe as an error), `*-head.html` (noindex). Listed by name in `tsconfig.app.json`: `tsc` skips dot folders in `include` globs.
+- `src/styles/tokens.css` - KitaBranding tokens as CSS variables (light + dark); `theme.css` maps them into Tailwind's theme; `app.css` imports both plus `utilities.css`, `base.css`, `dialog.css`, `lightbox.css`, `motion.css`, `print.css`. Test and story files are excluded from Tailwind's class scan (`@source not`).
 - `src/styles/kita-branding.tokens.json` - Figma Variables export; `tokens.test.ts` keeps `tokens.css` 1:1 with it.
 - `public/assets/` - images: `site/` (portrait, link-preview image) and `cases/<case>/` (screenshots, `thumbnail.webp`), referenced from content by their path under `/assets` (`cases/meetestim/thumbnail.webp`). Lowercase kebab-case. Screenshots are WebP (`sharp`, quality 90); the link-preview image stays PNG. `/assets/*` is cached for a week, so a changed image gets a new file name.
 - `docs/` - public project docs (design source, Figma links). Files and folders whose name starts with `_` (`docs/_*`) are private local notes: gitignored, never commit, quote or publish them.
@@ -56,6 +58,7 @@ Vertical slices: `app` → `features` → `shared`, never the other way.
 - Visitor statistics (Umami) are opt-in: the script loads only after the visitor allows it in the consent box or on /privacy (`shared/lib/analytics/statistics-consent.utils.ts`; ePrivacy Art. 5(3) and Art. 399 of Prawo komunikacji elektronicznej need consent for a script that reads device data, cookies or not). New events go through `track()`; never load a tracker any other way.
 - React Compiler lint rules are on: no `setState` inside effects, no ref reads during render. Derive state instead (see `useImageStatus`, `useScrolledPast`). An object returned by a hook that holds a ref counts as a ref: destructure it (`const { status, setImage } = useRevealedImage(src)`).
 - Tests sit next to the code (`*.test.ts(x)`); query by role and accessible name. jsdom gaps are polyfilled in `src/test/setup.ts`.
+- Stories: every component folder in `shared/ui`, `shared/layout` and `shared/media` has a `Name.stories.tsx` (a small sibling may be shown in another's story: `COVERED_ELSEWHERE` in `src/test/stories.test.tsx`). That test runs every story in Vitest (render, its `play` checks, axe) and fails when a component has no story. Import `userEvent` and `expect` from `storybook/test`; give stories real copy from the site.
 - Line endings are LF (`.gitattributes`). Netlify builds on Linux, so file names are case-sensitive.
 
 ## Git workflow (full process: `CONTRIBUTING.md`)
@@ -75,7 +78,7 @@ Uncommitted user edits stay out of commits and releases. If `git switch` refuses
 
 ## Deploy
 
-Netlify project `karolina-kita`. Production deploys from `main` (releases only); `develop` gets a branch deploy at `develop--karolina-kita.netlify.app`. Each build runs `yarn test:run && yarn build` and publishes `dist/` (see `netlify.toml`). `yarn build` ends with `yarn prerender`: an SSR build of `src/app/prerender.entry.tsx` and `scripts/prerender.ts`, which writes static HTML per page (`about.html` + `about/index.html`), `404.html` and `llms.txt`. A new view needs its path in `VIEW_PATHS`, a description in `seo.content.ts` and a line in `public/sitemap.xml`; tests check all three. Hashed bundles go to `/static/` (cached for a year by `public/_headers`).
+Netlify project `karolina-kita`. Production deploys from `main` (releases only); `develop` gets a branch deploy at `develop--karolina-kita.netlify.app`. Each build runs `yarn test:run && yarn build` and publishes `dist/` (see `netlify.toml`). `yarn build` ends with `yarn prerender`: an SSR build of `src/app/prerender.entry.tsx` and `scripts/prerender.ts`, which writes static HTML per page (`about.html` + `about/index.html`), `404.html` and `llms.txt`. A new view needs its path in `VIEW_PATHS`, a description in `seo.content.ts` and a line in `public/sitemap.xml`; tests check all three. Hashed bundles go to `/static/` (cached for a year by `public/_headers`). Production builds (main) also run `yarn build-storybook`: Storybook is served at `/storybook/` with `X-Robots-Tag: noindex`, linked from nowhere on the site, and its bundles never load on the site's pages. Branch deploys skip it.
 
 ## Pitfalls (learned; details in Claude's local lessons log)
 
@@ -85,3 +88,4 @@ Netlify project `karolina-kita`. Production deploys from `main` (releases only);
 - Releases compare against `origin/main` after `git fetch`, and a deploy counts only when Netlify's current deploy points at the release commit (the Netlify MCP, then `curl` the live site).
 - Check that a running dev or preview server serves the change before measuring; start your own on a spare port rather than trusting one already running.
 - Check a pure restructure by building before and after and comparing every prerendered page and the CSS, not only by tests.
+- One copy of React: `package.json` `resolutions` pins `react` and `react-dom`, because Storybook's docs addon once pulled a second, newer copy ("Cannot read properties of null (reading 'useId')"). Bump both versions there when upgrading React.

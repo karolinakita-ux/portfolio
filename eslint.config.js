@@ -152,6 +152,11 @@ export default defineConfig([
     },
   },
   {
+    // Storybook stories export a meta object and story objects, not components; render helpers may use hooks.
+    files: ["src/**/*.stories.tsx", ".storybook/**/*.{ts,tsx}"],
+    rules: { "react-refresh/only-export-components": "off" },
+  },
+  {
     // Data-driven checks over every content entry: optional fields are checked only when present.
     files: ["src/app/content-rules.test.ts"],
     rules: { "vitest/no-conditional-expect": "off" },

@@ -58,7 +58,7 @@ Built from the Figma components (Karolina Kita Branding, page Components) and th
 | Avatar                                    | `Avatar`                                       | initials on the avatar glow                                   |
 | Toggle                                    | `ThemeToggle` (layout)                         | light / dark                                                  |
 | Header, Navigation menu, Footer           | `SiteHeader`, `SiteFooter` (layout)            |                                                               |
-| Info Table                                | `InfoPanel`, `MetaMatrix` (features)           | contact and case-study details                                |
+| Info Table                                | `InfoTable`, `InfoTableCell`                   | label/value cells (contact, privacy); `MetaMatrix` in cases   |
 | -                                         | `Dialog`                                       | native modal: inert page, Escape, backdrop click, scroll lock |
 | -                                         | `Accordion`, `AccordionItem`                   | WAI-ARIA disclosure list (the FAQ)                            |
 | -                                         | `PageTitle`, `Section`, `Container`, `Eyebrow` | page structure                                                |
@@ -67,6 +67,14 @@ Built from the Figma components (Karolina Kita Branding, page Components) and th
 Figma's Tabs and Tile have no use on the site yet, so there is no code for them (YAGNI).
 
 - No barrel `index.ts` per component: imports name the file (`#shared/ui/Button/Button.tsx`). Barrels add nothing with explicit extensions and slow the dev server; only a feature's `index.ts` exists, as its public API.
+
+### Storybook
+
+Every shared component (`shared/ui`, `shared/layout`, `shared/media`) and the consent box have a story next to them (`Button/Button.stories.tsx`), with the variants from Figma, real copy and a light/dark toolbar. `yarn storybook` opens it locally on port 6006.
+
+- Tests: `src/test/stories.test.tsx` runs every story in Vitest with the Storybook settings (`composeStories`): it renders, runs the story's `play` checks (clicks, `aria-expanded`, callbacks), then axe for WCAG 2.1 A/AA. It also fails when a component folder has no story. Colour contrast and page-level rules stay with `yarn a11y`, which sees real layout.
+- Published: Netlify's production build (main) runs `yarn build-storybook` into `dist/storybook`, served at `/storybook/`. It is a separate build, so the site's pages never load its code; `X-Robots-Tag: noindex, nofollow` (`public/_headers`) and a robots meta keep it out of search, and nothing on the site links to it. Branch deploys skip it.
+- Static files: only `public/assets/cases/meetestim` is copied (the screenshots the media stories show), not the site's `public/` with its headers and sitemap.
 
 ## Routing
 
@@ -94,12 +102,12 @@ Tests keep the pieces in step: every view needs a path, a description (at most 1
 
 Tailwind v4 with the defaults removed: only KitaBranding token utilities exist (`bg-bg-canvas`, `p-md`, `text-body-md`). Dark mode swaps CSS variables through the `dark` class on `<html>`; there are no `dark:` variants. See [design.md](design.md).
 
-`src/styles/app.css` is the entry: it imports `tokens.css` (the token variables), `print.css`, `theme.css` (tokens → Tailwind theme), `utilities.css` (named utilities and variants), `base.css`, `lightbox.css` (image viewer) and `motion.css` (theme cross-fade, reduced-motion reset). Component classes live in each component's `*.styles.ts`.
+`src/styles/app.css` is the entry: it imports `tokens.css` (the token variables), `print.css`, `theme.css` (tokens → Tailwind theme), `utilities.css` (named utilities and variants), `base.css`, `dialog.css` (modal backdrop), `lightbox.css` (image viewer) and `motion.css` (theme cross-fade, reduced-motion reset). Component classes live in each component's `*.styles.ts`.
 
 ## Testing
 
 - Vitest + Testing Library in jsdom; tests sit next to the code and query by role and accessible name.
-- `src/app/content-rules.test.ts` checks the copy rules across all features; `src/styles/tokens.test.ts` checks the CSS tokens against the Figma export.
+- `src/app/content-rules.test.ts` checks the copy rules across all features; `src/styles/tokens.test.ts` checks the CSS tokens against the Figma export; `src/test/stories.test.tsx` runs every Storybook story (see Storybook above).
 - Behaviour that needs a real browser (layout, focus, scrolling, motion, analytics) is checked with Playwright (`e2e/*.e2e.ts`, helpers in `e2e/helpers/`) and `yarn a11y` (`scripts/a11y-audit.ts`, checks in `scripts/a11y/`).
 
 ## Adding a page
