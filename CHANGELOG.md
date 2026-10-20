@@ -4,7 +4,12 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v3.13.9 - 2026-10-20
+
+- Scrolling the site inside Messenger, Instagram or LinkedIn no longer shows the app's loading bar.
+- The Work page downloads much less on phones: a case study's screenshots load only when you point at or tap the case.
+
+Versions: 3.13.8 - 3.13.9.
 
 ### 3.13.9 - 2026-10-20
 
