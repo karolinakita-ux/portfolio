@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.13.3 - 2026-10-20
+
+#### Changed
+
+- On `yarn dev` the Storybook links (Work hero and Behind the Design) open the local `yarn storybook` on port 6006, on the same host as the dev server, so unreleased stories such as the Welcome page show there. Builds, tests and deploys keep the live `/storybook/` URL (checked in the prerendered Work page); `profile.test.ts` covers both.
+
 ### 3.13.2 - 2026-10-20
 
 #### Changed
