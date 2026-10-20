@@ -6,6 +6,14 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.13.1 - 2026-10-20
+
+#### Changed
+
+- README: the privacy page, the Storybook library and opt-in statistics in "What is inside", 490+ tests (was 270+), `yarn build-storybook`, and an up-to-date folder map (e2e/, theme.css, the lib/ domains).
+- docs/architecture.md: the privacy slice, a Visitor statistics section (consent, `track()`, what counts where), the Storybook Welcome page and banner link, Home and Work breadcrumb roots, `BUTTON_HEIGHT`, and the components the table left out.
+- docs/design.md: `theme.css` (not `app.css`) maps tokens into Tailwind; new sections on components and Storybook, and on Karolina's design rules in code.
+
 ### 3.13.0 - 2026-10-20
 
 #### Added
