@@ -4,6 +4,28 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Release v3.13.6 - 2026-10-20
+
+- The site is set up for Google Search Console, which shows how its pages appear in Google search and helps new pages get found sooner.
+
+Versions: 3.13.5 - 3.13.6.
+
+### 3.13.6 - 2026-10-20
+
+#### Added
+
+- A test keeps Google Search Console's verification file in `public/` exactly as issued (`src/app/seo/site-verification.test.ts`); Google rechecks it, so removing or editing it would lose the verification. Proved with a probe against a missing file, which failed.
+
+#### Changed
+
+- `_headers` marks the verification file `noindex`, so it never shows in search results. CLAUDE.md, README and docs/architecture.md say why the file stays.
+
+### 3.13.5 - 2026-10-20
+
+#### Added
+
+- Google Search Console's verification file, `public/googlecf978c6093e1d8a5.html`, byte for byte as Google issued it (53 bytes, no line ending); the build copies it to the site root. It verifies the owner once it is live, after the next release. Pushed with `[skip netlify]`: Netlify build credits are low.
+
 ## Release v3.13.4 - 2026-10-20
 
 - The component library opens on a welcome page that explains the design system and how it is built from Figma.
