@@ -16,5 +16,8 @@ export interface Route {
 /** What the app keeps in each browser history entry. */
 export interface HistoryState {
   kbView?: View;
+  /** Scroll position when the visitor left the entry (written on leaving, never while scrolling). */
   scrollY?: number;
+  /** The entry's id: Back and Forward look up its last scroll position in memory. */
+  kbId?: string;
 }

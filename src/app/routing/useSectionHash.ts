@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 import { urlWithAnchor } from "#shared/lib/routes/routes.utils.ts";
 
-import { READING_LINE } from "./section-hash.constants.ts";
+import { IN_APP_BROWSER, READING_LINE } from "./section-hash.constants.ts";
 
 /**
  * Keeps the URL hash on the section being read (/about#career), so the address bar
@@ -10,9 +10,11 @@ import { READING_LINE } from "./section-hash.constants.ts";
  * scroll jumps. Above the first anchored section the hash is cleared.
  * Sections opt in with `data-anchor` (see shared/ui/Section).
  * `routeKey` re-collects the sections after every navigation.
+ * Off in in-app browsers (Messenger, LinkedIn...): they show a loading bar on every history write.
  */
 export function useSectionHash(routeKey: number): void {
   useEffect(() => {
+    if (IN_APP_BROWSER.test(navigator.userAgent)) return undefined;
     const sections = [...document.querySelectorAll<HTMLElement>("main section[data-anchor][id]")];
     if (sections.length === 0) return undefined;
 
