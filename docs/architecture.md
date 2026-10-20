@@ -8,7 +8,7 @@ A single-page React app, prerendered to static HTML per page at build time. No b
 src/app        shell: App, routing/, seo/, analytics/, prerender entry
    │  imports features only through their index.ts
    ▼
-src/features   work · about · contact · cv · case-studies · image-viewer
+src/features   work · about · contact · cv · case-studies · image-viewer · privacy
    │  never import each other
    ▼
 src/shared     ui · layout · media · hooks · lib · content
@@ -41,7 +41,8 @@ src/features/about/
 
 - Components: `PascalCase/PascalCase.tsx`, one component per file. Hooks: `useX.ts` next to what uses them, or in the slice's `hooks/`. Other modules: kebab-case with a role suffix: `*.types.ts`, `*.styles.ts`, `*.constants.ts`, `*.utils.ts`, `*.content.ts`, `*.context.ts`.
 - Classes: a `*.styles.ts` exports `styles`, one key per styled element; state-dependent classes are functions (`styles.pill(active)`). Values are composed with [`clsx`](https://github.com/lukeed/clsx); variant sets use [`cva`](https://cva.style) (`button({ variant })`) with the variant names from Figma. Prettier sorts classes inside both. ESLint rejects class strings written into `className` in a component. There is no `tailwind-merge`: it reads the token type styles as colours and drops them.
-- Shared class lists (`FOCUS_RING`, `TEXT_LINK`, `BULLET_LIST`, `DOC_LINK`) live in `src/shared/lib/ui/ui.styles.ts`; `EXTERNAL_LINK` (target and rel of a new-tab link) in `ui.constants.ts`.
+- Shared class lists (`FOCUS_RING`, `TEXT_LINK`, `BUTTON_HEIGHT`, `BULLET_LIST`, `DOC_LINK`) live in `src/shared/lib/ui/ui.styles.ts`; `EXTERNAL_LINK` (target and rel of a new-tab link) in `ui.constants.ts`.
+- A row of text links that can wrap (the Behind the Design banner) is spaced like a row of buttons: each link gets `BUTTON_HEIGHT` (a bordered Button's height) and the row `gap-y-sm`, the gap between buttons.
 
 ## Component library (`src/shared/ui`)
 
@@ -54,7 +55,7 @@ Built from the Figma components (Karolina Kita Branding, page Components) and th
 | Badge                                     | `Badge`                                        | skill tags, status next to a title                            |
 | Card (Big Card)                           | `Card`                                         | `layout` stack / media, `gap`; cards fade up on scroll        |
 | Banner (Info, Warning)                    | `Callout`                                      | `tone`                                                        |
-| Breadcrumbs                               | `Breadcrumb`                                   |                                                               |
+| Breadcrumbs                               | `Breadcrumb`                                   | `HOME_CRUMB` on pages outside Work, `WORK_CRUMB` on cases     |
 | Avatar                                    | `Avatar`                                       | initials on the avatar glow                                   |
 | Toggle                                    | `ThemeToggle` (layout)                         | light / dark                                                  |
 | Header, Navigation menu, Footer           | `SiteHeader`, `SiteFooter` (layout)            |                                                               |
@@ -63,6 +64,10 @@ Built from the Figma components (Karolina Kita Branding, page Components) and th
 | -                                         | `Accordion`, `AccordionItem`                   | WAI-ARIA disclosure list (the FAQ)                            |
 | -                                         | `PageTitle`, `Section`, `Container`, `Eyebrow` | page structure                                                |
 | -                                         | `VisuallyHidden`, `NewTabNote`                 | screen reader text                                            |
+| -                                         | `TextLink`, `ViewLink`                         | inline link (`external` opens a new tab); link to a view      |
+| -                                         | `HeadingAnchor`, `CopyEmail`                   | copy a section's address; copy the email address              |
+| -                                         | `Lang`, `Strong`, `lead`, `Joined`, `Swatch`   | inline text helpers (Storybook: Inline text)                  |
+| -                                         | `icons`                                        | the icon set (Storybook: Foundations/Icons)                   |
 
 Figma's Tabs and Tile have no use on the site yet, so there is no code for them (YAGNI).
 
@@ -72,8 +77,9 @@ Figma's Tabs and Tile have no use on the site yet, so there is no code for them 
 
 Every shared component (`shared/ui`, `shared/layout`, `shared/media`) and the consent box have a story next to them (`Button/Button.stories.tsx`), with the variants from Figma, real copy and a light/dark toolbar. `yarn storybook` opens it locally on port 6006.
 
+- Welcome page: `.storybook/Welcome.mdx` opens first. It says what the library is, how it comes from the Figma design system, what each sidebar group holds and how to use the toolbar and the Accessibility panel. It sits outside `src` so Tailwind does not scan its prose for class names. The sidebar order is set in `preview.tsx` (`storySort`): Welcome, Foundations, UI, Layout, Media, Patterns.
 - Tests: `src/test/stories.test.tsx` runs every story in Vitest with the Storybook settings (`composeStories`): it renders, runs the story's `play` checks (clicks, `aria-expanded`, callbacks), then axe for WCAG 2.1 A/AA. It also fails when a component folder has no story. Colour contrast and page-level rules stay with `yarn a11y`, which sees real layout.
-- Published: Netlify's production build (main) runs `yarn build-storybook` into `dist/storybook`, served at `/storybook/`. It is a separate build, so the site's pages never load its code; `X-Robots-Tag: noindex, nofollow` (`public/_headers`) and a robots meta keep it out of search. The Work page hero links it ("View Components in Storybook", `PROFILE.storybookUrl`, an absolute URL because only production builds it). Branch deploys skip it.
+- Published: Netlify's production build (main) runs `yarn build-storybook` into `dist/storybook`, served at `/storybook/`. It is a separate build, so the site's pages never load its code; `X-Robots-Tag: noindex, nofollow` (`public/_headers`) and a robots meta keep it out of search. The Work page links it from the hero ("View Components in Storybook") and the Behind the Design banner ("Explore the Storybook Library"), both from `PROFILE.storybookUrl`: an absolute URL in builds, because only production builds Storybook; on `yarn dev` it points to the local `yarn storybook` (port 6006), so unreleased stories show there. Branch deploys skip it.
 - Deploys: every build renames the story files and Netlify removes the old ones, so a Storybook tab opened before a deploy would fail with "Failed to fetch dynamically imported module". `.storybook/preview-head.html` reloads the preview once on `vite:preloadError` (at most once in 10 s). The site itself is one bundle with no lazy chunks, so it does not have this problem.
 - Static files: only `public/assets/cases/project-planning` is copied (the screenshots the media stories show), not the site's `public/` with its headers and sitemap.
 
@@ -92,6 +98,15 @@ Every shared component (`shared/ui`, `shared/layout`, `shared/media`) and the co
 4. In the browser, `src/main.tsx` renders the app over the static HTML. On navigation, `App` updates the same head tags.
 
 Tests keep the pieces in step: every view needs a path, a description (at most 160 characters) and a sitemap entry.
+
+## Visitor statistics
+
+Umami Cloud counts visits, opt-in only. Its script reads the screen size and language, so it needs consent under ePrivacy Art. 5(3) and Art. 399 of the Polish Prawo komunikacji elektronicznej, cookies or not.
+
+- `src/shared/lib/analytics/statistics-consent.utils.ts` holds the choice (`kb-statistics` in localStorage, "on" or "off") and loads the script only after "on". With Do Not Track or Global Privacy Control on, nobody is asked and nothing loads. Only the live host counts (`UMAMI.host`); dev, previews, branch deploys and the artifact never load it.
+- The privacy slice (`src/features/privacy/`) asks: the consent box at the bottom of every page until the visitor decides (two equal buttons, a link to Umami and to the details), and the switch on /privacy to change the choice later. On `yarn dev` the box shows on every load to check its design and loads nothing; automated browsers (`navigator.webdriver`) never get it.
+- `src/shared/lib/analytics/analytics.utils.ts` sends page views and events through `track()`, the only way to count something. It overrides the address (no hash), title and referrer on each call, because the tracker's own stay on the landing page in a single-page app.
+- The privacy policy (`privacy.content.tsx`) lists what is counted; a new event needs a line there too. `e2e/analytics.e2e.ts` checks the whole flow in real browsers.
 
 ## Images
 
@@ -116,5 +131,5 @@ Tailwind v4 with the defaults removed: only KitaBranding token utilities exist (
 1. Add the id to `VIEW`, its path to `VIEW_PATHS` and its title to `VIEW_TITLES` in `src/shared/lib/routes/routes.constants.ts`.
 2. Create `src/features/<name>/` with the view folder (`<Name>View/`), `<name>.content.ts`, types, components and an `index.ts`.
 3. Map the view in `src/app/App/App.constants.tsx` (`VIEW_RENDERERS`: a missing entry is a type error).
-4. Add its description and breadcrumb name in `src/app/seo/seo.content.ts` and its URL in `public/sitemap.xml`.
+4. Add its description and breadcrumb name in `src/app/seo/seo.content.ts` and its URL in `public/sitemap.xml`. Its breadcrumb starts with `HOME_CRUMB`, or `WORK_CRUMB` if it is a case study.
 5. `yarn verify`.

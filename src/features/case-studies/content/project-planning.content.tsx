@@ -372,5 +372,5 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
   ],
   // Middle case in the Work order (Automotive → Project Planning → Data Governance).
   prev: { view: "case-automotive", label: "Automotive B2B Marketplace: Research-Backed Redesign" },
-  next: { view: "case-theming", label: "Multi-Tenant Theme Customizer" },
+  next: { view: "case-theming", label: "Enterprise White-Label Theme Generator" },
 };

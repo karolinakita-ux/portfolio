@@ -1,7 +1,7 @@
 import { ABOUT_INTRO } from "#features/about/about.content.ts";
 import { SECTION, VIEW } from "#shared/lib/routes/routes.constants.ts";
 import { hrefForView } from "#shared/lib/routes/routes.utils.ts";
-import { WORK_CRUMB } from "#shared/ui/Breadcrumb/Breadcrumb.constants.ts";
+import { HOME_CRUMB } from "#shared/ui/Breadcrumb/Breadcrumb.constants.ts";
 import { Breadcrumb } from "#shared/ui/Breadcrumb/Breadcrumb.tsx";
 import { Button } from "#shared/ui/Button/Button.tsx";
 import { Container } from "#shared/ui/Container/Container.tsx";
@@ -14,7 +14,7 @@ export function AboutHero({ onNavigate }: AboutHeroProps) {
   return (
     <section aria-labelledby="about-title" className={styles.root}>
       <Container>
-        <Breadcrumb onNavigate={onNavigate} items={[WORK_CRUMB, { label: "About" }]} />
+        <Breadcrumb onNavigate={onNavigate} items={[HOME_CRUMB, { label: "About" }]} />
         <div className={styles.body}>
           <PageTitle id="about-title">Designing clarity for complex software</PageTitle>
           {ABOUT_INTRO.map((paragraph) => (

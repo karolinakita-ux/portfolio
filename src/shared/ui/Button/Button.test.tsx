@@ -38,6 +38,18 @@ describe("Button", () => {
     );
   });
 
+  it("gives the Link type a bordered button's box, so the click area is more than the text", () => {
+    render(
+      <>
+        <Button variant="link">View Case Study</Button>
+        <Button variant="secondary">Cancel</Button>
+      </>,
+    );
+    const link = screen.getByRole("button", { name: "View Case Study" });
+    expect(link).toHaveClass("border", "border-transparent", "px-md", "py-xs");
+    expect(screen.getByRole("button", { name: "Cancel" })).toHaveClass("border", "px-md", "py-xs");
+  });
+
   it("does not fire clicks when disabled", async () => {
     const onClick = vi.fn();
     render(

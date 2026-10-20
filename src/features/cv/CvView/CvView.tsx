@@ -1,5 +1,5 @@
 import { CvSheet } from "#features/cv/components/CvSheet/CvSheet.tsx";
-import { WORK_CRUMB } from "#shared/ui/Breadcrumb/Breadcrumb.constants.ts";
+import { HOME_CRUMB } from "#shared/ui/Breadcrumb/Breadcrumb.constants.ts";
 import { Breadcrumb } from "#shared/ui/Breadcrumb/Breadcrumb.tsx";
 import { Button } from "#shared/ui/Button/Button.tsx";
 import { Container } from "#shared/ui/Container/Container.tsx";
@@ -30,7 +30,7 @@ export function CvView({ onNavigate }: CvViewProps) {
   return (
     <Container className={styles.root}>
       <div className={styles.toolbar}>
-        <Breadcrumb onNavigate={onNavigate} items={[WORK_CRUMB, { label: "CV" }]} />
+        <Breadcrumb onNavigate={onNavigate} items={[HOME_CRUMB, { label: "CV" }]} />
         <div className={styles.toolbarRow}>
           <div className={styles.note}>
             <Eyebrow parts={["Curriculum Vitae", "ATS-ready"]} />

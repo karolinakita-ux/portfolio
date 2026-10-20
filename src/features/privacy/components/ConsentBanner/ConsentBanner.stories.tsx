@@ -25,6 +25,7 @@ export const Default: Story = {
     await expect(args.onDecline).toHaveBeenCalledOnce();
     await userEvent.click(canvas.getByRole("button", { name: "Allow statistics" }));
     await expect(args.onAllow).toHaveBeenCalledOnce();
+    await expect(canvas.getByRole("link", { name: /^Umami.*opens in a new tab/ })).toHaveAttribute("target", "_blank");
     await userEvent.click(canvas.getByRole("link", { name: "Privacy details" }));
     await expect(args.onNavigate).toHaveBeenCalledWith("privacy", undefined);
   },

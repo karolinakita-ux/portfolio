@@ -1,0 +1,60 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+import { PROFILE } from "#shared/content/profile.ts";
+import { EXTERNAL_LINK } from "#shared/lib/ui/ui.constants.ts";
+import { NewTabNote } from "#shared/ui/NewTabNote/NewTabNote.tsx";
+
+export const LINKS = [
+  { label: "Figma file: Karolina Kita Branding", href: PROFILE.figmaWorkspaceUrl },
+  ...(PROFILE.repositoryUrl
+    ? [
+        { label: "Source code on GitHub", href: PROFILE.repositoryUrl },
+        { label: "How the tokens get from Figma to code", href: PROFILE.repositoryUrl + "/blob/main/docs/design.md" },
+      ]
+    : []),
+  { label: "The portfolio: karolina.kita.company", href: "https://karolina.kita.company" },
+];
+
+<Meta title="Welcome" />
+
+{/* The first page Storybook opens (storySort in preview.tsx). Same copy rules as the site: plain English, short hyphens. */}
+
+# KitaBranding component library
+
+The components of [karolina.kita.company](https://karolina.kita.company), the portfolio of Karolina Kita, Senior Product Designer. They come from KitaBranding, Karolina's design system in Figma. Every story renders the site's own code, with the same tokens and real copy from the pages.
+
+## Built from Figma
+
+- **Tokens first:** every colour, space, radius, shadow, type style and motion value is a variable in the Figma file, with a Light and a Dark mode. The variables are exported to JSON and turned into CSS variables, and a test fails when the code and the export drift apart.
+- **Only tokens:** the default Tailwind colours, sizes and radii are switched off, so a component can only use values from the design system, such as `bg-bg-canvas`, `p-md` or `text-body-md`.
+- **Names from Figma:** components and variants keep the names from the Figma Components page. `Button` has the Primary, Secondary, Subtle and Link types, and `Callout` has the Info and Warning tones of the Figma Banner.
+- **Light and dark:** dark mode swaps the same variables, so no component has separate dark styles.
+
+## In the sidebar
+
+- **Foundations:** the icon set.
+- **UI:** the building blocks of every page: buttons, badges, cards, callouts, breadcrumbs, links, the dialog, the accordion and the page structure.
+- **Layout:** the header with its navigation and theme switch, the footer and the back-to-top button.
+- **Media:** case-study thumbnails and screenshots.
+- **Patterns:** larger pieces made of several components, such as the statistics consent box.
+
+## How to use it
+
+- **Theme:** the Theme menu in the toolbar switches between the light and dark tokens.
+- **Docs:** each component has a Docs page with its props and all its stories.
+- **Accessibility:** the Accessibility panel runs axe on the open story. In the test run every story renders, runs its interaction checks and must pass axe for WCAG 2.1 A and AA. Colour contrast is checked on the real pages, where the layout is complete.
+
+## Links
+
+{/* JSX links: they open in a new tab (markdown links would replace Storybook itself), and the GitHub ones hide with the repo. */}
+
+<ul>
+  {LINKS.map((link) => (
+    <li key={link.href}>
+      <a href={link.href} {...EXTERNAL_LINK}>
+        {link.label}
+        <NewTabNote />
+      </a>
+    </li>
+  ))}
+</ul>

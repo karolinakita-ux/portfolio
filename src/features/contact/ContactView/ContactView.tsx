@@ -4,7 +4,7 @@ import { PROFILE } from "#shared/content/profile.ts";
 import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import { track } from "#shared/lib/analytics/analytics.utils.ts";
 import { EXTERNAL_LINK } from "#shared/lib/ui/ui.constants.ts";
-import { WORK_CRUMB } from "#shared/ui/Breadcrumb/Breadcrumb.constants.ts";
+import { HOME_CRUMB } from "#shared/ui/Breadcrumb/Breadcrumb.constants.ts";
 import { Breadcrumb } from "#shared/ui/Breadcrumb/Breadcrumb.tsx";
 import { Container } from "#shared/ui/Container/Container.tsx";
 import { CopyEmail } from "#shared/ui/CopyEmail/CopyEmail.tsx";
@@ -24,7 +24,7 @@ export function ContactView({ onNavigate }: ContactViewProps) {
     <>
       <section aria-labelledby="contact-title" className={styles.hero}>
         <Container>
-          <Breadcrumb onNavigate={onNavigate} items={[WORK_CRUMB, { label: "Contact" }]} />
+          <Breadcrumb onNavigate={onNavigate} items={[HOME_CRUMB, { label: "Contact" }]} />
           <div className={styles.heading}>
             <Eyebrow parts={[CONTACT.eyebrow]} />
             <PageTitle id="contact-title">{CONTACT.title}</PageTitle>
