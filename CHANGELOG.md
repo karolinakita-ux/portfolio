@@ -4,7 +4,11 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v3.13.6 - 2026-10-20
+
+- The site is set up for Google Search Console, which shows how its pages appear in Google search and helps new pages get found sooner.
+
+Versions: 3.13.5 - 3.13.6.
 
 ### 3.13.6 - 2026-10-20
 
