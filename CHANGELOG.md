@@ -4,6 +4,15 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Unreleased
+
+### 3.13.8 - 2026-10-20
+
+#### Changed
+
+- Case study screenshots load when the visitor shows interest in a case: the pointer over, or keyboard focus on, a link to it (`usePreloadCaseImages`); the open case still loads its own on arrival. Before, every case's screenshots loaded in the background on any page. Lighthouse mobile on the Work page (two runs each, local production builds): 3,431 KiB and 34 images before, 441 KiB and 3 images after; score and paint times unchanged (92 - 93, FCP 2.3 s). `e2e/loading.e2e.ts` checks it in three browsers.
+- Tried and left out, written down in CLAUDE.md and docs/architecture.md: a `srcset` with 640px thumbnail copies (WebKit then loads lazy images eagerly, which held up the load event and failed `e2e/motion-a11y.e2e.ts`) and a font preload (with or without `crossorigin`, WebKit or Chromium and Firefox download the font twice). `e2e/loading.e2e.ts` checks that every font downloads once.
+
 ## Release v3.13.7 - 2026-10-20
 
 - Search engines now see Karolina's GitHub profile next to her LinkedIn as hers, which helps them connect her name with her work.
