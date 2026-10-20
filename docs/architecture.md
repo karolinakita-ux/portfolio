@@ -114,7 +114,9 @@ Umami Cloud counts visits, opt-in only. Its script reads the screen size and lan
 
 - `public/assets/site/` (portrait, link-preview PNG) and `public/assets/cases/<case>/` (WebP screenshots, `thumbnail.webp`). Content refers to images by their path under `/assets`.
 - `vite.config.ts` provides `virtual:asset-sizes`: the pixel size of every image, read from its PNG or WebP header at build time, so the image viewer can reserve the right space before an image arrives.
-- Images load lazily on the page; once the first page is ready, every case study's screenshots preload in the background (`src/shared/media/image-preload/image-preload.utils.ts`), and the open case study goes first.
+- Images load lazily on the page. A case study's full screenshots load in the background when the visitor shows interest in it: the pointer over, or keyboard focus on, a link to the case (`src/app/App/usePreloadCaseImages.ts`), and on arrival for the open case (`useCaseGallery`). The image viewer still opens at once, and a visitor who only reads the Work page does not download every screenshot (about 2.6 MB). Loading goes through `src/shared/media/image-preload/image-preload.utils.ts`: a few at a time, nothing with Save-Data or on 2G.
+- Fonts are not preloaded. Checked on 2026-10-20: a `<link rel="preload" as="font">` with `crossorigin` makes WebKit download the font twice, and one without makes Chromium and Firefox do so; `e2e/loading.e2e.ts` checks that every font downloads once.
+- No `srcset` on the lazy thumbnails. Checked on 2026-10-20: with a `srcset`, WebKit loads a `loading="lazy"` image eagerly, so the thumbnails competed with the first screen and held up the load event (`e2e/motion-a11y.e2e.ts` caught it). Smaller thumbnail files would need a single smaller `src` instead.
 
 ## Styling
 
