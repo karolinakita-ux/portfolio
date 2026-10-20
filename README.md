@@ -46,7 +46,8 @@ yarn dev       # http://localhost:5173
 
 ```
 index.html                     <head>: site-wide meta, structured data, theme script
-public/                        copied as-is: robots.txt, sitemap.xml, _headers, _redirects, assets/
+public/                        copied as-is: robots.txt, sitemap.xml, _headers, _redirects, assets/,
+                               Google Search Console's verification file (keep it)
 public/assets/site/            portrait and link-preview image
 public/assets/cases/<case>/    case-study screenshots and thumbnail (WebP)
 src/app/                       shell: App, routing, section hash, SEO, prerender entry, copy tests
