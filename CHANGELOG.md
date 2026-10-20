@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.12.2 - 2026-10-20
+
+#### Fixed
+
+- Breadcrumbs on About, Contact, CV and Privacy start with "Home" instead of "Work": these pages are not part of the work. Case studies keep "Work". Same link to `/` and house icon (`HOME_CRUMB` next to `WORK_CRUMB`); the structured data (BreadcrumbList) names the root the same way. The Breadcrumb story shows both.
+
 ### 3.12.1 - 2026-10-20
 
 #### Changed

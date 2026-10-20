@@ -5,7 +5,7 @@ import { RecipientsTable } from "#features/privacy/components/RecipientsTable/Re
 import { StatisticsSwitch } from "#features/privacy/components/StatisticsSwitch/StatisticsSwitch.tsx";
 import { PRIVACY } from "#features/privacy/privacy.content.tsx";
 import type { PrivacySectionId } from "#features/privacy/privacy.types.ts";
-import { WORK_CRUMB } from "#shared/ui/Breadcrumb/Breadcrumb.constants.ts";
+import { HOME_CRUMB } from "#shared/ui/Breadcrumb/Breadcrumb.constants.ts";
 import { Breadcrumb } from "#shared/ui/Breadcrumb/Breadcrumb.tsx";
 import { Callout } from "#shared/ui/Callout/Callout.tsx";
 import { Container } from "#shared/ui/Container/Container.tsx";
@@ -33,7 +33,7 @@ export function PrivacyView({ onNavigate }: PrivacyViewProps) {
     <>
       <section aria-labelledby="privacy-title" className={styles.hero}>
         <Container>
-          <Breadcrumb onNavigate={onNavigate} items={[WORK_CRUMB, { label: PRIVACY.title }]} />
+          <Breadcrumb onNavigate={onNavigate} items={[HOME_CRUMB, { label: PRIVACY.title }]} />
           <div className={styles.heading}>
             <Eyebrow parts={[PRIVACY.eyebrow]} />
             <PageTitle id="privacy-title">{PRIVACY.title}</PageTitle>

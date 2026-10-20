@@ -26,6 +26,9 @@ export const PAGE_DESCRIPTIONS: Readonly<Record<View, string>> = {
     "Case study: research-backed redesign of a B2B vehicle marketplace across 6 European markets, from interviews and benchmarking to the checkout flow.",
 };
 
+/** The home page's name in the breadcrumb of pages outside Work (About, Contact, CV, Privacy), as on the page. */
+export const HOME_NAME = "Home";
+
 /** Short page names for breadcrumbs in structured data. */
 export const PAGE_NAMES: Readonly<Record<View, string>> = {
   [VIEW.work]: "Work",
