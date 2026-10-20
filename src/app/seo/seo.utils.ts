@@ -89,6 +89,7 @@ export function llmsTxt(): string {
     "",
     `- Email: ${PROFILE.email}`,
     `- LinkedIn: ${PROFILE.linkedinUrl}`,
+    `- GitHub: ${PROFILE.githubProfileUrl}`,
     "",
   ].join("\n");
 }

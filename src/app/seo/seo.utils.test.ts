@@ -1,5 +1,8 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
+import { PROFILE } from "#shared/content/profile.ts";
 import { VIEW, VIEWS } from "#shared/lib/routes/routes.constants.ts";
 import { titleForView } from "#shared/lib/routes/routes.utils.ts";
 
@@ -62,5 +65,16 @@ describe("llmsTxt", () => {
     expect(text.startsWith("# Karolina Kita - Senior Product Designer\n")).toBe(true);
     for (const view of VIEWS) expect(text).toContain(`](${absoluteUrl(view)}): `);
     expect(text).toContain("karolina.kita.zg@gmail.com");
+    expect(text).toContain(`- GitHub: ${PROFILE.githubProfileUrl}`);
+  });
+});
+
+describe("site-wide structured data (index.html)", () => {
+  it("names her LinkedIn and GitHub profiles as the same person (sameAs), as in PROFILE", () => {
+    const html = readFileSync(join(process.cwd(), "index.html"), "utf8");
+    const json = /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(html)?.[1] ?? "{}";
+    const nodes = (JSON.parse(json) as { "@graph": Node[] })["@graph"];
+    const person = nodes.find((node) => node["@type"] === "Person");
+    expect(person?.sameAs).toEqual([PROFILE.linkedinUrl, PROFILE.githubProfileUrl]);
   });
 });
