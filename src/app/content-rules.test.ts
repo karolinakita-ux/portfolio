@@ -204,4 +204,16 @@ describe("sitemap", () => {
     const locs = [...xml.matchAll(/<loc>https:\/\/karolina\.kita\.company(\/[^<]*)<\/loc>/g)].map((m) => m[1]);
     expect(new Set(locs)).toEqual(new Set(VIEWS.map((view) => VIEW_PATHS[view])));
   });
+
+  it("gives every page a last-changed date (ISO, never in the future)", () => {
+    const xml = readFileSync(join(process.cwd(), "public", "sitemap.xml"), "utf8");
+    const entries = [...xml.matchAll(/<url>([\s\S]*?)<\/url>/g)].map((m) => m[1] ?? "");
+    const today = new Date().toISOString().slice(0, 10);
+    expect(entries).toHaveLength(VIEWS.length);
+    for (const entry of entries) {
+      const lastmod = /<lastmod>([^<]*)<\/lastmod>/.exec(entry)?.[1] ?? "";
+      expect(lastmod, entry).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(lastmod <= today, `${lastmod} is after ${today}`).toBe(true);
+    }
+  });
 });
