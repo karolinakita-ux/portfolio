@@ -4,7 +4,16 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v3.13.4 - 2026-10-20
+
+- The component library opens on a welcome page that explains the design system and how it is built from Figma.
+- The Behind the Design box on the Work page links the component library too, and its links have more room between them.
+- "View Case Study" links are easier to click: the whole button-sized area around the text works.
+- Breadcrumbs on About, Contact, CV and Privacy start with Home; case studies still start with Work.
+- The statistics question links to Umami and says what it is: a visitor statistics tool.
+- The theming case study uses one name everywhere: Enterprise White-Label Theme Generator.
+
+Versions: 3.12.1 - 3.13.4.
 
 ### 3.13.4 - 2026-10-20
 
