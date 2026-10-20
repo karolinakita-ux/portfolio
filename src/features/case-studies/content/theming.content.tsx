@@ -2,13 +2,13 @@ import type { ThemingCaseStudy } from "#features/case-studies/case-studies.types
 import { VIEW } from "#shared/lib/routes/routes.constants.ts";
 import { lead } from "#shared/ui/lead/lead.tsx";
 
-/* Case study - Multi-Tenant Theme Customizer (Data Governance). Screenshot fields: see ShowcaseCard in case-studies.types.ts. */
+/* Case study - Enterprise White-Label Theme Generator (Data Governance). One product name everywhere: Work card, H1, SEO name, next links. Screenshot fields: see ShowcaseCard in case-studies.types.ts. */
 export const THEMING_CASE: ThemingCaseStudy = {
   view: VIEW.caseTheming,
   id: "case",
   shortTitle: "Data Governance",
   eyebrow: ["Enterprise Systems", "Multi-Tenant Architecture & Accessibility"],
-  title: "Multi-Tenant Theme Customizer: Balancing Custom Branding with Strict WCAG 2.1 AA Accessibility",
+  title: "Enterprise White-Label Theme Generator: Balancing Custom Branding with Strict WCAG 2.1 AA Accessibility",
   meta: [
     { label: "My role", value: "UX/UI Designer" },
     {
