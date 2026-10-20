@@ -17,6 +17,12 @@ import type { PrivacyContent } from "./privacy.types.ts";
  */
 
 const email = <TextLink href={"mailto:" + PROFILE.email}>{PROFILE.email}</TextLink>;
+// Umami's own homepage: what the tool is, in its words. The DPA is linked in the recipients table.
+const umami = (
+  <TextLink href="https://umami.is" external>
+    Umami
+  </TextLink>
+);
 
 export const PRIVACY: PrivacyContent = {
   eyebrow: "Privacy policy",
@@ -192,7 +198,13 @@ export const PRIVACY: PrivacyContent = {
   consent: {
     title: "Can I count your visit?",
     // Valid consent names who asks, what for, which data and that it can be withdrawn (EDPB Guidelines 05/2020, para. 64).
-    text: "I, Karolina Kita, use Umami to see which pages and links are useful. It sets no cookies and does not follow you to other websites. It reads your screen size and language, so I ask first. You can change your choice at any time on the privacy page.",
+    text: (
+      <>
+        I, Karolina Kita, use {umami}, a visitor statistics tool, to see which pages and links are useful. It sets no
+        cookies and does not follow you to other websites. It reads your screen size and language, so I ask first. You
+        can change your choice at any time on the privacy page.
+      </>
+    ),
     allow: "Allow statistics",
     decline: "No, thanks",
     details: "Privacy details",

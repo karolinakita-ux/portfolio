@@ -4,6 +4,14 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Unreleased
+
+### 3.12.1 - 2026-10-20
+
+#### Changed
+
+- The consent box links "Umami" to umami.is in a new tab and says what it is: "I, Karolina Kita, use Umami, a visitor statistics tool, to see ...". The homepage explains the tool; Umami's privacy policy covers only its own visitors and customers, and its data processing agreement stays linked on /privacy. The box text is now a React node, so the test and the story check the link.
+
 ## Release v3.12.0 - 2026-10-19
 
 - A new button on the Work page, "View Components in Storybook", opens the library of the buttons, cards and other parts this site is built from.
