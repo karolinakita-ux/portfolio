@@ -13,11 +13,14 @@ export const PROFILE = {
    */
   repositoryUrl: "https://github.com/karolinakita-ux/portfolio" as string | null,
   /**
-   * The component library (Storybook), built by production deploys only, so the link is absolute: it
-   * works from dev, branch deploys and the artifact too. null hides its Work page links (hero button,
-   * Behind the Design banner).
+   * The component library (Storybook). Only production deploys build it, so builds link the live one,
+   * absolute, which works from branch deploys and the artifact too. `yarn dev` links the local
+   * `yarn storybook` instead (port 6006, package.json), so unreleased stories show there. null hides
+   * its Work page links (hero button, Behind the Design banner).
    */
-  storybookUrl: "https://karolina.kita.company/storybook/" as string | null,
+  storybookUrl: (import.meta.env.MODE === "development"
+    ? `http://${window.location.hostname}:6006/`
+    : "https://karolina.kita.company/storybook/") as string | null,
   /** Discreet footer note on how the site was made. */
   builtWith: "Designed in Figma, prototyped & built with Claude AI assistance",
 } as const;
