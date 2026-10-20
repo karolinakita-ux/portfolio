@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.13.0 - 2026-10-20
+
+#### Added
+
+- Storybook opens on a Welcome page (`.storybook/Welcome.mdx`): what the KitaBranding component library is, how it comes from the Figma design system (tokens, only tokens, Figma names, light and dark), what each sidebar group holds, how to use the theme menu and the Accessibility panel, and links to the Figma file, the source, the design docs and the site (new tabs). The sidebar is ordered Welcome, Foundations, UI, Layout, Media, Patterns. Checked in the built Storybook: it opens on the page, axe finds nothing, no page errors.
+
 ### 3.12.3 - 2026-10-20
 
 #### Added
