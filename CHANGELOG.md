@@ -4,6 +4,14 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Unreleased
+
+### 3.13.5 - 2026-10-20
+
+#### Added
+
+- Google Search Console's verification file, `public/googlecf978c6093e1d8a5.html`, byte for byte as Google issued it (53 bytes, no line ending); the build copies it to the site root. It verifies the owner once it is live, after the next release. Pushed with `[skip netlify]`: Netlify build credits are low.
+
 ## Release v3.13.4 - 2026-10-20
 
 - The component library opens on a welcome page that explains the design system and how it is built from Figma.
