@@ -22,8 +22,9 @@ const VARIANT: Record<ButtonVariant, string> = {
     "hover:bg-bg-interactive-subtle-hover active:bg-bg-interactive-subtle-active",
     "disabled:bg-bg-interactive-disabled disabled:text-text-interactive-disabled",
   ),
+  // A transparent border: the click area is as big as a bordered (Secondary) button, not only the text.
   link: clsx(
-    "text-text-primary decoration-1 underline-offset-4 hover:underline disabled:text-text-interactive-disabled",
+    "border border-transparent text-text-primary decoration-1 underline-offset-4 hover:underline disabled:text-text-interactive-disabled",
   ),
 };
 

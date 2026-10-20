@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.13.2 - 2026-10-20
+
+#### Changed
+
+- Link buttons ("View Case Study" and the other case-card links) have a transparent 1px border, so their click area is a bordered button's box (38 px tall with the button padding), as Karolina asked; before it was 36 px. A Button test checks it; the rule is in docs/design.md.
+
 ### 3.13.1 - 2026-10-20
 
 #### Changed

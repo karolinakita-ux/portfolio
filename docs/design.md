@@ -32,6 +32,7 @@ Karolina's rules that a reviewer could miss, kept by the code and its tests:
 
 - **One primary action per screen:** other buttons are secondary, so the page keeps one clear next step.
 - **Equal choices look equal:** allow and decline in the consent box are the same secondary button (a story checks it).
+- **Link buttons are as big as bordered buttons:** the Button Link type ("View Case Study") has a transparent border and the button padding, so its click area is a Secondary button's box, not only the text.
 - **Link rows spaced like buttons:** a row of text links that can wrap gets a bordered button's height per link (`BUTTON_HEIGHT`) and the buttons' row gap, so wrapped rows do not look cramped.
 - **Breadcrumbs:** pages outside Work start with Home, case studies with Work.
 - **Calm motion:** nothing moves on the first screen at load, nothing loops past 5 seconds, and reduced motion makes every change instant.
