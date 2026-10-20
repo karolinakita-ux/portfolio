@@ -34,6 +34,15 @@ describe("WorkView", () => {
     expect(code).toHaveAttribute("href", "https://github.com/karolinakita-ux/portfolio");
     expect(code).toHaveAttribute("target", "_blank");
   });
+
+  it("links the component library from the Behind the Design banner too, after the code", () => {
+    renderWork();
+    const components = screen.getByRole("link", { name: /^Explore the Storybook Library.*opens in a new tab/ });
+    expect(components).toHaveAttribute("href", "https://karolina.kita.company/storybook/");
+    expect(components).toHaveAttribute("target", "_blank");
+    const code = screen.getByRole("link", { name: /^Explore the Code on GitHub/ });
+    expect(components.previousElementSibling).toBe(code);
+  });
 });
 
 describe("WorkView scroll reveal", () => {

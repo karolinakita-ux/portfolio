@@ -13,6 +13,13 @@ export const TEXT_LINK = clsx(
   FOCUS_RING,
 );
 
+/**
+ * A text link in a row of links that can wrap: as tall as a bordered Button (its py-xs and 1px border,
+ * Button.styles.ts), and the row takes the buttons' gap (gap-y-sm). Wrapped rows then sit as far apart
+ * as buttons would (Karolina's rule).
+ */
+export const BUTTON_HEIGHT = clsx("border-y border-transparent py-xs");
+
 /** Case-study bullet list: Body Medium, disc markers in textSecondary. */
 export const BULLET_LIST = clsx(
   "flex list-disc flex-col gap-xs pl-lg text-body-md text-text-secondary marker:text-text-secondary",

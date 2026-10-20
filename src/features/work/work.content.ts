@@ -89,4 +89,6 @@ export const PROCESS_BANNER = {
   linkLabel: "Explore the Figma Workspace",
   /** Shown while PROFILE.repositoryUrl is set. */
   sourceLinkLabel: "Explore the Code on GitHub",
+  /** Shown while PROFILE.storybookUrl is set. Short enough for one line in the banner at 375px. */
+  componentsLinkLabel: "Explore the Storybook Library",
 };

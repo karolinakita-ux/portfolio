@@ -6,6 +6,16 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.12.3 - 2026-10-20
+
+#### Added
+
+- "Explore the Storybook Library" in the Behind the Design banner, after the GitHub link, opens the component library in a new tab, as the hero button does (`PROFILE.storybookUrl`; not counted in statistics, like the hero button). The label fits one line at 375 px.
+
+#### Changed
+
+- The banner's links are spaced like buttons, as Karolina asked: each link is as tall as a bordered button (`BUTTON_HEIGHT`, a new shared class list) and wrapped rows keep the buttons' gap (`gap-y-sm`, was `gap-y-xs`). The rule is in CLAUDE.md.
+
 ### 3.12.2 - 2026-10-20
 
 #### Fixed
