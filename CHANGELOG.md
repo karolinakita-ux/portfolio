@@ -4,7 +4,12 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v3.13.7 - 2026-10-20
+
+- Search engines now see Karolina's GitHub profile next to her LinkedIn as hers, which helps them connect her name with her work.
+- The sitemap tells search engines that every page changed today, so they read the new versions sooner.
+
+Versions: 3.13.7.
 
 ### 3.13.7 - 2026-10-20
 
