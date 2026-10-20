@@ -53,5 +53,5 @@ export interface PrivacyContent {
   objection: { title: string; text: string };
   statisticsSwitch: StatisticsSwitchCopy;
   /** The consent box at the bottom of every page, until the visitor decides. */
-  consent: { title: string; text: string; allow: string; decline: string; details: string };
+  consent: { title: string; text: ReactNode; allow: string; decline: string; details: string };
 }
