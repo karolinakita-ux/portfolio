@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { VIEW } from "#shared/lib/routes/routes.constants.ts";
 import { setHashRouting } from "#shared/lib/routes/routes.utils.ts";
@@ -9,6 +9,17 @@ import { useHistoryRoute } from "./useHistoryRoute.ts";
 const start = (url: string) => {
   window.history.replaceState(null, "", url);
   return renderHook(() => useHistoryRoute()).result;
+};
+
+/** jsdom does not scroll: set the position the hook reads. */
+const scrollTo = (y: number) => {
+  Object.defineProperty(window, "scrollY", { value: y, configurable: true, writable: true });
+};
+
+/** Back or Forward to an entry whose state was read earlier. */
+const travelTo = (state: unknown, url: string) => {
+  window.history.replaceState(state, "", url);
+  window.dispatchEvent(new PopStateEvent("popstate", { state }));
 };
 
 describe("useHistoryRoute", () => {
@@ -81,6 +92,46 @@ describe("useHistoryRoute", () => {
     });
 
     expect(result.current[0]).toMatchObject({ view: VIEW.caseTheming, restoreY: 640, key: 2, viewKey: 2 });
+  });
+
+  it("never writes to the history while scrolling (in-app browsers show a loading bar on each write)", async () => {
+    start("/about");
+    const replace = vi.spyOn(window.history, "replaceState");
+    const push = vi.spyOn(window.history, "pushState");
+    for (const y of [120, 480, 900]) {
+      scrollTo(y);
+      window.dispatchEvent(new Event("scroll"));
+    }
+    // Longer than the old save delay (300 ms after scrolling stopped).
+    await act(() => new Promise<void>((resolve) => window.setTimeout(resolve, 400)));
+    expect(replace).not.toHaveBeenCalled();
+    expect(push).not.toHaveBeenCalled();
+    scrollTo(0);
+  });
+
+  it("brings back each entry's scroll position on Back and Forward, kept in memory", () => {
+    const result = start("/");
+    const work = window.history.state as unknown;
+    scrollTo(350); // reading the Work page, then opening About
+    act(() => result.current[1](VIEW.about));
+    const about = window.history.state as unknown;
+
+    scrollTo(800); // reading About, then Back
+    act(() => travelTo(work, "/"));
+    expect(result.current[0]).toMatchObject({ view: VIEW.work, restoreY: 350 });
+
+    scrollTo(350); // Forward: About's position was never written to its entry, only remembered
+    act(() => travelTo(about, "/about"));
+    expect(result.current[0]).toMatchObject({ view: VIEW.about, restoreY: 800 });
+    scrollTo(0);
+  });
+
+  it("writes the position into the entry once, when the page is hidden", () => {
+    start("/contact");
+    scrollTo(640);
+    window.dispatchEvent(new Event("pagehide"));
+    expect(window.history.state).toMatchObject({ kbView: VIEW.contact, scrollY: 640 });
+    scrollTo(0);
   });
 
   it("with hash routing, keeps the page's path and moves between views in the hash", () => {

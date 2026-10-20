@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.13.9 - 2026-10-20
+
+#### Fixed
+
+- Scrolling in an in-app browser (Messenger, reported on a phone; also Facebook, Instagram, LinkedIn, X, TikTok) flashed the app's loading bar on every page. The site wrote to the browser history while scrolling: one scroll on About made 4 writes (the address following three sections, then the scroll position saved after the scroll stopped). Now scroll positions stay in memory by history entry and are written only when leaving a page, and in in-app browsers (`IN_APP_BROWSER`, by user agent) the address does not follow the sections. Back and Forward still return to the same spot. Unit tests and `e2e/history.e2e.ts` (three browsers) check it; on the released build the same scroll still made the 4 writes.
+
 ### 3.13.8 - 2026-10-20
 
 #### Changed
