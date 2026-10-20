@@ -14,7 +14,8 @@ export const PROFILE = {
   repositoryUrl: "https://github.com/karolinakita-ux/portfolio" as string | null,
   /**
    * The component library (Storybook), built by production deploys only, so the link is absolute: it
-   * works from dev, branch deploys and the artifact too. null hides the Work page hero button.
+   * works from dev, branch deploys and the artifact too. null hides its Work page links (hero button,
+   * Behind the Design banner).
    */
   storybookUrl: "https://karolina.kita.company/storybook/" as string | null,
   /** Discreet footer note on how the site was made. */
