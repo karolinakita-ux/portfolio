@@ -12,6 +12,10 @@
 /storybook/*
   X-Robots-Tag: noindex, nofollow
 
+# Google Search Console's ownership file (never remove it): Google reads it, search results never show it.
+/googlecf978c6093e1d8a5.html
+  X-Robots-Tag: noindex
+
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin

@@ -6,6 +6,16 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.13.6 - 2026-10-20
+
+#### Added
+
+- A test keeps Google Search Console's verification file in `public/` exactly as issued (`src/app/seo/site-verification.test.ts`); Google rechecks it, so removing or editing it would lose the verification. Proved with a probe against a missing file, which failed.
+
+#### Changed
+
+- `_headers` marks the verification file `noindex`, so it never shows in search results. CLAUDE.md, README and docs/architecture.md say why the file stays.
+
 ### 3.13.5 - 2026-10-20
 
 #### Added

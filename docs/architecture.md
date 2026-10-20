@@ -99,6 +99,8 @@ Every shared component (`shared/ui`, `shared/layout`, `shared/media`) and the co
 
 Tests keep the pieces in step: every view needs a path, a description (at most 160 characters) and a sitemap entry.
 
+Google Search Console verifies the site's owner with `public/googlecf978c6093e1d8a5.html` (the HTML file method). Google checks it again from time to time, so the file stays as issued: `src/app/seo/site-verification.test.ts` fails if it is removed or edited, and `_headers` marks it `noindex`. The sitemap (`/sitemap.xml`) is submitted there.
+
 ## Visitor statistics
 
 Umami Cloud counts visits, opt-in only. Its script reads the screen size and language, so it needs consent under ePrivacy Art. 5(3) and Art. 399 of the Polish Prawo komunikacji elektronicznej, cookies or not.
