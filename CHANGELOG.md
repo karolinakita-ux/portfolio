@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.13.4 - 2026-10-20
+
+#### Changed
+
+- The theming case has one product name: "Enterprise White-Label Theme Generator", as on its Work card, in search results and in the page descriptions. The page heading and Project Planning's next-case link said "Multi-Tenant Theme Customizer". "Data Governance" stays the short name (breadcrumb, tab title, URL), like "Automotive Marketplace" for the platform.
+
 ### 3.13.3 - 2026-10-20
 
 #### Changed
