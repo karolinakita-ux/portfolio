@@ -17,11 +17,17 @@ beforeEach(() => {
 });
 
 describe("StatisticsConsent", () => {
-  it("asks on the live site, with allow and decline side by side and a link to the privacy page", () => {
+  it("asks on the live site, with allow and decline side by side and links to Umami and the privacy page", () => {
     live();
     render(<StatisticsConsent onNavigate={() => undefined} />);
     const box = screen.getByRole("region", { name: copy.title });
-    expect(box).toHaveTextContent(copy.text);
+    expect(box).toHaveTextContent(
+      "I, Karolina Kita, use Umami (opens in a new tab), a visitor statistics tool, to see",
+    );
+    expect(screen.getByRole("link", { name: /^Umami.*opens in a new tab/ })).toHaveAttribute(
+      "href",
+      "https://umami.is",
+    );
     expect(screen.getByRole("button", { name: copy.allow })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: copy.decline })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: copy.details })).toHaveAttribute("href", "/privacy");

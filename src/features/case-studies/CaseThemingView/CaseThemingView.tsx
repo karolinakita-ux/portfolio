@@ -13,7 +13,7 @@ import { Section } from "#shared/ui/Section/Section.tsx";
 
 import { styles } from "./CaseThemingView.styles.ts";
 
-/** Multi-Tenant Theme Customizer: problem cards, solution and safety rows, delivery, handoff, takeaways. */
+/** Enterprise White-Label Theme Generator: problem cards, solution and safety rows, delivery, handoff, takeaways. */
 export function CaseThemingView({ c, resolveAsset, onNavigate }: CaseViewProps<ThemingCaseStudy>) {
   const cards = useMemo(() => caseCards(c), [c]);
   const rows = useCaseGallery(cards, resolveAsset, c.view);

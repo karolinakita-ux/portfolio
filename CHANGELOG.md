@@ -4,6 +4,71 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Release v3.13.4 - 2026-10-20
+
+- The component library opens on a welcome page that explains the design system and how it is built from Figma.
+- The Behind the Design box on the Work page links the component library too, and its links have more room between them.
+- "View Case Study" links are easier to click: the whole button-sized area around the text works.
+- Breadcrumbs on About, Contact, CV and Privacy start with Home; case studies still start with Work.
+- The statistics question links to Umami and says what it is: a visitor statistics tool.
+- The theming case study uses one name everywhere: Enterprise White-Label Theme Generator.
+
+Versions: 3.12.1 - 3.13.4.
+
+### 3.13.4 - 2026-10-20
+
+#### Changed
+
+- The theming case has one product name: "Enterprise White-Label Theme Generator", as on its Work card, in search results and in the page descriptions. The page heading and MeetEstim's next-case link said "Multi-Tenant Theme Customizer". "Data Governance" stays the short name (breadcrumb, tab title, URL), like "Automotive Marketplace" for the platform.
+
+### 3.13.3 - 2026-10-20
+
+#### Changed
+
+- On `yarn dev` the Storybook links (Work hero and Behind the Design) open the local `yarn storybook` on port 6006, on the same host as the dev server, so unreleased stories such as the Welcome page show there. Builds, tests and deploys keep the live `/storybook/` URL (checked in the prerendered Work page); `profile.test.ts` covers both.
+
+### 3.13.2 - 2026-10-20
+
+#### Changed
+
+- Link buttons ("View Case Study" and the other case-card links) have a transparent 1px border, so their click area is a bordered button's box (38 px tall with the button padding), as Karolina asked; before it was 36 px. A Button test checks it; the rule is in docs/design.md.
+
+### 3.13.1 - 2026-10-20
+
+#### Changed
+
+- README: the privacy page, the Storybook library and opt-in statistics in "What is inside", 490+ tests (was 270+), `yarn build-storybook`, and an up-to-date folder map (e2e/, theme.css, the lib/ domains).
+- docs/architecture.md: the privacy slice, a Visitor statistics section (consent, `track()`, what counts where), the Storybook Welcome page and banner link, Home and Work breadcrumb roots, `BUTTON_HEIGHT`, and the components the table left out.
+- docs/design.md: `theme.css` (not `app.css`) maps tokens into Tailwind; new sections on components and Storybook, and on Karolina's design rules in code.
+
+### 3.13.0 - 2026-10-20
+
+#### Added
+
+- Storybook opens on a Welcome page (`.storybook/Welcome.mdx`): what the KitaBranding component library is, how it comes from the Figma design system (tokens, only tokens, Figma names, light and dark), what each sidebar group holds, how to use the theme menu and the Accessibility panel, and links to the Figma file, the source, the design docs and the site (new tabs). The sidebar is ordered Welcome, Foundations, UI, Layout, Media, Patterns. Checked in the built Storybook: it opens on the page, axe finds nothing, no page errors.
+
+### 3.12.3 - 2026-10-20
+
+#### Added
+
+- "Explore the Storybook Library" in the Behind the Design banner, after the GitHub link, opens the component library in a new tab, as the hero button does (`PROFILE.storybookUrl`; not counted in statistics, like the hero button). The label fits one line at 375 px.
+
+#### Changed
+
+- The banner's links are spaced like buttons, as Karolina asked: each link is as tall as a bordered button (`BUTTON_HEIGHT`, a new shared class list) and wrapped rows keep the buttons' gap (`gap-y-sm`, was `gap-y-xs`). The rule is in CLAUDE.md.
+
+### 3.12.2 - 2026-10-20
+
+#### Fixed
+
+- Breadcrumbs on About, Contact, CV and Privacy start with "Home" instead of "Work": these pages are not part of the work. Case studies keep "Work". Same link to `/` and house icon (`HOME_CRUMB` next to `WORK_CRUMB`); the structured data (BreadcrumbList) names the root the same way. The Breadcrumb story shows both.
+
+### 3.12.1 - 2026-10-20
+
+#### Changed
+
+- The consent box links "Umami" to umami.is in a new tab and says what it is: "I, Karolina Kita, use Umami, a visitor statistics tool, to see ...". The homepage explains the tool; Umami's privacy policy covers only its own visitors and customers, and its data processing agreement stays linked on /privacy. The box text is now a React node, so the test and the story check the link.
+
 ## Release v3.12.0 - 2026-10-19
 
 - A new button on the Work page, "View Components in Storybook", opens the library of the buttons, cards and other parts this site is built from.

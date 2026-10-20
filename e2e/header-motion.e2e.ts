@@ -196,11 +196,11 @@ test.describe("nav pill follows every way to change page", () => {
   test.describe("desktop, dark", () => {
     test.use({ viewport: VIEWPORTS.desktop, colorScheme: "dark" });
 
-    test(`breadcrumb: ${CONTACT} to ${WORK}`, async ({ page }) => {
+    test(`breadcrumb: ${CONTACT} to ${WORK} (the Home crumb)`, async ({ page }) => {
       await openView(page, VIEW_PATHS[VIEW.contact], { theme: "dark" });
       const motion = await motionTokens(page);
       await startSampling(page, SELECTOR.navPills);
-      await page.getByRole("navigation", { name: "Breadcrumb" }).getByRole("link", { name: WORK }).click();
+      await page.getByRole("navigation", { name: "Breadcrumb" }).getByRole("link", { name: "Home" }).click();
       const frames = await finishSampling(page, SELECTOR.navPills, { active: WORK });
       expectTravel(frames, { from: CONTACT, to: WORK, motion });
     });

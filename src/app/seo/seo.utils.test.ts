@@ -4,7 +4,7 @@ import { VIEW, VIEWS } from "#shared/lib/routes/routes.constants.ts";
 import { titleForView } from "#shared/lib/routes/routes.utils.ts";
 
 import { SITE_URL } from "./seo.constants.ts";
-import { PAGE_DESCRIPTIONS } from "./seo.content.ts";
+import { PAGE_DESCRIPTIONS, PAGE_NAMES } from "./seo.content.ts";
 import { absoluteUrl, headFor, llmsTxt } from "./seo.utils.ts";
 
 type Node = Record<string, unknown>;
@@ -40,12 +40,19 @@ describe("headFor", () => {
     });
   });
 
-  it("adds a breadcrumb from Work to the page", () => {
-    const crumb = graph(VIEW.caseTheming)[0]?.breadcrumb as { itemListElement: Node[] };
-    expect(crumb.itemListElement.map((item) => item.item)).toEqual([
+  it("adds a breadcrumb from Work to a case study, and from Home to the other pages", () => {
+    const crumbs = (view: (typeof VIEWS)[number]) =>
+      (graph(view)[0]?.breadcrumb as { itemListElement: Node[] }).itemListElement;
+    expect(crumbs(VIEW.caseTheming).map((item) => item.item)).toEqual([
       SITE_URL + "/",
       SITE_URL + "/work/data-governance",
     ]);
+    expect(crumbs(VIEW.caseTheming)[0]?.name).toBe("Work");
+    for (const view of [VIEW.about, VIEW.contact, VIEW.cv, VIEW.privacy]) {
+      expect(crumbs(view).map((item) => item.name)).toEqual(["Home", PAGE_NAMES[view]]);
+      expect(crumbs(view)[0]?.item).toBe(SITE_URL + "/");
+    }
+    expect(crumbs(VIEW.work).map((item) => item.name)).toEqual(["Work"]);
   });
 });
 

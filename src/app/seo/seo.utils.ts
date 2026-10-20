@@ -4,7 +4,7 @@ import type { View } from "#shared/lib/routes/routes.types.ts";
 import { isCaseView, titleForView } from "#shared/lib/routes/routes.utils.ts";
 
 import { PERSON_ID, PROFILE_PAGES, SITE_URL, WEBSITE_ID } from "./seo.constants.ts";
-import { PAGE_DESCRIPTIONS, PAGE_NAMES } from "./seo.content.ts";
+import { HOME_NAME, PAGE_DESCRIPTIONS, PAGE_NAMES } from "./seo.content.ts";
 import type { PageHead } from "./seo.types.ts";
 
 /**
@@ -20,6 +20,8 @@ export function headFor(view: View): PageHead {
   const description = PAGE_DESCRIPTIONS[view];
   const url = absoluteUrl(view);
   const trail = view === VIEW.work ? [VIEW.work] : [VIEW.work, view];
+  // The home page is the Work page: case studies sit under Work, the other pages under Home.
+  const stepName = (step: View) => (step === view || isCaseView(view) ? PAGE_NAMES[step] : HOME_NAME);
 
   const page = {
     "@type": PROFILE_PAGES.has(view) ? "ProfilePage" : "WebPage",
@@ -35,7 +37,7 @@ export function headFor(view: View): PageHead {
       itemListElement: trail.map((step, index) => ({
         "@type": "ListItem",
         position: index + 1,
-        name: PAGE_NAMES[step],
+        name: stepName(step),
         item: absoluteUrl(step),
       })),
     },

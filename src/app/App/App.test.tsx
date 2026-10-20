@@ -89,7 +89,7 @@ describe("App", () => {
     ["/about", "Designing clarity for complex software"],
     ["/contact", "Let’s connect"],
     ["/cv", "Karolina Kita"],
-    ["/work/data-governance", "Multi-Tenant Theme Customizer"],
+    ["/work/data-governance", "White-Label Theme Generator"],
     ["/#about", "Designing clarity for complex software"], // old hash link (before 3.0.0)
   ])("deep-links %s", (url, heading) => {
     renderApp(url);
@@ -134,7 +134,7 @@ describe("App", () => {
 
     const themingLink = [...thumbnailLinks].find((link) => link.getAttribute("href") === themingPath);
     await user.click(themingLink!);
-    expect(h1()).toHaveTextContent("Multi-Tenant Theme Customizer");
+    expect(h1()).toHaveTextContent("White-Label Theme Generator");
     expect(window.location.pathname).toBe(themingPath);
   });
 
