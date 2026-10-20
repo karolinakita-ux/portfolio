@@ -4,9 +4,8 @@ import { VIEW } from "#shared/lib/routes/routes.constants.ts";
 import type { Navigate, View } from "#shared/lib/routes/routes.types.ts";
 import { readRoute } from "#shared/lib/routes/routes.utils.ts";
 
-import { SCROLL_SAVE_DELAY } from "./history.constants.ts";
 import type { HistoryState, Route } from "./history.types.ts";
-import { nextViewKey, saveScrollPosition, urlFor } from "./history.utils.ts";
+import { newEntryId, nextViewKey, saveScrollPosition, urlFor } from "./history.utils.ts";
 
 /**
  * View routing backed by the browser history and real URL paths (/about, /work/meetestim).
@@ -14,7 +13,9 @@ import { nextViewKey, saveScrollPosition, urlFor } from "./history.utils.ts";
  * - navigate() pushes a new history entry when the view changes, so Back and
  *   Forward (and swipe-back on phones) move between views.
  * - Each entry remembers its scroll position; going Back returns to where the
- *   visitor was, e.g. the case-study card they clicked.
+ *   visitor was, e.g. the case-study card they clicked. Positions are kept in memory by
+ *   entry id and written to the history only when leaving an entry, never while
+ *   scrolling: in-app browsers (Messenger, LinkedIn) flash their loading bar on every write.
  * - Re-selecting the current view resets it to the top (or to its anchor) without adding history.
  * - The first load normalises the URL: old hash links (/#about) and aliases (/resume)
  *   become their path, an unknown path becomes /, a section hash (/about#career) stays.
@@ -32,6 +33,9 @@ export function useHistoryRoute(initialView: View = VIEW.work): [Route, Navigate
   // The committed view, read by event handlers and navigate().
   const viewRef = useRef(route.view);
   const initialAnchorRef = useRef(route.anchor);
+  // The current history entry's id, and the last scroll position of every entry left in this visit.
+  const entryIdRef = useRef("");
+  const positionsRef = useRef(new Map<string, number>());
   useLayoutEffect(() => {
     viewRef.current = route.view;
   }, [route.view]);
@@ -40,22 +44,25 @@ export function useHistoryRoute(initialView: View = VIEW.work): [Route, Navigate
     // The app restores scroll itself, per view.
     if ("scrollRestoration" in window.history) window.history.scrollRestoration = "manual";
 
-    // Normalise the first entry (old hash links, aliases, unknown paths).
+    // Normalise the first entry (old hash links, aliases, unknown paths); a reloaded entry keeps its id.
+    entryIdRef.current = (window.history.state as HistoryState | null)?.kbId ?? newEntryId();
     try {
-      const first: HistoryState = { kbView: viewRef.current, scrollY: 0 };
+      const first: HistoryState = { kbView: viewRef.current, scrollY: 0, kbId: entryIdRef.current };
       window.history.replaceState(first, "", urlFor(viewRef.current, initialAnchorRef.current));
     } catch {
       /* ignore */
     }
 
-    let timer: number | undefined;
+    const positions = positionsRef.current;
 
     const onPopState = (event: PopStateEvent) => {
-      // A pending save belongs to the entry we just left; drop it.
-      window.clearTimeout(timer);
+      // The page still shows the entry being left: remember where it was, in memory only.
+      positions.set(entryIdRef.current, window.scrollY);
       const view = readRoute(window.location).view ?? VIEW.work;
       const state = event.state as HistoryState | null;
-      const restoreY = typeof state?.scrollY === "number" ? state.scrollY : 0;
+      entryIdRef.current = state?.kbId ?? newEntryId();
+      const remembered = state?.kbId === undefined ? undefined : positions.get(state.kbId);
+      const restoreY = remembered ?? (typeof state?.scrollY === "number" ? state.scrollY : 0);
       setRoute((current) => ({
         view,
         anchor: null,
@@ -66,25 +73,25 @@ export function useHistoryRoute(initialView: View = VIEW.work): [Route, Navigate
       }));
     };
 
-    const onScroll = () => {
-      window.clearTimeout(timer);
-      timer = window.setTimeout(() => saveScrollPosition(viewRef.current), SCROLL_SAVE_DELAY);
-    };
+    // Leaving the page (another site, a reload, the app in the background): one write, so the
+    // entry still knows its position when the visitor comes back.
+    const onPageHide = () => saveScrollPosition(viewRef.current);
 
     window.addEventListener("popstate", onPopState);
-    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("pagehide", onPageHide);
     return () => {
-      window.clearTimeout(timer);
       window.removeEventListener("popstate", onPopState);
-      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("pagehide", onPageHide);
     };
   }, []);
 
   const navigate = useCallback<Navigate>((view, anchor = null, options = {}) => {
     try {
       if (view !== viewRef.current) {
+        positionsRef.current.set(entryIdRef.current, window.scrollY);
         saveScrollPosition(viewRef.current);
-        const next: HistoryState = { kbView: view, scrollY: 0 };
+        entryIdRef.current = newEntryId();
+        const next: HistoryState = { kbView: view, scrollY: 0, kbId: entryIdRef.current };
         window.history.pushState(next, "", urlFor(view, anchor));
       } else {
         window.history.replaceState(window.history.state, "", urlFor(view, anchor));

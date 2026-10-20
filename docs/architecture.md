@@ -86,9 +86,9 @@ Every shared component (`shared/ui`, `shared/layout`, `shared/media`) and the co
 ## Routing
 
 - `src/shared/lib/routes/` is the single source: `VIEW` (ids), `VIEW_PATHS` (URLs), `SECTION` (anchors other pages link to), titles and nav items. They are `as const` objects with derived union types, so a wrong id is a type error.
-- `src/app/routing/useHistoryRoute.ts` keeps the view in browser history: one entry per view change, scroll position restored on Back and Forward. A new view remounts and fades in; a jump within the same view (Explore Case Studies) only scrolls. On first load it normalises the URL: old hash links (`/#about`, used before 3.0.0) and aliases (`/resume`) become their path; unknown paths become `/`.
+- `src/app/routing/useHistoryRoute.ts` keeps the view in browser history: one entry per view change, scroll position restored on Back and Forward. Positions are kept in memory by entry id (`kbId`) and written into the history only when leaving a page (a navigation, `pagehide`), never while scrolling: in-app browsers (Messenger, Instagram, LinkedIn) flash their loading bar on every history write. A new view remounts and fades in; a jump within the same view (Explore Case Studies) only scrolls. On first load it normalises the URL: old hash links (`/#about`, used before 3.0.0) and aliases (`/resume`) become their path; unknown paths become `/`.
 - A one-page build with a relative base (`vite build --base ./`, e.g. a claude.ai artifact) has no other paths to load, so `src/main.tsx` turns on hash routing: the path travels in the hash (`#/about`, `#/about#career`). The site itself always uses real paths.
-- The URL hash is a **section anchor** (`/about#career`). `Section` (`src/shared/ui/Section/Section.tsx`) gives every section heading a `HeadingAnchor` link that copies the section's address. `src/app/routing/useSectionHash.ts` keeps the hash on the section in view while scrolling, with `replaceState` (no history entries).
+- The URL hash is a **section anchor** (`/about#career`). `Section` (`src/shared/ui/Section/Section.tsx`) gives every section heading a `HeadingAnchor` link that copies the section's address. `src/app/routing/useSectionHash.ts` keeps the hash on the section in view while scrolling, with `replaceState` (no history entries). Not in in-app browsers (`IN_APP_BROWSER`, by user agent), for the loading-bar reason above; `e2e/history.e2e.ts` checks both in three browsers.
 
 ## Rendering and SEO
 
@@ -114,7 +114,9 @@ Umami Cloud counts visits, opt-in only. Its script reads the screen size and lan
 
 - `public/assets/site/` (portrait, link-preview PNG) and `public/assets/cases/<case>/` (WebP screenshots, `thumbnail.webp`). Content refers to images by their path under `/assets`.
 - `vite.config.ts` provides `virtual:asset-sizes`: the pixel size of every image, read from its PNG or WebP header at build time, so the image viewer can reserve the right space before an image arrives.
-- Images load lazily on the page; once the first page is ready, every case study's screenshots preload in the background (`src/shared/media/image-preload/image-preload.utils.ts`), and the open case study goes first.
+- Images load lazily on the page. A case study's full screenshots load in the background when the visitor shows interest in it: the pointer over, or keyboard focus on, a link to the case (`src/app/App/usePreloadCaseImages.ts`), and on arrival for the open case (`useCaseGallery`). The image viewer still opens at once, and a visitor who only reads the Work page does not download every screenshot (about 2.6 MB). Loading goes through `src/shared/media/image-preload/image-preload.utils.ts`: a few at a time, nothing with Save-Data or on 2G.
+- Fonts are not preloaded. Checked on 2026-10-20: a `<link rel="preload" as="font">` with `crossorigin` makes WebKit download the font twice, and one without makes Chromium and Firefox do so; `e2e/loading.e2e.ts` checks that every font downloads once.
+- No `srcset` on the lazy thumbnails. Checked on 2026-10-20: with a `srcset`, WebKit loads a `loading="lazy"` image eagerly, so the thumbnails competed with the first screen and held up the load event (`e2e/motion-a11y.e2e.ts` caught it). Smaller thumbnail files would need a single smaller `src` instead.
 
 ## Styling
 

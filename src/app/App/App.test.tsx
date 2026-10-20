@@ -195,12 +195,28 @@ describe("App", () => {
     expect(firstScreenshot).toHaveFocus();
   });
 
-  it("queues every case study's screenshots for background loading from any page", () => {
-    renderApp("/about");
-    const all = [AUTOMOTIVE_CASE, MEETESTIM_CASE, THEMING_CASE].flatMap((c) =>
-      caseCards(c).map((card) => "/assets/" + card.asset),
-    );
-    expect(preloadImages).toHaveBeenCalledWith(all);
+  it("loads a case study's screenshots only once the visitor points at or focuses a link to it", async () => {
+    vi.mocked(preloadImages).mockClear();
+    const { user } = renderApp("/");
+    const shots = (c: Parameters<typeof caseCards>[0]) => caseCards(c).map((card) => "/assets/" + card.asset);
+    const cardLink = (title: string) =>
+      within(screen.getByRole("article", { name: title })).getByRole("link", { name: /^View/ });
+    // Nothing on page load: a visitor who only reads the Work page downloads no screenshots.
+    expect(preloadImages).not.toHaveBeenCalled();
+
+    await user.hover(cardLink("MeetEstim - Project Planning & Cost Management Platform"));
+    expect(preloadImages).toHaveBeenCalledTimes(1);
+    expect(preloadImages).toHaveBeenLastCalledWith(shots(MEETESTIM_CASE));
+
+    // Once per case: pointing at it again queues nothing new.
+    await user.unhover(cardLink("MeetEstim - Project Planning & Cost Management Platform"));
+    await user.hover(cardLink("MeetEstim - Project Planning & Cost Management Platform"));
+    expect(preloadImages).toHaveBeenCalledTimes(1);
+
+    // Keyboard focus counts as interest too.
+    cardLink("Automotive B2B Marketplace Redesign").focus();
+    expect(preloadImages).toHaveBeenLastCalledWith(shots(AUTOMOTIVE_CASE));
+    expect(preloadImages).not.toHaveBeenCalledWith(shots(THEMING_CASE));
   });
 
   it("expands FAQ answers on the About page", async () => {
