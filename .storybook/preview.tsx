@@ -30,6 +30,8 @@ const preview: Preview = {
     backgrounds: { disable: true },
     // Accessibility checks (axe) fail a story in the test run, not only warn in the panel.
     a11y: { test: "error" },
+    // Welcome first (Storybook opens the first entry), then from tokens up to whole patterns.
+    options: { storySort: { order: ["Welcome", "Foundations", "UI", "Layout", "Media", "Patterns"] } },
   },
   tags: ["autodocs"],
 };
