@@ -1,18 +1,20 @@
 # Karolina Kita - portfolio
 
-Source of **[karolina.kita.company](https://karolina.kita.company)**, the portfolio of Karolina Kita, Senior Product Designer. Three case studies (an automotive B2B marketplace, the MeetEstim planning platform and a white-label theme generator), an About page, a printable CV and contact details.
+Source of **[karolina.kita.company](https://karolina.kita.company)**, the portfolio of Karolina Kita, Senior Product Designer. Three case studies (an automotive B2B marketplace, the MeetEstim planning platform and a white-label theme generator), an About page, a printable CV, contact details and a privacy page.
 
 Designed by Karolina in Figma and built with [Claude Code](docs/claude-code.md): React 19, TypeScript (strict), Tailwind CSS v4 with her KitaBranding design tokens, Vite, Vitest and Playwright. Deployed on Netlify.
 
 ## What is inside
 
 - **Design tokens from Figma.** Every colour, space, radius, shadow and type style is a token exported from the Figma file; a test fails when the CSS drifts from the export. Light and dark mode swap the same variables. [Design source](docs/design.md)
+- **Component library in Storybook.** Every shared component has stories with its Figma variants and real copy, published at [karolina.kita.company/storybook](https://karolina.kita.company/storybook/) with a welcome page on the design system. Each story is also a test: it renders, runs its interaction checks and passes axe. [Storybook](docs/architecture.md#storybook)
 - **Vertical slices.** Each page is a feature folder with its own view, copy, types and tests; ESLint enforces the boundaries between `app`, `features` and `shared`. [Architecture](docs/architecture.md)
 - **Real pages, prerendered.** Every page has its own URL (`/work/meetestim`) and is written to static HTML at build time, so search engines, link previews and AI assistants read the full content without JavaScript. Per-page titles, descriptions, structured data, a sitemap and [`/llms.txt`](https://karolina.kita.company/llms.txt).
 - **Section links.** Each section heading has a link that copies its address (`/about#career`); the address bar follows the section you are reading.
 - **Accessible by design.** WCAG 2.1 AA is the minimum: keyboard focus, labelled controls, landmarks, reduced motion. `yarn a11y` audits every page in real Chromium (axe, an emulated screen reader, Tab order, reflow at 320 px).
 - **Image viewer.** Screenshots open full size with zoom, swipe and arrow keys; WebP images and background preloading keep it fast.
-- **Quality gate.** `yarn verify` runs the typecheck, ESLint with zero warnings, a Prettier check, 270+ tests and the full build before every commit.
+- **Statistics only with consent.** Visits are counted with [Umami](https://umami.is) only after the visitor allows it in the consent box. No cookies; with Do Not Track or Global Privacy Control on, nobody is asked and nothing loads. The [privacy page](https://karolina.kita.company/privacy) explains it and has the switch. [Visitor statistics](docs/architecture.md#visitor-statistics)
+- **Quality gate.** `yarn verify` runs the typecheck, ESLint with zero warnings, a Prettier check, 490+ tests and the full build before every commit.
 
 ## Getting started
 
@@ -26,18 +28,19 @@ yarn dev       # http://localhost:5173
 
 ## Scripts
 
-| Command          | What it does                                                                      |
-| ---------------- | --------------------------------------------------------------------------------- |
-| `yarn dev`       | Dev server with hot reload                                                        |
-| `yarn verify`    | Typecheck, lint (zero warnings), format check, tests, build and prerender         |
-| `yarn test`      | Vitest in watch mode (`yarn test:run` for a single run)                           |
-| `yarn e2e`       | Playwright tests in Chromium, Firefox and WebKit against the production build     |
-| `yarn build`     | Typecheck, build to `dist/`, then prerender every page (`yarn prerender`)         |
-| `yarn preview`   | Serve the production build locally                                                |
-| `yarn lint`      | ESLint, zero warnings allowed                                                     |
-| `yarn format`    | Prettier: formats files, sorts imports and Tailwind classes (`yarn format:check`) |
-| `yarn a11y`      | Accessibility audit in real Chromium; report in `a11y-report/`                    |
-| `yarn storybook` | The component library (Storybook) on port 6006                                    |
+| Command                | What it does                                                                           |
+| ---------------------- | -------------------------------------------------------------------------------------- |
+| `yarn dev`             | Dev server with hot reload                                                             |
+| `yarn verify`          | Typecheck, lint (zero warnings), format check, tests, build and prerender              |
+| `yarn test`            | Vitest in watch mode (`yarn test:run` for a single run)                                |
+| `yarn e2e`             | Playwright tests in Chromium, Firefox and WebKit against the production build          |
+| `yarn build`           | Typecheck, build to `dist/`, then prerender every page (`yarn prerender`)              |
+| `yarn preview`         | Serve the production build locally                                                     |
+| `yarn lint`            | ESLint, zero warnings allowed                                                          |
+| `yarn format`          | Prettier: formats files, sorts imports and Tailwind classes (`yarn format:check`)      |
+| `yarn a11y`            | Accessibility audit in real Chromium; report in `a11y-report/`                         |
+| `yarn storybook`       | The component library (Storybook) on port 6006                                         |
+| `yarn build-storybook` | Builds Storybook into `dist/storybook` (run after `yarn build`, which empties `dist/`) |
 
 ## Where things live
 
@@ -47,12 +50,15 @@ public/                        copied as-is: robots.txt, sitemap.xml, _headers, 
 public/assets/site/            portrait and link-preview image
 public/assets/cases/<case>/    case-study screenshots and thumbnail (WebP)
 src/app/                       shell: App, routing, section hash, SEO, prerender entry, copy tests
-src/features/<name>/           one slice per page: view, components, copy (*.content.ts), types, tests
-src/shared/                    ui/, layout/, media/, hooks/, lib/ (routes), content/ (profile)
-src/styles/                    tokens.css (light/dark), app.css (Tailwind theme), Figma export
-scripts/                       prerender.ts (static HTML per page), a11y-audit.ts
+src/features/<name>/           one slice per page or capability (image viewer, privacy and the consent box):
+                               view, components, copy (*.content.ts), types, tests
+src/shared/                    ui/, layout/, media/, hooks/, lib/ (routes, ui, analytics, motion, clipboard),
+                               content/ (profile)
+src/styles/                    tokens.css (light/dark), theme.css (Tailwind theme), app.css (entry), Figma export
+e2e/                           Playwright specs and their helpers
+scripts/                       prerender.ts (static HTML per page), a11y-audit.ts (checks in a11y/)
 docs/                          architecture, design source, working with Claude Code
-.storybook/                    Storybook config (stories sit next to their component)
+.storybook/                    Storybook config and its Welcome page (stories sit next to their component)
 .claude/                       Claude Code skills (/release, ship-change) and review agents
 ```
 
@@ -74,7 +80,7 @@ Images are cached for a week, so a changed image gets a new file name.
 
 ## Deploy and releases
 
-Work happens on `develop`; `main` is the live site and changes only in a release. Every commit bumps the version and adds a `CHANGELOG.md` entry. Branches, versions and the release steps: [CONTRIBUTING.md](CONTRIBUTING.md). Netlify builds with `yarn test:run && yarn build` and publishes `dist/`; a failing test blocks the deploy. Production builds add `yarn build-storybook`.
+Work happens on `develop`; `main` is the live site and changes only in a release. Every commit bumps the version and adds a `CHANGELOG.md` entry. Branches, versions and the release steps: [CONTRIBUTING.md](CONTRIBUTING.md). Netlify builds with `yarn test:run && yarn build` and publishes `dist/`; a failing test blocks the deploy. Production builds also run `yarn build-storybook`, served at `/storybook/`.
 
 Link previews are cached by apps: check LinkedIn at https://www.linkedin.com/post-inspector after changing the link-preview image.
 
