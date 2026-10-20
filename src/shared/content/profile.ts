@@ -3,6 +3,8 @@ export const PROFILE = {
   role: "Senior Product Designer",
   email: "karolina.kita.zg@gmail.com",
   linkedinUrl: "https://www.linkedin.com/in/karolinakita",
+  /** Her GitHub profile: named in the site-wide structured data (index.html sameAs) and llms.txt. */
+  githubProfileUrl: "https://github.com/karolinakita-ux",
   /** Recommendations on LinkedIn, the source of the Work page quotes. */
   linkedinRecommendationsUrl: "https://www.linkedin.com/in/karolinakita/details/recommendations",
   figmaWorkspaceUrl:

@@ -4,6 +4,20 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Release v3.13.7 - 2026-10-20
+
+- Search engines now see Karolina's GitHub profile next to her LinkedIn as hers, which helps them connect her name with her work.
+- The sitemap tells search engines that every page changed today, so they read the new versions sooner.
+
+Versions: 3.13.7.
+
+### 3.13.7 - 2026-10-20
+
+#### Changed
+
+- Site-wide structured data (`index.html`, Person `sameAs`) names her GitHub profile next to LinkedIn, and `llms.txt` lists it under Contact (`PROFILE.githubProfileUrl`). A test keeps `sameAs` equal to the PROFILE links.
+- Sitemap: every `<lastmod>` is 2026-10-20 (most pages changed today, and the structured data changes on every page); its comment points at `routes.constants.ts` again. A new test requires an ISO date on every entry, never in the future; CLAUDE.md says to update a page's date when its content changes. Both new checks were proved with probes that failed.
+
 ## Release v3.13.6 - 2026-10-20
 
 - The site is set up for Google Search Console, which shows how its pages appear in Google search and helps new pages get found sooner.
