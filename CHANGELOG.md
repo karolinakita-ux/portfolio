@@ -4,6 +4,14 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Unreleased
+
+### 3.13.10 - 2026-10-22
+
+#### Changed
+
+- The dark value of the `bg-surface-subtle` token is gray-700 (#4a4a4a) instead of gray-600 (#6c757d), following the change in the KitaBranding design system. On gray-600, light text was below 4.5:1 (`text-primary` 4.4:1, `text-secondary` 3.6:1); on gray-700 every text token passes (`text-primary` 8.4:1, `text-secondary` 6.8:1). No component uses the token yet, so no page looks different. `kita-branding.tokens.json` is edited by hand until the Figma variable has the new value (a task on Karolina's Figma list); `tokens.test.ts` keeps it equal to `tokens.css`.
+
 ## Release v3.13.9 - 2026-10-20
 
 - Scrolling the site inside Messenger, Instagram or LinkedIn no longer shows the app's loading bar.
