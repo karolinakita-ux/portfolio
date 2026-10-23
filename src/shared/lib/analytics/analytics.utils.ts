@@ -1,37 +1,49 @@
-import { EVENT, MAX_QUEUED, MAX_REF_LENGTH, PASSIVE_EVENTS, UMAMI } from "./analytics.constants.ts";
+import { EVENT, MAX_PATH_LENGTH, MAX_QUEUED, MAX_REF_LENGTH, PASSIVE_EVENTS, UMAMI } from "./analytics.constants.ts";
 import type {
   AnalyticsEvent,
   AnalyticsSite,
   AnalyticsState,
+  BeforeSend,
   BuildPayload,
   EventData,
   PageSnapshot,
   PrivacySignals,
   SentData,
   UmamiPayload,
+  UmamiTracker,
 } from "./analytics.types.ts";
-import { watchDeadClicks } from "./clicks.utils.ts";
-import { endStretch, startPage, watchEngagement } from "./engagement.utils.ts";
+import { watchCopies, watchDeadClicks } from "./clicks.utils.ts";
+import { endStretch, startPage, watchEngagement, watchPrints } from "./engagement.utils.ts";
+import { watchErrors } from "./errors.utils.ts";
 import { recentInput, watchInput } from "./input.utils.ts";
+import { cleanPayload, cleanReferrer, cleanUrl } from "./payload.utils.ts";
+import { sessionData } from "./session.utils.ts";
 
 /**
  * Visitor statistics with Umami Cloud (umami.is): no cookies, nothing written to the visitor's device.
- * What visitors are told: the privacy page (/privacy, features/privacy).
+ * What visitors are told: the privacy page (/privacy, features/privacy). What is sent and the rules for
+ * adding to it: docs/analytics.md.
  *
  * - Only the live site counts: a production build at the site root, served from karolina.kita.company.
  *   Dev, Netlify branch deploys, local previews, tests and the claude.ai artifact never load the script.
  * - The script loads only after the visitor allows statistics (statistics-consent.utils.ts: the consent box
  *   or the switch on /privacy). With Do Not Track or Global Privacy Control on, nobody is asked.
- * - The tracker's own page tracking is off (data-auto-track="false"): it misses Back / Forward and would count
+ * - The tracker's own pageviews are off (data-auto-pageview="false"): it misses Back / Forward and would count
  *   every scroll hash change (useSectionHash). App sends one pageview per view instead (trackPageview).
- * - With page tracking off, the tracker keeps the landing page as the current page forever, so every call
- *   passes the page itself: address without the hash, title and referrer.
+ *   The tracker stays initialised for its speed report (data-performance: Core Web Vitals, Umami's
+ *   Performance tab). It takes every history.replaceState as a new page, so address changes that are
+ *   not one go past it (replaceAddress in shared/lib/routes).
+ * - The tracker keeps its own idea of the current page, so every call passes the page itself: address
+ *   without the hash, title and referrer. beforeSend does the same for the tracker's own requests (speed
+ *   reports, session data), keeps only the link tag and UTM parameters in addresses, and cancels
+ *   everything once statistics are off.
  * - Calls made before the script has loaded wait in a queue; if the script is blocked, they are dropped.
- * - Besides pageviews and track() calls, it measures time on page (engagement.utils.ts) and dead clicks
- *   (clicks.utils.ts), and tags events a click or key started with the input (input.utils.ts). Those
- *   listeners run only while statistics are on.
+ * - Besides pageviews and track() calls, it measures time on page (engagement.utils.ts), dead clicks and
+ *   text copies (clicks.utils.ts), prints and errors in the site's code (errors.utils.ts), and tags events
+ *   a click or key started with the input (input.utils.ts). Those listeners run only while statistics are on.
  * - Each call carries the site's version as Umami's tag (data-tag), so the dashboard can compare releases.
- * - Never send names or email addresses, and never call umami.identify().
+ * - Never send names, email addresses or text the visitor typed or copied. umami.identify() gets session
+ *   data only (session.utils.ts), never an id: visits are not linked to each other.
  */
 
 export const optedOut = ({ doNotTrack, globalPrivacyControl }: PrivacySignals): boolean =>
@@ -41,7 +53,7 @@ export const optedOut = ({ doNotTrack, globalPrivacyControl }: PrivacySignals): 
 export const analyticsAllowed = ({ production, base, hostname, privacy }: AnalyticsSite): boolean =>
   production && base === "/" && hostname === UMAMI.host && !optedOut(privacy);
 
-const state: AnalyticsState = { on: false, queue: [], page: null, referrer: null, unwatch: null };
+const state: AnalyticsState = { on: false, queue: [], page: null, referrer: null, unwatch: null, notFound: null };
 
 /** Sends nothing more on this page (the script is blocked, or the visitor switched statistics off). */
 export const stopAnalytics = (): void => {
@@ -57,32 +69,30 @@ const flush = () => {
     stopAnalytics();
     return;
   }
-  for (const build of state.queue.splice(0)) tracker.track(build);
+  for (const run of state.queue.splice(0)) run(tracker);
+};
+
+/** Runs a tracker call now, or once the script has loaded. */
+const call = (run: (tracker: UmamiTracker) => void) => {
+  if (!state.on) return;
+  const tracker = window.umami;
+  if (tracker) run(tracker);
+  else if (state.queue.length < MAX_QUEUED) state.queue.push(run);
 };
 
 const send = (build: BuildPayload) => {
-  if (!state.on) return;
-  const tracker = window.umami;
-  if (tracker) tracker.track(build);
-  else if (state.queue.length < MAX_QUEUED) state.queue.push(build);
+  call((tracker) => tracker.track(build));
 };
 
-/** The address bar without the hash: a section anchor is not a page of its own. */
-const pageUrl = (): string => {
-  const url = new URL(window.location.href);
-  url.hash = "";
-  return url.toString();
-};
-
-/** Same-site addresses go as a path, the way the tracker sends them. */
-const asReferrer = (url: string): string => {
-  const { origin } = window.location;
-  return url.startsWith(origin + "/") ? url.slice(origin.length) : url;
-};
+/**
+ * Runs before every request the tracker makes (data-before-send), its own speed reports and session
+ * data included: nothing goes once statistics are off, and addresses are cleaned (payload.utils.ts).
+ */
+export const beforeSend: BeforeSend = (type, payload) => (state.on ? cleanPayload(type, payload, state.page) : null);
 
 /** The current page, read when the call is made (not when a queued call goes out). */
 const currentPage = (): PageSnapshot => ({
-  url: pageUrl(),
+  url: cleanUrl(window.location.href),
   title: document.title,
   ...(state.referrer !== null && { referrer: state.referrer }),
 });
@@ -113,8 +123,17 @@ const watch = (): (() => void) => {
   const stops = [
     watchInput(),
     watchEngagement(reportStretch),
-    watchDeadClicks((click, rage) => {
-      track(rage ? EVENT.rageClick : EVENT.deadClick, click);
+    watchDeadClicks((spot, rage) => {
+      track(rage ? EVENT.rageClick : EVENT.deadClick, spot);
+    }),
+    watchCopies((spot) => {
+      track(EVENT.textCopy, spot);
+    }),
+    watchPrints(() => {
+      track(EVENT.pagePrint, {});
+    }),
+    watchErrors((error) => {
+      track(EVENT.jsError, error);
     }),
   ];
   return () => {
@@ -130,36 +149,56 @@ export function startAnalytics(site: AnalyticsSite): boolean {
   if (!analyticsAllowed(site)) return false;
   if (state.on) return true;
   state.on = true;
+  window.kbUmamiBeforeSend = beforeSend;
+  state.unwatch = watch();
+  // Statistics switched off and on again on the same page: a second script would start a second speed report.
+  if (document.querySelector(`script[src="${UMAMI.script}"]`)) {
+    if (window.umami) flush();
+    return true;
+  }
   const script = document.createElement("script");
   script.src = UMAMI.script;
   script.dataset.websiteId = UMAMI.websiteId;
   script.dataset.domains = UMAMI.host;
-  script.dataset.autoTrack = "false";
+  script.dataset.autoPageview = "false";
+  script.dataset.performance = "true";
+  script.dataset.beforeSend = UMAMI.beforeSend;
   script.dataset.excludeHash = "true";
   script.dataset.doNotTrack = "true";
   if (site.release) script.dataset.tag = site.release;
   script.addEventListener("load", flush);
   script.addEventListener("error", stopAnalytics);
   document.head.append(script);
-  state.unwatch = watch();
   return true;
 }
 
 /**
+ * Remembers an address that matched no page (src/main.tsx, before the app replaces it with /). It goes
+ * out as page-not-found with the first pageview, so a broken link shows up even when the visitor allows
+ * statistics later on.
+ */
+export const notePageNotFound = (path: string): void => {
+  state.notFound = path.slice(0, MAX_PATH_LENGTH);
+};
+
+/**
  * Counts the current page. App calls it on load and on every view change (Back / Forward included),
  * after the title has been updated. It first sends the time spent on the page before. The first
- * pageview also counts a tagged link (link-ref) once.
+ * pageview also sends the session data and, once, a tagged link (link-ref) and a missing page.
  */
 export function trackPageview(): void {
   if (!state.on) return;
   reportStretch();
   const first = state.page === null;
-  if (state.page !== null) state.referrer = asReferrer(state.page.url);
+  if (state.page !== null) state.referrer = cleanReferrer(state.page.url);
   state.page = currentPage();
   send(withPage({}, state.page));
   startPage();
-  const ref = first ? linkRef(window.location.search) : null;
+  if (!first) return;
+  call((tracker) => tracker.identify(sessionData()));
+  const ref = linkRef(window.location.search);
   if (ref) track(EVENT.linkRef, { ref });
+  if (state.notFound !== null) track(EVENT.pageNotFound, { path: state.notFound });
 }
 
 /** Counts an event on the current page; does nothing off the live site. */

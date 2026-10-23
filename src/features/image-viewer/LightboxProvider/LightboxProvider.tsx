@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { LightboxDialog } from "#features/image-viewer/components/LightboxDialog/LightboxDialog.tsx";
 import type { LightboxState } from "#features/image-viewer/lightbox.types.ts";
@@ -28,6 +28,12 @@ export function LightboxProvider({ children }: LightboxProviderProps) {
     triggerRef.current = null;
     trigger?.focus({ preventScroll: true });
   }, []);
+
+  // The viewer moved to another image: its owner may count it (the case gallery sends image-nav).
+  useEffect(() => {
+    if (state === null || state.direction === 0) return;
+    state.items[state.index]?.onShow?.(state.direction > 0 ? "next" : "prev");
+  }, [state]);
 
   const step = useCallback((delta: number) => {
     setState((current) =>

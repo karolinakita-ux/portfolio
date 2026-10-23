@@ -1,8 +1,8 @@
 import { fireEvent } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { DeadClick } from "./analytics.types.ts";
-import { describeClick, isInteractive, watchDeadClicks } from "./clicks.utils.ts";
+import type { PageSpot } from "./analytics.types.ts";
+import { describeClick, isInteractive, watchCopies, watchDeadClicks } from "./clicks.utils.ts";
 
 /** A page like the site's: a hero, an anchored section with a card, an unlabelled region, header, footer, viewer. */
 const PAGE = `
@@ -100,7 +100,7 @@ describe("describeClick", () => {
 });
 
 describe("watchDeadClicks", () => {
-  const report = vi.fn<(click: DeadClick, rage: boolean) => void>();
+  const report = vi.fn<(click: PageSpot, rage: boolean) => void>();
   let stop: () => void;
 
   /** A press and release at one spot, as a mouse or a finger makes it. */
@@ -167,5 +167,31 @@ describe("watchDeadClicks", () => {
     stop();
     click($("portrait"));
     expect(report).not.toHaveBeenCalled();
+  });
+});
+
+describe("watchCopies", () => {
+  it("reports where copied text was: the card and section, never the text", () => {
+    const report = vi.fn<(spot: PageSpot) => void>();
+    const stop = watchCopies(report);
+    window.getSelection()?.selectAllChildren($("summary"));
+    document.dispatchEvent(new Event("copy"));
+    expect(report).toHaveBeenCalledExactlyOnceWith({
+      element: "text",
+      area: "enterprise-cases",
+      label: "Automotive marketplace",
+    });
+
+    stop();
+    document.dispatchEvent(new Event("copy"));
+    expect(report).toHaveBeenCalledOnce();
+  });
+
+  it("reports nothing when nothing is selected", () => {
+    const report = vi.fn<(spot: PageSpot) => void>();
+    const stop = watchCopies(report);
+    document.dispatchEvent(new Event("copy"));
+    expect(report).not.toHaveBeenCalled();
+    stop();
   });
 });
