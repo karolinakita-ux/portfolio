@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import { track } from "#shared/lib/analytics/analytics.utils.ts";
 import { writeClipboard } from "#shared/lib/clipboard/clipboard.utils.ts";
+import { replaceAddress } from "#shared/lib/routes/address.utils.ts";
 import { urlWithAnchor } from "#shared/lib/routes/routes.utils.ts";
 import { isPlainLeftClick, prefersReducedMotion } from "#shared/lib/ui/ui.utils.ts";
 import { Check, Link } from "#shared/ui/icons/icons.tsx";
@@ -38,7 +39,7 @@ export function HeadingAnchor({ id, headingId, label }: HeadingAnchorProps) {
           event.preventDefault();
           track(EVENT.sectionLinkCopy, { section: id });
           const url = urlWithAnchor(window.location, id);
-          window.history.replaceState(window.history.state, "", url);
+          replaceAddress(url);
           document
             .getElementById(headingId)
             ?.scrollIntoView({ block: "start", behavior: prefersReducedMotion() ? "auto" : "smooth" });

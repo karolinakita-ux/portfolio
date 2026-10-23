@@ -1,20 +1,22 @@
 import { useEffect } from "react";
 
+import { inAppBrowser } from "#shared/lib/browser/browser.utils.ts";
+import { replaceAddress } from "#shared/lib/routes/address.utils.ts";
 import { urlWithAnchor } from "#shared/lib/routes/routes.utils.ts";
 
-import { IN_APP_BROWSER, READING_LINE } from "./section-hash.constants.ts";
+import { READING_LINE } from "./section-hash.constants.ts";
 
 /**
  * Keeps the URL hash on the section being read (/about#career), so the address bar
- * always holds a link to the current spot. Uses replaceState: no history entries, no
- * scroll jumps. Above the first anchored section the hash is cleared.
+ * always holds a link to the current spot. Replaces the address (replaceAddress): no history
+ * entries, no scroll jumps, and not a new page for the statistics. Above the first anchored section the hash is cleared.
  * Sections opt in with `data-anchor` (see shared/ui/Section).
  * `routeKey` re-collects the sections after every navigation.
  * Off in in-app browsers (Messenger, LinkedIn...): they show a loading bar on every history write.
  */
 export function useSectionHash(routeKey: number): void {
   useEffect(() => {
-    if (IN_APP_BROWSER.test(navigator.userAgent)) return undefined;
+    if (inAppBrowser(navigator.userAgent) !== null) return undefined;
     const sections = [...document.querySelectorAll<HTMLElement>("main section[data-anchor][id]")];
     if (sections.length === 0) return undefined;
 
@@ -31,7 +33,7 @@ export function useSectionHash(routeKey: number): void {
       const next = urlWithAnchor(window.location, current);
       if (pathname + search + hash === next) return;
       try {
-        window.history.replaceState(window.history.state, "", next);
+        replaceAddress(next);
       } catch {
         /* sandboxed frames */
       }

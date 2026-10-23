@@ -315,3 +315,40 @@ describe("Lightbox swipe", () => {
     expect(title(dialog)).toHaveTextContent("Wide");
   });
 });
+
+describe("Lightbox steps", () => {
+  it("tells an image's owner when the viewer moves to it, not when it opens on it", async () => {
+    const shown = vi.fn<(title: string, direction: "prev" | "next") => void>();
+    const items: LightboxItem[] = ITEMS.map((item) => ({
+      ...item,
+      onShow: (direction) => {
+        shown(item.title, direction);
+      },
+    }));
+    function StepOpener() {
+      const open = useLightbox();
+      return (
+        <button type="button" onClick={(event) => open(items, 0, event.currentTarget)}>
+          Open
+        </button>
+      );
+    }
+    const user = userEvent.setup();
+    render(
+      <LightboxProvider>
+        <StepOpener />
+      </LightboxProvider>,
+    );
+    await user.click(screen.getByRole("button", { name: "Open" }));
+    expect(shown).not.toHaveBeenCalled();
+    const dialog = screen.getByRole("dialog");
+    await user.click(within(dialog).getByRole("button", { name: "Next image" }));
+    await user.click(within(dialog).getByRole("button", { name: "Next image" }));
+    await user.click(within(dialog).getByRole("button", { name: "Previous image" }));
+    expect(shown.mock.calls).toEqual([
+      ["Tall", "next"],
+      ["Square", "next"],
+      ["Tall", "prev"],
+    ]);
+  });
+});

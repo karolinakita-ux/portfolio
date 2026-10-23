@@ -162,3 +162,14 @@ describe("scroll depth and sections", () => {
     expect(engagement.endStretch()).toEqual({ time: "under 10 s", seconds: 1, scroll: "under 25%", section: "intro" });
   });
 });
+
+describe("watchPrints", () => {
+  it("reports each print or save as PDF until it stops", () => {
+    const report = vi.fn();
+    const stopPrints = engagement.watchPrints(report);
+    window.dispatchEvent(new Event("beforeprint"));
+    stopPrints();
+    window.dispatchEvent(new Event("beforeprint"));
+    expect(report).toHaveBeenCalledOnce();
+  });
+});

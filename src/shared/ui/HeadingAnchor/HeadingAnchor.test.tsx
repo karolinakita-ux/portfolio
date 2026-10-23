@@ -43,6 +43,21 @@ describe("HeadingAnchor", () => {
     expect(await screen.findByRole("status")).toHaveTextContent("Link copied");
   });
 
+  it("moves the hash past a tracker's wrapper on history.replaceState: a copied link is not a new page", () => {
+    window.history.replaceState(null, "", "/about");
+    stubClipboard(vi.fn((_text: string) => Promise.resolve()));
+    const wrapper = vi.fn(); // Umami's tracker wraps the method on the history object itself
+    window.history.replaceState = wrapper;
+    try {
+      renderAnchor();
+      fireEvent.click(screen.getByRole("link", { name: /Copy link to section/ }));
+      expect(window.location.hash).toBe("#career");
+      expect(wrapper).not.toHaveBeenCalled();
+    } finally {
+      Reflect.deleteProperty(window.history, "replaceState");
+    }
+  });
+
   it("still updates the address bar when the clipboard is blocked", () => {
     window.history.replaceState(null, "", "/about");
     stubClipboard(() => Promise.reject(new Error("denied")));

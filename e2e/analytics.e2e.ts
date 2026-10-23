@@ -20,9 +20,9 @@ const SITE = "https://" + UMAMI.host;
 const COLLECTOR = "https://gateway.umami.is/**";
 const CONSENT_BOX = "Can I count your visit?";
 
-/** One call to Umami's collector, as the tracker posts it. */
+/** One call to Umami's collector, as the tracker posts it: an event or pageview, session data, a speed report. */
 interface Sent {
-  type: string;
+  type: "event" | "identify" | "performance";
   payload: {
     website: string;
     hostname: string;
@@ -31,6 +31,9 @@ interface Sent {
     referrer?: string;
     name?: string;
     data?: Record<string, string>;
+    ttfb?: number;
+    lcp?: number;
+    duration?: number;
   };
 }
 
@@ -81,8 +84,10 @@ async function allowStatistics(page: Page): Promise<void> {
   expect((await script).ok(), "the Umami script loads from cloud.umami.is (needs the internet)").toBe(true);
 }
 
-const pageviews = (sent: readonly Sent[]) => sent.filter((call) => call.payload.name === undefined);
+const pageviews = (sent: readonly Sent[]) =>
+  sent.filter((call) => call.type === "event" && call.payload.name === undefined);
 const named = (sent: readonly Sent[]) => sent.flatMap((call) => (call.payload.name ? [call.payload] : []));
+const ofType = (sent: readonly Sent[], type: Sent["type"]) => sent.filter((call) => call.type === type);
 const storage = (page: Page) =>
   page.evaluate(() => ({ local: Object.keys(localStorage).sort(), session: Object.keys(sessionStorage) }));
 
@@ -113,13 +118,14 @@ test("counts pages and clicks after consent, without the hash, and stores only t
   context,
   baseURL,
 }) => {
-  const { sent } = await openAsLiveSite(page, baseURL, "/about?ref=e2e-test#faq");
+  const { sent } = await openAsLiveSite(page, baseURL, "/about?ref=e2e-test&fbclid=IwAR0e2e#faq");
   await allowStatistics(page);
   await expect(consentBox(page)).toHaveCount(0);
 
-  // The page the visitor is on and its tag, with the query but without the hash.
-  await expect.poll(() => sent.length).toBe(2);
-  const [landing, tag] = sent;
+  // The page the visitor is on and its tag, with the tag but without the click id and the hash.
+  await expect.poll(() => [pageviews(sent).length, named(sent).length]).toEqual([1, 1]);
+  const [landing] = pageviews(sent);
+  const [tag] = named(sent);
   expect(landing?.payload).toMatchObject({
     website: UMAMI.websiteId,
     hostname: UMAMI.host,
@@ -127,7 +133,7 @@ test("counts pages and clicks after consent, without the hash, and stores only t
     title: "About - Karolina Kita",
   });
   expect(landing?.payload.name).toBeUndefined();
-  expect(tag?.payload).toMatchObject({
+  expect(tag).toMatchObject({
     name: EVENT.linkRef,
     data: { ref: "e2e-test" },
     url: SITE + "/about?ref=e2e-test",
@@ -155,8 +161,8 @@ test("counts pages and clicks after consent, without the hash, and stores only t
   await expect.poll(() => pageviews(sent).length).toBe(3);
   expect(pageviews(sent)[2]?.payload).toMatchObject({ url: SITE + "/about?ref=e2e-test", referrer: "/?ref=e2e-test" });
 
-  // No hash in any address sent, no cookies, only the statistics choice stored.
-  for (const call of sent) expect(call.payload.url).not.toContain("#");
+  // No hash or click id in any address sent, no cookies, only the statistics choice stored.
+  for (const call of sent) expect(call.payload.url).not.toMatch(/#|fbclid/);
   expect(await context.cookies()).toEqual([]);
   expect(await storage(page)).toEqual({ local: [STATISTICS_CHOICE_KEY], session: [] });
 
@@ -172,17 +178,23 @@ test("stops at once when switched off on the privacy page, and does not load aft
 }) => {
   const { sent, requests } = await openAsLiveSite(page, baseURL, "/privacy");
   await allowStatistics(page);
-  await expect.poll(() => pageviews(sent).length).toBe(1);
+  await expect.poll(() => [pageviews(sent).length, ofType(sent, "identify").length]).toEqual([1, 1]);
 
   await page.getByRole("button", { name: "Switch statistics off" }).click();
   await expect(page.getByRole("status").filter({ hasText: "Statistics are off" })).toBeVisible();
   expect(await page.evaluate((key) => localStorage.getItem(key), STATISTICS_CHOICE_KEY)).toBe("off");
+  const before = sent.length;
 
-  // A new view and a click: nothing more is sent.
+  // A new view, a click and a hidden tab (when the tracker's own speed report goes): nothing more is sent.
   await page.locator('nav[aria-label="Primary"]').getByRole("link", { name: "About", exact: true }).click();
   await page.locator("#faq").getByRole("button").first().click();
+  await page.evaluate(() => {
+    Object.defineProperty(document, "visibilityState", { value: "hidden", configurable: true });
+    document.dispatchEvent(new Event("visibilitychange"));
+  });
   await page.waitForTimeout(800);
-  expect(sent).toHaveLength(1);
+  expect(sent).toHaveLength(before);
+  expect(ofType(sent, "performance")).toEqual([]);
 
   // After a reload the script is not even requested, and nobody asks again.
   requests.length = 0;
@@ -273,4 +285,52 @@ test("tells a tap on a touch screen from a mouse click", async ({ browser, baseU
   await page.locator("#faq").getByRole("button").first().tap();
   await expect.poll(() => eventsNamed(sent, EVENT.faqOpen).map((payload) => payload.data?.input)).toEqual(["touch"]);
   await context.close();
+});
+
+test("sends the session data once, and one speed report per page, none while reading", async ({ page, baseURL }) => {
+  const { sent } = await openAsLiveSite(page, baseURL, "/about");
+  await allowStatistics(page);
+  await expect.poll(() => ofType(sent, "identify").length).toBe(1);
+  // Desktop Chrome and Firefox have 1 pixel per CSS pixel, Desktop Safari 2.
+  const ratio = await page.evaluate(() => window.devicePixelRatio);
+  expect(ofType(sent, "identify")[0]?.payload.data).toMatchObject({
+    viewport: "1280px or wider",
+    pixelRatio: ratio >= 1.75 ? "2x" : "1x",
+    themeSource: "system",
+    inApp: "none",
+  });
+
+  // Reading moves the hash (useSectionHash): not a new page, so the tracker's speed report waits.
+  await page.mouse.wheel(0, 1500);
+  await page.mouse.wheel(0, 1500);
+  await expect.poll(() => new URL(page.url()).hash).not.toBe("");
+  await page.waitForTimeout(500);
+  expect(ofType(sent, "performance")).toEqual([]);
+
+  // A new view sends the report of the page left, with its load metrics: the browser loaded that page.
+  await page.locator('nav[aria-label="Primary"]').getByRole("link", { name: "Work", exact: true }).click();
+  await expect.poll(() => ofType(sent, "performance").length).toBe(1);
+  const [about] = ofType(sent, "performance");
+  expect(about?.payload).toMatchObject({ url: SITE + "/about", title: "About - Karolina Kita" });
+  expect(about?.payload.ttfb).toEqual(expect.any(Number));
+
+  // Hiding the tab sends the next one's, without load metrics: that page did not load.
+  await page.evaluate(() => {
+    Object.defineProperty(document, "visibilityState", { value: "hidden", configurable: true });
+    document.dispatchEvent(new Event("visibilitychange"));
+  });
+  await expect.poll(() => ofType(sent, "performance").length).toBe(2);
+  const work = ofType(sent, "performance")[1]?.payload;
+  expect(work).toMatchObject({ url: SITE + "/", title: "Karolina Kita - Senior Product Designer" });
+  expect(work?.ttfb).toBeUndefined();
+  expect(ofType(sent, "identify")).toHaveLength(1);
+});
+
+test("counts an address that matches no page, with the page shown instead", async ({ page, baseURL }) => {
+  const { sent } = await openAsLiveSite(page, baseURL, "/old-link?utm_source=e2e-test");
+  await allowStatistics(page);
+  await expect
+    .poll(() => eventsNamed(sent, EVENT.pageNotFound).map((payload) => payload.data))
+    .toEqual([{ path: "/old-link" }]);
+  expect(pageviews(sent).map((call) => call.payload.url)).toEqual([SITE + "/?utm_source=e2e-test"]);
 });
