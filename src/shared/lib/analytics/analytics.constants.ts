@@ -18,7 +18,6 @@ export const EVENT = {
   githubClick: "github-click",
   linkedinClick: "linkedin-click",
   emailClick: "email-click",
-  cvPrint: "cv-print",
   faqOpen: "faq-open",
   sectionLinkCopy: "section-link-copy",
   themeSwitch: "theme-switch",

@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { App } from "#app/App/App.tsx";
 import { FAQ } from "#features/about/about.content.ts";
@@ -195,50 +195,6 @@ describe("events on the About page", () => {
     await user.click(question);
     await user.click(question);
     expect(events()).toEqual([[EVENT.faqOpen, { question: first.id }]]);
-  });
-});
-
-describe("events on the CV page", () => {
-  const print = vi.fn();
-  beforeEach(() => {
-    window.print = print;
-  });
-  afterEach(() => {
-    Reflect.deleteProperty(window, "print");
-  });
-
-  it("counts the Download PDF button once, and the browser's own print", async () => {
-    // Like browsers: window.print() fires beforeprint and afterprint around the dialog.
-    print.mockImplementation(() => {
-      window.dispatchEvent(new Event("beforeprint"));
-      window.dispatchEvent(new Event("afterprint"));
-    });
-    const { user } = renderApp("/cv");
-    await user.click(screen.getByRole("button", { name: "Download PDF" }));
-    expect(print).toHaveBeenCalledOnce();
-
-    window.dispatchEvent(new Event("beforeprint")); // Ctrl+P
-    expect(events()).toEqual([
-      [EVENT.cvPrint, { method: "button" }],
-      [EVENT.cvPrint, { method: "browser" }],
-    ]);
-  });
-
-  it("counts the CV's LinkedIn and email links, and tags its portfolio link", () => {
-    renderApp("/cv");
-    const contacts = within(
-      screen.getByRole("article", { name: "Karolina Kita" }).querySelector("address") ?? document.body,
-    );
-    clickLink(contacts.getByRole("link", { name: "linkedin.com/in/karolinakita" }));
-    clickLink(contacts.getByRole("link", { name: "karolina.kita.zg@gmail.com" }));
-    expect(events()).toEqual([
-      [EVENT.linkedinClick, { target: "profile", place: "cv" }],
-      [EVENT.emailClick, { action: "mailto", place: "cv" }],
-    ]);
-    expect(contacts.getByRole("link", { name: "karolina.kita.company" })).toHaveAttribute(
-      "href",
-      "https://karolina.kita.company/?ref=cv",
-    );
   });
 });
 

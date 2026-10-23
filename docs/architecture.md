@@ -8,7 +8,7 @@ A single-page React app, prerendered to static HTML per page at build time. No b
 src/app        shell: App, routing/, seo/, analytics/, prerender entry
    │  imports features only through their index.ts
    ▼
-src/features   work · about · contact · cv · case-studies · image-viewer · privacy
+src/features   work · about · contact · case-studies · image-viewer · privacy
    │  never import each other
    ▼
 src/shared     ui · layout · media · hooks · lib · content
@@ -41,7 +41,7 @@ src/features/about/
 
 - Components: `PascalCase/PascalCase.tsx`, one component per file. Hooks: `useX.ts` next to what uses them, or in the slice's `hooks/`. Other modules: kebab-case with a role suffix: `*.types.ts`, `*.styles.ts`, `*.constants.ts`, `*.utils.ts`, `*.content.ts`, `*.context.ts`.
 - Classes: a `*.styles.ts` exports `styles`, one key per styled element; state-dependent classes are functions (`styles.pill(active)`). Values are composed with [`clsx`](https://github.com/lukeed/clsx); variant sets use [`cva`](https://cva.style) (`button({ variant })`) with the variant names from Figma. Prettier sorts classes inside both. ESLint rejects class strings written into `className` in a component. There is no `tailwind-merge`: it reads the token type styles as colours and drops them.
-- Shared class lists (`FOCUS_RING`, `TEXT_LINK`, `BUTTON_HEIGHT`, `BULLET_LIST`, `DOC_LINK`) live in `src/shared/lib/ui/ui.styles.ts`; `EXTERNAL_LINK` (target and rel of a new-tab link) in `ui.constants.ts`.
+- Shared class lists (`FOCUS_RING`, `TEXT_LINK`, `BUTTON_HEIGHT`, `BULLET_LIST`) live in `src/shared/lib/ui/ui.styles.ts`; `EXTERNAL_LINK` (target and rel of a new-tab link) in `ui.constants.ts`.
 - A row of text links that can wrap (the Behind the Design banner) is spaced like a row of buttons: each link gets `BUTTON_HEIGHT` (a bordered Button's height) and the row `gap-y-sm`, the gap between buttons.
 
 ## Component library (`src/shared/ui`)
@@ -66,7 +66,7 @@ Built from the Figma components (Karolina Kita Branding, page Components) and th
 | -                                         | `VisuallyHidden`, `NewTabNote`                 | screen reader text                                            |
 | -                                         | `TextLink`, `ViewLink`                         | inline link (`external` opens a new tab); link to a view      |
 | -                                         | `HeadingAnchor`, `CopyEmail`                   | copy a section's address; copy the email address              |
-| -                                         | `Lang`, `Strong`, `lead`, `Joined`, `Swatch`   | inline text helpers (Storybook: Inline text)                  |
+| -                                         | `Lang`, `Strong`, `lead`, `Swatch`             | inline text helpers (Storybook: Inline text)                  |
 | -                                         | `icons`                                        | the icon set (Storybook: Foundations/Icons)                   |
 
 Figma's Tabs and Tile have no use on the site yet, so there is no code for them (YAGNI).
@@ -86,7 +86,7 @@ Every shared component (`shared/ui`, `shared/layout`, `shared/media`) and the co
 ## Routing
 
 - `src/shared/lib/routes/` is the single source: `VIEW` (ids), `VIEW_PATHS` (URLs), `SECTION` (anchors other pages link to), titles and nav items. They are `as const` objects with derived union types, so a wrong id is a type error.
-- `src/app/routing/useHistoryRoute.ts` keeps the view in browser history: one entry per view change, scroll position restored on Back and Forward. Positions are kept in memory by entry id (`kbId`) and written into the history only when leaving a page (a navigation, `pagehide`), never while scrolling: in-app browsers (Messenger, Instagram, LinkedIn) flash their loading bar on every history write. A new view remounts and fades in; a jump within the same view (Explore Case Studies) only scrolls. On first load it normalises the URL: old hash links (`/#about`, used before 3.0.0) and aliases (`/resume`) become their path; unknown paths become `/`.
+- `src/app/routing/useHistoryRoute.ts` keeps the view in browser history: one entry per view change, scroll position restored on Back and Forward. Positions are kept in memory by entry id (`kbId`) and written into the history only when leaving a page (a navigation, `pagehide`), never while scrolling: in-app browsers (Messenger, Instagram, LinkedIn) flash their loading bar on every history write. A new view remounts and fades in; a jump within the same view (Explore Case Studies) only scrolls. On first load it normalises the URL: old hash links (`/#about`, used before 3.0.0) and aliases (`/resume`, and `/cv`: the CV page, removed in 4.0.0, now opens About) become their path; unknown paths become `/`.
 - A one-page build with a relative base (`vite build --base ./`, e.g. a claude.ai artifact) has no other paths to load, so `src/main.tsx` turns on hash routing: the path travels in the hash (`#/about`, `#/about#career`). The site itself always uses real paths.
 - The URL hash is a **section anchor** (`/about#career`). `Section` (`src/shared/ui/Section/Section.tsx`) gives every section heading a `HeadingAnchor` link that copies the section's address. `src/app/routing/useSectionHash.ts` keeps the hash on the section in view while scrolling, with `replaceState` (no history entries). Not in in-app browsers (`IN_APP_BROWSER`, by user agent), for the loading-bar reason above; `e2e/history.e2e.ts` checks both in three browsers.
 

@@ -54,8 +54,8 @@ describe("SiteHeader nav pill", () => {
     expect(screen.getByRole("link", { name: "About" })).not.toHaveAttribute("aria-current");
   });
 
-  it("shows no pill on a page outside the nav (the CV)", () => {
-    render(<Header view={VIEW.cv} />);
+  it("shows no pill on a page outside the nav (Privacy)", () => {
+    render(<Header view={VIEW.privacy} />);
     expect(visiblePills(screen.getByRole("navigation", { name: "Primary" }))).toEqual([]);
     for (const link of navLinks()) expect(link).not.toHaveAttribute("aria-current");
   });
@@ -71,7 +71,7 @@ describe("SiteHeader nav pill", () => {
     rerender(<Header view={VIEW.caseTheming} />); // a case study: Work
     expect(animations[1]?.target).toBe(pillOf(screen.getByRole("link", { name: "Work" })));
 
-    rerender(<Header view={VIEW.cv} />); // out of the nav: the Work pill fades out
+    rerender(<Header view={VIEW.privacy} />); // out of the nav: the Work pill fades out
     expect(animations[2]?.target).toBe(pillOf(screen.getByRole("link", { name: "Work" })));
     expect(animations[2]?.keyframes).toEqual([{ opacity: 1 }, { opacity: 0 }]);
   });

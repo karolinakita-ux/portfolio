@@ -9,8 +9,6 @@ import { AUTOMOTIVE_CASE } from "#features/case-studies/content/automotive.conte
 import { MEETESTIM_CASE } from "#features/case-studies/content/meetestim.content.tsx";
 import { THEMING_CASE } from "#features/case-studies/content/theming.content.tsx";
 import { CONTACT } from "#features/contact/contact.content.ts";
-import { CV } from "#features/cv/cv.content.ts";
-import { formatMonthYear } from "#features/cv/dates/dates.utils.ts";
 import { PRIVACY } from "#features/privacy/privacy.content.tsx";
 import { PROCESS_BANNER, TESTIMONIALS, WORK_CASES, WORK_INTRO } from "#features/work/work.content.ts";
 import { PROFILE } from "#shared/content/profile.ts";
@@ -25,7 +23,6 @@ const ASSET_PATH = /^(?:[a-z0-9-]+\/)*[a-z0-9-]+\.(png|jpe?g|webp)$/;
 /**
  * Content rules for the portfolio copy, so they hold for every future edit:
  *   - Short hyphens with spaces ("word - word", "2019 - 2026"), never en or em dashes.
- *   - The CV is plain text for ATS parsers: no curly quotes either.
  *   - H1 headings never end with a trailing period.
  *   - Every case-study bullet opens with a bold lead-in term and a colon.
  *   - Navigation targets and image file names are valid on Netlify (Linux: case-sensitive).
@@ -52,7 +49,6 @@ const ALL_CONTENT = {
   MILESTONES,
   PRINCIPLES,
   CONTACT,
-  CV,
   PRIVACY,
   PROFILE,
   PROCESS_BANNER,
@@ -65,11 +61,6 @@ const ALL_CONTENT = {
 describe("copy style", () => {
   it("uses short hyphens, never en or em dashes", () => {
     const offending = collectText(ALL_CONTENT).filter((text) => /[–—]/.test(text));
-    expect(offending).toEqual([]);
-  });
-
-  it("keeps the CV ATS-safe (no curly quotes)", () => {
-    const offending = collectText({ CV }).filter((text) => /[‘’“”]/.test(text));
     expect(offending).toEqual([]);
   });
 
@@ -170,22 +161,8 @@ describe("work page", () => {
   });
 });
 
-describe("CV", () => {
-  it("uses valid ISO dates", () => {
-    for (const role of [...CV.experience, ...CV.education]) {
-      expect(() => formatMonthYear(role.start)).not.toThrow();
-      if (role.end) expect(() => formatMonthYear(role.end ?? "")).not.toThrow();
-    }
-  });
-
-  it("writes lead-ins without their own colon (the layout adds it)", () => {
-    const leads = CV.experience.flatMap((role) => role.bullets).map((bullet) => bullet.lead);
-    for (const lead of leads) expect(lead).not.toMatch(/:\s*$/);
-  });
-
-  it("shares contact details with the profile", () => {
-    expect(CV.header.email).toBe(PROFILE.email);
-    expect(CV.header.linkedin.href).toBe(PROFILE.linkedinUrl);
+describe("LinkedIn links", () => {
+  it("point the recommendations link at the profile", () => {
     expect(PROFILE.linkedinRecommendationsUrl.startsWith(PROFILE.linkedinUrl + "/")).toBe(true);
   });
 

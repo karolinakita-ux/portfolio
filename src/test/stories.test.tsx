@@ -35,7 +35,6 @@ const AXE_OPTIONS: axe.RunOptions = {
 const COVERED_ELSEWHERE: Readonly<Record<string, string>> = {
   AccordionItem: "Accordion",
   InfoTableCell: "InfoTable",
-  Joined: "Strong",
   Lang: "Strong",
   NewTabNote: "Strong",
   Swatch: "Strong",

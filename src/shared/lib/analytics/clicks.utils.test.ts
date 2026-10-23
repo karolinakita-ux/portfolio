@@ -87,7 +87,7 @@ describe("describeClick", () => {
     const card = { area: "philosophy", label: "Keep it simple" };
     expect(describeClick($("principle"))).toEqual({ element: "card", ...card });
     expect(describeClick($("principle-body"))).toEqual({ element: "text", ...card });
-    // Any other article (a role on the CV) is not a card.
+    // Any other article is not a card.
     expect(describeClick($("role-body"))).toEqual({ element: "text", area: "philosophy" });
   });
 

@@ -27,7 +27,7 @@ import { useHeaderHeight } from "./useHeaderHeight.ts";
 export function SiteHeader({ activeView, onNavigate, onHome, theme, onThemeChange }: SiteHeaderProps) {
   const headerRef = useRef<HTMLElement>(null);
   const scrolled = useScrolledPast(4);
-  // The nav section of the view (Work on a case study); null on a page outside the nav (the CV).
+  // The nav section of the view (Work on a case study); null on a page outside the nav (Privacy).
   const activeNav = NAV_ITEMS.find((item) => item.view === navSectionFor(activeView))?.view ?? null;
   const navRef = useSlidingPill<HTMLUListElement>(activeNav);
   useHeaderHeight(headerRef);
