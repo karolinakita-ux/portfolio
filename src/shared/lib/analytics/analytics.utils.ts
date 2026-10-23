@@ -1,13 +1,18 @@
-import { EVENT, MAX_QUEUED, MAX_REF_LENGTH, UMAMI } from "./analytics.constants.ts";
+import { EVENT, MAX_QUEUED, MAX_REF_LENGTH, PASSIVE_EVENTS, UMAMI } from "./analytics.constants.ts";
 import type {
   AnalyticsEvent,
   AnalyticsSite,
   AnalyticsState,
   BuildPayload,
   EventData,
+  PageSnapshot,
   PrivacySignals,
+  SentData,
   UmamiPayload,
 } from "./analytics.types.ts";
+import { watchDeadClicks } from "./clicks.utils.ts";
+import { endStretch, startPage, watchEngagement } from "./engagement.utils.ts";
+import { recentInput, watchInput } from "./input.utils.ts";
 
 /**
  * Visitor statistics with Umami Cloud (umami.is): no cookies, nothing written to the visitor's device.
@@ -22,6 +27,10 @@ import type {
  * - With page tracking off, the tracker keeps the landing page as the current page forever, so every call
  *   passes the page itself: address without the hash, title and referrer.
  * - Calls made before the script has loaded wait in a queue; if the script is blocked, they are dropped.
+ * - Besides pageviews and track() calls, it measures time on page (engagement.utils.ts) and dead clicks
+ *   (clicks.utils.ts), and tags events a click or key started with the input (input.utils.ts). Those
+ *   listeners run only while statistics are on.
+ * - Each call carries the site's version as Umami's tag (data-tag), so the dashboard can compare releases.
  * - Never send names or email addresses, and never call umami.identify().
  */
 
@@ -32,12 +41,14 @@ export const optedOut = ({ doNotTrack, globalPrivacyControl }: PrivacySignals): 
 export const analyticsAllowed = ({ production, base, hostname, privacy }: AnalyticsSite): boolean =>
   production && base === "/" && hostname === UMAMI.host && !optedOut(privacy);
 
-const state: AnalyticsState = { on: false, queue: [], lastPage: null, referrer: null };
+const state: AnalyticsState = { on: false, queue: [], page: null, referrer: null, unwatch: null };
 
 /** Sends nothing more on this page (the script is blocked, or the visitor switched statistics off). */
 export const stopAnalytics = (): void => {
   state.on = false;
   state.queue.length = 0;
+  state.unwatch?.();
+  state.unwatch = null;
 };
 
 const flush = () => {
@@ -70,9 +81,20 @@ const asReferrer = (url: string): string => {
 };
 
 /** The current page, read when the call is made (not when a queued call goes out). */
-const withPage = (extra: Partial<UmamiPayload> = {}): BuildPayload => {
-  const page = { url: pageUrl(), title: document.title, ...(state.referrer !== null && { referrer: state.referrer }) };
-  return (payload) => ({ ...payload, ...page, ...extra });
+const currentPage = (): PageSnapshot => ({
+  url: pageUrl(),
+  title: document.title,
+  ...(state.referrer !== null && { referrer: state.referrer }),
+});
+
+const withPage =
+  (extra: Partial<UmamiPayload> = {}, page = currentPage()): BuildPayload =>
+  (payload) => ({ ...payload, ...page, ...extra });
+
+/** An event's properties, plus the input behind it when a click or key started it. */
+const sentData = <E extends AnalyticsEvent>(name: E, data: EventData[E]): SentData<E> => {
+  const input = PASSIVE_EVENTS.includes(name) ? undefined : recentInput();
+  return input ? { ...data, input } : data;
 };
 
 /** The tag of a tagged link (?ref=acme, else utm_source), or null. */
@@ -80,6 +102,24 @@ const linkRef = (search: string): string | null => {
   const params = new URLSearchParams(search);
   const ref = (params.get("ref") ?? params.get("utm_source"))?.trim();
   return ref ? ref.slice(0, MAX_REF_LENGTH) : null;
+};
+
+/** The stretch on the page being left, sent as that page (the address bar may show the next one already). */
+const reportStretch = (stretch = endStretch()) => {
+  if (stretch && state.page) send(withPage({ name: EVENT.timeOnPage, data: stretch }, state.page));
+};
+
+const watch = (): (() => void) => {
+  const stops = [
+    watchInput(),
+    watchEngagement(reportStretch),
+    watchDeadClicks((click, rage) => {
+      track(rage ? EVENT.rageClick : EVENT.deadClick, click);
+    }),
+  ];
+  return () => {
+    for (const stop of stops) stop();
+  };
 };
 
 /**
@@ -97,22 +137,27 @@ export function startAnalytics(site: AnalyticsSite): boolean {
   script.dataset.autoTrack = "false";
   script.dataset.excludeHash = "true";
   script.dataset.doNotTrack = "true";
+  if (site.release) script.dataset.tag = site.release;
   script.addEventListener("load", flush);
   script.addEventListener("error", stopAnalytics);
   document.head.append(script);
+  state.unwatch = watch();
   return true;
 }
 
 /**
  * Counts the current page. App calls it on load and on every view change (Back / Forward included),
- * after the title has been updated. The first pageview also counts a tagged link (link-ref) once.
+ * after the title has been updated. It first sends the time spent on the page before. The first
+ * pageview also counts a tagged link (link-ref) once.
  */
 export function trackPageview(): void {
   if (!state.on) return;
-  const first = state.lastPage === null;
-  if (state.lastPage !== null) state.referrer = asReferrer(state.lastPage);
-  state.lastPage = pageUrl();
-  send(withPage());
+  reportStretch();
+  const first = state.page === null;
+  if (state.page !== null) state.referrer = asReferrer(state.page.url);
+  state.page = currentPage();
+  send(withPage({}, state.page));
+  startPage();
   const ref = first ? linkRef(window.location.search) : null;
   if (ref) track(EVENT.linkRef, { ref });
 }
@@ -120,5 +165,5 @@ export function trackPageview(): void {
 /** Counts an event on the current page; does nothing off the live site. */
 export function track<E extends AnalyticsEvent>(name: E, data: EventData[E]): void {
   if (!state.on) return;
-  send(withPage({ name, data }));
+  send(withPage({ name, data: sentData(name, data) }));
 }

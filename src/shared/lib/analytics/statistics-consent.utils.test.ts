@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { STATISTICS_CHOICE_KEY, UMAMI } from "./analytics.constants.ts";
+import { STATISTICS_CHOICE_KEY, STORED_CHOICE, UMAMI } from "./analytics.constants.ts";
 import type { AnalyticsSite } from "./analytics.types.ts";
 import type * as Analytics from "./analytics.utils.ts";
 import type * as Consent from "./statistics-consent.utils.ts";
@@ -18,6 +18,7 @@ beforeEach(async () => {
 });
 
 afterEach(() => {
+  analytics.stopAnalytics(); // its listeners stay on the document otherwise
   for (const script of document.querySelectorAll("script")) script.remove();
   Reflect.deleteProperty(window, "umami");
   Reflect.deleteProperty(navigator, "doNotTrack");
@@ -46,6 +47,18 @@ describe("statisticsState", () => {
     window.localStorage.setItem(STATISTICS_CHOICE_KEY, "maybe");
     expect(consent.statisticsState()).toBe("unset");
   });
+
+  it("asks again after a yes to the older statistics (a plain on), but keeps a no", () => {
+    window.localStorage.setItem(STATISTICS_CHOICE_KEY, "on");
+    expect(consent.statisticsState()).toBe("unset");
+    consent.initStatistics(LIVE);
+    expect(umamiScript()).toBeNull();
+    expect(consent.consentNeeded()).toBe(true);
+
+    window.localStorage.setItem(STATISTICS_CHOICE_KEY, "off");
+    expect(consent.statisticsState()).toBe("off");
+    expect(consent.consentNeeded()).toBe(false);
+  });
 });
 
 describe("consentNeeded", () => {
@@ -70,7 +83,7 @@ describe("initStatistics", () => {
   });
 
   it("loads the script at once for a visitor who allowed statistics earlier", () => {
-    window.localStorage.setItem(STATISTICS_CHOICE_KEY, "on");
+    window.localStorage.setItem(STATISTICS_CHOICE_KEY, STORED_CHOICE.on);
     consent.initStatistics(LIVE);
     expect(umamiScript()).not.toBeNull();
   });
@@ -82,7 +95,7 @@ describe("setStatisticsChoice", () => {
     const track = vi.fn();
     window.umami = { track };
     consent.setStatisticsChoice("on");
-    expect(window.localStorage.getItem(STATISTICS_CHOICE_KEY)).toBe("on");
+    expect(window.localStorage.getItem(STATISTICS_CHOICE_KEY)).toBe(STORED_CHOICE.on);
     expect(umamiScript()).not.toBeNull();
     expect(track).toHaveBeenCalledOnce();
   });

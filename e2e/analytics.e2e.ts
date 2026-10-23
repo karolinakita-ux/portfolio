@@ -214,3 +214,63 @@ test("neither asks nor loads for a visitor with Global Privacy Control", async (
   await expect(consentBox(page)).toHaveCount(0);
   await expect(page.locator(`script[src="${UMAMI.script}"]`)).toHaveCount(0);
 });
+
+/** The data of the named events sent so far, by name. */
+const eventsNamed = (sent: readonly Sent[], name: string) =>
+  named(sent).flatMap((payload) => (payload.name === name ? [payload] : []));
+
+test("measures time on page and clicks on things that do nothing, as a mouse", async ({ page, baseURL }) => {
+  const { sent } = await openAsLiveSite(page, baseURL, "/about");
+  await allowStatistics(page);
+  await expect.poll(() => pageviews(sent).length).toBe(1);
+
+  // The portrait does nothing when clicked: one dead click, with what, where and the input.
+  const portrait = page.locator("#philosophy img");
+  await portrait.scrollIntoViewIfNeeded();
+  await portrait.click();
+  const alt = await portrait.getAttribute("alt");
+  await expect
+    .poll(() => eventsNamed(sent, EVENT.deadClick).map((payload) => payload.data))
+    .toEqual([{ element: "image", area: "philosophy", label: alt, input: "mouse" }]);
+
+  // Three quick clicks on it: a new burst, so one more dead click and one rage click.
+  await page.waitForTimeout(1000);
+  await portrait.click({ clickCount: 3 });
+  await expect.poll(() => eventsNamed(sent, EVENT.rageClick).length).toBe(1);
+  expect(eventsNamed(sent, EVENT.deadClick)).toHaveLength(2);
+
+  // Links and buttons are not dead clicks; a new view sends the time spent on the one before.
+  await page.locator('nav[aria-label="Primary"]').getByRole("link", { name: "Work", exact: true }).click();
+  await expect.poll(() => eventsNamed(sent, EVENT.timeOnPage).length).toBe(1);
+  const [about] = eventsNamed(sent, EVENT.timeOnPage);
+  expect(about).toMatchObject({ url: SITE + "/about", title: "About - Karolina Kita" });
+  expect(about?.data).toMatchObject({ time: "under 10 s", section: "philosophy" });
+  expect(Number(about?.data?.seconds)).toBeGreaterThanOrEqual(1);
+  expect(eventsNamed(sent, EVENT.deadClick)).toHaveLength(2);
+
+  // Hiding the tab (another tab, another app) ends the stretch on this page too.
+  await page.mouse.move(10, 300);
+  await page.waitForTimeout(1200);
+  await page.evaluate(() => {
+    Object.defineProperty(document, "visibilityState", { value: "hidden", configurable: true });
+    document.dispatchEvent(new Event("visibilitychange"));
+  });
+  await expect.poll(() => eventsNamed(sent, EVENT.timeOnPage).length).toBe(2);
+  expect(eventsNamed(sent, EVENT.timeOnPage)[1]).toMatchObject({ url: SITE + "/" });
+});
+
+test("tells a tap on a touch screen from a mouse click", async ({ browser, baseURL }) => {
+  const context = await browser.newContext({ hasTouch: true, viewport: { width: 390, height: 844 } });
+  const page = await context.newPage();
+  const { sent } = await openAsLiveSite(page, baseURL, "/about");
+  await allowStatistics(page);
+
+  const portrait = page.locator("#philosophy img");
+  await portrait.scrollIntoViewIfNeeded();
+  await portrait.tap();
+  await expect.poll(() => eventsNamed(sent, EVENT.deadClick).map((payload) => payload.data?.input)).toEqual(["touch"]);
+
+  await page.locator("#faq").getByRole("button").first().tap();
+  await expect.poll(() => eventsNamed(sent, EVENT.faqOpen).map((payload) => payload.data?.input)).toEqual(["touch"]);
+  await context.close();
+});

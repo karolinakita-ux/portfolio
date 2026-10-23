@@ -28,7 +28,7 @@ export const PRIVACY: PrivacyContent = {
   eyebrow: "Privacy policy",
   title: "Privacy",
   intro: "How this website handles your data, in plain words.",
-  updated: { iso: "2026-10-19", label: "19 October 2026" },
+  updated: { iso: "2026-10-23", label: "23 October 2026" },
   sections: [
     {
       id: "in-short",
@@ -69,7 +69,15 @@ export const PRIVACY: PrivacyContent = {
       points: [
         lead(
           "What I count",
-          "The pages you open and the site that sent you here. I also count clicks on case studies, screenshots, FAQ questions, section links, the light / dark switch, and links to LinkedIn, Figma, GitHub and email.",
+          "The pages you open, the site that sent you here, how long you spend on each page and how far down you scroll. I also count clicks on case studies, screenshots, FAQ questions, section links, the light / dark switch, and links to LinkedIn, Figma, GitHub and email.",
+        ),
+        lead(
+          "Clicks that do nothing",
+          "If you click or tap something that does not react, such as an image or a heading, I count what it was and which part of the page it is in. This shows me what people expect to be a link.",
+        ),
+        lead(
+          "Mouse, touch or keyboard",
+          "With each click I note whether it came from a mouse, a touch screen, a pen or the keyboard. I never record what you type or the exact spot you click.",
         ),
         lead(
           "What is recorded with it",
@@ -77,7 +85,7 @@ export const PRIVACY: PrivacyContent = {
         ),
         lead(
           "Why I ask first",
-          "The statistics script reads your screen size and language and sends them. European law and the Polish Electronic Communications Law (Art. 399) need your consent for that, even without cookies.",
+          "The statistics read your screen size, language, scrolling and clicks on this website and send them. European law and the Polish Electronic Communications Law (Art. 399) need your consent for that, even without cookies.",
         ),
         lead("No cookies", "The statistics set no cookies. Only your choice is kept in your browser."),
         lead("How long", "Umami keeps the statistics for 6 months, then deletes them."),
@@ -200,9 +208,10 @@ export const PRIVACY: PrivacyContent = {
     // Valid consent names who asks, what for, which data and that it can be withdrawn (EDPB Guidelines 05/2020, para. 64).
     text: (
       <>
-        I, Karolina Kita, use {umami}, a visitor statistics tool, to see which pages and links are useful. It sets no
-        cookies and does not follow you to other websites. It reads your screen size and language, so I ask first. You
-        can change your choice at any time on the privacy page.
+        I, Karolina Kita, use {umami}, a visitor statistics tool, to see which pages and links are useful. It counts the
+        pages you open, how long you stay and what you click or tap. It sets no cookies and does not follow you to other
+        websites. It reads your screen size and language, so I ask first. You can change your choice at any time on the
+        privacy page.
       </>
     ),
     allow: "Allow statistics",

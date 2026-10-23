@@ -6,6 +6,19 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 3.14.0 - 2026-10-23
+
+#### Added
+
+- Visitor statistics measure time on page: `time-on-page` is sent when a visitor leaves a page, switches tabs or closes it, with the engaged time (as a dashboard group and in seconds), how far down they scrolled (in quarters) and the furthest section they reached. Time counts only while the tab is visible and the visitor was active in the last 30 s; scroll depth is read once a new view has stopped moving, so the glide to the top does not count as reading.
+- Clicks and taps on things that do nothing (an image, a heading, text, a card's empty space) are counted as `dead-click`, with what was clicked, the section and a label from the site's copy (alt text, heading or card title); a burst of three or more quick clicks on one spot also sends `rage-click`. Links, buttons, drags, text selection and clicks without a pointer do not count. The design system's `Card` carries `data-card` so cards are found whatever their tag.
+- Every event a click or key starts carries `input`: mouse, touch, pen or keyboard, so the dashboard tells a tap from a click.
+- Every Umami call carries the site's version as its tag (`data-tag`), so the dashboard can compare releases.
+
+#### Changed
+
+- The privacy policy (now dated 23 October 2026) and the consent box say what is counted now. Visitors who allowed statistics before this version are asked again, because their consent covers only what they were told; a no stays a no (`STORED_CHOICE`). Unit tests, nine mutation checks (each failed the expected test) and `e2e/analytics.e2e.ts` in three browsers with the real Umami script check it, including a touch screen.
+
 ### 3.13.10 - 2026-10-22
 
 #### Changed

@@ -10,6 +10,8 @@ import { WORK_CASES } from "#features/work/work.content.ts";
 import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import type * as Analytics from "#shared/lib/analytics/analytics.utils.ts";
 import { track, trackPageview } from "#shared/lib/analytics/analytics.utils.ts";
+import { describeClick } from "#shared/lib/analytics/clicks.utils.ts";
+import { SECTION } from "#shared/lib/routes/routes.constants.ts";
 
 /**
  * Which visits and clicks the app counts (src/shared/lib/analytics/analytics.utils.ts): the helpers are mocked,
@@ -237,5 +239,28 @@ describe("events on the CV page", () => {
       "href",
       "https://karolina.kita.company/?ref=cv",
     );
+  });
+});
+
+describe("dead clicks", () => {
+  it("are described from the page's own markup: the hero, section ids and card titles", () => {
+    renderApp("/");
+    const [first] = WORK_CASES;
+    if (!first) throw new Error("no case cards");
+    const card = within(screen.getByRole("article", { name: first.title }));
+    expect(describeClick(screen.getByRole("heading", { level: 1 }))).toMatchObject({
+      element: "heading",
+      area: "hero",
+    });
+    expect(describeClick(card.getByText(first.summary))).toEqual({
+      element: "text",
+      area: SECTION.workCases,
+      label: first.title,
+    });
+    expect(describeClick(card.getByRole("heading", { name: first.title }))).toEqual({
+      element: "heading",
+      area: SECTION.workCases,
+      label: first.title,
+    });
   });
 });
