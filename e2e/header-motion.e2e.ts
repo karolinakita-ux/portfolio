@@ -3,7 +3,7 @@
  * - Nav: each Primary nav link holds an aria-hidden <span data-pill>; only the active link's pill
  *   shows. When the active item changes, that pill runs one animation from the old pill's box to
  *   its own (--motion-duration-medium, --motion-easing-standard); a second change mid-way turns it
- *   from where it is. With no item on one side (/cv) it fades instead. Nothing moves on the first
+ *   from where it is. With no item on one side (/privacy) it fades instead. Nothing moves on the first
  *   load or under reduced motion.
  * - Theme switch: its pill travels the same way. Where document.startViewTransition exists the
  *   page cross-fades through it (the toggle keeps its own live layer); elsewhere the theme switches
@@ -49,7 +49,7 @@ test.describe("nav pill at rest", () => {
     { path: VIEW_PATHS[VIEW.about], active: ABOUT, current: "page" },
     { path: VIEW_PATHS[VIEW.contact], active: CONTACT, current: "page" },
     { path: VIEW_PATHS[VIEW.caseProjectPlanning], active: WORK, current: "true" },
-    { path: VIEW_PATHS[VIEW.cv], active: null, current: null },
+    { path: VIEW_PATHS[VIEW.privacy], active: null, current: null },
   ] as const;
 
   for (const { path, active, current } of pages) {
@@ -246,17 +246,17 @@ test.describe("nav pill follows every way to change page", () => {
   });
 });
 
-test.describe("nav pill with no item on one side (/cv is not in the nav)", () => {
-  test(`from /cv to ${ABOUT}: the pill fades in`, async ({ page }) => {
-    await openView(page, VIEW_PATHS[VIEW.cv]);
+test.describe("nav pill with no item on one side (/privacy is not in the nav)", () => {
+  test(`from /privacy to ${ABOUT}: the pill fades in`, async ({ page }) => {
+    await openView(page, VIEW_PATHS[VIEW.privacy]);
     await startSampling(page, SELECTOR.navPills);
     await navLink(page, ABOUT).click();
     const frames = await finishSampling(page, SELECTOR.navPills, { active: ABOUT });
     expectFade(frames, { key: ABOUT, direction: "in" });
   });
 
-  test(`Back from ${ABOUT} to /cv: the pill fades out`, async ({ page }) => {
-    await openView(page, VIEW_PATHS[VIEW.cv]);
+  test(`Back from ${ABOUT} to /privacy: the pill fades out`, async ({ page }) => {
+    await openView(page, VIEW_PATHS[VIEW.privacy]);
     await navLink(page, ABOUT).click();
     await expect(navLink(page, ABOUT)).toHaveAttribute("aria-current", "page");
     await waitIdle(page, SELECTOR.navPills);

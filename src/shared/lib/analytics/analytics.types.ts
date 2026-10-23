@@ -42,11 +42,9 @@ export interface EventData {
   [EVENT.githubClick]: { place: "hero" | "banner" };
   [EVENT.linkedinClick]: {
     target: "profile" | "recommendations" | "author" | "company";
-    place: "footer" | "contact" | "testimonials" | "cv";
+    place: "footer" | "contact" | "testimonials";
   };
-  [EVENT.emailClick]: { action: "copy" | "mailto"; place: "footer" | "contact" | "cv" };
-  /** method: the Download PDF button, or the browser's own print (Ctrl+P). */
-  [EVENT.cvPrint]: { method: "button" | "browser" };
+  [EVENT.emailClick]: { action: "copy" | "mailto"; place: "footer" | "contact" };
   /** question: the FAQ item's id. Sent when it opens, not when it closes. */
   [EVENT.faqOpen]: { question: string };
   /** section: the section id (the URL hash the copied link ends in). */

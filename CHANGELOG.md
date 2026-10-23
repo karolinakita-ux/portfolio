@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 4.0.0 - 2026-10-23
+
+#### Removed
+
+- The CV page (`/cv`) is gone: its view, route, page title, description, sitemap line, structured data and llms.txt line, and the `cv-print` statistics event. Old links (`/cv`, `/resume`, `/#resume`) open About instead: Netlify answers with a 301 (`public/_redirects`) and the app resolves them as aliases. Code that only the CV used went with it: the `Joined` component (and its story), `DOC_LINK`, `telHref`, the CV-only print classes and the `.kb-theme-light` scope in `tokens.css`. Major version because a page was removed.
+
 ### 3.14.0 - 2026-10-23
 
 #### Added

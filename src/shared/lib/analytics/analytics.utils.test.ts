@@ -295,15 +295,15 @@ describe("clicks", () => {
     analytics.track(EVENT.themeSwitch, { theme: "dark" });
     fireEvent.keyDown(document.body, { key: "Enter" });
     analytics.track(EVENT.faqOpen, { question: "tools" });
-    vi.advanceTimersByTime(2000); // the browser's own print, from its menu
-    analytics.track(EVENT.cvPrint, { method: "browser" });
+    vi.advanceTimersByTime(2000); // no input in the last second: none is named
+    analytics.track(EVENT.sectionLinkCopy, { section: "faq" });
 
     expect(sent.map((payload) => [payload.name, payload.data])).toEqual([
       [undefined, undefined],
       ["link-ref", { ref: "acme" }],
       ["theme-switch", { theme: "dark", input: "touch" }],
       ["faq-open", { question: "tools", input: "keyboard" }],
-      ["cv-print", { method: "browser" }],
+      ["section-link-copy", { section: "faq" }],
     ]);
   });
 

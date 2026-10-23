@@ -1,13 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { isPlainLeftClick, telHref } from "./ui.utils.ts";
-
-describe("telHref", () => {
-  it("keeps only digits and the leading +", () => {
-    expect(telHref("+48 123 456 789")).toBe("tel:+48123456789");
-    expect(telHref("(022) 123-45-67")).toBe("tel:0221234567");
-  });
-});
+import { isPlainLeftClick } from "./ui.utils.ts";
 
 describe("isPlainLeftClick", () => {
   const click = { defaultPrevented: false, button: 0, metaKey: false, ctrlKey: false, shiftKey: false, altKey: false };
