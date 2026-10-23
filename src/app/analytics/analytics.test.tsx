@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { App } from "#app/App/App.tsx";
 import { FAQ } from "#features/about/about.content.ts";
@@ -10,6 +10,8 @@ import { WORK_CASES } from "#features/work/work.content.ts";
 import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import type * as Analytics from "#shared/lib/analytics/analytics.utils.ts";
 import { track, trackPageview } from "#shared/lib/analytics/analytics.utils.ts";
+import { describeClick } from "#shared/lib/analytics/clicks.utils.ts";
+import { SECTION } from "#shared/lib/routes/routes.constants.ts";
 
 /**
  * Which visits and clicks the app counts (src/shared/lib/analytics/analytics.utils.ts): the helpers are mocked,
@@ -196,46 +198,25 @@ describe("events on the About page", () => {
   });
 });
 
-describe("events on the CV page", () => {
-  const print = vi.fn();
-  beforeEach(() => {
-    window.print = print;
-  });
-  afterEach(() => {
-    Reflect.deleteProperty(window, "print");
-  });
-
-  it("counts the Download PDF button once, and the browser's own print", async () => {
-    // Like browsers: window.print() fires beforeprint and afterprint around the dialog.
-    print.mockImplementation(() => {
-      window.dispatchEvent(new Event("beforeprint"));
-      window.dispatchEvent(new Event("afterprint"));
+describe("dead clicks", () => {
+  it("are described from the page's own markup: the hero, section ids and card titles", () => {
+    renderApp("/");
+    const [first] = WORK_CASES;
+    if (!first) throw new Error("no case cards");
+    const card = within(screen.getByRole("article", { name: first.title }));
+    expect(describeClick(screen.getByRole("heading", { level: 1 }))).toMatchObject({
+      element: "heading",
+      area: "hero",
     });
-    const { user } = renderApp("/cv");
-    await user.click(screen.getByRole("button", { name: "Download PDF" }));
-    expect(print).toHaveBeenCalledOnce();
-
-    window.dispatchEvent(new Event("beforeprint")); // Ctrl+P
-    expect(events()).toEqual([
-      [EVENT.cvPrint, { method: "button" }],
-      [EVENT.cvPrint, { method: "browser" }],
-    ]);
-  });
-
-  it("counts the CV's LinkedIn and email links, and tags its portfolio link", () => {
-    renderApp("/cv");
-    const contacts = within(
-      screen.getByRole("article", { name: "Karolina Kita" }).querySelector("address") ?? document.body,
-    );
-    clickLink(contacts.getByRole("link", { name: "linkedin.com/in/karolinakita" }));
-    clickLink(contacts.getByRole("link", { name: "karolina.kita.zg@gmail.com" }));
-    expect(events()).toEqual([
-      [EVENT.linkedinClick, { target: "profile", place: "cv" }],
-      [EVENT.emailClick, { action: "mailto", place: "cv" }],
-    ]);
-    expect(contacts.getByRole("link", { name: "karolina.kita.company" })).toHaveAttribute(
-      "href",
-      "https://karolina.kita.company/?ref=cv",
-    );
+    expect(describeClick(card.getByText(first.summary))).toEqual({
+      element: "text",
+      area: SECTION.workCases,
+      label: first.title,
+    });
+    expect(describeClick(card.getByRole("heading", { name: first.title }))).toEqual({
+      element: "heading",
+      area: SECTION.workCases,
+      label: first.title,
+    });
   });
 });

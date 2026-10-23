@@ -8,4 +8,4 @@ export const PERSON_ID = SITE_URL + "/#person";
 export const WEBSITE_ID = SITE_URL + "/#website";
 
 /** Pages about Karolina herself: Google reads them as profile pages. */
-export const PROFILE_PAGES: ReadonlySet<View> = new Set([VIEW.work, VIEW.about, VIEW.cv]);
+export const PROFILE_PAGES: ReadonlySet<View> = new Set([VIEW.work, VIEW.about]);

@@ -4,6 +4,39 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Release v4.0.0 - 2026-10-23
+
+- The CV page is gone: old CV links now open the About page.
+- With your consent, visitor statistics now also count how long you stay on a page, how far you scroll and clicks or taps on things that do nothing, so the site can be clearer where visitors get stuck.
+- The privacy policy and the consent box explain what is counted, and visitors who allowed statistics before are asked again.
+
+Versions: 3.13.10 - 4.0.0.
+
+### 4.0.0 - 2026-10-23
+
+#### Removed
+
+- The CV page (`/cv`) is gone: its view, route, page title, description, sitemap line, structured data and llms.txt line, and the `cv-print` statistics event. Old links (`/cv`, `/resume`, `/#resume`) open About instead: Netlify answers with a 301 (`public/_redirects`) and the app resolves them as aliases. Code that only the CV used went with it: the `Joined` component (and its story), `DOC_LINK`, `telHref`, the CV-only print classes and the `.kb-theme-light` scope in `tokens.css`. Major version because a page was removed.
+
+### 3.14.0 - 2026-10-23
+
+#### Added
+
+- Visitor statistics measure time on page: `time-on-page` is sent when a visitor leaves a page, switches tabs or closes it, with the engaged time (as a dashboard group and in seconds), how far down they scrolled (in quarters) and the furthest section they reached. Time counts only while the tab is visible and the visitor was active in the last 30 s; scroll depth is read once a new view has stopped moving, so the glide to the top does not count as reading.
+- Clicks and taps on things that do nothing (an image, a heading, text, a card's empty space) are counted as `dead-click`, with what was clicked, the section and a label from the site's copy (alt text, heading or card title); a burst of three or more quick clicks on one spot also sends `rage-click`. Links, buttons, drags, text selection and clicks without a pointer do not count. The design system's `Card` carries `data-card` so cards are found whatever their tag.
+- Every event a click or key starts carries `input`: mouse, touch, pen or keyboard, so the dashboard tells a tap from a click.
+- Every Umami call carries the site's version as its tag (`data-tag`), so the dashboard can compare releases.
+
+#### Changed
+
+- The privacy policy (now dated 23 October 2026) and the consent box say what is counted now. Visitors who allowed statistics before this version are asked again, because their consent covers only what they were told; a no stays a no (`STORED_CHOICE`). Unit tests, nine mutation checks (each failed the expected test) and `e2e/analytics.e2e.ts` in three browsers with the real Umami script check it, including a touch screen.
+
+### 3.13.10 - 2026-10-22
+
+#### Changed
+
+- The dark value of the `bg-surface-subtle` token is gray-700 (#4a4a4a) instead of gray-600 (#6c757d), following the change in the KitaBranding design system. On gray-600, light text was below 4.5:1 (`text-primary` 4.4:1, `text-secondary` 3.6:1); on gray-700 every text token passes (`text-primary` 8.4:1, `text-secondary` 6.8:1). No component uses the token yet, so no page looks different. `kita-branding.tokens.json` is edited by hand until the Figma variable has the new value (a task on Karolina's Figma list); `tokens.test.ts` keeps it equal to `tokens.css`.
+
 ## Release v3.13.9 - 2026-10-20
 
 - Scrolling the site inside Messenger, Instagram or LinkedIn no longer shows the app's loading bar.

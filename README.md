@@ -1,6 +1,6 @@
 # Karolina Kita - portfolio
 
-Source of **[karolina.kita.company](https://karolina.kita.company)**, the portfolio of Karolina Kita, Senior Product Designer. Three case studies (an automotive B2B marketplace, the MeetEstim planning platform and a white-label theme generator), an About page, a printable CV, contact details and a privacy page.
+Source of **[karolina.kita.company](https://karolina.kita.company)**, the portfolio of Karolina Kita, Senior Product Designer. Three case studies (an automotive B2B marketplace, the MeetEstim planning platform and a white-label theme generator), an About page, contact details and a privacy page.
 
 Designed by Karolina in Figma and built with [Claude Code](docs/claude-code.md): React 19, TypeScript (strict), Tailwind CSS v4 with her KitaBranding design tokens, Vite, Vitest and Playwright. Deployed on Netlify.
 
@@ -13,7 +13,7 @@ Designed by Karolina in Figma and built with [Claude Code](docs/claude-code.md):
 - **Section links.** Each section heading has a link that copies its address (`/about#career`); the address bar follows the section you are reading.
 - **Accessible by design.** WCAG 2.1 AA is the minimum: keyboard focus, labelled controls, landmarks, reduced motion. `yarn a11y` audits every page in real Chromium (axe, an emulated screen reader, Tab order, reflow at 320 px).
 - **Image viewer.** Screenshots open full size with zoom, swipe and arrow keys; WebP images and loading a case's screenshots as soon as a visitor points at it keep it fast.
-- **Statistics only with consent.** Visits are counted with [Umami](https://umami.is) only after the visitor allows it in the consent box. No cookies; with Do Not Track or Global Privacy Control on, nobody is asked and nothing loads. The [privacy page](https://karolina.kita.company/privacy) explains it and has the switch. [Visitor statistics](docs/architecture.md#visitor-statistics)
+- **Statistics only with consent.** Visits, time on page and clicks (including taps on things that do nothing, told apart from mouse clicks) are counted with [Umami](https://umami.is) only after the visitor allows it in the consent box. No cookies; with Do Not Track or Global Privacy Control on, nobody is asked and nothing loads. The [privacy page](https://karolina.kita.company/privacy) explains it and has the switch. [Visitor statistics](docs/architecture.md#visitor-statistics)
 - **Quality gate.** `yarn verify` runs the typecheck, ESLint with zero warnings, a Prettier check, 490+ tests and the full build before every commit.
 
 ## Getting started
@@ -65,7 +65,7 @@ docs/                          architecture, design source, working with Claude 
 
 ## Editing content
 
-Most edits are copy changes in `src/features/*/*.content.ts` (case studies in `src/features/case-studies/`). The writing rules (plain English, short hyphens, bold lead-ins on case-study bullets, an ATS-safe CV) are checked by `src/app/content-rules.test.ts`.
+Most edits are copy changes in `src/features/*/*.content.ts` (case studies in `src/features/case-studies/`). The writing rules (plain English, short hyphens, bold lead-ins on case-study bullets) are checked by `src/app/content-rules.test.ts`.
 
 To add a screenshot to a case study, put a WebP file in `public/assets/cases/<case>/` and reference it by its path under `/assets`:
 

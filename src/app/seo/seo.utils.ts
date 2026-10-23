@@ -68,7 +68,7 @@ export function headFor(view: View): PageHead {
 export function llmsTxt(): string {
   const line = (view: View) => `- [${PAGE_NAMES[view]}](${absoluteUrl(view)}): ${PAGE_DESCRIPTIONS[view]}`;
   const cases = VIEWS.filter(isCaseView);
-  const pages = [VIEW.about, VIEW.cv, VIEW.contact, VIEW.privacy];
+  const pages = [VIEW.about, VIEW.contact, VIEW.privacy];
   return [
     `# ${PROFILE.name} - ${PROFILE.role}`,
     "",

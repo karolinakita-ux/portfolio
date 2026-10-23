@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { Joined } from "#shared/ui/Joined/Joined.tsx";
 import { Lang } from "#shared/ui/Lang/Lang.tsx";
 import { lead } from "#shared/ui/lead/lead.tsx";
 import { NewTabNote } from "#shared/ui/NewTabNote/NewTabNote.tsx";
@@ -9,7 +8,7 @@ import { VisuallyHidden } from "#shared/ui/VisuallyHidden/VisuallyHidden.tsx";
 
 import { Strong } from "./Strong.tsx";
 
-/** Small inline pieces of copy: emphasis, language, colour chips, joins, screen reader text. */
+/** Small inline pieces of copy: emphasis, language, colour chips, screen reader text. */
 const meta = {
   title: "UI/Inline text",
   component: Strong,
@@ -39,14 +38,6 @@ export const ColourSwatch: Story = {
     <p>
       <Swatch hex="#f5c84c" />
       Accent yellow
-    </p>
-  ),
-};
-
-export const JoinedParts: Story = {
-  render: () => (
-    <p>
-      <Joined parts={["Poland", "Remote", "2019 - 2026"]} />
     </p>
   ),
 };

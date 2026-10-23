@@ -1,4 +1,4 @@
-import { STATISTICS_CHANGE_EVENT, STATISTICS_CHOICE_KEY } from "./analytics.constants.ts";
+import { STATISTICS_CHANGE_EVENT, STATISTICS_CHOICE_KEY, STORED_CHOICE } from "./analytics.constants.ts";
 import type { AnalyticsSite, PrivacySignals, StatisticsChoice, StatisticsState } from "./analytics.types.ts";
 import { analyticsAllowed, optedOut, startAnalytics, stopAnalytics, trackPageview } from "./analytics.utils.ts";
 
@@ -19,11 +19,11 @@ export const browserSignals = (): PrivacySignals => {
   return { doNotTrack: nav.doNotTrack, globalPrivacyControl: nav.globalPrivacyControl };
 };
 
-/** The visitor's stored choice, or null before they decide. Kept in this browser only. */
+/** The visitor's stored choice, or null before they decide (or after a yes to an older version: STORED_CHOICE). */
 export const storedChoice = (): StatisticsChoice | null => {
   try {
     const value = window.localStorage.getItem(STATISTICS_CHOICE_KEY);
-    return value === "on" || value === "off" ? value : null;
+    return value === STORED_CHOICE.on ? "on" : value === STORED_CHOICE.off ? "off" : null;
   } catch {
     return null; // storage blocked: ask again on every page load
   }
@@ -54,7 +54,7 @@ export function initStatistics(current: AnalyticsSite): void {
  */
 export function setStatisticsChoice(choice: StatisticsChoice): void {
   try {
-    window.localStorage.setItem(STATISTICS_CHOICE_KEY, choice);
+    window.localStorage.setItem(STATISTICS_CHOICE_KEY, STORED_CHOICE[choice]);
   } catch {
     /* storage blocked: the choice applies to this page only */
   }

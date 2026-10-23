@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { PRIVACY } from "#features/privacy/privacy.content.tsx";
-import { STATISTICS_CHOICE_KEY, UMAMI } from "#shared/lib/analytics/analytics.constants.ts";
+import { STATISTICS_CHOICE_KEY, STORED_CHOICE, UMAMI } from "#shared/lib/analytics/analytics.constants.ts";
 import { initStatistics } from "#shared/lib/analytics/statistics-consent.utils.ts";
 
 import { StatisticsConsent } from "./StatisticsConsent.tsx";
@@ -46,7 +46,7 @@ describe("StatisticsConsent", () => {
     render(<StatisticsConsent onNavigate={() => undefined} />);
     await user.click(screen.getByRole("button", { name: copy.allow }));
     expect(screen.queryByRole("region", { name: copy.title })).not.toBeInTheDocument();
-    expect(window.localStorage.getItem(STATISTICS_CHOICE_KEY)).toBe("on");
+    expect(window.localStorage.getItem(STATISTICS_CHOICE_KEY)).toBe(STORED_CHOICE.on);
   });
 
   it("does not ask off the live site, or after a choice", () => {

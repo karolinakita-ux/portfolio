@@ -1,19 +1,13 @@
 /* ==========================================================================
-   Print layer - A4 / PDF export (the CV view, and any other view printed)
+   Print layer - A4 / PDF export of any view
 
-   - Page: A4 with 17mm margins on every side. 17mm is the print equivalent
-     of spacing3xl (64px), the sheet's padding on screen, so the on-screen
-     preview and the PDF share the same text width.
+   - Page: A4 with 17mm margins on every side (the print equivalent of
+     spacing3xl, 64px).
    - Colour: dark-mode tokens are screen-only (see tokens.css), so paper
      always gets the light KitaBranding values.
    - Site chrome (header, footer, back-to-top) and action CTAs carry
      Tailwind's `print:hidden`; nothing here hides elements by guessing.
    ========================================================================== */
-
-/* Paper dimensions for on-screen document previews (paper sizes, not spacing tokens). */
-@utility max-w-a4 {
-  max-width: 210mm;
-}
 
 @page {
   size: A4;
@@ -28,18 +22,6 @@
   html,
   body {
     background: var(--bg-canvas);
-  }
-
-  /* Keep a block (a job role, the summary, education) on one page. */
-  .kb-print-block {
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-
-  /* Never strand a section heading at the bottom of a page. */
-  .kb-print-keep-with-next {
-    break-after: avoid;
-    page-break-after: avoid;
   }
 
   p,
