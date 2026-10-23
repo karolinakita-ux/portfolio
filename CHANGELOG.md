@@ -4,7 +4,13 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v4.0.0 - 2026-10-23
+
+- The CV page is gone: old CV links now open the About page.
+- With your consent, visitor statistics now also count how long you stay on a page, how far you scroll and clicks or taps on things that do nothing, so the site can be clearer where visitors get stuck.
+- The privacy policy and the consent box explain what is counted, and visitors who allowed statistics before are asked again.
+
+Versions: 3.13.10 - 4.0.0.
 
 ### 4.0.0 - 2026-10-23
 
