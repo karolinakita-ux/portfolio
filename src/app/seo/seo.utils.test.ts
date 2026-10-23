@@ -51,7 +51,7 @@ describe("headFor", () => {
       SITE_URL + "/work/data-governance",
     ]);
     expect(crumbs(VIEW.caseTheming)[0]?.name).toBe("Work");
-    for (const view of [VIEW.about, VIEW.contact, VIEW.cv, VIEW.privacy]) {
+    for (const view of [VIEW.about, VIEW.contact, VIEW.privacy]) {
       expect(crumbs(view).map((item) => item.name)).toEqual(["Home", PAGE_NAMES[view]]);
       expect(crumbs(view)[0]?.item).toBe(SITE_URL + "/");
     }

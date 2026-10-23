@@ -88,7 +88,7 @@ describe("App", () => {
   it.each([
     ["/about", "Designing clarity for complex software"],
     ["/contact", "Let’s connect"],
-    ["/cv", "Karolina Kita"],
+    ["/cv", "Designing clarity for complex software"], // the CV page, removed in 4.0.0: About
     ["/work/data-governance", "White-Label Theme Generator"],
     ["/#about", "Designing clarity for complex software"], // old hash link (before 3.0.0)
   ])("deep-links %s", (url, heading) => {

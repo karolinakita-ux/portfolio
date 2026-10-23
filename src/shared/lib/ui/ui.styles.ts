@@ -24,9 +24,3 @@ export const BUTTON_HEIGHT = clsx("border-y border-transparent py-xs");
 export const BULLET_LIST = clsx(
   "flex list-disc flex-col gap-xs pl-lg text-body-md text-text-secondary marker:text-text-secondary",
 );
-
-/**
- * Inline links in printable documents (the CV): denim on screen,
- * plain dark text on paper (the URL is the visible label).
- */
-export const DOC_LINK = clsx(TEXT_LINK, "print:text-text-primary print:no-underline");

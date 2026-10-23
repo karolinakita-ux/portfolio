@@ -29,7 +29,8 @@ describe("resolveView", () => {
     ["home", VIEW.work],
     ["landing", VIEW.work],
     ["projects", VIEW.work],
-    ["resume", VIEW.cv],
+    ["cv", VIEW.about], // the CV page, removed in 4.0.0
+    ["resume", VIEW.about],
   ])("maps the alias %j to %s", (alias, view) => {
     expect(resolveView(alias)).toBe(view);
   });
@@ -70,7 +71,7 @@ describe("viewForPath", () => {
   });
 
   it("accepts short aliases as paths", () => {
-    expect(viewForPath("/resume")).toBe(VIEW.cv);
+    expect(viewForPath("/cv")).toBe(VIEW.about);
     expect(viewForPath("/projects")).toBe(VIEW.work);
   });
 
@@ -88,7 +89,7 @@ describe("readRoute", () => {
 
   it.each([
     ["/#about", VIEW.about],
-    ["/#resume", VIEW.cv],
+    ["/#resume", VIEW.about],
     ["/#case-theming", VIEW.caseTheming],
   ])("redirects the old hash link %s to its view", (url, view) => {
     expect(at(url)).toEqual({ view, anchor: null });
@@ -147,7 +148,7 @@ describe("hash routing (one-page builds, e.g. the claude.ai artifact)", () => {
 
   it("keeps the page's own path and query string in addresses", () => {
     const here = { pathname: page, search: "?ref=cv", hash: "#/about#faq" };
-    expect(urlForView(VIEW.cv, null, here)).toBe(page + "?ref=cv#/cv");
+    expect(urlForView(VIEW.contact, null, here)).toBe(page + "?ref=cv#/contact");
     expect(urlWithAnchor(here, "career")).toBe(page + "?ref=cv#/about#career");
     expect(urlWithAnchor(here, null)).toBe(page + "?ref=cv#/about");
   });
@@ -165,9 +166,5 @@ describe("titleForView", () => {
     const titles = VIEWS.map(titleForView);
     expect(new Set(titles).size).toBe(VIEWS.length);
     for (const title of titles) expect(title).toContain("Karolina Kita");
-  });
-
-  it("leads with the name on printable documents (default PDF file name)", () => {
-    expect(titleForView(VIEW.cv)).toBe("Karolina Kita - CV");
   });
 });

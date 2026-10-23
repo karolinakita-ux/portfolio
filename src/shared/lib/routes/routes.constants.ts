@@ -5,7 +5,7 @@ import type { NavItem, View } from "./routes.types.ts";
  *   Work            /  ─┬─ /work/data-governance  (Data Governance theming case)
  *                       ├─ /work/project-planning
  *                       └─ /work/automotive
- *   About /about · Contact /contact · CV /cv (print-ready, not in the primary nav)
+ *   About /about · Contact /contact
  *   Privacy /privacy (linked from the footer)
  *
  * Every view has its own path and browser-history entry, so Back / Forward (and
@@ -23,7 +23,6 @@ export const VIEW = {
   caseProjectPlanning: "case-project-planning",
   caseAutomotive: "case-automotive",
   contact: "contact",
-  cv: "cv",
   privacy: "privacy",
 } as const;
 
@@ -38,7 +37,6 @@ export const VIEW_PATHS = {
   [VIEW.work]: "/",
   [VIEW.about]: "/about",
   [VIEW.contact]: "/contact",
-  [VIEW.cv]: "/cv",
   [VIEW.privacy]: "/privacy",
   [VIEW.caseTheming]: "/work/data-governance",
   [VIEW.caseProjectPlanning]: "/work/project-planning",
@@ -50,13 +48,17 @@ export const SECTION = {
   workCases: "enterprise-cases",
 } as const;
 
-/** Short names that resolve to a view: as a hash (old links, /#resume) or as a path (/resume). */
+/**
+ * Short names that resolve to a view: as a hash (old links, /#resume) or as a path (/resume).
+ * The CV page was removed in 4.0.0: its old links open About (Netlify redirects /cv in _redirects).
+ */
 export const VIEW_ALIASES: Readonly<Record<string, View>> = {
   "": VIEW.work,
   home: VIEW.work,
   landing: VIEW.work,
   projects: VIEW.work,
-  resume: VIEW.cv,
+  cv: VIEW.about,
+  resume: VIEW.about,
 };
 
 export const NAV_ITEMS: readonly NavItem[] = [
@@ -69,14 +71,11 @@ export const SITE_NAME = "Karolina Kita";
 
 /**
  * Document title per view (shown in the tab and in the history menu).
- * The CV title leads with the name: browsers use the title as the default
- * PDF file name.
  */
 export const VIEW_TITLES: Readonly<Record<View, string>> = {
   [VIEW.work]: SITE_NAME + " - Senior Product Designer",
   [VIEW.about]: "About - " + SITE_NAME,
   [VIEW.contact]: "Contact - " + SITE_NAME,
-  [VIEW.cv]: SITE_NAME + " - CV",
   [VIEW.privacy]: "Privacy - " + SITE_NAME,
   [VIEW.caseTheming]: "Data Governance Case Study - " + SITE_NAME,
   [VIEW.caseProjectPlanning]: "Project Planning Case Study - " + SITE_NAME,

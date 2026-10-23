@@ -36,8 +36,11 @@ function readBlock(startMarker: string, endMarker?: string): Map<string, string>
   );
 }
 
+/** Where the light block starts (the motion block before it is a :root too). */
+const LIGHT_START = ":root {\n  color-scheme: light;";
+
 const MODES = {
-  light: readBlock(":root,", "@media not print"),
+  light: readBlock(LIGHT_START, "@media not print"),
   dark: readBlock(":root.dark"),
 } as const;
 
@@ -65,7 +68,7 @@ describe("tokens.css light / dark", () => {
  * Motion tokens are the same in both modes, so tokens.css declares them once, in their own
  * :root block. Figma stores durations as a number of milliseconds (motionDurationFast: 150).
  */
-const MOTION = readBlock("/* Motion: the same in light and dark */", ":root,");
+const MOTION = readBlock("/* Motion: the same in light and dark */", LIGHT_START);
 
 /** The CSS value a Figma motion variable stands for: durations get their unit. */
 const motionCssValue = (cssName: string, figmaValue: string | number) =>

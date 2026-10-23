@@ -40,8 +40,8 @@ describe("useHistoryRoute", () => {
     expect(window.location.pathname).toBe("/work/data-governance");
     expect(window.location.hash).toBe("");
 
-    start("/resume");
-    expect(window.location.pathname).toBe("/cv");
+    start("/cv"); // the CV page, removed in 4.0.0
+    expect(window.location.pathname).toBe("/about");
 
     const result = start("/#projects");
     expect(result.current[0].view).toBe(VIEW.work);
