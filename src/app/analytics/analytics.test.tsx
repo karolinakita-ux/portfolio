@@ -96,17 +96,21 @@ describe("events on the Work page", () => {
     expect(events()).toEqual([[EVENT.caseOpen, { case: "case-automotive", from: "thumbnail" }]]);
   });
 
-  it("counts the Figma and GitHub links in the hero and in the banner", () => {
+  it("counts the Figma, GitHub and Storybook links in the hero and in the banner", () => {
     renderApp("/");
     clickLink(screen.getByRole("link", { name: /^Inspect Figma Workspace/ }));
     clickLink(screen.getByRole("link", { name: /^View Code on GitHub/ }));
+    clickLink(screen.getByRole("link", { name: /^View Components in Storybook/ }));
     clickLink(screen.getByRole("link", { name: /^Explore the Figma Workspace/ }));
     clickLink(screen.getByRole("link", { name: /^Explore the Code on GitHub/ }));
+    clickLink(screen.getByRole("link", { name: /^Explore the Storybook Library/ }));
     expect(events()).toEqual([
       [EVENT.figmaClick, { place: "hero" }],
       [EVENT.githubClick, { place: "hero" }],
+      [EVENT.storybookClick, { place: "hero" }],
       [EVENT.figmaClick, { place: "banner" }],
       [EVENT.githubClick, { place: "banner" }],
+      [EVENT.storybookClick, { place: "banner" }],
     ]);
   });
 
@@ -153,6 +157,16 @@ describe("events in the footer and on the Contact page", () => {
     expect(screen.getByRole("heading", { level: 1, name: "Privacy" })).toBeInTheDocument();
   });
 
+  it("counts a link to another website by the website it opens", () => {
+    renderApp("/privacy");
+    clickLink(screen.getByRole("link", { name: /^uodo\.gov\.pl/ }));
+    clickLink(screen.getByRole("link", { name: /^Netlify privacy policy/ }));
+    expect(events()).toEqual([
+      [EVENT.outboundClick, { host: "uodo.gov.pl" }],
+      [EVENT.outboundClick, { host: "www.netlify.com" }],
+    ]);
+  });
+
   it("counts the Contact page's LinkedIn and email links", () => {
     renderApp("/contact");
     const channels = within(screen.getByRole("region", { name: "Primary Channels" }));
@@ -173,7 +187,7 @@ describe("events on case studies", () => {
     const [firstScreenshot] = screen.getAllByRole("button", { name: /View full size/ });
     if (!firstScreenshot) throw new Error("no screenshots rendered");
     await user.click(firstScreenshot);
-    await user.keyboard("{ArrowRight}"); // browsing inside the viewer is not a new open
+    await user.keyboard("{ArrowRight}"); // browsing inside the viewer: not a new open, but counted as a step
     await user.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Close image viewer" }));
 
     const nav = within(screen.getByRole("navigation", { name: "Case study navigation" }));
@@ -181,6 +195,7 @@ describe("events on case studies", () => {
 
     expect(events()).toEqual([
       [EVENT.imageOpen, { case: "case-automotive", image: caseCards(AUTOMOTIVE_CASE)[0]?.id }],
+      [EVENT.imageNav, { case: "case-automotive", image: caseCards(AUTOMOTIVE_CASE)[1]?.id, direction: "next" }],
       [EVENT.caseNav, { from: "case-automotive", to: "case-meetestim", direction: "next" }],
     ]);
   });

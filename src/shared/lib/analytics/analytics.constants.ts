@@ -6,38 +6,94 @@ export const UMAMI = {
   websiteId: "19c960f0-bad6-40f5-b5cb-75dca6dc292f",
   /** The only host that counts; the tracker checks it again (data-domains). */
   host: "karolina.kita.company",
+  /** The window function the tracker runs before every request (data-before-send): beforeSend in analytics.utils.ts. */
+  beforeSend: "kbUmamiBeforeSend",
 } as const;
 
-/** Event names as the Umami dashboard lists them (at most 50 characters). Properties: EventData. */
+/**
+ * Event names as the Umami dashboard lists them. The naming rules and what each event answers:
+ * docs/analytics.md (the tracking plan; tracking-plan.test.ts keeps it in step). Properties: EventData.
+ */
 export const EVENT = {
   linkRef: "link-ref",
   caseOpen: "case-open",
   caseNav: "case-nav",
   imageOpen: "image-open",
+  imageNav: "image-nav",
   figmaClick: "figma-click",
   githubClick: "github-click",
+  storybookClick: "storybook-click",
   linkedinClick: "linkedin-click",
   emailClick: "email-click",
+  outboundClick: "outbound-click",
   faqOpen: "faq-open",
   sectionLinkCopy: "section-link-copy",
+  textCopy: "text-copy",
   themeSwitch: "theme-switch",
+  pagePrint: "page-print",
   timeOnPage: "time-on-page",
   deadClick: "dead-click",
   rageClick: "rage-click",
+  pageNotFound: "page-not-found",
+  jsError: "js-error",
 } as const;
 
 /** Events that no click or key starts: they carry no `input`. */
-export const PASSIVE_EVENTS: readonly string[] = [EVENT.linkRef, EVENT.timeOnPage];
+export const PASSIVE_EVENTS: readonly string[] = [EVENT.linkRef, EVENT.timeOnPage, EVENT.pageNotFound];
 
 /** The visitor's statistics choice, kept in this browser only (statistics-consent.utils.ts). */
 export const STATISTICS_CHOICE_KEY = "kb-statistics";
 
 /**
- * What is stored for each answer. A plain "on" was a yes before 3.14.0, when the statistics counted
- * pages and link clicks only: consent covers what the visitor was told, so that visitor is asked again.
- * A no stays a no.
+ * What is stored for each answer. Consent covers what the visitor was told, so a yes given to an
+ * earlier version is asked again: "on" (before 3.14.0: pages and link clicks) and "on-2" (3.14.0 -
+ * 4.0.0: no page speed, errors or window size yet). A no stays a no.
  */
-export const STORED_CHOICE: Readonly<Record<StatisticsChoice, string>> = { on: "on-2", off: "off" };
+export const STORED_CHOICE: Readonly<Record<StatisticsChoice, string>> = { on: "on-3", off: "off" };
+
+/**
+ * Query parameters kept in the addresses sent to Umami: the link tag (?ref=) and the UTM parameters
+ * of Umami's UTM report. Anything else is dropped, such as the click ids that ads and social apps add
+ * (fbclid, gclid, li_fat_id): they are unique per click, and the pages would split by them.
+ */
+export const KEPT_PARAMS: readonly string[] = [
+  "ref",
+  "utm_source",
+  "utm_medium",
+  "utm_campaign",
+  "utm_term",
+  "utm_content",
+];
+
+/** Load metrics in the tracker's speed report: they belong to the page the browser loaded (payload.utils.ts). */
+export const LOAD_METRICS = ["ttfb", "fcp", "lcp"] as const;
+
+/** Browser window width as the dashboard groups it, at the site's breakpoints (theme.css). */
+export const VIEWPORT_BUCKETS: ReadonlyArray<readonly [number, string]> = [
+  [480, "under 480px"],
+  [768, "480 - 767px"],
+  [1024, "768 - 1023px"],
+  [1280, "1024 - 1279px"],
+];
+export const VIEWPORT_BUCKET_LAST = "1280px or wider";
+
+/** Screen pixel density (devicePixelRatio), for image sizes: each label holds the ratios below its limit. */
+export const PIXEL_RATIO_BUCKETS: ReadonlyArray<readonly [number, string]> = [
+  [1.25, "1x"],
+  [1.75, "1.5x"],
+  [2.5, "2x"],
+];
+export const PIXEL_RATIO_BUCKET_LAST = "3x";
+
+/** js-error: at most this many per page load, each message cut to MAX_MESSAGE_LENGTH. */
+export const MAX_ERRORS = 3;
+export const MAX_MESSAGE_LENGTH = 150;
+
+/** Browser warnings that reach window.onerror but break nothing. */
+export const HARMLESS_ERRORS = ["ResizeObserver loop"];
+
+/** Longest address sent with page-not-found. */
+export const MAX_PATH_LENGTH = 100;
 
 /** Fired on window when the choice changes, so the consent box and the privacy page update. */
 export const STATISTICS_CHANGE_EVENT = "kb-statistics-change";

@@ -74,6 +74,7 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
                 variant="secondary"
                 iconLeft={Blocks}
                 iconRight={ArrowUpRight}
+                onClick={() => track(EVENT.storybookClick, { place: "hero" })}
               >
                 {HERO_ACTIONS.components}
                 <NewTabNote />

@@ -7,15 +7,16 @@ import {
   RAGE_CLICKS,
   TEXT,
 } from "./analytics.constants.ts";
-import type { ClickedElement, DeadClick } from "./analytics.types.ts";
+import type { ClickedElement, PageSpot } from "./analytics.types.ts";
 
 /**
  * Dead clicks: clicks and taps on something that does nothing (an image, a heading, a card's empty
  * space). They show where visitors expect a link or a bigger image. Not counted: clicks on controls
  * and links, drags and swipes, double clicks that select text, and clicks that no pointer made.
  * Quick clicks on one spot form a burst: one dead-click per burst, and one rage-click when it reaches
- * RAGE_CLICKS. Only the kind of element, the section and a label from the site's own copy are sent,
- * never the spot on the screen or text the visitor typed.
+ * RAGE_CLICKS. Text copies (text-copy) are described the same way. Only the kind of element, the
+ * section and a label from the site's own copy are sent, never the spot on the screen or any text the
+ * visitor typed or copied.
  */
 
 /** Lowercase ids written by hand ("hero-title"); React's useId ids are not stable between builds. */
@@ -67,13 +68,27 @@ export const labelOf = (target: Element, element: ClickedElement): string | unde
   return cardName(target);
 };
 
-export const describeClick = (target: Element, element = elementKind(target)): DeadClick => {
+export const describeClick = (target: Element, element = elementKind(target)): PageSpot => {
   const label = labelOf(target, element);
   return { element, area: areaOf(target), ...(label !== undefined && { label }) };
 };
 
+/** Starts listening for copied text; `report` gets where the selection started. Returns the function that stops. */
+export function watchCopies(report: (spot: PageSpot) => void): () => void {
+  const onCopy = () => {
+    const node = window.getSelection()?.anchorNode;
+    const target = node instanceof Element ? node : node?.parentElement;
+    if (target) report(describeClick(target));
+  };
+  const options = { capture: true, passive: true };
+  document.addEventListener("copy", onCopy, options);
+  return () => {
+    document.removeEventListener("copy", onCopy, options);
+  };
+}
+
 /** Starts listening; `report` gets each dead click, with rage true for a rage click. Returns the function that stops. */
-export function watchDeadClicks(report: (click: DeadClick, rage: boolean) => void): () => void {
+export function watchDeadClicks(report: (click: PageSpot, rage: boolean) => void): () => void {
   let down: { x: number; y: number } | null = null;
   let burst: { x: number; y: number; at: number; count: number } | null = null;
 

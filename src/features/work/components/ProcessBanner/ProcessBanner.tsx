@@ -23,7 +23,7 @@ export function ProcessBanner() {
             </BannerLink>
           ) : null}
           {PROFILE.storybookUrl ? (
-            <BannerLink href={PROFILE.storybookUrl} icon={Blocks}>
+            <BannerLink href={PROFILE.storybookUrl} icon={Blocks} event={EVENT.storybookClick}>
               {PROCESS_BANNER.componentsLinkLabel}
             </BannerLink>
           ) : null}

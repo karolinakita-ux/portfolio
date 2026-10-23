@@ -2,7 +2,7 @@ import { fireEvent } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from "vitest";
 
 import { EVENT, UMAMI } from "./analytics.constants.ts";
-import type { AnalyticsEvent, AnalyticsSite, EventData, UmamiPayload } from "./analytics.types.ts";
+import type { AnalyticsEvent, AnalyticsSite, EventData, SessionData, UmamiPayload } from "./analytics.types.ts";
 import type * as Analytics from "./analytics.utils.ts";
 
 /** The live site, as src/main.tsx describes it in a production build there. */
@@ -21,10 +21,13 @@ const TRACKER_PAYLOAD: UmamiPayload = {
 
 /** The module keeps its state for the page's lifetime: each test gets a fresh copy. */
 let analytics: typeof Analytics;
+/** Session data the fake tracker got through identify(). */
+let identified: SessionData[] = [];
 
 beforeEach(async () => {
   vi.resetModules();
   analytics = await import("./analytics.utils.ts");
+  identified = [];
 });
 
 afterEach(() => {
@@ -34,15 +37,19 @@ afterEach(() => {
   Reflect.deleteProperty(document, "visibilityState");
   for (const script of document.querySelectorAll("script")) script.remove();
   Reflect.deleteProperty(window, "umami");
+  Reflect.deleteProperty(window, "kbUmamiBeforeSend");
   document.title = "";
 });
 
 const umamiScript = () => document.querySelector<HTMLScriptElement>(`script[src="${UMAMI.script}"]`);
 
-/** Installs a fake window.umami and fires the script's load event; returns the payloads it was sent. */
+/** Installs a fake window.umami and fires the script's load event; returns the payloads track() was sent. */
 const loadTracker = (): UmamiPayload[] => {
   const sent: UmamiPayload[] = [];
-  window.umami = { track: (build) => sent.push(build(TRACKER_PAYLOAD)) };
+  window.umami = {
+    track: (build) => sent.push(build(TRACKER_PAYLOAD)),
+    identify: (data) => identified.push(data),
+  };
   umamiScript()?.dispatchEvent(new Event("load"));
   return sent;
 };
@@ -74,7 +81,7 @@ describe("analyticsAllowed", () => {
 });
 
 describe("startAnalytics", () => {
-  it("adds the Umami script once, with page tracking off and the domain, hash and Do Not Track guards", () => {
+  it("adds the Umami script once: no pageviews of its own, its speed report on, every request past beforeSend", () => {
     expect(analytics.startAnalytics(LIVE)).toBe(true);
     expect(analytics.startAnalytics(LIVE)).toBe(true);
     expect(document.querySelectorAll("script")).toHaveLength(1);
@@ -88,10 +95,23 @@ describe("startAnalytics", () => {
       src: "https://cloud.umami.is/script.js",
       "data-website-id": "19c960f0-bad6-40f5-b5cb-75dca6dc292f",
       "data-domains": "karolina.kita.company",
-      "data-auto-track": "false",
+      "data-auto-pageview": "false",
+      "data-performance": "true",
+      "data-before-send": "kbUmamiBeforeSend",
       "data-exclude-hash": "true",
       "data-do-not-track": "true",
     });
+    expect(window.kbUmamiBeforeSend).toBe(analytics.beforeSend);
+  });
+
+  it("keeps one script when statistics go off and on again on the same page (one speed report)", () => {
+    analytics.startAnalytics(LIVE);
+    const sent = loadTracker();
+    analytics.stopAnalytics();
+    analytics.startAnalytics(LIVE);
+    expect(document.querySelectorAll("script")).toHaveLength(1);
+    analytics.trackPageview();
+    expect(sent).toHaveLength(1);
   });
 
   it("tags every call with the site's version, so the dashboard can compare releases", () => {
@@ -109,7 +129,7 @@ describe("startAnalytics", () => {
 describe("trackPageview and track", () => {
   it("do nothing before startAnalytics, and never touch window.umami off the live site", () => {
     const track = vi.fn();
-    window.umami = { track };
+    window.umami = { track, identify: track };
     analytics.startAnalytics({ ...LIVE, production: false });
     analytics.trackPageview();
     analytics.track(EVENT.themeSwitch, { theme: "dark" });
@@ -140,6 +160,51 @@ describe("trackPageview and track", () => {
       url: window.location.origin + "/about?ref=acme",
       title: "About - Karolina Kita",
     });
+  });
+
+  it("keep only the link tag and UTM parameters in addresses: click ids and other parameters go", () => {
+    analytics.startAnalytics(LIVE);
+    const sent = loadTracker();
+    go("/about?fbclid=IwAR0abc&ref=acme&utm_medium=social&li_fat_id=1f2e#career");
+    analytics.trackPageview();
+    go("/contact");
+    analytics.trackPageview();
+    const pageviews = sent.filter((payload) => payload.name === undefined);
+    expect(pageviews.map((payload) => [payload.url, payload.referrer])).toEqual([
+      [window.location.origin + "/about?ref=acme&utm_medium=social", TRACKER_PAYLOAD.referrer],
+      [window.location.origin + "/contact", "/about?ref=acme&utm_medium=social"],
+    ]);
+  });
+
+  it("send the session data once, with the first pageview, and never an id that would link visits", () => {
+    analytics.startAnalytics(LIVE);
+    go("/");
+    analytics.trackPageview();
+    go("/about");
+    analytics.trackPageview();
+    loadTracker();
+    // jsdom: a 1024px window, pixel ratio 1, no theme class, an ordinary browser.
+    expect(identified).toEqual([
+      { viewport: "1024 - 1279px", pixelRatio: "1x", theme: "light", themeSource: "system", inApp: "none" },
+    ]);
+    expect(identified[0]).not.toHaveProperty("id");
+  });
+
+  it("send a missing page with the first pageview, once, even when statistics are allowed later", () => {
+    const path = "/old-portfolio/" + "x".repeat(200);
+    analytics.notePageNotFound(path);
+    analytics.startAnalytics(LIVE);
+    const sent = loadTracker();
+    fireEvent.pointerDown(document.body, { pointerType: "mouse" }); // the click on "Allow statistics"
+    go("/");
+    analytics.trackPageview();
+    go("/about");
+    analytics.trackPageview();
+    expect(sent.map((payload) => [payload.name, payload.data])).toEqual([
+      [undefined, undefined],
+      ["page-not-found", { path: path.slice(0, 100) }], // no input: nobody clicked to get here
+      [undefined, undefined],
+    ]);
   });
 
   it("keep the landing referrer on the first page, then refer each page to the one before it", () => {
@@ -217,11 +282,7 @@ describe("trackPageview and track", () => {
 });
 
 describe("events", () => {
-  it("have kebab-case names within Umami's 50-character limit", () => {
-    for (const name of Object.values(EVENT)) expect(name).toMatch(/^[a-z]+(?:-[a-z]+)*$/);
-    for (const name of Object.values(EVENT)) expect(name.length).toBeLessThanOrEqual(50);
-  });
-
+  // Naming rules: tracking-plan.test.ts.
   // eslint-disable-next-line vitest/expect-expect -- type-level checks (expectTypeOf, @ts-expect-error)
   it("tie every event name to its properties", () => {
     expectTypeOf<EventData[typeof EVENT.caseOpen]>().toEqualTypeOf<{
@@ -338,5 +399,73 @@ describe("clicks", () => {
     fireEvent.pointerDown(text, { pointerType: "mouse" });
     fireEvent.click(text, { detail: 1 });
     expect(sent.map((payload) => payload.name)).toEqual(["dead-click"]);
+  });
+});
+
+describe("copies, prints and errors", () => {
+  it("are counted while statistics are on: where the copied text was, a print, an error in the site's code", () => {
+    document.body.innerHTML = `<main><section id="career" data-anchor=""><p id="role">UX Lead</p></section></main>`;
+    analytics.startAnalytics(LIVE);
+    const sent = loadTracker();
+    const role = document.getElementById("role") ?? document.body;
+    window.getSelection()?.selectAllChildren(role);
+    document.dispatchEvent(new Event("copy"));
+    window.dispatchEvent(new Event("beforeprint"));
+    const file = window.location.origin + "/static/index-Bj0HK1p4.js";
+    window.dispatchEvent(new ErrorEvent("error", { message: "x is not a function", filename: file }));
+
+    analytics.stopAnalytics();
+    document.dispatchEvent(new Event("copy"));
+    window.dispatchEvent(new Event("beforeprint"));
+
+    expect(sent.map((payload) => [payload.name, payload.data])).toEqual([
+      ["text-copy", { element: "text", area: "career" }],
+      ["page-print", {}],
+      ["js-error", { kind: "error", message: "x is not a function", file: "index-Bj0HK1p4.js" }],
+    ]);
+  });
+});
+
+describe("beforeSend", () => {
+  const performance = { ...TRACKER_PAYLOAD, url: TRACKER_PAYLOAD.url + "?fbclid=1", lcp: 1800, cls: 0.02 };
+
+  it("cancels every request of the tracker's own once statistics are off", () => {
+    expect(analytics.beforeSend("performance", performance)).toBeNull(); // before consent
+    analytics.startAnalytics(LIVE);
+    expect(analytics.beforeSend("performance", performance)).not.toBeNull();
+    analytics.stopAnalytics();
+    expect(analytics.beforeSend("identify", TRACKER_PAYLOAD)).toBeNull();
+    expect(analytics.beforeSend("event", TRACKER_PAYLOAD)).toBeNull();
+  });
+
+  it("gives a speed report the page the app counted last, with a clean address", () => {
+    analytics.startAnalytics(LIVE);
+    loadTracker();
+    go("/work/meetestim?fbclid=1", "MeetEstim");
+    analytics.trackPageview();
+    // The browser loaded this page: its load metrics stay.
+    vi.spyOn(window.performance, "getEntriesByType").mockReturnValue([
+      { name: window.location.origin + "/work/meetestim?fbclid=1" } as PerformanceEntry,
+    ]);
+    expect(analytics.beforeSend("performance", performance)).toEqual({
+      ...performance,
+      url: window.location.origin + "/work/meetestim",
+      title: "MeetEstim",
+    });
+  });
+
+  it("drops the load metrics when the counted page is not the one the browser loaded", () => {
+    analytics.startAnalytics(LIVE);
+    loadTracker();
+    vi.spyOn(window.performance, "getEntriesByType").mockReturnValue([
+      { name: window.location.origin + "/" } as PerformanceEntry,
+    ]);
+    go("/about", "About"); // the visitor moved on, then allowed statistics
+    analytics.trackPageview();
+    const sent = analytics.beforeSend("performance", { ...performance, ttfb: 90, fcp: 700 });
+    expect(sent).toMatchObject({ url: window.location.origin + "/about", cls: 0.02 });
+    expect(sent).not.toHaveProperty("lcp");
+    expect(sent).not.toHaveProperty("ttfb");
+    expect(sent).not.toHaveProperty("fcp");
   });
 });
