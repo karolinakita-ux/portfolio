@@ -4,7 +4,14 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v4.1.0 - 2026-10-23
+
+- With your consent, visitor statistics now also measure how fast pages load and react on your device, and note errors and broken links, so problems can be fixed sooner.
+- They also record your browser window size, screen pixel density and theme in ranges, and the app you opened the site in, such as LinkedIn.
+- The click IDs that ads and social apps add to links are removed before anything is sent.
+- The privacy policy and the consent box explain the changes, and visitors who allowed statistics before are asked again.
+
+Versions: 4.1.0.
 
 ### 4.1.0 - 2026-10-23
 
