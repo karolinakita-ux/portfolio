@@ -17,16 +17,22 @@ interface HistoryWrite {
   url: string | null;
 }
 
-/** Records every pushState / replaceState from the start of the page; read with historyWrites(). */
+/**
+ * Records every pushState / replaceState from the start of the page; read with historyWrites(). On
+ * History.prototype: replaceAddress() (shared/lib/routes) calls it there, past any wrapper on
+ * window.history such as Umami's tracker, so a recorder on window.history would miss those writes.
+ */
 async function recordHistoryWrites(page: Page): Promise<void> {
   await page.addInitScript(() => {
     const log: HistoryWrite[] = [];
     Object.assign(window, { __historyWrites: log });
     for (const method of ["pushState", "replaceState"] as const) {
-      const original = window.history[method].bind(window.history);
-      window.history[method] = (state: unknown, unused: string, url?: string | URL | null) => {
+      // eslint-disable-next-line @typescript-eslint/unbound-method -- called below with the history object as this
+      const original = History.prototype[method];
+      History.prototype[method] = function (this: History, ...args: Parameters<History["pushState"]>) {
+        const [, , url] = args;
         log.push({ method, url: url === undefined || url === null ? null : String(url) });
-        original(state, unused, url);
+        original.apply(this, args);
       };
     }
   });

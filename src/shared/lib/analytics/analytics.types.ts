@@ -1,6 +1,8 @@
+import type { Theme } from "#shared/hooks/theme/theme.types.ts";
+import type { InAppBrowser } from "#shared/lib/browser/browser.types.ts";
 import type { View } from "#shared/lib/routes/routes.types.ts";
 
-import type { EVENT, SCROLL_BUCKETS } from "./analytics.constants.ts";
+import type { EVENT, LOAD_METRICS, SCROLL_BUCKETS } from "./analytics.constants.ts";
 
 export type AnalyticsEvent = (typeof EVENT)[keyof typeof EVENT];
 
@@ -19,15 +21,43 @@ export interface TimeOnPage {
   section?: string;
 }
 
-/** What a dead click landed on: an image, an icon, a heading, text, the empty part of a card, or the page. */
+/** What a click or a copied selection was on: an image, an icon, a heading, text, the empty part of a card, or the page. */
 export type ClickedElement = "image" | "icon" | "heading" | "text" | "card" | "page";
 
-export interface DeadClick {
+/** A spot on the page, described from the site's own markup (clicks.utils.ts): dead clicks and text copies. */
+export interface PageSpot {
   element: ClickedElement;
   /** The section id around it, a hero's name (hero, about, case...), or the landmark (header, footer, dialog, main). */
   area: string;
   /** The image's alt text, the heading, or the card's title: site copy, never anything the visitor typed. */
   label?: string;
+}
+
+/** An error in the site's own code (errors.utils.ts). */
+export interface JsError {
+  /** error: a script error; rejection: a promise nobody handled. */
+  kind: "error" | "rejection";
+  /** The browser's message, cut to MAX_MESSAGE_LENGTH, addresses without their query. */
+  message: string;
+  /** The script file it came from (index-Bj0HK1p4.js); none for a rejection. */
+  file?: string;
+}
+
+/**
+ * Session data (umami.identify, once per page load): how the site is seen, for filtering any report.
+ * Never an `id` key: identify() would take it as a Distinct ID and link visits.
+ */
+export interface SessionData {
+  /** Browser window width (VIEWPORT_BUCKETS); Umami's own `screen` is the whole screen. */
+  viewport: string;
+  /** Screen pixel density (PIXEL_RATIO_BUCKETS). */
+  pixelRatio: string;
+  /** The theme shown when the page loaded. */
+  theme: Theme;
+  /** system: it follows the device setting; picked: the visitor chose it with the switch. */
+  themeSource: "system" | "picked";
+  /** The app whose built-in browser shows the site, or none. */
+  inApp: InAppBrowser | "none";
 }
 
 /** The properties each event carries: a wrong event name or property is a type error. */
@@ -38,24 +68,36 @@ export interface EventData {
   [EVENT.caseNav]: { from: View; to: View; direction: "prev" | "next" };
   /** image: the screenshot card's id. */
   [EVENT.imageOpen]: { case: View; image: string };
+  /** The next or previous screenshot in the image viewer (arrow, key or swipe); image: the one now shown. */
+  [EVENT.imageNav]: { case: View; image: string; direction: "prev" | "next" };
   [EVENT.figmaClick]: { place: "hero" | "banner" };
   [EVENT.githubClick]: { place: "hero" | "banner" };
+  [EVENT.storybookClick]: { place: "hero" | "banner" };
   [EVENT.linkedinClick]: {
     target: "profile" | "recommendations" | "author" | "company";
     place: "footer" | "contact" | "testimonials";
   };
   [EVENT.emailClick]: { action: "copy" | "mailto"; place: "footer" | "contact" };
+  /** A link to another website that has no event of its own (TextLink external); host: that website. */
+  [EVENT.outboundClick]: { host: string };
   /** question: the FAQ item's id. Sent when it opens, not when it closes. */
   [EVENT.faqOpen]: { question: string };
   /** section: the section id (the URL hash the copied link ends in). */
   [EVENT.sectionLinkCopy]: { section: string };
-  [EVENT.themeSwitch]: { theme: "light" | "dark" };
+  /** The visitor selected text and copied it: where it was, never the text. */
+  [EVENT.textCopy]: PageSpot;
+  [EVENT.themeSwitch]: { theme: Theme };
+  /** The page went to the printer or to a PDF (beforeprint). */
+  [EVENT.pagePrint]: Record<string, never>;
   /** Sent when the visitor leaves the page, switches tabs or apps, or closes it. */
   [EVENT.timeOnPage]: TimeOnPage;
   /** A click or tap on something that does nothing; once per burst of quick clicks on one spot. */
-  [EVENT.deadClick]: DeadClick;
+  [EVENT.deadClick]: PageSpot;
   /** The same burst reached RAGE_CLICKS clicks: the visitor expected it to react. */
-  [EVENT.rageClick]: DeadClick;
+  [EVENT.rageClick]: PageSpot;
+  /** The visitor opened an address that matches no page; the app showed Work instead. path: that address. */
+  [EVENT.pageNotFound]: { path: string };
+  [EVENT.jsError]: JsError;
 }
 
 /** What goes to Umami: the event's properties, plus the input behind it when a click or key started it. */
@@ -72,21 +114,36 @@ export interface UmamiPayload {
   title: string;
   url: string;
   referrer?: string;
+  /** The site's version (data-tag). */
+  tag?: string;
   /** Set for events; a payload without a name is a pageview. */
   name?: string;
   data?: object;
 }
 
+/** A speed report (type "performance", data-performance): Core Web Vitals in milliseconds, CLS as a score. */
+export type PerformancePayload = UmamiPayload &
+  Partial<Record<(typeof LOAD_METRICS)[number] | "cls" | "inp" | "duration", number>>;
+
+/** The kinds of request the tracker makes: pageviews and events, session data, speed reports. */
+export type UmamiSendType = "event" | "identify" | "performance";
+
+/** data-before-send: gets every request before it goes; null cancels it. */
+export type BeforeSend = (type: UmamiSendType, payload: PerformancePayload) => PerformancePayload | null;
+
 export type BuildPayload = (payload: UmamiPayload) => UmamiPayload;
 
-/** The part of window.umami the app uses: track() with a function that edits the payload. */
+/** The part of window.umami the app uses: track() with a function that edits the payload, identify() with session data. */
 export interface UmamiTracker {
   track: (build: BuildPayload) => unknown;
+  identify: (data: SessionData) => unknown;
 }
 
 declare global {
   interface Window {
     umami?: UmamiTracker;
+    /** UMAMI.beforeSend */
+    kbUmamiBeforeSend?: BeforeSend;
   }
 }
 
@@ -125,11 +182,14 @@ export interface PageSnapshot {
 /** What the module remembers for the page's lifetime. */
 export interface AnalyticsState {
   on: boolean;
-  queue: BuildPayload[];
+  /** Tracker calls waiting for the script. */
+  queue: Array<(tracker: UmamiTracker) => void>;
   /** The page of the last pageview, or null before the first one. */
   page: PageSnapshot | null;
   /** Referrer of the current page; null keeps the tracker's own (document.referrer, on the first page). */
   referrer: string | null;
-  /** Removes the input, click and time-on-page listeners; null while statistics are off. */
+  /** Removes the input, click, copy, print, error and time-on-page listeners; null while statistics are off. */
   unwatch: (() => void) | null;
+  /** The address the visitor opened when it matched no page: page-not-found goes with the first pageview. */
+  notFound: string | null;
 }

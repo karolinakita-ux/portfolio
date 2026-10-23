@@ -69,15 +69,31 @@ export const PRIVACY: PrivacyContent = {
       points: [
         lead(
           "What I count",
-          "The pages you open, the site that sent you here, how long you spend on each page and how far down you scroll. I also count clicks on case studies, screenshots, FAQ questions, section links, the light / dark switch, and links to LinkedIn, Figma, GitHub and email.",
+          "The pages you open, the site that sent you here, how long you spend on each page and how far down you scroll. I also count clicks on case studies, screenshots (and moving between them in the image viewer), FAQ questions, section links, the light / dark switch, and links to LinkedIn, Figma, GitHub, Storybook, email and other websites.",
         ),
         lead(
           "Clicks that do nothing",
           "If you click or tap something that does not react, such as an image or a heading, I count what it was and which part of the page it is in. This shows me what people expect to be a link.",
         ),
         lead(
+          "Copying and printing",
+          "If you copy text or print a page, I count that you did and which part of the page the text came from. I never record the text itself.",
+        ),
+        lead(
           "Mouse, touch or keyboard",
           "With each click I note whether it came from a mouse, a touch screen, a pen or the keyboard. I never record what you type or the exact spot you click.",
+        ),
+        lead(
+          "Your screen and window",
+          "The width of your browser window and your screen's pixel density, in ranges (such as 768 - 1023px), whether you see the light or dark theme and whether you picked it, and the app if you opened the site inside one, such as LinkedIn or Messenger. This shows me which layouts to improve first.",
+        ),
+        lead(
+          "Speed and errors",
+          "How fast each page loads and reacts to taps and clicks on your device (Core Web Vitals), and errors in this website's own code, with the browser's short technical message. This shows me where the site is slow or broken.",
+        ),
+        lead(
+          "Broken links",
+          "If you open an address on this website that does not exist, I count that address, so I can fix the link that led there.",
         ),
         lead(
           "What is recorded with it",
@@ -85,13 +101,13 @@ export const PRIVACY: PrivacyContent = {
         ),
         lead(
           "Why I ask first",
-          "The statistics read your screen size, language, scrolling and clicks on this website and send them. European law and the Polish Electronic Communications Law (Art. 399) need your consent for that, even without cookies.",
+          "The statistics read your screen and window size, language, scrolling, clicks and page speed on this website and send them. European law and the Polish Electronic Communications Law (Art. 399) need your consent for that, even without cookies.",
         ),
         lead("No cookies", "The statistics set no cookies. Only your choice is kept in your browser."),
         lead("How long", "Umami keeps the statistics for 6 months, then deletes them."),
         lead(
           "Tagged links",
-          "Links I share, for example in job applications, may end in ?ref= and a company or channel name, so I can see which link brought a visit. They never contain a person's name.",
+          "Links I share, for example in job applications, may end in ?ref= and a company or channel name, so I can see which link brought a visit. They never contain a person's name. Other parts of an address, such as the click IDs that ads and social apps add, are removed before anything is sent.",
         ),
       ],
       intro: [
@@ -209,9 +225,9 @@ export const PRIVACY: PrivacyContent = {
     text: (
       <>
         I, Karolina Kita, use {umami}, a visitor statistics tool, to see which pages and links are useful. It counts the
-        pages you open, how long you stay and what you click or tap. It sets no cookies and does not follow you to other
-        websites. It reads your screen size and language, so I ask first. You can change your choice at any time on the
-        privacy page.
+        pages you open, how long you stay, what you click or tap and how fast pages load. It sets no cookies and does
+        not follow you to other websites. It reads your screen and window size and language, so I ask first. You can
+        change your choice at any time on the privacy page.
       </>
     ),
     allow: "Allow statistics",

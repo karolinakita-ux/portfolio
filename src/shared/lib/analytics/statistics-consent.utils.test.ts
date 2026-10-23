@@ -93,7 +93,7 @@ describe("setStatisticsChoice", () => {
   it("on: keeps the choice, loads the script and counts the page the visitor is on", () => {
     consent.initStatistics(LIVE);
     const track = vi.fn();
-    window.umami = { track };
+    window.umami = { track, identify: vi.fn() };
     consent.setStatisticsChoice("on");
     expect(window.localStorage.getItem(STATISTICS_CHOICE_KEY)).toBe(STORED_CHOICE.on);
     expect(umamiScript()).not.toBeNull();
@@ -103,7 +103,7 @@ describe("setStatisticsChoice", () => {
   it("off: keeps the choice and stops counting on this page at once", () => {
     consent.initStatistics(LIVE);
     const track = vi.fn();
-    window.umami = { track };
+    window.umami = { track, identify: vi.fn() };
     consent.setStatisticsChoice("on");
     consent.setStatisticsChoice("off");
     analytics.trackPageview();

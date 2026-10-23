@@ -32,9 +32,12 @@ export function useCaseGallery(
           alt: card.alt,
           title: card.title,
           ...(size && { width: size[0], height: size[1] }),
+          onShow: (direction) => {
+            track(EVENT.imageNav, { case: caseView, image: card.id, direction });
+          },
         };
       }),
-    [cards, resolveAsset],
+    [cards, caseView, resolveAsset],
   );
 
   useEffect(() => preloadImages(gallery.map((item) => item.src)), [gallery]);

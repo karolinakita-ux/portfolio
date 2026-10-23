@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
+import { replaceAddress } from "#shared/lib/routes/address.utils.ts";
 import { VIEW } from "#shared/lib/routes/routes.constants.ts";
 import type { Navigate, View } from "#shared/lib/routes/routes.types.ts";
 import { readRoute } from "#shared/lib/routes/routes.utils.ts";
@@ -48,7 +49,7 @@ export function useHistoryRoute(initialView: View = VIEW.work): [Route, Navigate
     entryIdRef.current = (window.history.state as HistoryState | null)?.kbId ?? newEntryId();
     try {
       const first: HistoryState = { kbView: viewRef.current, scrollY: 0, kbId: entryIdRef.current };
-      window.history.replaceState(first, "", urlFor(viewRef.current, initialAnchorRef.current));
+      replaceAddress(urlFor(viewRef.current, initialAnchorRef.current), first);
     } catch {
       /* ignore */
     }
@@ -94,7 +95,7 @@ export function useHistoryRoute(initialView: View = VIEW.work): [Route, Navigate
         const next: HistoryState = { kbView: view, scrollY: 0, kbId: entryIdRef.current };
         window.history.pushState(next, "", urlFor(view, anchor));
       } else {
-        window.history.replaceState(window.history.state, "", urlFor(view, anchor));
+        replaceAddress(urlFor(view, anchor)); // the same view: not a new page
       }
     } catch {
       /* routing still works in state */

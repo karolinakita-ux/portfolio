@@ -8,9 +8,8 @@ import type { BannerLinkProps } from "./BannerLink.types.ts";
 
 /** External text link in the banner: brand icon, label, arrow (opens in a new tab). */
 export function BannerLink({ href, icon: Icon, event, children }: BannerLinkProps) {
-  const onClick = event ? () => track(event, { place: "banner" }) : undefined;
   return (
-    <a href={href} {...EXTERNAL_LINK} onClick={onClick} className={styles.root}>
+    <a href={href} {...EXTERNAL_LINK} onClick={() => track(event, { place: "banner" })} className={styles.root}>
       <Icon aria-hidden="true" size={16} className={styles.icon} />
       {children}
       <ArrowUpRight aria-hidden="true" size={16} className={styles.arrow} />

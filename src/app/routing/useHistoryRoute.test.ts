@@ -82,6 +82,29 @@ describe("useHistoryRoute", () => {
     expect(window.history.length).toBe(before);
   });
 
+  it("shows a tracker only new views: the first address and same-view jumps go past its wrapper", () => {
+    window.history.replaceState(null, "", "/resume");
+    // Umami's tracker wraps the methods on the history object itself; it takes each call as a new page.
+    const replace = vi.fn();
+    const push = vi.fn((...args: Parameters<History["pushState"]>) => {
+      History.prototype.pushState.apply(window.history, args);
+    });
+    Object.assign(window.history, { replaceState: replace, pushState: push });
+    try {
+      const result = renderHook(() => useHistoryRoute()).result;
+      expect(window.location.pathname).toBe("/about"); // the alias, normalised
+      act(() => result.current[1](VIEW.about, "faq"));
+      expect(window.location.hash).toBe("#faq");
+      act(() => result.current[1](VIEW.contact));
+      // Saving the scroll position passes no address, which the tracker ignores.
+      expect(replace.mock.calls.filter((args: unknown[]) => args[2] !== undefined)).toEqual([]);
+      expect(push).toHaveBeenCalledOnce();
+    } finally {
+      Reflect.deleteProperty(window.history, "replaceState");
+      Reflect.deleteProperty(window.history, "pushState");
+    }
+  });
+
   it("restores the view and scroll position on Back / Forward", () => {
     const result = start("/");
     act(() => result.current[1](VIEW.about));
@@ -96,8 +119,9 @@ describe("useHistoryRoute", () => {
 
   it("never writes to the history while scrolling (in-app browsers show a loading bar on each write)", async () => {
     start("/about");
-    const replace = vi.spyOn(window.history, "replaceState");
-    const push = vi.spyOn(window.history, "pushState");
+    // On the prototype: replaceAddress() calls it there, past a tracker's wrapper on window.history.
+    const replace = vi.spyOn(History.prototype, "replaceState");
+    const push = vi.spyOn(History.prototype, "pushState");
     for (const y of [120, 480, 900]) {
       scrollTo(y);
       window.dispatchEvent(new Event("scroll"));

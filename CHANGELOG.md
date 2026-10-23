@@ -4,6 +4,30 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Release v4.1.0 - 2026-10-23
+
+- With your consent, visitor statistics now also measure how fast pages load and react on your device, and note errors and broken links, so problems can be fixed sooner.
+- They also record your browser window size, screen pixel density and theme in ranges, and the app you opened the site in, such as LinkedIn.
+- The click IDs that ads and social apps add to links are removed before anything is sent.
+- The privacy policy and the consent box explain the changes, and visitors who allowed statistics before are asked again.
+
+Versions: 4.1.0.
+
+### 4.1.0 - 2026-10-23
+
+#### Added
+
+- `docs/analytics.md`, the tracking plan: principles, naming rules for events and properties, every event and session property with the question it answers, what is not collected on purpose and why, a checklist for new events, the event budget and dashboard recipes. `tracking-plan.test.ts` fails when the code sends an event or session property the plan does not list, or the plan lists one the code does not send (checked with a missing and an extra row).
+- Page speed in Umami's Performance tab: the tracker's own Core Web Vitals report (`data-performance`; LCP, INP, CLS, FCP, TTFB), one per view. The tracker stays initialised with its own pageviews off (`data-auto-pageview="false"`). The section hash, same-view jumps and the first load's address go past its history wrapper (`replaceAddress()` in `shared/lib/routes/address.utils.ts`), so reading a page does not split it into many short ones; load metrics are dropped when the counted page is not the one the browser loaded.
+- Session data once per page load (`umami.identify()` without an id, `session.utils.ts`): window width at the site's breakpoints, pixel density, the theme and whether it was picked, and the in-app browser (LinkedIn, Messenger, Instagram...). In-app detection moved to `shared/lib/browser` and names the app.
+- New events: `storybook-click` (hero and banner), `outbound-click` (any other external `TextLink`, with its host), `image-nav` (next / previous in the image viewer, through `LightboxItem.onShow`), `text-copy` (where copied text was, never the text), `page-print`, `page-not-found` (an address that matches no page, kept by `src/main.tsx` and sent with the first pageview) and `js-error` (errors in the site's own scripts, at most three a page, harmless browser warnings left out).
+
+#### Changed
+
+- Addresses sent to Umami keep only `ref` and the UTM parameters, so ad and social click ids (`fbclid`, `gclid`, `li_fat_id`) never reach it, and another site's referrer loses its query. `beforeSend` (`data-before-send`) applies this to the tracker's own requests too and cancels them once statistics are off. Statistics switched off and on again on one page reuse the loaded script.
+- `e2e/history.e2e.ts` records history writes on `History.prototype`, where `replaceAddress()` writes: a recorder on `window.history` (like the tracker's wrapper) no longer sees them, and the in-app browser check would have passed without looking. Unit tests for `useSectionHash`, `useHistoryRoute` and `HeadingAnchor` put a tracker-style wrapper on `window.history` and check that reading, same-view jumps and copied links pass it.
+- The privacy policy lists copying and printing, window and screen, speed and errors, broken links, Storybook and other links, and the removed click ids; the consent box says it counts how fast pages load and reads the window size. Visitors who allowed statistics before this version are asked again (`STORED_CHOICE.on` is "on-3"); a no stays a no.
+
 ## Release v4.0.0 - 2026-10-23
 
 - The CV page is gone: old CV links now open the About page.

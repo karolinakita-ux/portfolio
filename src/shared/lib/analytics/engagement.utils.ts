@@ -142,3 +142,11 @@ export function watchEngagement(onStretch: (stretch: TimeOnPage) => void): () =>
     frame = 0;
   };
 }
+
+/** Calls `report` when the page goes to the printer or to a PDF (page-print). Returns the function that stops. */
+export function watchPrints(report: () => void): () => void {
+  window.addEventListener("beforeprint", report);
+  return () => {
+    window.removeEventListener("beforeprint", report);
+  };
+}
