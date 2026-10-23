@@ -1,8 +1,34 @@
 import type { View } from "#shared/lib/routes/routes.types.ts";
 
-import type { EVENT } from "./analytics.constants.ts";
+import type { EVENT, SCROLL_BUCKETS } from "./analytics.constants.ts";
 
 export type AnalyticsEvent = (typeof EVENT)[keyof typeof EVENT];
+
+/** What the visitor used for a click or key: sent with every event they start (input.utils.ts). */
+export type InputKind = "mouse" | "touch" | "pen" | "keyboard";
+
+/** One stretch on a page, from arriving (or coming back to the tab) to leaving or hiding it. */
+export interface TimeOnPage {
+  /** The engaged time as the dashboard groups it (TIME_BUCKETS). */
+  time: string;
+  /** The same in whole seconds, for exports and the API. */
+  seconds: number;
+  /** How far down the page the visitor has seen so far. */
+  scroll: (typeof SCROLL_BUCKETS)[number];
+  /** The furthest section reached (its id, the URL hash); absent above the first one. */
+  section?: string;
+}
+
+/** What a dead click landed on: an image, an icon, a heading, text, the empty part of a card, or the page. */
+export type ClickedElement = "image" | "icon" | "heading" | "text" | "card" | "page";
+
+export interface DeadClick {
+  element: ClickedElement;
+  /** The section id around it, a hero's name (hero, about, case...), or the landmark (header, footer, dialog, main). */
+  area: string;
+  /** The image's alt text, the heading, or the card's title: site copy, never anything the visitor typed. */
+  label?: string;
+}
 
 /** The properties each event carries: a wrong event name or property is a type error. */
 export interface EventData {
@@ -26,7 +52,16 @@ export interface EventData {
   /** section: the section id (the URL hash the copied link ends in). */
   [EVENT.sectionLinkCopy]: { section: string };
   [EVENT.themeSwitch]: { theme: "light" | "dark" };
+  /** Sent when the visitor leaves the page, switches tabs or apps, or closes it. */
+  [EVENT.timeOnPage]: TimeOnPage;
+  /** A click or tap on something that does nothing; once per burst of quick clicks on one spot. */
+  [EVENT.deadClick]: DeadClick;
+  /** The same burst reached RAGE_CLICKS clicks: the visitor expected it to react. */
+  [EVENT.rageClick]: DeadClick;
 }
+
+/** What goes to Umami: the event's properties, plus the input behind it when a click or key started it. */
+export type SentData<E extends AnalyticsEvent> = EventData[E] & { input?: InputKind };
 
 export type EmailPlace = EventData[typeof EVENT.emailClick]["place"];
 
@@ -78,14 +113,25 @@ export interface AnalyticsSite {
   privacy: PrivacySignals;
   /** The dev server in a person's browser: the consent box shows on every page load, to check its design. */
   preview?: boolean;
+  /** The site's version (package.json), sent as Umami's tag so the dashboard can compare releases. */
+  release?: string;
+}
+
+/** The page a call belongs to, read when it is made: address without the hash, title and referrer. */
+export interface PageSnapshot {
+  url: string;
+  title: string;
+  referrer?: string;
 }
 
 /** What the module remembers for the page's lifetime. */
 export interface AnalyticsState {
   on: boolean;
   queue: BuildPayload[];
-  /** Address of the last pageview, or null before the first one. */
-  lastPage: string | null;
+  /** The page of the last pageview, or null before the first one. */
+  page: PageSnapshot | null;
   /** Referrer of the current page; null keeps the tracker's own (document.referrer, on the first page). */
   referrer: string | null;
+  /** Removes the input, click and time-on-page listeners; null while statistics are off. */
+  unwatch: (() => void) | null;
 }

@@ -1,5 +1,5 @@
 /// <reference types="vitest/config" />
-import { closeSync, openSync, readdirSync, readSync } from "node:fs";
+import { closeSync, openSync, readdirSync, readFileSync, readSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
@@ -58,9 +58,13 @@ function assetSizes(): Plugin {
   };
 }
 
+/** The site's version: visitor statistics send it as Umami's tag (src/main.tsx). */
+const { version } = JSON.parse(readFileSync(new URL("package.json", import.meta.url), "utf8")) as { version: string };
+
 // https://vite.dev/config/
 export default defineConfig(({ isSsrBuild }) => ({
   plugins: [react(), tailwindcss(), assetSizes()],
+  define: { "import.meta.env.APP_VERSION": JSON.stringify(version) },
   build: {
     // Hashed bundles go to /static/*, which public/_headers caches for a year.
     // Content images stay in /assets under their own names.

@@ -25,6 +25,7 @@ initStatistics({
   hostname: window.location.hostname,
   privacy: browserSignals(),
   preview: import.meta.env.DEV && !navigator.webdriver,
+  release: import.meta.env.APP_VERSION,
 });
 
 const root = document.getElementById("root");

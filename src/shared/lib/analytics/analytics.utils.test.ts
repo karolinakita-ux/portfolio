@@ -1,3 +1,4 @@
+import { fireEvent } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from "vitest";
 
 import { EVENT, UMAMI } from "./analytics.constants.ts";
@@ -27,6 +28,10 @@ beforeEach(async () => {
 });
 
 afterEach(() => {
+  analytics.stopAnalytics(); // its listeners stay on the document otherwise
+  vi.useRealTimers();
+  document.body.innerHTML = "";
+  Reflect.deleteProperty(document, "visibilityState");
   for (const script of document.querySelectorAll("script")) script.remove();
   Reflect.deleteProperty(window, "umami");
   document.title = "";
@@ -87,6 +92,11 @@ describe("startAnalytics", () => {
       "data-exclude-hash": "true",
       "data-do-not-track": "true",
     });
+  });
+
+  it("tags every call with the site's version, so the dashboard can compare releases", () => {
+    analytics.startAnalytics({ ...LIVE, release: "3.14.0" });
+    expect(umamiScript()?.dataset.tag).toBe("3.14.0");
   });
 
   it("adds nothing off the live site or for a visitor who opted out", () => {
@@ -225,5 +235,108 @@ describe("events", () => {
     analytics.track(EVENT.figmaClick, { target: "hero" });
     // @ts-expect-error - case takes a view id
     analytics.track(EVENT.caseOpen, { case: "project-planning", from: "thumbnail" });
+  });
+});
+
+describe("time on page", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    Object.defineProperty(document, "visibilityState", { value: "visible", configurable: true });
+  });
+
+  it("is sent as the page being left when the view changes, before the next pageview", () => {
+    analytics.startAnalytics(LIVE);
+    const sent = loadTracker();
+    go("/about?ref=acme#career", "About - Karolina Kita");
+    analytics.trackPageview();
+    vi.advanceTimersByTime(5000);
+    go("/contact", "Contact - Karolina Kita");
+    analytics.trackPageview();
+
+    expect(sent.map((payload) => payload.name)).toEqual([undefined, "link-ref", "time-on-page", undefined]);
+    expect(sent[2]).toEqual({
+      ...TRACKER_PAYLOAD,
+      url: window.location.origin + "/about?ref=acme",
+      title: "About - Karolina Kita",
+      name: "time-on-page",
+      data: { time: "under 10 s", seconds: 5, scroll: "100%" }, // jsdom has no layout: the whole page is in view
+    });
+  });
+
+  it("is sent when the tab hides, and never after statistics are switched off", () => {
+    analytics.startAnalytics(LIVE);
+    const sent = loadTracker();
+    go("/work/automotive", "Automotive");
+    analytics.trackPageview();
+    vi.advanceTimersByTime(20_000);
+    fireEvent.keyDown(document.body, { key: "ArrowDown" }); // still reading: without it, the count stops at 30 s
+    vi.advanceTimersByTime(22_000);
+    Object.defineProperty(document, "visibilityState", { value: "hidden", configurable: true });
+    document.dispatchEvent(new Event("visibilitychange"));
+    expect(sent.at(-1)).toMatchObject({ name: "time-on-page", data: { time: "30 s - 1 min", seconds: 42 } });
+
+    Object.defineProperty(document, "visibilityState", { value: "visible", configurable: true });
+    document.dispatchEvent(new Event("visibilitychange"));
+    vi.advanceTimersByTime(10_000);
+    analytics.stopAnalytics();
+    window.dispatchEvent(new Event("pagehide"));
+    expect(sent).toHaveLength(2);
+  });
+});
+
+describe("clicks", () => {
+  it("carry the input behind them: a tap, a click or a key; a tagged link does not", () => {
+    vi.useFakeTimers();
+    analytics.startAnalytics(LIVE);
+    const sent = loadTracker();
+    go("/?ref=acme");
+    fireEvent.pointerDown(document.body, { pointerType: "touch" });
+    analytics.trackPageview(); // the visitor's tap on "Allow statistics" counts the page and its tag
+    analytics.track(EVENT.themeSwitch, { theme: "dark" });
+    fireEvent.keyDown(document.body, { key: "Enter" });
+    analytics.track(EVENT.faqOpen, { question: "tools" });
+    vi.advanceTimersByTime(2000); // the browser's own print, from its menu
+    analytics.track(EVENT.cvPrint, { method: "browser" });
+
+    expect(sent.map((payload) => [payload.name, payload.data])).toEqual([
+      [undefined, undefined],
+      ["link-ref", { ref: "acme" }],
+      ["theme-switch", { theme: "dark", input: "touch" }],
+      ["faq-open", { question: "tools", input: "keyboard" }],
+      ["cv-print", { method: "browser" }],
+    ]);
+  });
+
+  it("on something that does nothing are counted only while statistics are on", () => {
+    document.body.innerHTML = `<main><section id="faq" data-anchor=""><h2 id="faq-title">FAQ</h2></section></main>`;
+    const heading = document.getElementById("faq-title") ?? document.body;
+    const click = () => {
+      fireEvent.pointerDown(heading, { pointerType: "mouse" });
+      fireEvent.click(heading, { detail: 1 });
+    };
+    click();
+    analytics.startAnalytics(LIVE);
+    const sent = loadTracker();
+    analytics.trackPageview();
+    click();
+    analytics.stopAnalytics();
+    click();
+
+    expect(sent.map((payload) => [payload.name, payload.data])).toEqual([
+      [undefined, undefined],
+      ["dead-click", { element: "heading", area: "faq", label: "FAQ", input: "mouse" }],
+    ]);
+  });
+
+  it("are counted once after statistics go off and on again: stopping removes the listeners", () => {
+    document.body.innerHTML = `<main><p id="text">Text</p></main>`;
+    const text = document.getElementById("text") ?? document.body;
+    analytics.startAnalytics(LIVE);
+    analytics.stopAnalytics();
+    analytics.startAnalytics(LIVE);
+    const sent = loadTracker();
+    fireEvent.pointerDown(text, { pointerType: "mouse" });
+    fireEvent.click(text, { detail: 1 });
+    expect(sent.map((payload) => payload.name)).toEqual(["dead-click"]);
   });
 });
