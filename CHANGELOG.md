@@ -4,7 +4,12 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v5.3.3 - 2026-10-26
+
+- Visitor statistics, which run only if you allow them, now also note the height of your browser window and which pages were read after opening a tagged link, such as one in a job application; the privacy page says so and explains more exactly how visits are counted.
+- Behind the scenes: updated libraries, clearer licence notes for the icons and fonts, and better accessibility checks.
+
+Versions: 5.2.5 - 5.3.3.
 
 ### 5.3.3 - 2026-10-26
 
