@@ -11,10 +11,11 @@ Designed by Karolina in Figma and built with [Claude Code](docs/claude-code.md):
 - **Vertical slices.** Each page is a feature folder with its own view, copy, types and tests; ESLint enforces the boundaries between `app`, `features` and `shared`. [Architecture](docs/architecture.md)
 - **Real pages, prerendered.** Every page has its own URL (`/work/project-planning`) and is written to static HTML at build time, so search engines, link previews and AI assistants read the full content without JavaScript. Per-page titles, descriptions, structured data, a sitemap and [`/llms.txt`](https://karolina.kita.company/llms.txt).
 - **Section links.** Each section heading has a link that copies its address (`/about#career`); the address bar follows the section you are reading.
-- **Accessible by design.** WCAG 2.1 AA is the minimum: keyboard focus, labelled controls, landmarks, reduced motion. `yarn a11y` audits every page in real Chromium (axe, an emulated screen reader, Tab order, reflow at 320 px).
+- **Accessible by design.** WCAG 2.2 AA is the minimum: keyboard focus that nothing covers, labelled controls, landmarks, reduced motion. `yarn a11y` audits every page in real Chromium (axe, an emulated screen reader, the Tab order with a check that no focused element is hidden, also with the consent box showing, reflow at 320 px and 400% zoom).
+- **Readable as plain text.** Search engines and AI assistants read the HTML without CSS, so neighbouring elements always have a space between them; a test renders every page and checks it. Favicons in SVG, PNG and ICO, because Google Search does not read SVG ones.
 - **Image viewer.** Screenshots open full size with zoom, swipe and arrow keys; WebP images and loading a case's screenshots as soon as a visitor points at it keep it fast.
 - **Statistics only with consent.** Visits, time on page, clicks (including taps on things that do nothing, told apart from mouse clicks), page speed and errors are counted with [Umami](https://umami.is) only after the visitor allows it in the consent box. No cookies; with Do Not Track or Global Privacy Control on, nobody is asked and nothing loads. The [privacy page](https://karolina.kita.company/privacy) explains it and has the switch. [Visitor statistics](docs/architecture.md#visitor-statistics), [tracking plan](docs/analytics.md)
-- **Quality gate.** `yarn verify` runs the typecheck, ESLint with zero warnings, a Prettier check, 490+ tests and the full build before every commit.
+- **Quality gate.** `yarn verify` runs the typecheck, ESLint with zero warnings, a Prettier check, 580+ tests and the full build before every commit.
 
 ## Getting started
 

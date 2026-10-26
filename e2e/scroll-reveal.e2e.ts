@@ -549,7 +549,7 @@ test.describe("motion allowed", () => {
         // every card has been revealed, so this run checks them all.
         await walkToBottom(page, () => undefined);
         await audit("bottom");
-        expect(found, "axe WCAG 2.1 A/AA violations").toEqual([]);
+        expect(found, "axe WCAG 2.2 A/AA violations").toEqual([]);
       });
 
       test(`${path} (${theme}): early in a reveal, axe flags only the entering card's text that is not fully on screen`, async ({

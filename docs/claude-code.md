@@ -27,7 +27,7 @@ Reviewers that run in their own context and only report:
 
 | Agent           | Reviews                                                                                      |
 | --------------- | -------------------------------------------------------------------------------------------- |
-| `a11y-reviewer` | Runs `yarn a11y` and reads the screen reader transcripts and Tab orders against WCAG 2.1 AA. |
+| `a11y-reviewer` | Runs `yarn a11y` and reads the screen reader transcripts and Tab orders against WCAG 2.2 AA. |
 | `copy-reviewer` | Copy against Karolina's writing rules, and facts (dates, employers, years) across pages.     |
 
 ## Tools Claude uses here

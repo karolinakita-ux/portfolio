@@ -6,6 +6,14 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.2.1 - 2026-10-26
+
+#### Changed
+
+- The Privacy page's search description says that visitor statistics run only if the visitor allows them, as the policy does, instead of "cookieless visitor statistics". Its sitemap date is today, because the description is also in its structured data.
+- The docs follow today's changes: WCAG 2.2 AA is the minimum in CLAUDE.md, the README, `docs/architecture.md`, `docs/claude-code.md`, the Storybook welcome page and the a11y-reviewer agent (which now also reads the hidden-focus and consent box checks). CLAUDE.md has the rules for focus that nothing hides, names that start with the visible label, states beyond the yellow marker, and spaces between neighbouring elements. `docs/design.md` lists the new design rules (breadcrumb roots, previous and next at both ends, dark labels on gold, the theme icon, the footer version).
+- The case studies and the About page keep "WCAG 2.1 AA" where they describe past projects: that is what those projects met.
+
 ### 5.2.0 - 2026-10-26
 
 #### Added
