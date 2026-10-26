@@ -22,13 +22,21 @@ const tableNames = (heading: string): string[] => {
 
 const sorted = (names: Iterable<string>) => [...names].sort();
 
+/** Every session property, the optional link tag included (it is sent only when the page has one). */
+const sessionKeys = (): string[] => {
+  window.history.replaceState(null, "", "/?ref=plan");
+  const keys = Object.keys(sessionData());
+  window.history.replaceState(null, "", "/");
+  return keys;
+};
+
 describe("the tracking plan (docs/analytics.md)", () => {
   it("lists every event the code can send, and no other", () => {
     expect(sorted(tableNames("Events"))).toEqual(sorted(Object.values(EVENT)));
   });
 
   it("lists every session property, and no other", () => {
-    expect(sorted(tableNames("Session data"))).toEqual(sorted(Object.keys(sessionData())));
+    expect(sorted(tableNames("Session data"))).toEqual(sorted(sessionKeys()));
   });
 });
 
@@ -41,8 +49,8 @@ describe("naming", () => {
   });
 
   it("never names a session property id: identify() would take it as a Distinct ID and link visits", () => {
-    expect(Object.keys(sessionData())).not.toContain("id");
-    for (const key of Object.keys(sessionData())) expect(key).toMatch(/^[a-z]+(?:[A-Z][a-z]+)*$/);
+    expect(sessionKeys()).not.toContain("id");
+    for (const key of sessionKeys()) expect(key).toMatch(/^[a-z]+(?:[A-Z][a-z]+)*$/);
   });
 
   it("marks only known events as passive", () => {

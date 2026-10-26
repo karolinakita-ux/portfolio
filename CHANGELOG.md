@@ -6,6 +6,17 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.3.0 - 2026-10-26
+
+#### Added
+
+- Two more session properties in the visitor statistics: `viewportHeight`, the browser window's height in ranges (under 500px ... 1100px or taller), to see how much of a page fits on the first screen; and `ref`, the tag of a tagged link (`?ref=`, else `utm_source`) when the page was opened from one, so Umami's Sessions page lists the visits each application or channel brought, and their later visits in the same session stay under it. `linkRef` moved to `payload.utils.ts`, and the three range helpers share one function.
+- The tracking plan names what stays out on purpose: the browser's exact version, the time zone, the list of languages, fonts or supported features (fingerprinting signals). It says a Segment with Session data filters narrows any report to a session property.
+
+#### Changed
+
+- The privacy policy (dated 26 October 2026) says that the statistics note the window's height as well as its width, the version of the site you saw, and which pages were read after a tagged link. All three belong to kinds of data already listed (window size, tagged links, what Umami records with each visit), so visitors who allowed statistics are not asked again and the consent box stays as it is.
+
 ### 5.2.7 - 2026-10-26
 
 #### Changed

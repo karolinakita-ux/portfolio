@@ -1,4 +1,4 @@
-import { EVENT, MAX_PATH_LENGTH, MAX_QUEUED, MAX_REF_LENGTH, PASSIVE_EVENTS, UMAMI } from "./analytics.constants.ts";
+import { EVENT, MAX_PATH_LENGTH, MAX_QUEUED, PASSIVE_EVENTS, UMAMI } from "./analytics.constants.ts";
 import type {
   AnalyticsEvent,
   AnalyticsSite,
@@ -16,7 +16,7 @@ import { watchCopies, watchDeadClicks } from "./clicks.utils.ts";
 import { endStretch, startPage, watchEngagement, watchPrints } from "./engagement.utils.ts";
 import { watchErrors } from "./errors.utils.ts";
 import { recentInput, watchInput } from "./input.utils.ts";
-import { cleanPayload, cleanReferrer, cleanUrl } from "./payload.utils.ts";
+import { cleanPayload, cleanReferrer, cleanUrl, linkRef } from "./payload.utils.ts";
 import { sessionData } from "./session.utils.ts";
 
 /**
@@ -107,13 +107,6 @@ const withPage =
 const sentData = <E extends AnalyticsEvent>(name: E, data: EventData[E]): SentData<E> => {
   const input = PASSIVE_EVENTS.includes(name) ? undefined : recentInput();
   return input ? { ...data, input } : data;
-};
-
-/** The tag of a tagged link (?ref=acme, else utm_source), or null. */
-const linkRef = (search: string): string | null => {
-  const params = new URLSearchParams(search);
-  const ref = (params.get("ref") ?? params.get("utm_source"))?.trim();
-  return ref ? ref.slice(0, MAX_REF_LENGTH) : null;
 };
 
 /** The stretch on the page being left, sent as that page (the address bar may show the next one already). */

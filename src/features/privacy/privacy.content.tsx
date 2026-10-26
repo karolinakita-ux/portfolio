@@ -28,7 +28,7 @@ export const PRIVACY: PrivacyContent = {
   eyebrow: "Privacy policy",
   title: "Privacy",
   intro: "How this website handles your data, in plain words.",
-  updated: { iso: "2026-10-23", label: "23 October 2026" },
+  updated: { iso: "2026-10-26", label: "26 October 2026" },
   sections: [
     {
       id: "in-short",
@@ -85,7 +85,7 @@ export const PRIVACY: PrivacyContent = {
         ),
         lead(
           "Your screen and window",
-          "The width of your browser window and your screen's pixel density, in ranges (such as 768 - 1023px), whether you see the light or dark theme and whether you picked it, and the app if you opened the site inside one, such as LinkedIn or Messenger. This shows me which layouts to improve first.",
+          "The width and height of your browser window and your screen's pixel density, in ranges (such as 768 - 1023px), whether you see the light or dark theme and whether you picked it, and the app if you opened the site inside one, such as LinkedIn or Messenger. This shows me which layouts to improve first.",
         ),
         lead(
           "Speed and errors",
@@ -97,7 +97,7 @@ export const PRIVACY: PrivacyContent = {
         ),
         lead(
           "What is recorded with it",
-          "Your browser, operating system, device type, screen size, language and approximate location (country, region and city). Umami uses your IP address only to work out the location; its data processing agreement does not list the IP address among the data it keeps.",
+          "Your browser, operating system, device type, screen size, language and approximate location (country, region and city), and the version of this website you saw. Umami uses your IP address only to work out the location; its data processing agreement does not list the IP address among the data it keeps.",
         ),
         lead(
           "Why I ask first",
@@ -107,7 +107,7 @@ export const PRIVACY: PrivacyContent = {
         lead("How long", "Umami keeps the statistics for 6 months, then deletes them."),
         lead(
           "Tagged links",
-          "Links I share, for example in job applications, may end in ?ref= and a company or channel name, so I can see which link brought a visit. They never contain a person's name. Other parts of an address, such as the click IDs that ads and social apps add, are removed before anything is sent.",
+          "Links I share, for example in job applications, may end in ?ref= and a company or channel name, so I can see which link brought a visit and which pages were read after it. They never contain a person's name. Other parts of an address, such as the click IDs that ads and social apps add, are removed before anything is sent.",
         ),
       ],
       intro: [

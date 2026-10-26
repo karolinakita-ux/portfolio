@@ -1,4 +1,4 @@
-import { KEPT_PARAMS, LOAD_METRICS } from "./analytics.constants.ts";
+import { KEPT_PARAMS, LOAD_METRICS, MAX_REF_LENGTH } from "./analytics.constants.ts";
 import type { PageSnapshot, PerformancePayload, UmamiSendType } from "./analytics.types.ts";
 
 /**
@@ -19,6 +19,13 @@ export const cleanUrl = (href: string): string => {
   } catch {
     return href;
   }
+};
+
+/** The tag of a tagged link (?ref=acme, else utm_source), or null: link-ref and the session data send it. */
+export const linkRef = (search: string): string | null => {
+  const params = new URLSearchParams(search);
+  const ref = (params.get("ref") ?? params.get("utm_source"))?.trim();
+  return ref ? ref.slice(0, MAX_REF_LENGTH) : null;
 };
 
 /** A referrer as Umami gets it: a page of this site as a cleaned path, another site without its query and hash. */

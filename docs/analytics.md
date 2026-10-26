@@ -73,16 +73,20 @@ Addresses are cleaned before anything goes (`payload.utils.ts`, applied to the t
 
 ## Session data
 
-Sent once per page load with `umami.identify()` (`session.utils.ts`), never with an id. Umami shows it on the Sessions page (Properties: each property with its values), and every report can be filtered by it. Umami keeps one value per session and property: a later page load in the same session replaces it.
+Sent once per page load with `umami.identify()` (`session.utils.ts`), never with an id. Umami shows it on the Sessions page (Properties: each property with its values), and a Segment (Session data filters) narrows any report to it. Umami keeps one value per session and property: a later page load in the same session replaces it, and a property left out keeps its earlier value.
 
-| Property      | Values                                                                              | Question it answers                                 |
-| ------------- | ----------------------------------------------------------------------------------- | --------------------------------------------------- |
-| `viewport`    | browser window width at the site's breakpoints: `under 480px` ... `1280px or wider` | Which layouts are seen most, and so polished first? |
-| `pixelRatio`  | `1x`, `1.5x`, `2x`, `3x`                                                            | Which image resolutions are worth producing?        |
-| `theme`       | `light`, `dark`: the theme when the page loaded                                     | How many visitors see dark mode?                    |
-| `themeSource` | `system` (follows the device), `picked` (chosen with the switch)                    | Is dark mode a device default or a choice?          |
-| `inApp`       | `linkedin`, `messenger`, `instagram`, `facebook`, ... or `none`                     | How many visits come through an app's own browser?  |
-| `version`     | the site's version the page was loaded with (`package.json`, `5.2.5`), as the tag   | Which release did visitors see?                     |
+| Property         | Values                                                                                    | Question it answers                                                                  |
+| ---------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `viewport`       | browser window width at the site's breakpoints: `under 480px` ... `1280px or wider`       | Which layouts are seen most, and so polished first?                                  |
+| `viewportHeight` | browser window height: `under 500px`, `500 - 699px`, `700 - 899px` ... `1100px or taller` | How much of a page fits on the first screen, and what must sit in it?                |
+| `pixelRatio`     | `1x`, `1.5x`, `2x`, `3x`                                                                  | Which image resolutions are worth producing?                                         |
+| `theme`          | `light`, `dark`: the theme when the page loaded                                           | How many visitors see dark mode?                                                     |
+| `themeSource`    | `system` (follows the device), `picked` (chosen with the switch)                          | Is dark mode a device default or a choice?                                           |
+| `inApp`          | `linkedin`, `messenger`, `instagram`, `facebook`, ... or `none`                           | How many visits come through an app's own browser?                                   |
+| `version`        | the site's version the page was loaded with (`package.json`, `5.2.5`), as the tag         | Which release did visitors see?                                                      |
+| `ref`            | the tagged link's tag, as `link-ref` sends it; only when the page was opened from one     | What did the visitors from each application or channel read, and did they come back? |
+
+What is left out on purpose, such as accessibility settings, the browser's exact version or the time zone: [Not collected, on purpose](#not-collected-on-purpose).
 
 ## Speed reports
 
@@ -99,6 +103,7 @@ Sent once per page load with `umami.identify()` (`session.utils.ts`), never with
 - **Distinct IDs** (`data-distinct-id`, `identify()` with an id): visits stay unlinked.
 - **Accessibility settings** (reduced motion, forced colours, contrast): they can hint at health, and the site supports them for everyone anyway.
 - **Connection type, memory, battery, exact screen pixels beyond Umami's own `screen`**: more fingerprinting surface, and no decision depends on them.
+- **The browser's exact version, the time zone, the list of languages, fonts or supported features**: classic fingerprinting signals. Umami's browser name, country and language are enough, `js-error` shows where the site breaks, and reading more of the device would need a new consent text.
 - **Text**: what visitors type or copy, and the exact spot of a click.
 
 ## Adding or changing an event
@@ -121,7 +126,7 @@ The Hobby plan allows 100,000 events a month and keeps data for 6 months, which 
 - **Funnel**: `/` → `case-open` (or a `/work/...` page) → `email-click` or `linkedin-click`.
 - **Journey**: which pages lead to Contact, and where visits end.
 - **Compare releases**: filter any report by tag (the version from `package.json`). Sessions → Properties → `version` lists the versions with their counts; so does Other → Tag behind "More" under any Overview table.
-- **Filter by session data**: `inApp` is `linkedin` for visits from LinkedIn's app; `viewport` for one layout.
+- **Filter by session data** (a Segment with Session data filters): `inApp` is `linkedin` for visits from LinkedIn's app; `viewport` and `viewportHeight` for one screen size; `ref` for the visits one application or channel brought, later visits in the same session included.
 - **Performance tab**: p75 of LCP, INP and CLS per page and device. Google's limits: LCP 2.5 s, INP 200 ms, CLS 0.1.
 - **UTM report** for `utm_*` links; `link-ref` for `?ref=` tags.
 - **Events → Properties**: `dead-click` by `area` and `label`, `time-on-page` by `time` and `scroll`, `page-not-found` by `path`, `js-error` by `message`.
