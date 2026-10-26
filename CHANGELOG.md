@@ -4,7 +4,13 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v5.0.0 - 2026-10-26
+
+- The project planning case study no longer names its product: it has a new address, /work/project-planning, and the product's logo is gone from its screenshots.
+- The other two case studies hide more client details: the theming case no longer shows its vendor's brand, and the automotive case blurs internal page names, survey counts, a dealer's sales figures and a persona's raw survey numbers.
+- Search engines and other tools that read the page as text now see clean page labels and named case links.
+
+Versions: 5.0.0.
 
 ### 5.0.0 - 2026-10-26
 
