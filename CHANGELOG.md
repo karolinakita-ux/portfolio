@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.6.1 - 2026-10-26
+
+#### Changed
+
+- The footer's Privacy and Accessibility links are separated by a vertical bar, like the copyright line above them: "Privacy | Accessibility". They stay on one line down to 320px; if a large text size wraps them, the taller lines keep their 24px target areas apart (WCAG 2.5.8).
+
 ### 5.6.0 - 2026-10-26
 
 #### Added

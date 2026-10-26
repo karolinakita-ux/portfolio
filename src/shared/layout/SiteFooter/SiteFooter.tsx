@@ -78,10 +78,12 @@ export function SiteFooter({ onNavigate }: SiteFooterProps) {
             )}
           </p>
           <p>{PROFILE.builtWith}</p>
-          <p className={styles.pageLinks}>
+          {/* Separated like the copyright line above. */}
+          <p>
             <ViewLink view={VIEW.privacy} onNavigate={onNavigate} className={styles.pageLink}>
               Privacy
-            </ViewLink>{" "}
+            </ViewLink>
+            {" | "}
             <ViewLink view={VIEW.accessibility} onNavigate={onNavigate} className={styles.pageLink}>
               Accessibility
             </ViewLink>
