@@ -6,6 +6,18 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.3.2 - 2026-10-26
+
+#### Added
+
+- Claude Code helpers for the requests that came up most often (215 requests over 14 sessions). Skills: `add-tracking` (statistics events and session data), `update-dependencies`, `sync-design-system` (Figma, tokens, components and the claude.ai design system) and `record-rule` ("remember ..."). Agents that only report: `ui-reviewer` (design tokens, components and UX patterns, with screenshots on phone and desktop in both themes), `docs-seo-reviewer`, `confidentiality-reviewer` (never writes a hidden name) and `pattern-sweeper` (the same root cause elsewhere, and a guard). CONTRIBUTING.md has a table of what to use when; `docs/claude-code.md`, CLAUDE.md and the README list them. Personal `local-*` skills stay out of the repo (`.gitignore`).
+- `yarn a11y`'s summary names the axe version that ran and lists the results axe could not decide ("Needs manual review by rule"). The audit ran axe 4.13 from `@axe-core/playwright` while Storybook ran 4.14, so the 2.5.3 rule (`label-content-name-mismatch`) was off in the page audit until the 5.2.7 update; now 34 scans, 0 violations, and 8 undecided contrast results, all decorative avatar initials.
+
+#### Changed
+
+- `a11y-reviewer` follows current practice: it starts from the changed files, also runs the motion e2e spec, rules on every result axe could not decide, walks a checklist of what tools miss on this site (text spacing, hover content, dragging, consistent help, status messages, and more), grades findings by severity with their evidence, and lists the limits of the run and the screen reader checks a person still has to do. Its description says to use it proactively.
+- The `release` skill can be started by Claude when the user asks for a release, not only by typing `/release`. It says what to do when the deploy fails and lists the caches to refresh. `ship-change` points to the e2e run and the reviewers after UI changes.
+
 ### 5.3.1 - 2026-10-26
 
 #### Fixed

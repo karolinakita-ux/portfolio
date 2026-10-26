@@ -74,9 +74,10 @@ Vertical slices: `app` → `features` → `shared`, never the other way.
 
 ### Skills and agents (`.claude/`)
 
-- `/release` (`.claude/skills/release/`): the release, only when the user asks for one. Compare against `origin/main`, not local `main`.
+- `release` (`.claude/skills/release/`): the release, only when the user asks for one. Compare against `origin/main`, not local `main`.
 - `ship-change` (`.claude/skills/ship-change/`): the commit routine above, step by step.
-- Agents: `a11y-reviewer` (runs `yarn a11y`, reviews WCAG 2.2 AA) and `copy-reviewer` (Karolina's copy rules). Both only report.
+- More skills: `add-tracking` (statistics events and session data), `update-dependencies`, `sync-design-system` (Figma, tokens, components, the claude.ai design system), `record-rule` ("remember ..."). `local-*` skills are personal and gitignored.
+- Agents, all report only: `a11y-reviewer` (WCAG 2.2 AA), `ui-reviewer` (design system and UX, phone and desktop), `copy-reviewer` (Karolina's copy rules), `docs-seo-reviewer`, `confidentiality-reviewer`, `pattern-sweeper` (the same root cause elsewhere). When to use each: CONTRIBUTING.md (Claude Code helpers).
 
 Uncommitted user edits stay out of commits and releases. If `git switch` refuses because of them, stop and ask; do not stash or discard them.
 

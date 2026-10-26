@@ -29,6 +29,8 @@ export interface AxeIssue {
 
 export interface AxeRun {
   scenario: string;
+  /** The axe that ran, e.g. "axe-core 4.14.0": the copy @axe-core/playwright bundles, not the repo's axe-core. */
+  engine: string;
   violations: AxeIssue[];
   bestPractice: AxeIssue[];
   incomplete: AxeIssue[];

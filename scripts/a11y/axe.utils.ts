@@ -23,6 +23,7 @@ export async function runAxe(page: Page, scenario: string): Promise<AxeRun> {
   const isWcag = (r: { tags: string[] }): boolean => r.tags.some((t) => WCAG_TAGS.includes(t));
   return {
     scenario,
+    engine: `${result.testEngine.name} ${result.testEngine.version}`,
     violations: result.violations.filter(isWcag).map(toIssue),
     bestPractice: result.violations.filter((r) => !isWcag(r)).map(toIssue),
     incomplete: result.incomplete.filter(isWcag).map(toIssue),

@@ -64,7 +64,7 @@ scripts/                       prerender.ts (static HTML per page), a11y-audit.t
                                favicons.ts (PNG and ICO icons from the SVG)
 docs/                          architecture, design source, tracking plan (analytics.md), working with Claude Code
 .storybook/                    Storybook config and its Welcome page (stories sit next to their component)
-.claude/                       Claude Code skills (/release, ship-change) and review agents
+.claude/                       Claude Code skills and review agents (when to use each: CONTRIBUTING.md)
 ```
 
 ## Editing content
