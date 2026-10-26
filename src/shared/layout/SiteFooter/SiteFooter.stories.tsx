@@ -5,7 +5,7 @@ import { SiteFooter } from "./SiteFooter.tsx";
 
 /**
  * Figma: Footer. Explore links, contact, the legal lines: the site's version (package.json) linking to the
- * release notes, and the privacy link.
+ * release notes, and the privacy and accessibility links.
  */
 const meta = {
   title: "Layout/SiteFooter",
@@ -27,5 +27,7 @@ export const Default: Story = {
     );
     await userEvent.click(canvas.getByRole("link", { name: "Privacy" }));
     await expect(args.onNavigate).toHaveBeenCalledWith("privacy", undefined);
+    await userEvent.click(canvas.getByRole("link", { name: "Accessibility" }));
+    await expect(args.onNavigate).toHaveBeenCalledWith("accessibility", undefined);
   },
 };

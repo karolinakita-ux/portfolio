@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 
+import type { ProseSectionContent } from "#shared/ui/ProseSection/ProseSection.types.ts";
+
 /** Section ids: the URL hashes of the privacy page (/privacy#rights). Keep them stable. */
 export type PrivacySectionId =
   | "in-short"
@@ -13,16 +15,9 @@ export type PrivacySectionId =
   | "links"
   | "changes";
 
-export interface PrivacySection {
+/** A part of the policy, shown with the shared ProseSection (the switch, the table and the objection note are its extras). */
+export interface PrivacySection extends ProseSectionContent {
   id: PrivacySectionId;
-  title: string;
-  paragraphs?: readonly ReactNode[];
-  /** A bullet list after the paragraphs. */
-  points?: readonly ReactNode[];
-  /** Paragraphs that lead into the section's own component (the switch, the table, the objection note). */
-  intro?: readonly ReactNode[];
-  /** Paragraphs after that component. */
-  after?: readonly ReactNode[];
 }
 
 export interface Recipient {

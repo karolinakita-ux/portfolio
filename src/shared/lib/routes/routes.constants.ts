@@ -6,7 +6,7 @@ import type { NavItem, View } from "./routes.types.ts";
  *                       ├─ /work/project-planning
  *                       └─ /work/automotive
  *   About /about · Contact /contact
- *   Privacy /privacy (linked from the footer)
+ *   Privacy /privacy · Accessibility /accessibility (linked from the footer)
  *
  * Every view has its own path and browser-history entry, so Back / Forward (and
  * swipe-back on phones) move between views. The URL hash is a section anchor
@@ -24,6 +24,7 @@ export const VIEW = {
   caseAutomotive: "case-automotive",
   contact: "contact",
   privacy: "privacy",
+  accessibility: "accessibility",
 } as const;
 
 /** Every view, in page order (sitemap, prerendering, audits). */
@@ -39,6 +40,7 @@ export const VIEW_PATHS = {
   [VIEW.about]: "/about",
   [VIEW.contact]: "/contact",
   [VIEW.privacy]: "/privacy",
+  [VIEW.accessibility]: "/accessibility",
   [VIEW.caseTheming]: "/work/data-governance",
   [VIEW.caseProjectPlanning]: "/work/project-planning",
   [VIEW.caseAutomotive]: "/work/automotive",
@@ -78,6 +80,7 @@ export const VIEW_TITLES: Readonly<Record<View, string>> = {
   [VIEW.about]: "About - " + SITE_NAME,
   [VIEW.contact]: "Contact - " + SITE_NAME,
   [VIEW.privacy]: "Privacy - " + SITE_NAME,
+  [VIEW.accessibility]: "Accessibility - " + SITE_NAME,
   [VIEW.caseTheming]: "Data Governance Case Study - " + SITE_NAME,
   [VIEW.caseProjectPlanning]: "Project Planning Case Study - " + SITE_NAME,
   [VIEW.caseAutomotive]: "Automotive Ecosystem Case Study - " + SITE_NAME,

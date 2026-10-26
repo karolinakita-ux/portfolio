@@ -8,7 +8,7 @@ A single-page React app, prerendered to static HTML per page at build time. No b
 src/app        shell: App, routing/, seo/, analytics/, prerender entry
    │  imports features only through their index.ts
    ▼
-src/features   work · about · contact · case-studies · image-viewer · privacy
+src/features   work · about · contact · case-studies · image-viewer · privacy · accessibility
    │  never import each other
    ▼
 src/shared     ui · layout · media · hooks · lib · content
@@ -48,26 +48,27 @@ src/features/about/
 
 Built from the Figma components (Karolina Kita Branding, page Components) and the patterns the pages repeat:
 
-| Figma                                     | Code                                           | Notes                                                         |
-| ----------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------- |
-| Button (Primary, Secondary, Subtle, Link) | `Button`                                       | `as="a"` for links; icon left / right                         |
-| Emoji button                              | `IconButton`                                   | square, icon only (image viewer)                              |
-| Badge                                     | `Badge`                                        | skill tags, status next to a title                            |
-| Card (Big Card)                           | `Card`                                         | `layout` stack / media, `gap`; cards fade up on scroll        |
-| Banner (Info, Warning)                    | `Callout`                                      | `tone`                                                        |
-| Breadcrumbs                               | `Breadcrumb`                                   | `HOME_CRUMB` on pages outside Work, `WORK_CRUMB` on cases     |
-| Avatar                                    | `Avatar`                                       | initials on the avatar glow                                   |
-| Toggle                                    | `ThemeToggle` (layout)                         | light / dark                                                  |
-| Header, Navigation menu, Footer           | `SiteHeader`, `SiteFooter` (layout)            |                                                               |
-| Info Table                                | `InfoTable`, `InfoTableCell`                   | label/value cells (contact, privacy); `MetaMatrix` in cases   |
-| -                                         | `Dialog`                                       | native modal: inert page, Escape, backdrop click, scroll lock |
-| -                                         | `Accordion`, `AccordionItem`                   | WAI-ARIA disclosure list (the FAQ)                            |
-| -                                         | `PageTitle`, `Section`, `Container`, `Eyebrow` | page structure                                                |
-| -                                         | `VisuallyHidden`, `NewTabNote`                 | screen reader text                                            |
-| -                                         | `TextLink`, `ViewLink`                         | inline link (`external` opens a new tab); link to a view      |
-| -                                         | `HeadingAnchor`, `CopyEmail`                   | copy a section's address; copy the email address              |
-| -                                         | `Lang`, `Strong`, `lead`, `Swatch`             | inline text helpers (Storybook: Inline text)                  |
-| -                                         | `icons`                                        | the icon set (Storybook: Foundations/Icons)                   |
+| Figma                                     | Code                                           | Notes                                                                                                      |
+| ----------------------------------------- | ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Button (Primary, Secondary, Subtle, Link) | `Button`                                       | `as="a"` for links; icon left / right                                                                      |
+| Emoji button                              | `IconButton`                                   | square, icon only (image viewer)                                                                           |
+| Badge                                     | `Badge`                                        | skill tags, status next to a title                                                                         |
+| Card (Big Card)                           | `Card`                                         | `layout` stack / media, `gap`; cards fade up on scroll                                                     |
+| Banner (Info, Warning)                    | `Callout`                                      | `tone`                                                                                                     |
+| Breadcrumbs                               | `Breadcrumb`                                   | `HOME_CRUMB` on pages outside Work, `WORK_CRUMB` on cases                                                  |
+| Avatar                                    | `Avatar`                                       | initials on the avatar glow                                                                                |
+| Toggle                                    | `ThemeToggle` (layout)                         | light / dark                                                                                               |
+| Header, Navigation menu, Footer           | `SiteHeader`, `SiteFooter` (layout)            |                                                                                                            |
+| Info Table                                | `InfoTable`, `InfoTableCell`                   | label/value cells (contact, privacy); `MetaMatrix` in cases                                                |
+| -                                         | `Dialog`                                       | native modal: inert page, Escape, backdrop click, scroll lock                                              |
+| -                                         | `Accordion`, `AccordionItem`                   | WAI-ARIA disclosure list (the FAQ)                                                                         |
+| -                                         | `PageTitle`, `Section`, `Container`, `Eyebrow` | page structure                                                                                             |
+| -                                         | `ProseSection`                                 | a text page's section: paragraphs, points, an optional component (privacy policy, accessibility statement) |
+| -                                         | `VisuallyHidden`, `NewTabNote`                 | screen reader text                                                                                         |
+| -                                         | `TextLink`, `ViewLink`                         | inline link (`external` opens a new tab); link to a view                                                   |
+| -                                         | `HeadingAnchor`, `CopyEmail`                   | copy a section's address; copy the email address                                                           |
+| -                                         | `Lang`, `Strong`, `lead`, `Swatch`             | inline text helpers (Storybook: Inline text)                                                               |
+| -                                         | `icons`                                        | the icon set (Storybook: Foundations/Icons)                                                                |
 
 Figma's Tabs and Tile have no use on the site yet, so there is no code for them (YAGNI).
 

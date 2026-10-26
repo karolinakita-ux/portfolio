@@ -2,8 +2,8 @@ import type { ReactNode } from "react";
 
 import { Section } from "#shared/ui/Section/Section.tsx";
 
-import { styles } from "./PrivacySectionView.styles.ts";
-import type { PrivacySectionViewProps } from "./PrivacySectionView.types.ts";
+import { styles } from "./ProseSection.styles.ts";
+import type { ProseSectionProps } from "./ProseSection.types.ts";
 
 /** Plain paragraphs at reading width; nothing when there are none. */
 function Paragraphs({ items }: { items: readonly ReactNode[] }) {
@@ -19,10 +19,11 @@ function Paragraphs({ items }: { items: readonly ReactNode[] }) {
 }
 
 /**
- * One part of the privacy policy: paragraphs and an optional bullet list, then the paragraphs that lead
- * into the section's own component, the component, and closing paragraphs. All at reading width.
+ * One part of a text page (privacy policy, accessibility statement): paragraphs and an optional bullet list,
+ * then the paragraphs that lead into the section's own component, the component, and closing paragraphs. All at
+ * reading width, in a Section with its copy-link heading.
  */
-export function PrivacySectionView({ section, extra }: PrivacySectionViewProps) {
+export function ProseSection({ section, extra }: ProseSectionProps) {
   const { id, title, paragraphs = [], points = [], intro = [], after = [] } = section;
   return (
     <Section id={id} title={title}>

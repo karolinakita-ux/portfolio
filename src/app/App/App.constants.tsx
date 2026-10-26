@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import { AboutView } from "#features/about/index.ts";
+import { AccessibilityView } from "#features/accessibility/index.ts";
 import {
   AUTOMOTIVE_CASE,
   CaseStudyView,
@@ -22,6 +23,7 @@ export const VIEW_RENDERERS: Record<View, (ctx: ViewContext) => ReactNode> = {
   [VIEW.about]: ({ navigate, portraitSrc }) => <AboutView portraitSrc={portraitSrc} onNavigate={navigate} />,
   [VIEW.contact]: ({ navigate }) => <ContactView onNavigate={navigate} />,
   [VIEW.privacy]: ({ navigate }) => <PrivacyView onNavigate={navigate} />,
+  [VIEW.accessibility]: ({ navigate }) => <AccessibilityView onNavigate={navigate} />,
   [VIEW.caseTheming]: ({ navigate, resolveAsset }) => (
     <CaseThemingView c={THEMING_CASE} resolveAsset={resolveAsset} onNavigate={navigate} />
   ),

@@ -1,6 +1,6 @@
 # Karolina Kita - portfolio
 
-Source of **[karolina.kita.company](https://karolina.kita.company)**, the portfolio of Karolina Kita, Senior Product Designer. Three case studies (an automotive B2B marketplace, a project planning and cost management platform and a white-label theme generator), an About page, contact details and a privacy page.
+Source of **[karolina.kita.company](https://karolina.kita.company)**, the portfolio of Karolina Kita, Senior Product Designer. Three case studies (an automotive B2B marketplace, a project planning and cost management platform and a white-label theme generator), an About page, contact details, a privacy page and an accessibility statement.
 
 Designed by Karolina in Figma and built with [Claude Code](docs/claude-code.md): React 19, TypeScript (strict), Tailwind CSS v4 with her KitaBranding design tokens, Vite, Vitest and Playwright. Deployed on Netlify.
 

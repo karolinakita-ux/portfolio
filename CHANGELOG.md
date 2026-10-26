@@ -6,6 +6,18 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.6.0 - 2026-10-26
+
+#### Added
+
+- An accessibility statement at `/accessibility`, linked from the footer next to Privacy: what the site supports (keyboard, screen readers, zoom, text size, dark mode, reduced motion, more contrast, Windows contrast themes), its known limits (text inside screenshots, other websites), how it is checked and how to report a problem. Like the privacy policy it has a page title, a search description, a sitemap date, an `llms.txt` line and a breadcrumb; the copy rules test checks its text, and `yarn a11y` checks it with every other page (38 scans, 0 violations). A copy review made two claims more exact (Storybook's examples are checked without colour contrast; one real browser, with reduced motion and more contrast tested separately).
+- `ProseSection` in `shared/ui`, with a story: a text page's section of paragraphs, points and an optional component. The privacy policy and the accessibility statement both use it; it replaces the privacy slice's own section view.
+
+#### Changed
+
+- The footer's Privacy and Accessibility links sit side by side.
+- The `a11y-reviewer` agent names the specs that test reduced motion (`header-motion`, `scroll-reveal`) and more contrast (`contrast`).
+
 ### 5.5.0 - 2026-10-26
 
 #### Added

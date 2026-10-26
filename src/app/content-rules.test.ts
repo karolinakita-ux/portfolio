@@ -6,6 +6,7 @@ import { describe, expect, it } from "vitest";
 
 import { PAGE_DESCRIPTIONS, PAGE_NAMES } from "#app/seo/seo.content.ts";
 import { ABOUT_INTRO, FAQ, MILESTONES, PRINCIPLES } from "#features/about/about.content.ts";
+import { ACCESSIBILITY } from "#features/accessibility/accessibility.content.tsx";
 import type { CaseStudy, ShowcaseCard, ThemingCaseStudy } from "#features/case-studies/case-studies.types.ts";
 import { AUTOMOTIVE_CASE } from "#features/case-studies/content/automotive.content.ts";
 import { PROJECT_PLANNING_CASE } from "#features/case-studies/content/project-planning.content.tsx";
@@ -49,6 +50,7 @@ const caseCards = (c: CaseStudy | ThemingCaseStudy): ShowcaseCard[] =>
 
 const ALL_CONTENT = {
   ABOUT_INTRO,
+  ACCESSIBILITY,
   FAQ,
   MILESTONES,
   PRINCIPLES,
@@ -69,7 +71,7 @@ describe("copy style", () => {
   });
 
   it("never ends an H1 with a period", () => {
-    const h1s = [...CASES.map((c) => c.title), CONTACT.title, PRIVACY.title];
+    const h1s = [...CASES.map((c) => c.title), CONTACT.title, PRIVACY.title, ACCESSIBILITY.title];
     for (const title of h1s) expect(title.trimEnd()).not.toMatch(/\.$/);
   });
 });

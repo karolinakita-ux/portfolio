@@ -78,9 +78,12 @@ export function SiteFooter({ onNavigate }: SiteFooterProps) {
             )}
           </p>
           <p>{PROFILE.builtWith}</p>
-          <p>
-            <ViewLink view={VIEW.privacy} onNavigate={onNavigate} className={styles.privacyLink}>
+          <p className={styles.pageLinks}>
+            <ViewLink view={VIEW.privacy} onNavigate={onNavigate} className={styles.pageLink}>
               Privacy
+            </ViewLink>{" "}
+            <ViewLink view={VIEW.accessibility} onNavigate={onNavigate} className={styles.pageLink}>
+              Accessibility
             </ViewLink>
           </p>
         </div>
