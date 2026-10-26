@@ -145,7 +145,7 @@ describe("App", () => {
       "Enterprise White-Label Theme Generator",
     ]);
     // The image stays readable: the overlay sits beside it, not around it.
-    const thumbnail = screen.getByRole("img", { name: /^Two Edit Theme panels and a Create New Theme panel/ });
+    const thumbnail = screen.getByRole("img", { name: /^A Create New Theme panel between two Edit Theme panels/ });
     expect(thumbnail.closest("a")).toBeNull();
     // Only the CTA reaches the theming case from the keyboard / accessibility tree.
     const themingPath = "/work/data-governance";

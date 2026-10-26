@@ -82,7 +82,7 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
         {
           id: "heuristics",
           asset: "cases/automotive/heuristic-evaluation-matrix.webp",
-          alt: "Heuristic violation summary: a table of how often the platform broke each usability heuristic. Visibility of System Status and Aesthetic and Minimalist Design are broken most, which points to unclear feedback and visual organisation.",
+          alt: "Heuristic violation summary: a table of how often the platform broke each usability heuristic. Visibility of System Status was broken most often (8 times), then Aesthetic and Minimalist Design (7 times). Together they point to unclear feedback and visual organization.",
           title: "Heuristic Evaluation",
           intro:
             "Audited the live application against standard usability heuristics. Identified recurring usability blockers, including poor system feedback, misleading navigation labels, and buried critical actions.",

@@ -202,7 +202,7 @@ describe("events on case studies", () => {
 
   it("counts the previous / next links beside the breadcrumb as the top of the case study", async () => {
     const { user } = renderApp("/work/project-planning");
-    const top = within(screen.getByRole("navigation", { name: "Previous and next case study" }));
+    const top = within(screen.getByRole("navigation", { name: "Previous and next case studies" }));
     await user.click(top.getByRole("link", { name: /^Previous/ }));
     expect(events()).toEqual([
       [EVENT.caseNav, { from: "case-project-planning", to: "case-automotive", direction: "prev", place: "top" }],

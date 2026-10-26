@@ -6,6 +6,14 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.2.2 - 2026-10-26
+
+#### Fixed
+
+- After a copy review of today's changes: the heuristic summary's alt text names the two most broken heuristics one at a time, with their counts, instead of joining them with two "and"s in a row. The theming card's alt says the Create New Theme panel sits between the two Edit Theme panels. Both use the American spelling of the copy around them.
+- The top previous / next links' landmark is named after the links it holds: "Previous and next case studies", or "Previous case study" and "Next case study" on the last and first case, where it holds one.
+- A range in the 5.0.1 entry has the short hyphen with spaces.
+
 ### 5.2.1 - 2026-10-26
 
 #### Changed
@@ -80,7 +88,7 @@ The rest of the WCAG 2.2 A and AA review (four reviewers, file by file):
 #### Fixed
 
 - Keyboard focus no longer ends up behind the statistics consent box (WCAG 2.2, 2.4.11 Focus Not Obscured). While the box shows, the page keeps the strip it covers clear: a focused link or button scrolls above it, the end of the page gets the same space so the last footer links can scroll clear, and Back to top moves up above it (`useConsentSpace`, `--kb-consent-h`).
-- On short windows (landscape phones, a laptop at 300-400% zoom) the consent box sits at the top of the page instead of floating over it, so all of its text can be scrolled to (WCAG 1.4.10 Reflow). Before, it was taller than the window and its top was out of reach.
+- On short windows (landscape phones, a laptop at 300 - 400% zoom) the consent box sits at the top of the page instead of floating over it, so all of its text can be scrolled to (WCAG 1.4.10 Reflow). Before, it was taller than the window and its top was out of reach.
 
 #### Changed
 

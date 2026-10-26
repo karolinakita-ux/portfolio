@@ -9,7 +9,8 @@ import { VIEW } from "#shared/lib/routes/routes.constants.ts";
 
 import { CasePager } from "./CasePager.tsx";
 
-const pager = () => within(screen.getByRole("navigation", { name: "Previous and next case study" }));
+/** The pager, by the name that says which links it holds. */
+const pager = (name: string) => within(screen.getByRole("navigation", { name }));
 
 describe("CasePager", () => {
   it("links the previous and the next case study, named in full for screen readers", async () => {
@@ -18,8 +19,8 @@ describe("CasePager", () => {
     const c = PROJECT_PLANNING_CASE;
     render(<CasePager from={c.view} prev={c.prev} next={c.next} onNavigate={onNavigate} />);
 
-    const previous = pager().getByRole("link", { name: /^Previous/ });
-    const next = pager().getByRole("link", { name: /^Next/ });
+    const previous = pager("Previous and next case studies").getByRole("link", { name: /^Previous/ });
+    const next = pager("Previous and next case studies").getByRole("link", { name: /^Next/ });
     // The text says "Previous" / "Next"; the case name follows for screen readers only.
     expect(previous).toHaveTextContent("Previous case study: Automotive B2B Marketplace: Research-Backed Redesign");
     expect(next).toHaveTextContent("Next case study: Enterprise White-Label Theme Generator");
@@ -40,7 +41,7 @@ describe("CasePager", () => {
       />,
     );
     expect(
-      pager()
+      pager("Next case study")
         .getAllByRole("link")
         .map((link) => link.getAttribute("href")),
     ).toEqual(["/work/project-planning"]);
@@ -50,7 +51,7 @@ describe("CasePager", () => {
       <CasePager from={THEMING_CASE.view} prev={THEMING_CASE.prev} next={THEMING_CASE.next} onNavigate={vi.fn()} />,
     );
     expect(
-      pager()
+      pager("Previous case study")
         .getAllByRole("link")
         .map((link) => link.getAttribute("href")),
     ).toEqual(["/work/project-planning"]);
