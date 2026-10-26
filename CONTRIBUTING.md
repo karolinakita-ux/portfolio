@@ -114,6 +114,20 @@ git push origin develop
 
 Netlify builds `main` (tests run first; a failing test stops the deploy). Check that the production deploy for the release commit says Published in Netlify, then open https://karolina.kita.company.
 
+### 5. Refresh what other services cached
+
+Only when the release changed what they show: a page's title or description, the link-preview image (`public/assets/site/og-image.png`), the site icon, or a page's address. The pages are listed in `public/sitemap.xml`.
+
+| Service                              | Tool                                         | What to do                                                                                                                                                               |
+| ------------------------------------ | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| LinkedIn (posts, messages)           | https://www.linkedin.com/post-inspector/     | Enter each page you will share, starting with `https://karolina.kita.company/`, and press Inspect: LinkedIn fetches it again and shows the new preview.                  |
+| Facebook, Messenger, Instagram links | https://developers.facebook.com/tools/debug/ | Enter the same addresses, press Debug, then Scrape Again.                                                                                                                |
+| Google Search                        | https://search.google.com/search-console     | URL inspection (the search box at the top): enter each changed page, then Request indexing. Sitemaps: submit `sitemap.xml` when pages were added or their dates changed. |
+| Google: structured data              | https://search.google.com/test/rich-results  | Enter a page's address to see what Google reads from its structured data.                                                                                                |
+| Bing and Copilot                     | https://www.bing.com/webmasters              | URL Submission: the changed pages (the site has to be added there once).                                                                                                 |
+
+Google shows a new site icon only after it recrawls the home page, which can take days to weeks. Apps without a refresh button (WhatsApp, Slack, Teams, X) fetch a new preview for a new address, so share the page with a fresh tag such as `?ref=linkedin-post`.
+
 ### Urgent fixes
 
 Fix on `develop` as usual (patch version), then make a release with just that fix. Do not patch `main` directly.

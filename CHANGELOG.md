@@ -6,6 +6,17 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.3.1 - 2026-10-26
+
+#### Fixed
+
+- LICENSE and THIRD-PARTY-NOTICES.md name the icons' current file (`src/shared/ui/icons/icons.tsx`). LICENSE lists the two fonts (SIL Open Font License 1.1) and says more exactly what Anthropic's terms do: they assign to the user whatever rights Anthropic has in Claude's output. THIRD-PARTY-NOTICES.md gives the fonts' copyright lines and a link to the licence text. `package.json` says `SEE LICENSE IN LICENSE` instead of `UNLICENSED`, because the licence grants some uses (viewing, linking, forking on GitHub).
+- README: Netlify builds only `main` (with Storybook) and never `develop`; the docs list names the tracking plan; the notices cover fonts as well as icons; cache refreshing points to CONTRIBUTING.md.
+
+#### Added
+
+- CONTRIBUTING.md, release step 5: which services cache the site's previews and search results (LinkedIn, Facebook and Messenger, Google Search Console, Google's structured data test, Bing), the link to each tool and what to enter, and a fresh `?ref=` tag for apps without a refresh button.
+
 ### 5.3.0 - 2026-10-26
 
 #### Added

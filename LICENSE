@@ -27,15 +27,18 @@ Requests for permission: karolina.kita.zg@gmail.com
 HOW THE WORK WAS MADE
 
 The site was designed by Karolina Kita and built with the help of Claude Code, an AI
-coding assistant from Anthropic. Under Anthropic's terms, the rights in the assistant's
-output belong to its user, and they are part of the Work covered by this notice.
+coding assistant from Anthropic. Anthropic's terms assign to the user whatever rights
+Anthropic has in the assistant's output, and that output is part of the Work covered by
+this notice.
 
 THIRD-PARTY MATERIAL
 
 Some parts keep their own licences, and this notice does not change them:
 
-- The icon shapes in src/shared/ui/icons.tsx come from Lucide (ISC licence) and, for
-  some icons, from Feather (MIT licence). See THIRD-PARTY-NOTICES.md.
+- The icon shapes in src/shared/ui/icons/icons.tsx come from Lucide (ISC licence) and,
+  for some icons, from Feather (MIT licence). See THIRD-PARTY-NOTICES.md.
+- The Inter and Zilla Slab fonts are under the SIL Open Font License 1.1. See
+  THIRD-PARTY-NOTICES.md.
 - Packages installed with yarn (listed in package.json) are under their own licences.
 - Company and product names, logos and screenshots of third-party products shown in the
   case studies belong to their owners. They appear only to describe Karolina Kita's
