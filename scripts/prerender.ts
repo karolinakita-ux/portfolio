@@ -111,12 +111,23 @@ function withContent(page: string, appHtml: string): string {
   return replaceOnce(page, /<div id="root"><\/div>/, `<div id="root">${appHtml}</div>`, '<div id="root">');
 }
 
+/** The site icons (index.html). Search engines read each page's own head, so every page must keep them. */
+const ICON_LINK = /<link rel="(?:icon|apple-touch-icon)"[^>]*>/g;
+
+function keepsIcons(page: string, iconLinks: readonly string[], what: string): string {
+  const lost = iconLinks.filter((link) => !page.includes(link));
+  if (lost.length) throw new Error(`prerender: ${what} lost its icon links: ${lost.join(" ")}`);
+  return page;
+}
+
 async function write(file: string, content: string): Promise<void> {
   await mkdir(dirname(file), { recursive: true });
   await writeFile(file, content);
 }
 
 const template = await readFile(join(DIST, "index.html"), "utf8");
+const iconLinks = template.match(ICON_LINK) ?? [];
+if (iconLinks.length === 0) throw new Error("prerender: no icon <link> in dist/index.html");
 installWindow("https://karolina.kita.company/", template);
 const ssr = (await import(pathToFileURL(SSR_ENTRY).href)) as PrerenderModule;
 
@@ -125,7 +136,7 @@ for (const view of ssr.VIEWS) {
   if (!path) throw new Error(`prerender: no path for ${view}`);
   const head = ssr.headFor(view);
   installWindow(head.url, template);
-  const page = withContent(applyHead(template, head), ssr.renderPage());
+  const page = keepsIcons(withContent(applyHead(template, head), ssr.renderPage()), iconLinks, path);
   if (path === "/") {
     await write(join(DIST, "index.html"), page);
   } else {
@@ -139,9 +150,7 @@ for (const view of ssr.VIEWS) {
 // Unknown paths: Netlify serves 404.html with status 404; the app then shows Work at /.
 const workView = ssr.VIEWS[0] ?? "work";
 installWindow("https://karolina.kita.company/", template);
-await write(
-  join(DIST, "404.html"),
-  withContent(applyHead(template, ssr.headFor(workView), { noindex: true }), ssr.renderPage()),
-);
+const notFound = withContent(applyHead(template, ssr.headFor(workView), { noindex: true }), ssr.renderPage());
+await write(join(DIST, "404.html"), keepsIcons(notFound, iconLinks, "404.html"));
 await write(join(DIST, "llms.txt"), ssr.llmsTxt());
 console.log("prerendered 404.html and llms.txt");

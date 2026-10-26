@@ -6,6 +6,19 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.0.2 - 2026-10-26
+
+#### Fixed
+
+- Google Search showed a plain globe instead of the site icon. The site linked only `favicon.svg`, which Google Search does not read (its list: BMP, GIF, ICO, PNG, JPEG, PPM and TIFF), and `/favicon.ico` answered with the 404 page. Every page now links, after the SVG, a 96 px PNG, an ICO with 16, 32 and 48 px images, and a 180 px icon for iOS home screens.
+
+#### Added
+
+- `yarn favicons` (`scripts/favicons.ts`, with sharp) makes the PNG and ICO icons from `public/favicon.svg`, so they always match it.
+- `public/_headers` caches the icons for a day: their names never change, as Google asks, and a new icon still reaches visitors.
+- `src/app/seo/favicons.test.ts` fails when `index.html` misses an icon link, a linked file is missing or has the wrong size, or an icon gets `X-Robots-Tag` or a robots.txt block. `scripts/prerender.ts` fails the build when a prerendered page loses an icon link. Both are checked with probes that must fail and must pass.
+- CLAUDE.md, the README and `docs/architecture.md` describe the icons and the new command.
+
 ### 5.0.1 - 2026-10-26
 
 #### Fixed

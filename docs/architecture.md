@@ -93,7 +93,7 @@ Every shared component (`shared/ui`, `shared/layout`, `shared/media`) and the co
 ## Rendering and SEO
 
 1. `yarn build` runs `vite build` for the browser bundle.
-2. `yarn prerender` builds `src/app/prerender.entry.tsx` for the server, then `scripts/prerender.ts` renders every page inside a jsdom window at that page's URL and writes `dist/<path>.html` and `dist/<path>/index.html`, `dist/404.html` (noindex) and `dist/llms.txt`.
+2. `yarn prerender` builds `src/app/prerender.entry.tsx` for the server, then `scripts/prerender.ts` renders every page inside a jsdom window at that page's URL and writes `dist/<path>.html` and `dist/<path>/index.html`, `dist/404.html` (noindex) and `dist/llms.txt`. A page that lost one of the template's icon links (`<link rel="icon">`, `apple-touch-icon`) fails the build: search engines read each page's own head.
 3. Each page gets its own title, description, canonical URL, link-preview tags and JSON-LD from `src/app/seo/seo.utils.ts`. Site-wide data (WebSite, Person) stays in `index.html`.
 4. In the browser, `src/main.tsx` renders the app over the static HTML. On navigation, `App` updates the same head tags.
 

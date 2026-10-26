@@ -39,6 +39,7 @@ yarn dev       # http://localhost:5173
 | `yarn lint`            | ESLint, zero warnings allowed                                                          |
 | `yarn format`          | Prettier: formats files, sorts imports and Tailwind classes (`yarn format:check`)      |
 | `yarn a11y`            | Accessibility audit in real Chromium; report in `a11y-report/`                         |
+| `yarn favicons`        | Remakes the PNG and ICO site icons from `public/favicon.svg` (commit the files)        |
 | `yarn storybook`       | The component library (Storybook) on port 6006                                         |
 | `yarn build-storybook` | Builds Storybook into `dist/storybook` (run after `yarn build`, which empties `dist/`) |
 
@@ -47,6 +48,7 @@ yarn dev       # http://localhost:5173
 ```
 index.html                     <head>: site-wide meta, structured data, theme script
 public/                        copied as-is: robots.txt, sitemap.xml, _headers, _redirects, assets/,
+                               site icons (favicon.svg and its PNG and ICO copies),
                                Google Search Console's verification file (keep it)
 public/assets/site/            portrait and link-preview image
 public/assets/cases/<case>/    case-study screenshots and thumbnail (WebP)
@@ -57,7 +59,8 @@ src/shared/                    ui/, layout/, media/, hooks/, lib/ (routes, ui, a
                                content/ (profile)
 src/styles/                    tokens.css (light/dark), theme.css (Tailwind theme), app.css (entry), Figma export
 e2e/                           Playwright specs and their helpers
-scripts/                       prerender.ts (static HTML per page), a11y-audit.ts (checks in a11y/)
+scripts/                       prerender.ts (static HTML per page), a11y-audit.ts (checks in a11y/),
+                               favicons.ts (PNG and ICO icons from the SVG)
 docs/                          architecture, design source, working with Claude Code
 .storybook/                    Storybook config and its Welcome page (stories sit next to their component)
 .claude/                       Claude Code skills (/release, ship-change) and review agents
