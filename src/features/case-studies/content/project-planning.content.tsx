@@ -4,7 +4,11 @@ import { Lang } from "#shared/ui/Lang/Lang.tsx";
 import { Strong } from "#shared/ui/Strong/Strong.tsx";
 import { Swatch } from "#shared/ui/Swatch/Swatch.tsx";
 
-/* Case study - Project Planning (Project Planning & Cost Management). Screenshot fields: see ShowcaseCard in case-studies.types.ts. */
+/*
+ * Case study - Project Planning & Cost Management. The product is not named anywhere (copy, alt text, file names,
+ * screenshots: the logo is painted out) until the client approves it; content-rules.test.ts fails on the old name.
+ * Screenshot fields: see ShowcaseCard in case-studies.types.ts.
+ */
 export const PROJECT_PLANNING_CASE: CaseStudy = {
   view: VIEW.caseProjectPlanning,
   id: "me",
@@ -28,14 +32,14 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
     },
   ],
   notice: {
-    tone: "info",
-    label: "Permission & localization note",
-    text: "All branding, logos, and interface visuals are shared publicly with direct permission from the product leadership team. Screens reflect the live enterprise deployment for Polish teams (PLN formatting, domestic regulations). The underlying PrimeNG component library and layout grids were structured to scale across multiple languages and currencies.",
+    tone: "warning",
+    label: "Confidentiality & localization note",
+    text: "Due to confidentiality, the product name and logo have been removed, and the screens show sample data. They reflect the live deployment for Polish teams (PLN formatting, domestic regulations). The underlying PrimeNG component library and layout grids were structured to scale across multiple languages and currencies.",
   },
   summaryTitle: "Executive Summary & Problem Space",
   summary: [
     "Managing software project budgets often breaks down in daily operations. While managers track high-level numbers in spreadsheets, team hours quietly get lost in untracked meetings and misaligned task estimates, leading to sudden budget overruns.",
-    "The product was built as a focused web platform to solve this by connecting project planning directly with real-time meeting cost tracking. As the Senior UX Designer, I led the end-to-end interface design using the PrimeNG component system - simplifying resource scheduling, structuring clear budget dashboards, and mentoring a UX intern while collaborating closely with project managers and developers.",
+    "This platform was built to solve that by connecting project planning directly with real-time meeting cost tracking. As the Senior UX Designer, I led the end-to-end interface design using the PrimeNG component system - simplifying resource scheduling, structuring clear budget dashboards, and mentoring a UX intern while collaborating closely with project managers and developers.",
   ],
   sections: [
     {
@@ -355,7 +359,7 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
   ],
   outcomesTitle: "Outcomes & Key Takeaways",
   outcomesIntro:
-    "Delivering the platform transformed a fragmented planning process into a unified desktop tool, giving project managers transparent control over time and meeting expenditure.",
+    "The platform brought a fragmented planning process into one desktop tool, giving project managers a clear view of time and meeting costs.",
   outcomes: [
     {
       title: "Centralized Budget & Cost Visibility",

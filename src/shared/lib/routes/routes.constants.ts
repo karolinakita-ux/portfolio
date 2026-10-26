@@ -31,7 +31,8 @@ export const VIEWS: readonly View[] = Object.values(VIEW);
 
 /**
  * URL path of each view. Changing a path breaks shared links: keep the old one
- * working through VIEW_ALIASES.
+ * working through VIEW_ALIASES (and a 301 in public/_redirects). The one exception: 5.0.0
+ * dropped the project planning case's old path on purpose, because it named the product.
  */
 export const VIEW_PATHS = {
   [VIEW.work]: "/",

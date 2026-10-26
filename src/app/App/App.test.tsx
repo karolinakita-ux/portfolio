@@ -125,6 +125,12 @@ describe("App", () => {
       expect(link).toHaveAttribute("tabindex", "-1");
       expect(link).toHaveAttribute("aria-hidden", "true");
     }
+    // Readers that ignore ARIA (search engines, text extractors) still get a named link: the card title.
+    expect([...thumbnailLinks].map((link) => link.textContent)).toEqual([
+      "Automotive B2B Marketplace Redesign",
+      "Project Planning & Cost Management Platform",
+      "Enterprise White-Label Theme Generator",
+    ]);
     // The image stays readable: the overlay sits beside it, not around it.
     const thumbnail = screen.getByRole("img", { name: /^Three Edit Theme panels/ });
     expect(thumbnail.closest("a")).toBeNull();
@@ -146,8 +152,8 @@ describe("App", () => {
     // Work is the current section; only the breadcrumb marks the case study as the current page.
     expect(within(primaryNav()).getByRole("link", { name: "Work" })).toHaveAttribute("aria-current", "true");
 
-    await user.click(screen.getByRole("link", { name: /Next Case Study: Project Planning/ }));
-    expect(h1()).toHaveTextContent("Project Planning");
+    await user.click(screen.getByRole("link", { name: /^Next Case Study.*Enterprise Project Planning/ }));
+    expect(h1()).toHaveTextContent("Enterprise Project Planning & Cost Management Platform");
 
     await user.click(
       within(screen.getByRole("navigation", { name: "Breadcrumb" })).getByRole("link", { name: "Work" }),

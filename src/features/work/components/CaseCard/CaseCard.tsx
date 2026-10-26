@@ -9,6 +9,7 @@ import { Card } from "#shared/ui/Card/Card.tsx";
 import { Eyebrow } from "#shared/ui/Eyebrow/Eyebrow.tsx";
 import { ArrowRight } from "#shared/ui/icons/icons.tsx";
 import { ViewLink } from "#shared/ui/ViewLink/ViewLink.tsx";
+import { VisuallyHidden } from "#shared/ui/VisuallyHidden/VisuallyHidden.tsx";
 
 import { styles } from "./CaseCard.styles.ts";
 import type { CaseCardProps } from "./CaseCard.types.ts";
@@ -20,7 +21,8 @@ export function CaseCard({ item, resolveAsset, onNavigate }: CaseCardProps) {
     <Card layout="media" gap="lg" aria-labelledby={titleId} className={styles.root}>
       {/* The thumbnail opens the case study too (mouse and touch). Keyboard and screen reader users get the
           "View Case Study" link below, so this overlay is out of the Tab order and hidden from assistive tech;
-          the image itself, and its alt text, stay readable. */}
+          the image itself, and its alt text, stay readable. The hidden title names the link for readers that
+          ignore ARIA (search engines, link and text extractors), which would otherwise see an empty link. */}
       <div className={styles.thumbnail}>
         <CaseThumbnail src={resolveAsset(item.asset)} alt={item.alt} interactive />
         <ViewLink
@@ -32,7 +34,7 @@ export function CaseCard({ item, resolveAsset, onNavigate }: CaseCardProps) {
           onClick={() => track(EVENT.caseOpen, { case: item.view, from: "thumbnail" })}
           className={styles.thumbnailLink}
         >
-          {null}
+          <VisuallyHidden>{item.title}</VisuallyHidden>
         </ViewLink>
       </div>
       <div className={styles.body}>

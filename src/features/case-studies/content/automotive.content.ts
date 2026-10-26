@@ -43,15 +43,15 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
       cards: [
         {
           id: "survey",
-          asset: "cases/automotive/research-surveymonkey-markets.webp",
-          alt: "Survey data quality table: mandatory questions and answer length could not be tracked; regional coverage is complete at 87.5% (7 of 8 markets).",
+          asset: "cases/automotive/research-surveymonkey-markets-v2.webp",
+          alt: "Survey data quality table: mandatory questions and answer length could not be tracked; regional coverage met its target at 87.5% (7 of 8 markets).",
           title: "Multi-Market Survey Analysis",
           intro:
             "Analyzed quantitative feedback from dealers across Spain, France, Germany, Portugal, the UK, and Poland, mapping out common bottlenecks in vehicle search, filtering, and checkout.",
         },
         {
           id: "interviews",
-          asset: "cases/automotive/qualitative-interviews-synthesis.webp",
+          asset: "cases/automotive/qualitative-interviews-synthesis-v2.webp",
           alt: "Franchise dealer research board for Poland: grouped quotes from dealer interviews, a table that turns each finding into a platform implication, and charts of preferred communication channels.",
           title: "1-on-1 Customer Interviews",
           intro:
@@ -73,7 +73,7 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
       cards: [
         {
           id: "persona",
-          asset: "cases/automotive/b2b-persona-dealer.webp",
+          asset: "cases/automotive/b2b-persona-dealer-v2.webp",
           alt: "Service provider persona built from survey data: profile and goals, charts of respondent roles, business locations and vehicles bought per month, and lists of behaviour traits and priorities.",
           title: "B2B User Personas",
           intro:
@@ -205,9 +205,5 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
   },
   // First case in the Work order: left link returns to the list, right link continues to Project Planning.
   prev: { view: VIEW.work, action: "Back to All Work" },
-  next: {
-    view: VIEW.caseProjectPlanning,
-    action: "Next Case Study: Project Planning",
-    label: "Enterprise Project Planning & Cost Management Platform",
-  },
+  next: { view: VIEW.caseProjectPlanning, label: "Enterprise Project Planning & Cost Management Platform" },
 };

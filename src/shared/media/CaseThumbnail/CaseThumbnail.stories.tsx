@@ -6,7 +6,10 @@ import { CaseThumbnail } from "./CaseThumbnail.tsx";
 const meta = {
   title: "Media/CaseThumbnail",
   component: CaseThumbnail,
-  args: { src: "/assets/cases/project-planning/thumbnail.webp", alt: "Project Planning project dashboard" },
+  args: {
+    src: "/assets/cases/project-planning/thumbnail.webp",
+    alt: "Month overview: a participant calendar with a mini month picker beside a weekly schedule of meetings.",
+  },
 } satisfies Meta<typeof CaseThumbnail>;
 
 export default meta;

@@ -12,7 +12,7 @@ import { ALL_CASES } from "./App.constants.tsx";
  * next-case link). The image viewer then opens at once, while a visitor who only reads the Work
  * page no longer downloads every screenshot (about 2.6 MB). The open case study queues its own
  * screenshots on arrival (useCaseGallery). Links are read with readRoute, so the artifact's hash
- * links (#/work/project-planning) count too.
+ * links (#/work/automotive) count too.
  */
 export function usePreloadCaseImages(resolveAsset: (name: string) => string): void {
   useEffect(() => {

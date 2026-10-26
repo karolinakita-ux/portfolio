@@ -29,8 +29,12 @@ export const Media: Story = {
     gap: "lg",
     children: (
       <>
-        <img src="/assets/cases/project-planning/thumbnail.webp" alt="Project Planning dashboard" width={320} />
-        <span>Project Planning: enterprise project planning and cost management.</span>
+        <img
+          src="/assets/cases/project-planning/thumbnail.webp"
+          alt="Month overview: a participant calendar beside a weekly schedule of meetings."
+          width={320}
+        />
+        <span>Enterprise project planning and cost management.</span>
       </>
     ),
   },

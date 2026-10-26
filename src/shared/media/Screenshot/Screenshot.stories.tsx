@@ -7,7 +7,10 @@ import { Screenshot } from "./Screenshot.tsx";
 const meta = {
   title: "Media/Screenshot",
   component: Screenshot,
-  args: { src: "/assets/cases/project-planning/thumbnail.webp", alt: "Project Planning project dashboard" },
+  args: {
+    src: "/assets/cases/project-planning/thumbnail.webp",
+    alt: "Month overview: a participant calendar with a mini month picker beside a weekly schedule of meetings.",
+  },
 } satisfies Meta<typeof Screenshot>;
 
 export default meta;

@@ -32,9 +32,13 @@ test("loads no case screenshots until a visitor points at a case, then only that
 
   await cardLink(page, /^Project Planning/).hover();
   await expect
-    .poll(() => paths.filter((path) => SCREENSHOT.test(path) && path.startsWith("/assets/cases/project-planning/")).length)
+    .poll(
+      () => paths.filter((path) => SCREENSHOT.test(path) && path.startsWith("/assets/cases/project-planning/")).length,
+    )
     .toBeGreaterThan(0);
-  expect(paths.filter((path) => SCREENSHOT.test(path) && !path.startsWith("/assets/cases/project-planning/"))).toEqual([]);
+  expect(paths.filter((path) => SCREENSHOT.test(path) && !path.startsWith("/assets/cases/project-planning/"))).toEqual(
+    [],
+  );
 });
 
 // No <link rel="preload"> for fonts: checked 2026-10-20, WebKit downloads a font preloaded with

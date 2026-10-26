@@ -4,6 +4,29 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Unreleased
+
+### 5.0.0 - 2026-10-26
+
+#### Changed
+
+- The project planning case study no longer names its product, whose owner has not approved it yet. Its address is now `/work/project-planning`. Its heading, Work card, page title, search copy, structured data, llms.txt and Storybook stories say "Project Planning & Cost Management Platform" or "Project Planning". The product's logo is painted out of the seven screenshots that showed it (`public/assets/cases/project-planning/`). Major version because a URL changed. The old address gets the 404 page: a redirect rule would keep the name in the public repo.
+- That case's notice no longer says the screens are shared with permission. It says the name and logo were removed and that the screens show sample data. The Work page's confidentiality note no longer names it as an exception, and now speaks only of the case studies (the recommendations name their authors' companies).
+- Data Governance case: the vendor's logo, product name and search placeholder are painted out of every screenshot, finishing the paint-overs some already had. The colour-blindness grid's first column is "Theme with purple colors", like the other two. Two alt texts no longer name the vendor.
+- Automotive case: blurred the client's Confluence page tree in the Work thumbnail, the survey's respondents per country (also gone from the alt text), the interview quote with a dealer's sales figures, and the persona board's respondent counts, chart scales and salary. The usability results stay.
+- Edited screenshots have new file names (`-v2`, or the new folder), because images are cached for a week. The unredacted originals are deleted.
+- Statistics: the case's events now carry the view id `case-project-planning`; older events keep the old one.
+- Older changelog entries, the README and the docs use the new name.
+
+#### Added
+
+- `content-rules.test.ts` fails when a published file (site, Storybook, docs, tests) names a hidden client, when a case study, its Work card or its search copy names any client, or when `public/assets/cases` holds an image no page shows (it would stay reachable by URL). The names are stored as SHA-256 hashes, so the repo does not spell them. Checked with probe files that must fail and must pass. The rule is in CLAUDE.md (Copy rules).
+
+#### Fixed
+
+- Eyebrows such as "Karolina Kita • Senior Product Designer" read as "Karolina Kita • , Senior Product Designer" to anything that ignores CSS and ARIA (search engines, link previews, text extractors), and copying one put the comma on a line of its own. CSS now draws the bullet (`bullet-before` in `utilities.css`), with a comma as its alternative text, so screen readers still pause there. The text in the HTML is just "Karolina Kita Senior Product Designer".
+- The case thumbnails' mouse-only links had no text, so link extractors saw three empty links. Each now holds the case title as hidden text, and stays out of the Tab order and hidden from screen readers.
+
 ## Release v4.1.0 - 2026-10-23
 
 - With your consent, visitor statistics now also measure how fast pages load and react on your device, and note errors and broken links, so problems can be fixed sooner.
@@ -132,7 +155,7 @@ Versions: 3.12.1 - 3.13.4.
 
 #### Changed
 
-- The theming case has one product name: "Enterprise White-Label Theme Generator", as on its Work card, in search results and in the page descriptions. The page heading and Project Planning's next-case link said "Multi-Tenant Theme Customizer". "Data Governance" stays the short name (breadcrumb, tab title, URL), like "Automotive Marketplace" for the platform.
+- The theming case has one product name: "Enterprise White-Label Theme Generator", as on its Work card, in search results and in the page descriptions. The page heading and the project planning case's next-case link said "Multi-Tenant Theme Customizer". "Data Governance" stays the short name (breadcrumb, tab title, URL), like "Automotive Marketplace" for the platform.
 
 ### 3.13.3 - 2026-10-20
 
@@ -422,7 +445,7 @@ Versions: 3.5.1 - 3.7.3.
 ## Release v3.5.0 - 2026-10-13
 
 - The code behind the site is now public on GitHub, linked from the Work page next to the Figma workspace.
-- Every page has its own address, such as /about or /work/project-planning, and old links still open the right page.
+- Every page has its own address, such as /about or /work/automotive, and old links still open the right page.
 - Every section heading has a link icon that copies a link to that section, and the address bar follows the section you are reading.
 - Pages load faster and show up better in search results, link previews and AI assistants: images are about three times smaller, and every page arrives ready to read.
 - Screenshots in the automotive case study no longer show client names.
@@ -486,7 +509,7 @@ Versions: 2.0.2 - 3.5.0.
 
 #### Removed
 
-- Four images no page used (two dark link-preview variants, a light one, and an early Project Planning palette screenshot).
+- Four images no page used (two dark link-preview variants, a light one, and an early palette screenshot of the project planning case).
 
 ### 3.1.0 - 2026-10-13
 
@@ -507,7 +530,7 @@ Versions: 2.0.2 - 3.5.0.
 
 #### Changed
 
-- Every page has its own address: `/about`, `/contact`, `/cv`, `/work/data-governance`, `/work/project-planning` and `/work/automotive` instead of `/#about` and similar. Old links keep working: they open the right page and the address bar shows the new address.
+- Every page has its own address instead of `/#about` and similar: `/about`, `/contact`, `/cv`, `/work/data-governance`, `/work/automotive` and one for the project planning case. Old links keep working: they open the right page and the address bar shows the new address.
 - The sitemap lists all seven pages, so search engines can index each one.
 - View ids, page paths and section anchors live in one place (`VIEW`, `VIEW_PATHS`, `SECTION` in `src/shared/lib/routes.ts`) instead of repeated strings.
 
@@ -690,7 +713,7 @@ Versions: 1.2.2 - 2.0.1.
 
 #### Fixed
 
-- Quoted Polish UI labels in the Project Planning case study (21 phrases, e.g. "Koszt opóźnień") are marked `lang="pl"`, so screen readers pronounce them in Polish (WCAG 3.1.2). New `Lang` inline component in `ui/text.tsx`; a content test fails if Polish letters appear outside it.
+- Quoted Polish UI labels in the project planning case study (21 phrases, e.g. "Koszt opóźnień") are marked `lang="pl"`, so screen readers pronounce them in Polish (WCAG 3.1.2). New `Lang` inline component in `ui/text.tsx`; a content test fails if Polish letters appear outside it.
 
 ### 1.2.3 - 2026-10-12
 
@@ -781,7 +804,7 @@ Versions: 1.0.3 - 1.1.0.
 First release of the rebuilt portfolio.
 
 - The portfolio is rebuilt from scratch, with Work, About, Contact, CV and cover letter pages, light and dark mode.
-- Three case studies: Automotive B2B Marketplace Redesign, Project Planning and the Enterprise White-Label Theme Generator, each with its screenshots.
+- Three case studies, each with its screenshots: Automotive B2B Marketplace Redesign, Project Planning & Cost Management Platform and Enterprise White-Label Theme Generator.
 - New favicon and link preview image for LinkedIn, Slack and other apps.
 - Large screenshots are resized so case studies load faster (the biggest went from 32 MB to 1.6 MB).
 
@@ -808,7 +831,7 @@ Versions: 1.0.0 - 1.0.2.
 #### Added
 
 - Portfolio rebuilt in React 19, TypeScript and Tailwind v4 on Vite, replacing the Vite starter.
-- Work, About and case-study pages for the theming system, Project Planning and automotive projects.
+- Work, About and case-study pages for the theming system, project planning and automotive projects.
 - KitaBranding design tokens (light and dark) kept in sync with the Figma export by tests.
 - Case-study images, Work page thumbnails, portrait and Open Graph image in `public/assets/`.
 - New favicon.

@@ -141,7 +141,10 @@ describe("hash routing (one-page builds, e.g. the claude.ai artifact)", () => {
 
   it("reads the view and the section from the hash, whatever the page's own path", () => {
     expect(readRoute({ pathname: page, hash: "" })).toEqual({ view: VIEW.work, anchor: null });
-    expect(readRoute({ pathname: page, hash: "#/work/project-planning" })).toEqual({ view: VIEW.caseProjectPlanning, anchor: null });
+    expect(readRoute({ pathname: page, hash: "#/work/project-planning" })).toEqual({
+      view: VIEW.caseProjectPlanning,
+      anchor: null,
+    });
     expect(readRoute({ pathname: page, hash: "#/about#career" })).toEqual({ view: VIEW.about, anchor: "career" });
     expect(readRoute({ pathname: page, hash: "#about" })).toEqual({ view: VIEW.about, anchor: null }); // old view hash
   });
