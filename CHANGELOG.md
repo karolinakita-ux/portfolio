@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.2.7 - 2026-10-26
+
+#### Changed
+
+- Dependencies updated: React and React DOM 19.3.1 (also in `resolutions`), Vite 8.3.5, Vitest 5.0.5, Storybook 10.6.4 (all four packages), ESLint 10.13.0, typescript-eslint 8.72.1, @eslint-react/eslint-plugin 5.28.8, @vitest/eslint-plugin 1.6.28, Playwright 1.64.1, @axe-core/playwright 4.14.0, jsdom 30.1.3, Prettier 3.9.10 and @testing-library/user-event 14.6.8. TypeScript stays on 6.0: typescript-eslint 8.72 supports TypeScript below 6.1 only, so 7.0 waits for it. Checked with `yarn verify`, a Storybook build and the full e2e run in three browsers (347 passed).
+
 ### 5.2.6 - 2026-10-26
 
 #### Changed
