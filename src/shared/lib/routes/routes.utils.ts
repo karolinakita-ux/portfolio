@@ -92,7 +92,7 @@ export const urlWithAnchor = (
   return pathname + search + "#" + routedLocation(location).pathname + (anchor ? "#" + anchor : "");
 };
 
-/** True for a case-study view (case-project-planning, ...). */
+/** True for a case-study view (case-automotive, ...). */
 export const isCaseView = (view: View): boolean => view.startsWith("case-");
 
 /** Case studies live under Work, so the Work pill stays active there. */

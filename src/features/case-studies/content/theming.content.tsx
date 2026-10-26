@@ -56,7 +56,7 @@ export const THEMING_CASE: ThemingCaseStudy = {
   solution: [
     {
       id: "surfaces",
-      asset: "cases/data-governance/solution-scoped-theming.webp",
+      asset: "cases/data-governance/solution-scoped-theming-v2.webp",
       alt: "Edit Theme modal with header bar, logo and colour fields, and an inline tooltip warning that the Take Action button must stay visible against the navigation bar.",
       title: "Configurable Surfaces & Inline Guidance",
       intro: "A focused modal letting administrators rebrand key touchpoints while preserving data readability.",
@@ -120,7 +120,7 @@ export const THEMING_CASE: ThemingCaseStudy = {
     },
     {
       id: "cvd-matrix",
-      asset: "cases/data-governance/solution-cvd-matrix.webp",
+      asset: "cases/data-governance/solution-cvd-matrix-v2.webp",
       alt: "Grid of three themes - purple, red and blue - each previewed under normal vision, tritanopia, protanopia and deuteranopia.",
       title: "Advocating for Accessibility in Team Reviews",
       intro:
@@ -142,7 +142,7 @@ export const THEMING_CASE: ThemingCaseStudy = {
     },
     {
       id: "global-views",
-      asset: "cases/data-governance/solution-cvd-normal-vs-tritanopia.webp",
+      asset: "cases/data-governance/solution-cvd-normal-vs-tritanopia-v2.webp",
       alt: "Two Information panels side by side: the current theme's accessibility preview under normal vision and under tritanopia.",
       title: "Side-Panel Accessibility Preview (Phase 2 Concept)",
       intro:
@@ -168,7 +168,7 @@ export const THEMING_CASE: ThemingCaseStudy = {
   safety: [
     {
       id: "immutability",
-      asset: "cases/data-governance/safety-base-immutability.webp",
+      asset: "cases/data-governance/safety-base-immutability-v2.webp",
       alt: "Branding page listing the default theme as current, with Duplicate as the only action in its menu.",
       title: "Protecting the Default System Theme",
       intro: "Preventing critical system errors by locking the baseline theme.",
@@ -185,7 +185,7 @@ export const THEMING_CASE: ThemingCaseStudy = {
     },
     {
       id: "session-warning",
-      asset: "cases/data-governance/safety-session-warning-modal.webp",
+      asset: "cases/data-governance/safety-session-warning-modal-v2.webp",
       alt: "Set as Current Theme confirmation dialog explaining that logged-in users will see the new theme when they refresh.",
       title: "Clear Warnings Before Applying Changes",
       intro: "Explaining the immediate impact of publishing a theme to active users.",
@@ -202,7 +202,7 @@ export const THEMING_CASE: ThemingCaseStudy = {
     },
     {
       id: "css-sandbox",
-      asset: "cases/data-governance/safety-css-sandbox-disclaimer.webp",
+      asset: "cases/data-governance/safety-css-sandbox-disclaimer-v2.webp",
       alt: "CSS Customization panel with a warning that overrides can break with monthly releases and require regression testing.",
       title: "Optional CSS Field with Maintenance Warnings",
       intro: "Keeping custom CSS as a secondary fallback for technical teams, not the primary tool.",
@@ -262,6 +262,6 @@ export const THEMING_CASE: ThemingCaseStudy = {
     },
   ],
   // Last case in the Work order (Automotive → Project Planning → Data Governance).
-  prev: { view: "case-project-planning", label: "Enterprise Project Planning & Cost Management Platform" },
+  prev: { view: VIEW.caseProjectPlanning, label: "Enterprise Project Planning & Cost Management Platform" },
   next: { view: VIEW.work, action: "Back to All Work" },
 };

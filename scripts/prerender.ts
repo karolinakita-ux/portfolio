@@ -1,6 +1,6 @@
 /**
  * Writes static HTML for every page after `vite build` (run by `yarn build`):
- *   dist/index.html, dist/about.html + dist/about/index.html, dist/work/project-planning.html + …,
+ *   dist/index.html, dist/about.html + dist/about/index.html, dist/work/automotive.html + …,
  *   dist/404.html (Work, noindex) and dist/llms.txt.
  * Search engines, link previews and AI agents read the full content without JavaScript;
  * in the browser, src/main.tsx renders the app over it.

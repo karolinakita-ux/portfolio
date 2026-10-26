@@ -9,7 +9,7 @@ import type { HistoryState, Route } from "./history.types.ts";
 import { newEntryId, nextViewKey, saveScrollPosition, urlFor } from "./history.utils.ts";
 
 /**
- * View routing backed by the browser history and real URL paths (/about, /work/project-planning).
+ * View routing backed by the browser history and real URL paths (/about, /work/automotive).
  *
  * - navigate() pushes a new history entry when the view changes, so Back and
  *   Forward (and swipe-back on phones) move between views.

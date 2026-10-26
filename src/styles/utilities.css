@@ -31,6 +31,19 @@
 @utility grid-rows-expanded {
   grid-template-rows: 1fr;
 }
+/* Separator between the parts of an Eyebrow: a bullet drawn by CSS, so the page's text (what search engines,
+   link previews and copy and paste read) has only the space before it. Screen readers get its alternative
+   text, a comma; a browser without that syntax shows the same bullet and may read it as "bullet". */
+@utility bullet-before {
+  &::before {
+    content: "• ";
+  }
+  @supports (content: "" / "") {
+    &::before {
+      content: "• " / ", ";
+    }
+  }
+}
 @utility z-header {
   z-index: 50;
 }

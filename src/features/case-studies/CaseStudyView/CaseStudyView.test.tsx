@@ -44,7 +44,9 @@ describe("CaseStudyView scroll reveal: closing sections", () => {
 
   it("keeps the outcomes still (Project Planning)", () => {
     render(<CaseStudyView c={PROJECT_PLANNING_CASE} resolveAsset={resolveAsset} onNavigate={() => undefined} />);
-    const outcomes = screen.getByRole("region", { name: PROJECT_PLANNING_CASE.outcomesTitle ?? "Outcomes & Business Impact" });
+    const outcomes = screen.getByRole("region", {
+      name: PROJECT_PLANNING_CASE.outcomesTitle ?? "Outcomes & Business Impact",
+    });
     expect(revealsAround(outcomes)).toEqual([]);
   });
 });
