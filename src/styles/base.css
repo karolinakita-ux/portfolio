@@ -8,11 +8,14 @@
     scrollbar-gutter: stable;
     /* In-page anchors land below the sticky header (height measured at runtime). */
     scroll-padding-top: calc(env(safe-area-inset-top, 0px) + var(--kb-header-h, 0px) + 16px);
+    /* While the statistics consent box shows, keyboard focus scrolls clear of it (WCAG 2.4.11; useConsentSpace). */
+    scroll-padding-bottom: var(--kb-consent-h, 0px);
   }
   body {
     margin: 0;
     padding-top: env(safe-area-inset-top, 0px);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    /* The same space at the end of the page, so the last links can scroll above the consent box too. */
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + var(--kb-consent-h, 0px));
     background: var(--bg-canvas);
     color: var(--text-primary);
     font-family: var(--font-sans);

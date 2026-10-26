@@ -15,7 +15,7 @@ export const PAGE_DESCRIPTIONS: Readonly<Record<View, string>> = {
   [VIEW.contact]:
     "Contact Karolina Kita, Senior Product Designer and Design Systems specialist, open to new opportunities: email, LinkedIn, availability and working hours.",
   [VIEW.privacy]:
-    "How Karolina Kita's portfolio handles your data: no cookies, cookieless visitor statistics with Umami, hosting on Netlify, and your GDPR rights.",
+    "How Karolina Kita's portfolio handles your data: no cookies, visitor statistics with Umami only if you allow them, hosting on Netlify, and your GDPR rights.",
   [VIEW.caseTheming]:
     "Case study: a visual theme generator for a B2B data governance platform that picks readable text colours automatically, so custom tenant themes stay accessible.",
   [VIEW.caseProjectPlanning]:

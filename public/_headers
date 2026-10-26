@@ -8,6 +8,18 @@
 /assets/*
   Cache-Control: public, max-age=604800, stale-while-revalidate=86400
 
+# Site icons (favicon.svg and the copies `yarn favicons` makes from it): Google asks for stable favicon URLs,
+# so the names never change and the cache is short: a day, then refreshed in the background. Search engines
+# must be able to fetch them: never an X-Robots-Tag here.
+/favicon.svg
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+/favicon.ico
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+/favicon-96x96.png
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+/apple-touch-icon.png
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
 # The component library (Storybook, production only): not for search engines (linked from the Work page hero).
 /storybook/*
   X-Robots-Tag: noindex, nofollow

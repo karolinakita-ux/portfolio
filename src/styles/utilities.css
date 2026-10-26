@@ -44,6 +44,18 @@
     }
   }
 }
+/* A reading-width block with the page gutter on narrow screens (the consent box in the page flow). */
+@utility w-reading-inset {
+  width: min(var(--container-reading), calc(100% - 2 * var(--spacing-md)));
+}
+/* Fixed controls at the bottom right (Back to top): md from the edge, lg from md up, and above the statistics
+   consent box while it shows (--kb-consent-h, useConsentSpace), so focusing them never ends behind it (WCAG 2.4.11). */
+@utility bottom-clear-consent {
+  bottom: max(var(--spacing-md), var(--kb-consent-h, 0px));
+  @variant md {
+    bottom: max(var(--spacing-lg), var(--kb-consent-h, 0px));
+  }
+}
 @utility z-header {
   z-index: 50;
 }

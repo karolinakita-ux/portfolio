@@ -17,6 +17,8 @@ export function createIcon(name: string, nodes: readonly IconNode[]): IconCompon
       strokeLinecap="round"
       strokeLinejoin="round"
       focusable="false"
+      // Decorative unless named: the text next to an icon says what it means.
+      aria-hidden={props["aria-label"] === undefined ? true : undefined}
       className={styles.root(name, className)}
       {...props}
     >

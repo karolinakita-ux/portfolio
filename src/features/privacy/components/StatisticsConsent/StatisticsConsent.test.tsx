@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -47,6 +47,25 @@ describe("StatisticsConsent", () => {
     await user.click(screen.getByRole("button", { name: copy.allow }));
     expect(screen.queryByRole("region", { name: copy.title })).not.toBeInTheDocument();
     expect(window.localStorage.getItem(STATISTICS_CHOICE_KEY)).toBe(STORED_CHOICE.on);
+  });
+
+  it("hands focus on before it goes away with focus in it, and only then (WCAG 2.4.3)", async () => {
+    live();
+    const onAnswered = vi.fn();
+    const user = userEvent.setup();
+    const { unmount } = render(<StatisticsConsent onNavigate={() => undefined} onAnswered={onAnswered} />);
+    screen.getByRole("button", { name: copy.decline }).focus();
+    await user.keyboard("{Enter}");
+    expect(onAnswered).toHaveBeenCalledTimes(1);
+    unmount();
+
+    // Answered while focus is elsewhere (Safari does not focus a clicked button): focus stays where it is.
+    window.localStorage.removeItem(STATISTICS_CHOICE_KEY);
+    onAnswered.mockClear();
+    render(<StatisticsConsent onNavigate={() => undefined} onAnswered={onAnswered} />);
+    fireEvent.click(screen.getByRole("button", { name: copy.allow }));
+    expect(screen.queryByRole("region", { name: copy.title })).not.toBeInTheDocument();
+    expect(onAnswered).not.toHaveBeenCalled();
   });
 
   it("does not ask off the live site, or after a choice", () => {

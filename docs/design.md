@@ -34,5 +34,9 @@ Karolina's rules that a reviewer could miss, kept by the code and its tests:
 - **Equal choices look equal:** allow and decline in the consent box are the same secondary button (a story checks it).
 - **Link buttons are as big as bordered buttons:** the Button Link type ("View Case Study") has a transparent border and the button padding, so its click area is a Secondary button's box, not only the text.
 - **Link rows spaced like buttons:** a row of text links that can wrap gets a bordered button's height per link (`BUTTON_HEIGHT`) and the buttons' row gap, so wrapped rows do not look cramped.
-- **Breadcrumbs:** pages outside Work start with Home, case studies with Work.
-- **Calm motion:** nothing moves on the first screen at load, nothing loops past 5 seconds, and reduced motion makes every change instant.
+- **Breadcrumbs:** pages outside Work start with Home (house icon, the home page); case studies start with Work, without the icon, which opens the list of case studies. One name for one destination (WCAG 3.2.4).
+- **Previous and next at both ends of a case study:** compact "← Previous" and "Next →" at the end of the breadcrumb row (the case name for screen readers), the full links with the case names at the end. At the first and last case the top shows one link: the breadcrumb leads back to Work.
+- **Dark label on gold:** a Secondary button's hover and pressed fills and every Subtle fill are gold in the dark theme, so their label is `text-on-accent`; the light label would fall under 4.5:1.
+- **States are more than the yellow marker:** the chosen theme also fills its icon, because the yellow marker reads 1.54:1 on white.
+- **Version in the footer:** the copyright line ends with the site's version, linked to the release notes.
+- **Calm motion:** nothing moves on the first screen at load, nothing loops past 5 seconds, and reduced motion makes every change instant. Elements hidden until focus (the copy-link icons) appear at once, so their focus ring does too.

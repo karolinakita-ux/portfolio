@@ -11,7 +11,7 @@ import { Swatch } from "#shared/ui/Swatch/Swatch.tsx";
  */
 export const PROJECT_PLANNING_CASE: CaseStudy = {
   view: VIEW.caseProjectPlanning,
-  id: "me",
+  id: "planning",
   shortTitle: "Project Planning",
   eyebrow: ["B2B SaaS", "Design System & Web Application"],
   title: "Enterprise Project Planning & Cost Management Platform",
@@ -43,7 +43,7 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
   ],
   sections: [
     {
-      id: "me-foundations",
+      id: "planning-foundations",
       title: "Technical Foundation: Adopting PrimeNG & Semantic Tokens",
       intro: [
         "The initial prototype suffered from outdated legacy charting and fragmented UI patterns that were difficult to maintain. After aligning with product owners on required features and consulting with developers on delivery speed, we chose PrimeNG as our core front-end framework.",
@@ -101,7 +101,7 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
       ],
     },
     {
-      id: "me-calendar",
+      id: "planning-calendar",
       title: "Calendar Architecture: Structuring the Scheduling Workspace",
       intro:
         "During initial discovery, product owners needed a centralized calendar to make meeting planning and cost tracking practical. I took this high-level idea and structured the complete desktop interface - designing flexible weekly and daily views along with an interactive mini-calendar navigation system for the PrimeNG implementation.",
@@ -158,7 +158,7 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
       ],
     },
     {
-      id: "me-cockpits",
+      id: "planning-cockpits",
       title: "Project Dashboards & Budget Tracking Tables",
       intro:
         "Dense operational data quickly becomes overwhelming without a clear hierarchy. I organized the analytics workspace into two connected layers: high-level meeting habit KPIs up top, and an actionable project table below that highlights budget risks at a glance.",
@@ -215,7 +215,7 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
       ],
     },
     {
-      id: "me-planning",
+      id: "planning-roadmap",
       title: "Project Roadmap & Goal Hierarchy",
       intro:
         "Accurate budget estimation requires breaking projects down into manageable milestones. Following an initial discovery workshop with stakeholders, we aligned on a familiar mental model - combining a structured goal hierarchy with an interactive timeline so managers could track project progress without steep learning curves.",
@@ -274,7 +274,7 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
       ],
     },
     {
-      id: "me-operations",
+      id: "planning-operations",
       title: "Organization Settings & Project Budget Transparency",
       intro:
         "SaaS budgeting tools often fail when they ignore daily working habits or make hourly rate configuration tedious. I designed centralized administrative controls allowing companies to set reasonable meeting rules, track project spend breakdown, and manage employee rates without heavy operational friction.",

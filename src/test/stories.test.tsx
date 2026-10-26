@@ -6,7 +6,7 @@ import preview from "../../.storybook/preview.tsx";
 
 /**
  * Every Storybook story as a test: it renders with the site's preview settings, runs its play
- * function (the interaction checks written in the story), and then passes axe (WCAG 2.1 A/AA).
+ * function (the interaction checks written in the story), and then passes axe (WCAG 2.2 A/AA).
  * jsdom has no layout, so colour contrast is left to `yarn a11y` and the browser checks; a story is
  * a fragment, so the page-level rules (landmarks, one h1) are left to the page audits too.
  * A new *.stories.tsx is picked up by itself.
@@ -22,7 +22,7 @@ interface RunnableStory {
 const modules = import.meta.glob<StoriesModule>("../**/*.stories.tsx", { eager: true });
 
 const AXE_OPTIONS: axe.RunOptions = {
-  runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"] },
+  runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22a", "wcag22aa"] },
   rules: {
     "color-contrast": { enabled: false },
     region: { enabled: false },

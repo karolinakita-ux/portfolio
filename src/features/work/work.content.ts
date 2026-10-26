@@ -43,7 +43,7 @@ const CASES: readonly WorkCase[] = [
   {
     id: "theming-system",
     asset: "cases/data-governance/thumbnail-v2.webp",
-    alt: "Three Edit Theme panels from a data governance platform, showing header, navigation and general colour settings used to brand each tenant.",
+    alt: "A Create New Theme panel between two Edit Theme panels from a data governance platform, showing the header, navigation and general color settings used to brand each tenant.",
     eyebrow: ["B2B Platform", "Feature Design"],
     title: "Enterprise White-Label Theme Generator",
     summary:

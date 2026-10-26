@@ -44,6 +44,10 @@ export interface TabStop {
   visibleIndicator: boolean;
   rect: { x: number; y: number; w: number; h: number };
   inDialog: boolean;
+  /** Share of the element's on-screen area that is not covered by other content (0 = hidden, WCAG 2.4.11). */
+  shown: number;
+  /** What covers it, when anything does. */
+  coveredBy: string | null;
 }
 
 export interface ReflowResult {

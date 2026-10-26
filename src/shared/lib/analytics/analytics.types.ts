@@ -65,7 +65,7 @@ export interface EventData {
   /** The page was opened from a tagged link (?ref=acme, or utm_source). */
   [EVENT.linkRef]: { ref: string };
   [EVENT.caseOpen]: { case: View; from: "card-link" | "thumbnail" };
-  [EVENT.caseNav]: { from: View; to: View; direction: "prev" | "next" };
+  [EVENT.caseNav]: { from: View; to: View; direction: "prev" | "next"; place: "top" | "end" };
   /** image: the screenshot card's id. */
   [EVENT.imageOpen]: { case: View; image: string };
   /** The next or previous screenshot in the image viewer (arrow, key or swipe); image: the one now shown. */

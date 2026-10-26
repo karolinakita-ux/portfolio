@@ -80,7 +80,8 @@ export function CopyEmail({ email, place, textClassName, icon = null }: CopyEmai
             if (status === "selected") setStatus("idle");
           }}
           aria-label={copied ? "Email address copied to clipboard" : "Copy email address"}
-          title={copied ? "Copied to clipboard!" : "Copy email address"}
+          // The tooltip says what the name says, so a voice command read from it matches (WCAG 2.5.3).
+          title={copied ? "Email address copied to clipboard" : "Copy email address"}
           className={styles.button}
         >
           {copied ? <Check aria-hidden="true" size={16} /> : <Copy aria-hidden="true" size={16} />}

@@ -5,7 +5,11 @@ import { FOCUS_RING } from "#shared/lib/ui/ui.styles.ts";
 
 import type { ButtonVariant } from "./Button.types.ts";
 
-/** Figma: Button, Type = Primary | Secondary | Subtle | Link (states: default, hover, disabled). */
+/**
+ * Figma: Button, Type = Primary | Secondary | Subtle | Link (states: default, hover, disabled).
+ * On the gold fills (Secondary hover and pressed, every Subtle state) the label is text-on-accent: the dark
+ * theme's light label would read 1.75-2.98:1 there, under the 4.5:1 of WCAG 1.4.3.
+ */
 const VARIANT: Record<ButtonVariant, string> = {
   primary: clsx(
     "bg-bg-interactive-primary-default font-semibold text-text-interactive-primary shadow-sm",
@@ -14,11 +18,12 @@ const VARIANT: Record<ButtonVariant, string> = {
   ),
   secondary: clsx(
     "border border-border-interactive-default bg-bg-interactive-secondary-default text-text-interactive-secondary",
-    "hover:border-border-interactive-hover hover:bg-bg-interactive-secondary-hover active:bg-bg-interactive-secondary-active",
+    "hover:border-border-interactive-hover hover:bg-bg-interactive-secondary-hover hover:text-text-on-accent",
+    "active:bg-bg-interactive-secondary-active active:text-text-on-accent",
     "disabled:border-border-interactive-disabled disabled:text-text-interactive-disabled",
   ),
   subtle: clsx(
-    "bg-bg-interactive-subtle-default text-text-interactive-secondary",
+    "bg-bg-interactive-subtle-default text-text-on-accent",
     "hover:bg-bg-interactive-subtle-hover active:bg-bg-interactive-subtle-active",
     "disabled:bg-bg-interactive-disabled disabled:text-text-interactive-disabled",
   ),

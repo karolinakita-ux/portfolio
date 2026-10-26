@@ -4,7 +4,10 @@ import { THEME_OPTIONS } from "./ThemeToggle.constants.ts";
 import { styles } from "./ThemeToggle.styles.ts";
 import type { ThemeToggleProps } from "./ThemeToggle.types.ts";
 
-/** Light / dark switch: two pressed-state buttons with a sliding marker. */
+/**
+ * Light / dark switch: two pressed-state buttons with a sliding marker. The pressed one also fills its
+ * icon: the yellow marker alone reads 1.54:1 on the white group, under the 3:1 a state needs (WCAG 1.4.11).
+ */
 export function ThemeToggle({ theme, onChange }: ThemeToggleProps) {
   const groupRef = useSlidingPill<HTMLDivElement>(theme);
   return (
@@ -22,7 +25,7 @@ export function ThemeToggle({ theme, onChange }: ThemeToggleProps) {
             className={styles.button(active)}
           >
             <span data-pill={value} aria-hidden="true" className={styles.pill(active)} />
-            <Icon aria-hidden="true" size={16} />
+            <Icon aria-hidden="true" size={16} fill={active ? "currentColor" : "none"} />
           </button>
         );
       })}

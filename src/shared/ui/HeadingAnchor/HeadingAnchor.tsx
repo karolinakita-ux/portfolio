@@ -33,7 +33,7 @@ export function HeadingAnchor({ id, headingId, label }: HeadingAnchorProps) {
       <a
         href={hash}
         aria-label={"Copy link to section: " + label}
-        title={copied ? "Link copied" : "Copy link to this section"}
+        title={copied ? "Link copied" : "Copy link to section"}
         onClick={(event) => {
           if (!isPlainLeftClick(event)) return;
           event.preventDefault();

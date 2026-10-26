@@ -33,6 +33,8 @@ async function dialogTabStops(page: Page): Promise<TabStop[]> {
       visibleIndicator: true,
       rect: { x: 0, y: 0, w: 0, h: 0 },
       inDialog,
+      shown: 1,
+      coveredBy: null,
     });
   }
   return stops;

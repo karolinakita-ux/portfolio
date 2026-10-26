@@ -41,7 +41,8 @@ export function SiteHeader({ activeView, onNavigate, onHome, theme, onThemeChang
             event.preventDefault();
             onHome();
           }}
-          aria-label="Karolina Kita, home page"
+          // Starts with the wordmark the link shows, so "click K Kita" works by voice (WCAG 2.5.3).
+          aria-label="K.Kita - Karolina Kita, home page"
           className={styles.home}
         >
           <Logo />

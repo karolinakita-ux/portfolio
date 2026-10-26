@@ -4,6 +4,111 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Release v5.2.3 - 2026-10-26
+
+- Each case study now has previous and next links at the top, beside the breadcrumb, so you can move between cases without scrolling to the end.
+- The footer shows the site's version, linked to the release notes, so you can tell whether anything changed since your last visit.
+- Google can now show the site's icon in search results.
+- The site is easier to use with a keyboard or a screen reader, checked against WCAG 2.2: the statistics box no longer covers the link you move to and fits small or zoomed screens, and the theme switch and dark-theme buttons are clearer.
+- Search engines and AI assistants read the pages more cleanly, and two image descriptions are more accurate.
+
+Versions: 5.0.1 - 5.2.3.
+
+### 5.2.3 - 2026-10-26
+
+#### Changed
+
+- The project planning case's section links no longer start with "me-", a trace of the product name hidden in 5.0.0. The address bar now shows `#planning-summary`, `#planning-foundations`, `#planning-calendar`, `#planning-cockpits`, `#planning-roadmap` (was `#me-planning`), `#planning-operations` and `#planning-outcomes` while you read. An exception to keeping section ids stable: the old ones were live for a few hours only, and the case's address changed in 5.0.0 the same day. A link with an old `#me-` part opens the case at the top. Screenshot ids in the statistics change with them.
+
+### 5.2.2 - 2026-10-26
+
+#### Fixed
+
+- After a copy review of today's changes: the heuristic summary's alt text names the two most broken heuristics one at a time, with their counts, instead of joining them with two "and"s in a row. The theming card's alt says the Create New Theme panel sits between the two Edit Theme panels. Both use the American spelling of the copy around them.
+- The top previous / next links' landmark is named after the links it holds: "Previous and next case studies", or "Previous case study" and "Next case study" on the last and first case, where it holds one.
+- A range in the 5.0.1 entry has the short hyphen with spaces.
+
+### 5.2.1 - 2026-10-26
+
+#### Changed
+
+- The Privacy page's search description says that visitor statistics run only if the visitor allows them, as the policy does, instead of "cookieless visitor statistics". Its sitemap date is today, because the description is also in its structured data.
+- The docs follow today's changes: WCAG 2.2 AA is the minimum in CLAUDE.md, the README, `docs/architecture.md`, `docs/claude-code.md`, the Storybook welcome page and the a11y-reviewer agent (which now also reads the hidden-focus and consent box checks). CLAUDE.md has the rules for focus that nothing hides, names that start with the visible label, states beyond the yellow marker, and spaces between neighbouring elements. `docs/design.md` lists the new design rules (breadcrumb roots, previous and next at both ends, dark labels on gold, the theme icon, the footer version).
+- The case studies and the About page keep "WCAG 2.1 AA" where they describe past projects: that is what those projects met.
+
+### 5.2.0 - 2026-10-26
+
+#### Added
+
+- Previous and next case study links at the top of each case study, at the end of the breadcrumb row, so readers can move between cases without scrolling to the end. They say "← Previous" and "Next →"; screen readers hear the case name too ("Next case study: Enterprise White-Label Theme Generator"). On narrow phones they move to a row of their own, on the right. The first and the last case show one link: the breadcrumb's "Work" already leads back to the list. The full links with the case names still close each case study.
+- `CaseNavLink` has a `place` variant (`top`, `end`), and `case-nav` events carry it, so the statistics show which links readers use (tracking plan updated).
+
+### 5.1.1 - 2026-10-26
+
+#### Fixed
+
+The rest of the WCAG 2.2 A and AA review (four reviewers, file by file):
+
+- Secondary buttons in the dark theme: on hover and while pressed, the label turns dark on the gold fill. The light label read 2.98:1 and 2.25:1 there, under the 4.5:1 of 1.4.3. Subtle buttons (Storybook only) use the dark label in every state.
+- The theme switch fills the icon of the chosen theme. The yellow marker alone reads 1.54:1 on the white switch, under the 3:1 a state needs (1.4.11).
+- The scrollbar of a zoomed image in the image viewer is darker in the light theme: 8.41:1 instead of 1.97:1 (1.4.11).
+- The logo link's name starts with the wordmark it shows, "K.Kita - Karolina Kita, home page", so the voice command "click K Kita" finds it (2.5.3). The tooltips of the copy-link and copy-email buttons now match their names.
+- After answering the statistics box with the keyboard, focus moves to the page content instead of dropping to the top of the page (2.4.3).
+- On case studies the breadcrumb's "Work" opens the list of case studies and has no house icon. "Home" with the house icon stays the home page on the other pages (3.2.4: one name for one destination).
+- Two alt texts now describe their images: the automotive heuristic summary table, and the theming card, whose middle panel is Create New Theme (1.1.1). When a full-size image does not load, the viewer still gives its description to screen readers.
+- The copy-link icons next to section headings appear at once instead of fading in, so their focus ring does too.
+- A press that starts inside the image viewer and ends over the backdrop (selecting the title, panning an image) no longer closes it.
+- Icons are hidden from screen readers unless they get a name.
+
+#### Changed
+
+- `e2e/motion-a11y.e2e.ts` also fails when an element that is hidden until focus fades in with its focus ring (`e2e/helpers/focus-ring.utils.ts`). Checked against the live site, which still has the fade.
+
+### 5.1.0 - 2026-10-26
+
+#### Added
+
+- The footer shows the site's version from `package.json` ("Version 5.1.0"), linked to the release notes (`CHANGELOG.md` on GitHub, newest release first), so a returning visitor can tell whether anything changed since their last visit. It ends the copyright line, two lines away from the Privacy link, because two small links on neighbouring lines would be closer than WCAG 2.5.8 allows. On phones it moves to the next line as a whole. The footer story and an App test check it against `package.json`.
+
+#### Changed
+
+- CLAUDE.md: the footer's version number does not count as a content change for a page's sitemap `<lastmod>`.
+
+### 5.0.3 - 2026-10-26
+
+#### Fixed
+
+- Words ran together for anything that reads the pages without CSS (search engines, AI assistants, reader modes, plain-text copies): "Back to All WorkNext Case StudyEnterprise", "SWStewart WilsonUX Director", "Based in PolandProduct & UX/UI Designer", the hero and banner link labels, the privacy page's policy links and a heading with a "Roadmap" badge, 21 places in all. The HTML now has a space between them. The layout does not change: every changed element's box matches the live site at 390 and 1280 px.
+
+#### Added
+
+- `src/app/plain-text.test.tsx` renders every page and fails when words from two elements touch with no space between them (`src/test/plain-text.ts`). It found the 21 places before the fix.
+
+### 5.0.2 - 2026-10-26
+
+#### Fixed
+
+- Google Search showed a plain globe instead of the site icon. The site linked only `favicon.svg`, which Google Search does not read (its list: BMP, GIF, ICO, PNG, JPEG, PPM and TIFF), and `/favicon.ico` answered with the 404 page. Every page now links, after the SVG, a 96 px PNG, an ICO with 16, 32 and 48 px images, and a 180 px icon for iOS home screens.
+
+#### Added
+
+- `yarn favicons` (`scripts/favicons.ts`, with sharp) makes the PNG and ICO icons from `public/favicon.svg`, so they always match it.
+- `public/_headers` caches the icons for a day: their names never change, as Google asks, and a new icon still reaches visitors.
+- `src/app/seo/favicons.test.ts` fails when `index.html` misses an icon link, a linked file is missing or has the wrong size, or an icon gets `X-Robots-Tag` or a robots.txt block. `scripts/prerender.ts` fails the build when a prerendered page loses an icon link. Both are checked with probes that must fail and must pass.
+- CLAUDE.md, the README and `docs/architecture.md` describe the icons and the new command.
+
+### 5.0.1 - 2026-10-26
+
+#### Fixed
+
+- Keyboard focus no longer ends up behind the statistics consent box (WCAG 2.2, 2.4.11 Focus Not Obscured). While the box shows, the page keeps the strip it covers clear: a focused link or button scrolls above it, the end of the page gets the same space so the last footer links can scroll clear, and Back to top moves up above it (`useConsentSpace`, `--kb-consent-h`).
+- On short windows (landscape phones, a laptop at 300 - 400% zoom) the consent box sits at the top of the page instead of floating over it, so all of its text can be scrolled to (WCAG 1.4.10 Reflow). Before, it was taller than the window and its top was out of reach.
+
+#### Changed
+
+- `yarn a11y`, the scroll reveal e2e and the stories test check WCAG 2.2 A/AA (axe tags `wcag22a` and `wcag22aa`).
+- `yarn a11y` hit-tests every Tab stop and reports the ones another element hides (2.4.11). It also tabs through four pages with the consent box showing, at phone, desktop and 400% zoom sizes, and checks at 400% zoom that all of the box can be scrolled to. Tab stops get the name a screen reader gives them: image alt text in, hidden text out.
+
 ## Release v5.0.0 - 2026-10-26
 
 - The project planning case study no longer names its product: it has a new address, /work/project-planning, and the product's logo is gone from its screenshots.

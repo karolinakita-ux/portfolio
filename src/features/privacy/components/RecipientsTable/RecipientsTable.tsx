@@ -12,7 +12,7 @@ export function RecipientsTable() {
       {PRIVACY.recipients.map((recipient) => (
         <InfoTableCell key={recipient.name} label={recipient.name}>
           <span className={styles.text}>
-            {recipient.text}
+            {recipient.text}{" "}
             <TextLink href={recipient.policy.href} external>
               {recipient.policy.label}
             </TextLink>

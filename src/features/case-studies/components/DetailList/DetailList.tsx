@@ -15,8 +15,7 @@ export function DetailList({ items }: DetailListProps) {
       {items.map((item) => (
         <li key={item.title} className={styles.item}>
           <h3 className={styles.title}>
-            {item.title}
-            {item.badge && <Badge weight="medium">{item.badge}</Badge>}
+            {item.title} {item.badge && <Badge weight="medium">{item.badge}</Badge>}
           </h3>
           <p className={styles.body}>{item.body}</p>
         </li>

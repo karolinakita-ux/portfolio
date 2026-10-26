@@ -213,9 +213,9 @@ describe("trackPageview and track", () => {
 
     go("/");
     analytics.trackPageview();
-    go("/work/project-planning#me-research");
+    go("/work/project-planning#planning-calendar");
     analytics.trackPageview();
-    analytics.track(EVENT.imageOpen, { case: "case-project-planning", image: "me-dashboard" });
+    analytics.track(EVENT.imageOpen, { case: "case-project-planning", image: "kpis" });
 
     expect(sent.map((payload) => payload.referrer)).toEqual(["https://www.linkedin.com/", "/", "/"]);
     expect(sent.map((payload) => payload.url)).toEqual([
@@ -229,14 +229,19 @@ describe("trackPageview and track", () => {
     analytics.startAnalytics(LIVE);
     const sent = loadTracker();
     go("/work/automotive", "Automotive");
-    analytics.track(EVENT.caseNav, { from: "case-automotive", to: "case-project-planning", direction: "next" });
+    analytics.track(EVENT.caseNav, {
+      from: "case-automotive",
+      to: "case-project-planning",
+      direction: "next",
+      place: "end",
+    });
     expect(sent).toEqual([
       {
         ...TRACKER_PAYLOAD,
         url: window.location.origin + "/work/automotive",
         title: "Automotive",
         name: "case-nav",
-        data: { from: "case-automotive", to: "case-project-planning", direction: "next" },
+        data: { from: "case-automotive", to: "case-project-planning", direction: "next", place: "end" },
       },
     ]);
   });

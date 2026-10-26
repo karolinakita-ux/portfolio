@@ -1,9 +1,10 @@
 /* The image viewer (features/image-viewer): pane, image and skeleton sizes. Its backdrop: dialog.css. */
 
-/* Zoomed pane: thin scrollbars in the border colour instead of the heavy defaults. */
+/* Zoomed pane: thin scrollbars instead of the heavy defaults, in a colour that keeps 3:1 against the pane
+   in both themes (WCAG 1.4.11; --border-default read 1.97:1 in light). */
 .kb-lightbox-viewport {
   scrollbar-width: thin;
-  scrollbar-color: var(--border-default) transparent;
+  scrollbar-color: var(--border-interactive-hover) transparent;
 }
 /* Image pane: the window height minus the panel chrome (title row, controls and
    paddings), fixed rather than following each image, so the panel and its

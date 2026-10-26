@@ -5,6 +5,8 @@ export interface BreadcrumbItem {
   label: string;
   /** Required for every item except the last (current page). */
   view?: View;
+  /** A section of that view to open at (its heading id), e.g. the case list on Work. */
+  anchor?: string;
   icon?: IconComponent;
 }
 
