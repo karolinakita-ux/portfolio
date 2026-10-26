@@ -4,6 +4,14 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Unreleased
+
+### 5.2.4 - 2026-10-26
+
+#### Fixed
+
+- Release v5.2.3 did not go live: Netlify's build stopped after all 580 tests had passed. The plain-text page test rendered every page with the real image preloader, whose idle timer fired after the test's browser environment was gone and threw "Image is not defined", and Vitest fails the whole run on such an error. The test now mocks the preloader, like the other tests that render whole pages. On this machine the test process ended before the timer fired, so `yarn verify` passed; a probe that removes `Image` and waits reproduces the failure. CLAUDE.md lists the trap under Pitfalls.
+
 ## Release v5.2.3 - 2026-10-26
 
 - Each case study now has previous and next links at the top, beside the breadcrumb, so you can move between cases without scrolling to the end.

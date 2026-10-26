@@ -1,10 +1,14 @@
 import { render } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { VIEW_PATHS, VIEWS } from "#shared/lib/routes/routes.constants.ts";
 import { joinedText } from "#test/plain-text.ts";
 
 import { App } from "./App/App.tsx";
+
+// As in the other tests that render whole pages: the real preloader's idle timer would outlive this file and
+// call `new Image()` after jsdom is gone, an unhandled error that fails the whole run (Netlify, v5.2.3).
+vi.mock("#shared/media/image-preload/image-preload.utils.ts", () => ({ preloadImages: vi.fn() }));
 
 /**
  * Every page also reads cleanly as plain text: what search engines, AI assistants and text-only tools take
