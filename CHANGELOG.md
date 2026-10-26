@@ -4,7 +4,15 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v5.2.3 - 2026-10-26
+
+- Each case study now has previous and next links at the top, beside the breadcrumb, so you can move between cases without scrolling to the end.
+- The footer shows the site's version, linked to the release notes, so you can tell whether anything changed since your last visit.
+- Google can now show the site's icon in search results.
+- The site is easier to use with a keyboard or a screen reader, checked against WCAG 2.2: the statistics box no longer covers the link you move to and fits small or zoomed screens, and the theme switch and dark-theme buttons are clearer.
+- Search engines and AI assistants read the pages more cleanly, and two image descriptions are more accurate.
+
+Versions: 5.0.1 - 5.2.3.
 
 ### 5.2.3 - 2026-10-26
 
