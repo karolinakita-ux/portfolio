@@ -4,6 +4,13 @@ export type Theme = "light" | "dark";
 
 export type ViewportName = keyof typeof VIEWPORTS;
 
+/** A focusable element whose focus ring would fade in (focusRingFades). */
+export interface RingTransition {
+  element: string;
+  property: string;
+  duration: string;
+}
+
 export interface Box {
   x: number;
   y: number;

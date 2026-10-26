@@ -13,16 +13,25 @@ import type { StatisticsConsentProps } from "./StatisticsConsent.types.ts";
  * Privacy Control. On the dev server it shows on every page load (consentPreview), and an answer hides
  * it until the next one.
  */
-export function StatisticsConsent({ onNavigate }: StatisticsConsentProps) {
+export function StatisticsConsent({ onNavigate, onAnswered }: StatisticsConsentProps) {
   const state = useStatisticsState();
   // Also covers blocked storage: the answer applies to this page, so the box does not come back at once.
   const [answered, setAnswered] = useState(false);
   const asking = !answered && (consentPreview() || (state === "unset" && consentNeeded()));
   if (!asking) return null;
 
-  const answer = (choice: StatisticsChoice) => {
+  const answer = (choice: StatisticsChoice, focusInside: boolean) => {
+    // Focus is on the answer button, which goes away with the box: it moves on first, so keyboard and
+    // screen reader users do not drop back to the top of the page (WCAG 2.4.3).
+    if (focusInside) onAnswered?.();
     setAnswered(true);
     setStatisticsChoice(choice);
   };
-  return <ConsentBanner onAllow={() => answer("on")} onDecline={() => answer("off")} onNavigate={onNavigate} />;
+  return (
+    <ConsentBanner
+      onAllow={(focusInside) => answer("on", focusInside)}
+      onDecline={(focusInside) => answer("off", focusInside)}
+      onNavigate={onNavigate}
+    />
+  );
 }

@@ -19,6 +19,8 @@ export function ConsentBanner({ onAllow, onDecline, onNavigate }: ConsentBannerP
   const boxRef = useRef<HTMLElement>(null);
   useConsentSpace(boxRef);
   const copy = PRIVACY.consent;
+  /** Whether keyboard focus is in the box, on the answer button that goes away with it. */
+  const focusInside = () => boxRef.current?.contains(document.activeElement) ?? false;
   return (
     <section ref={boxRef} aria-labelledby={titleId} className={styles.root}>
       <p id={titleId} className={styles.title}>
@@ -27,10 +29,10 @@ export function ConsentBanner({ onAllow, onDecline, onNavigate }: ConsentBannerP
       <p className={styles.text}>{copy.text}</p>
       <div className={styles.actions}>
         <div className={styles.choices}>
-          <Button variant="secondary" onClick={onAllow}>
+          <Button variant="secondary" onClick={() => onAllow(focusInside())}>
             {copy.allow}
           </Button>
-          <Button variant="secondary" onClick={onDecline}>
+          <Button variant="secondary" onClick={() => onDecline(focusInside())}>
             {copy.decline}
           </Button>
         </div>

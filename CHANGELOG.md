@@ -6,6 +6,27 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.1.1 - 2026-10-26
+
+#### Fixed
+
+The rest of the WCAG 2.2 A and AA review (four reviewers, file by file):
+
+- Secondary buttons in the dark theme: on hover and while pressed, the label turns dark on the gold fill. The light label read 2.98:1 and 2.25:1 there, under the 4.5:1 of 1.4.3. Subtle buttons (Storybook only) use the dark label in every state.
+- The theme switch fills the icon of the chosen theme. The yellow marker alone reads 1.54:1 on the white switch, under the 3:1 a state needs (1.4.11).
+- The scrollbar of a zoomed image in the image viewer is darker in the light theme: 8.41:1 instead of 1.97:1 (1.4.11).
+- The logo link's name starts with the wordmark it shows, "K.Kita - Karolina Kita, home page", so the voice command "click K Kita" finds it (2.5.3). The tooltips of the copy-link and copy-email buttons now match their names.
+- After answering the statistics box with the keyboard, focus moves to the page content instead of dropping to the top of the page (2.4.3).
+- On case studies the breadcrumb's "Work" opens the list of case studies and has no house icon. "Home" with the house icon stays the home page on the other pages (3.2.4: one name for one destination).
+- Two alt texts now describe their images: the automotive heuristic summary table, and the theming card, whose middle panel is Create New Theme (1.1.1). When a full-size image does not load, the viewer still gives its description to screen readers.
+- The copy-link icons next to section headings appear at once instead of fading in, so their focus ring does too.
+- A press that starts inside the image viewer and ends over the backdrop (selecting the title, panning an image) no longer closes it.
+- Icons are hidden from screen readers unless they get a name.
+
+#### Changed
+
+- `e2e/motion-a11y.e2e.ts` also fails when an element that is hidden until focus fades in with its focus ring (`e2e/helpers/focus-ring.utils.ts`). Checked against the live site, which still has the fade.
+
 ### 5.1.0 - 2026-10-26
 
 #### Added

@@ -64,6 +64,9 @@ export function App({ assetBase = "/assets", portraitSrc = assetBase + "/site/po
     mainRef.current?.focus({ preventScroll: true });
   }, []);
 
+  /** The consent box goes away with focus in it: focus moves to the content, where reading goes on. */
+  const focusContent = useCallback(() => mainRef.current?.focus({ preventScroll: true }), []);
+
   const view = VIEW_RENDERERS[route.view]({ navigate, resolveAsset, portraitSrc });
 
   return (
@@ -81,7 +84,7 @@ export function App({ assetBase = "/assets", portraitSrc = assetBase + "/site/po
         </a>
 
         {/* Early in the DOM so keyboard and screen reader users meet it first; it sits at the bottom of the screen. */}
-        <StatisticsConsent onNavigate={navigate} />
+        <StatisticsConsent onNavigate={navigate} onAnswered={focusContent} />
 
         <div className={styles.chrome}>
           <SiteHeader

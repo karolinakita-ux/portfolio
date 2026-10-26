@@ -4,7 +4,10 @@ import { expect, fn, userEvent } from "storybook/test";
 import { HOME_CRUMB, WORK_CRUMB } from "./Breadcrumb.constants.ts";
 import { Breadcrumb } from "./Breadcrumb.tsx";
 
-/** Figma: Breadcrumbs. The home page, then the current page: Home on pages outside Work, Work on case studies. */
+/**
+ * Figma: Breadcrumbs. Pages outside Work start at Home (the house icon, the home page); case studies start at
+ * Work, which opens the list of case studies on that page.
+ */
 const meta = {
   title: "UI/Breadcrumb",
   component: Breadcrumb,
@@ -25,7 +28,9 @@ export const Default: Story = {
 export const CaseStudy: Story = {
   args: { items: [WORK_CRUMB, { label: "Project Planning" }] },
   play: async ({ canvas, args }) => {
-    await userEvent.click(canvas.getByRole("link", { name: "Work" }));
-    await expect(args.onNavigate).toHaveBeenCalledWith("work", undefined);
+    const work = canvas.getByRole("link", { name: "Work" });
+    await expect(work).toHaveAttribute("href", "/#enterprise-cases");
+    await userEvent.click(work);
+    await expect(args.onNavigate).toHaveBeenCalledWith("work", "enterprise-cases");
   },
 };

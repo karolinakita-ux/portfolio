@@ -19,7 +19,7 @@ export function Breadcrumb({ items, onNavigate }: BreadcrumbProps) {
                   {item.label}
                 </span>
               ) : (
-                <ViewLink view={item.view} onNavigate={onNavigate} className={styles.link}>
+                <ViewLink view={item.view} anchor={item.anchor} onNavigate={onNavigate} className={styles.link}>
                   {Icon && <Icon aria-hidden="true" size={14} />}
                   {item.label}
                 </ViewLink>

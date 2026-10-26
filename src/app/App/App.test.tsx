@@ -8,6 +8,9 @@ import { AUTOMOTIVE_CASE } from "#features/case-studies/content/automotive.conte
 import { PROJECT_PLANNING_CASE } from "#features/case-studies/content/project-planning.content.tsx";
 import { THEMING_CASE } from "#features/case-studies/content/theming.content.tsx";
 import { caseCards } from "#features/case-studies/gallery/gallery.utils.ts";
+import { PRIVACY } from "#features/privacy/privacy.content.tsx";
+import { UMAMI } from "#shared/lib/analytics/analytics.constants.ts";
+import { initStatistics } from "#shared/lib/analytics/statistics-consent.utils.ts";
 import { preloadImages } from "#shared/media/image-preload/image-preload.utils.ts";
 
 import { App } from "./App.tsx";
@@ -142,7 +145,7 @@ describe("App", () => {
       "Enterprise White-Label Theme Generator",
     ]);
     // The image stays readable: the overlay sits beside it, not around it.
-    const thumbnail = screen.getByRole("img", { name: /^Three Edit Theme panels/ });
+    const thumbnail = screen.getByRole("img", { name: /^Two Edit Theme panels and a Create New Theme panel/ });
     expect(thumbnail.closest("a")).toBeNull();
     // Only the CTA reaches the theming case from the keyboard / accessibility tree.
     const themingPath = "/work/data-governance";
@@ -174,7 +177,7 @@ describe("App", () => {
   it("orders the header as it looks on desktop: logo, primary nav, then the theme switch", () => {
     renderApp();
     const header = screen.getByRole("banner");
-    const logo = within(header).getByRole("link", { name: "Karolina Kita, home page" });
+    const logo = within(header).getByRole("link", { name: "K.Kita - Karolina Kita, home page" });
     const nav = within(header).getByRole("navigation", { name: "Primary" });
     const themeSwitch = within(header).getByRole("group", { name: "Color theme" });
 
@@ -243,5 +246,18 @@ describe("App", () => {
     await user.click(question);
 
     expect(question).toHaveAttribute("aria-expanded", "true");
+  });
+
+  it("moves focus to the content when the consent box goes away with focus in it", async () => {
+    initStatistics({ production: true, base: "/", hostname: UMAMI.host, privacy: {} });
+    try {
+      const { user } = renderApp("/about");
+      screen.getByRole("button", { name: PRIVACY.consent.decline }).focus();
+      await user.keyboard("{Enter}");
+      expect(screen.queryByRole("region", { name: PRIVACY.consent.title })).not.toBeInTheDocument();
+      expect(screen.getByRole("main")).toHaveFocus();
+    } finally {
+      initStatistics({ production: false, base: "/", hostname: "localhost", privacy: {} });
+    }
   });
 });

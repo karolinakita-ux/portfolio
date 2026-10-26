@@ -11,6 +11,7 @@ import { IMAGE_ENTRY } from "#features/image-viewer/lightbox.styles.ts";
 import { zoomStyle } from "#features/image-viewer/lightbox.utils.ts";
 import { Dialog } from "#shared/ui/Dialog/Dialog.tsx";
 import { ImageOff } from "#shared/ui/icons/icons.tsx";
+import { VisuallyHidden } from "#shared/ui/VisuallyHidden/VisuallyHidden.tsx";
 
 import { styles } from "./LightboxDialog.styles.ts";
 import type { LightboxDialogProps } from "./LightboxDialog.types.ts";
@@ -112,6 +113,8 @@ export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps)
               <p className={styles.unavailable}>
                 <ImageOff aria-hidden="true" size={16} />
                 Image unavailable
+                {/* The description stays available when the image does not (WCAG 1.1.1). */}
+                <VisuallyHidden>: {item.alt}</VisuallyHidden>
               </p>
             ) : (
               <>
