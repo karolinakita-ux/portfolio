@@ -213,9 +213,9 @@ describe("trackPageview and track", () => {
 
     go("/");
     analytics.trackPageview();
-    go("/work/project-planning#me-research");
+    go("/work/project-planning#planning-calendar");
     analytics.trackPageview();
-    analytics.track(EVENT.imageOpen, { case: "case-project-planning", image: "me-dashboard" });
+    analytics.track(EVENT.imageOpen, { case: "case-project-planning", image: "kpis" });
 
     expect(sent.map((payload) => payload.referrer)).toEqual(["https://www.linkedin.com/", "/", "/"]);
     expect(sent.map((payload) => payload.url)).toEqual([

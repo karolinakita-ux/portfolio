@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.2.3 - 2026-10-26
+
+#### Changed
+
+- The project planning case's section links no longer start with "me-", a trace of the product name hidden in 5.0.0. The address bar now shows `#planning-summary`, `#planning-foundations`, `#planning-calendar`, `#planning-cockpits`, `#planning-roadmap` (was `#me-planning`), `#planning-operations` and `#planning-outcomes` while you read. An exception to keeping section ids stable: the old ones were live for a few hours only, and the case's address changed in 5.0.0 the same day. A link with an old `#me-` part opens the case at the top. Screenshot ids in the statistics change with them.
+
 ### 5.2.2 - 2026-10-26
 
 #### Fixed
