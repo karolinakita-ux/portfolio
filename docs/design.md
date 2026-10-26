@@ -9,7 +9,7 @@ The site's look comes from Karolina's KitaBranding design system in Figma.
 1. The variables live in the Figma collection "Kita Branding", with two modes: Light and Dark. Motion variables (`motion/duration/fast|medium|slow` in milliseconds, `motion/easing/standard` as a CSS easing) have the same value in both modes.
 2. They are exported as JSON to `src/styles/kita-branding.tokens.json`.
 3. `src/styles/tokens.css` turns each token into a CSS variable, for both modes. Dark mode swaps the variables when `<html>` has the `.dark` class.
-4. `src/styles/theme.css` (imported by `app.css`) maps the variables into Tailwind's theme (`bg-bg-canvas`, `text-text-secondary`, `p-md`, `rounded-lg`, `duration-medium ease-standard` ...) and removes Tailwind's default colours, radii, shadows, font sizes and easings, so only tokens can be used.
+4. `src/styles/theme.css` (imported by `app.css`) maps the variables into Tailwind's theme (`bg-bg-canvas`, `text-text-secondary`, `p-md`, `rounded-lg`, `duration-medium ease-standard` ...) and removes Tailwind's default colours, radii, shadows, font sizes and easings, so only tokens can be used. Figma works in px; the code writes spacing, type, layout widths and breakpoints as rem (px / 16, so `spacing/md` 16px is `1rem`). At the browser's default text size the result is the same to the pixel, and visitors who set a larger text size get a page that grows with it.
 5. `src/styles/tokens.test.ts` fails when `tokens.css` and the JSON export drift apart; `src/styles/motion-tokens.test.ts` fails on a raw duration or easing in the code.
 
 ## Changing a token

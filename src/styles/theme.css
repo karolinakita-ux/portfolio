@@ -6,14 +6,19 @@
    borderSubtle → border-border-subtle · statusInfoText → text-status-info-text.
    `inline` makes each utility reference the token variable directly, so it
    follows the light/dark values of the element it is used on.
+   Breakpoints, spacing, type and layout widths are in rem (Figma's px / 16):
+   at the browser's default text size they match Figma to the pixel, and when
+   a visitor sets a larger default size, text, spacing and layout grow with it
+   the way they do with zoom. Radius and shadows stay in px
+   (relative-units.test.ts).
    ========================================================================== */
 @theme inline {
-  /* Breakpoints */
+  /* Breakpoints (rem in a media query is the browser's default text size, so the layout switches as with zoom) */
   --breakpoint-*: initial;
-  --breakpoint-sm: 480px;
-  --breakpoint-md: 768px;
-  --breakpoint-lg: 1024px;
-  --breakpoint-xl: 1280px;
+  --breakpoint-sm: 30rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
 
   /* Colours (semantic tokens only) */
   --color-*: initial;
@@ -69,16 +74,16 @@
   --color-status-info-border: var(--status-info-border);
 
   /* Spacing (spacing3xs … spacing4xl) */
-  --spacing-3xs: 2px;
-  --spacing-2xs: 4px;
-  --spacing-xs: 8px;
-  --spacing-sm: 12px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
-  --spacing-2xl: 48px;
-  --spacing-3xl: 64px;
-  --spacing-4xl: 96px;
+  --spacing-3xs: 0.125rem;
+  --spacing-2xs: 0.25rem;
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 0.75rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  --spacing-3xl: 4rem;
+  --spacing-4xl: 6rem;
 
   /* Radius (radiusNone … radiusFull) */
   --radius-*: initial;
@@ -103,64 +108,64 @@
 
   /* Type scale */
   --text-*: initial;
-  --text-display-lg: 57px;
-  --text-display-lg--line-height: 68px;
-  --text-display-lg--letter-spacing: 0px;
-  --text-display-md: 45px;
-  --text-display-md--line-height: 54px;
-  --text-display-md--letter-spacing: 0px;
-  --text-display-sm: 36px;
-  --text-display-sm--line-height: 44px;
-  --text-display-sm--letter-spacing: 0px;
-  --text-headline-lg: 32px;
-  --text-headline-lg--line-height: 40px;
-  --text-headline-lg--letter-spacing: 0px;
-  --text-headline-md: 28px;
-  --text-headline-md--line-height: 36px;
-  --text-headline-md--letter-spacing: 0px;
-  --text-headline-sm: 24px;
-  --text-headline-sm--line-height: 32px;
-  --text-headline-sm--letter-spacing: 0px;
-  --text-title-lg: 22px;
-  --text-title-lg--line-height: 28px;
-  --text-title-lg--letter-spacing: 0px;
+  --text-display-lg: 3.5625rem;
+  --text-display-lg--line-height: 4.25rem;
+  --text-display-lg--letter-spacing: 0rem;
+  --text-display-md: 2.8125rem;
+  --text-display-md--line-height: 3.375rem;
+  --text-display-md--letter-spacing: 0rem;
+  --text-display-sm: 2.25rem;
+  --text-display-sm--line-height: 2.75rem;
+  --text-display-sm--letter-spacing: 0rem;
+  --text-headline-lg: 2rem;
+  --text-headline-lg--line-height: 2.5rem;
+  --text-headline-lg--letter-spacing: 0rem;
+  --text-headline-md: 1.75rem;
+  --text-headline-md--line-height: 2.25rem;
+  --text-headline-md--letter-spacing: 0rem;
+  --text-headline-sm: 1.5rem;
+  --text-headline-sm--line-height: 2rem;
+  --text-headline-sm--letter-spacing: 0rem;
+  --text-title-lg: 1.375rem;
+  --text-title-lg--line-height: 1.75rem;
+  --text-title-lg--letter-spacing: 0rem;
   --text-title-lg--font-weight: 500;
-  --text-title-md: 16px;
-  --text-title-md--line-height: 24px;
-  --text-title-md--letter-spacing: 0.1px;
+  --text-title-md: 1rem;
+  --text-title-md--line-height: 1.5rem;
+  --text-title-md--letter-spacing: 0.00625rem;
   --text-title-md--font-weight: 500;
-  --text-title-sm: 14px;
-  --text-title-sm--line-height: 20px;
-  --text-title-sm--letter-spacing: 0.1px;
+  --text-title-sm: 0.875rem;
+  --text-title-sm--line-height: 1.25rem;
+  --text-title-sm--letter-spacing: 0.00625rem;
   --text-title-sm--font-weight: 500;
-  --text-label-lg: 14px;
-  --text-label-lg--line-height: 20px;
-  --text-label-lg--letter-spacing: 0.1px;
+  --text-label-lg: 0.875rem;
+  --text-label-lg--line-height: 1.25rem;
+  --text-label-lg--letter-spacing: 0.00625rem;
   --text-label-lg--font-weight: 500;
-  --text-label-md: 12px;
-  --text-label-md--line-height: 16px;
-  --text-label-md--letter-spacing: 0.5px;
+  --text-label-md: 0.75rem;
+  --text-label-md--line-height: 1rem;
+  --text-label-md--letter-spacing: 0.03125rem;
   --text-label-md--font-weight: 500;
-  --text-label-sm: 11px;
-  --text-label-sm--line-height: 16px;
-  --text-label-sm--letter-spacing: 0.5px;
+  --text-label-sm: 0.6875rem;
+  --text-label-sm--line-height: 1rem;
+  --text-label-sm--letter-spacing: 0.03125rem;
   --text-label-sm--font-weight: 500;
-  --text-body-lg: 16px;
-  --text-body-lg--line-height: 24px;
-  --text-body-lg--letter-spacing: 0.15px;
-  --text-body-md: 14px;
-  --text-body-md--line-height: 20px;
-  --text-body-md--letter-spacing: 0.25px;
-  --text-body-sm: 12px;
-  --text-body-sm--line-height: 16px;
-  --text-body-sm--letter-spacing: 0.4px;
+  --text-body-lg: 1rem;
+  --text-body-lg--line-height: 1.5rem;
+  --text-body-lg--letter-spacing: 0.009375rem;
+  --text-body-md: 0.875rem;
+  --text-body-md--line-height: 1.25rem;
+  --text-body-md--letter-spacing: 0.015625rem;
+  --text-body-sm: 0.75rem;
+  --text-body-sm--line-height: 1rem;
+  --text-body-sm--letter-spacing: 0.025rem;
 
   /* Layout widths */
-  --container-content: 1120px;
-  --container-header: 1248px;
-  --container-footer: 608px;
+  --container-content: 70rem;
+  --container-header: 78rem;
+  --container-footer: 38rem;
   /* Reading width for long text (the privacy page): about 75 characters per line at Body Medium. */
-  --container-reading: 576px;
+  --container-reading: 36rem;
 
   /* Aspect ratios */
   --aspect-thumb: 4 / 3;

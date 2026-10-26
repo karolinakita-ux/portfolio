@@ -7,7 +7,7 @@
     /* Reserve the scrollbar so locking scroll (image viewer) does not shift the layout. */
     scrollbar-gutter: stable;
     /* In-page anchors land below the sticky header (height measured at runtime). */
-    scroll-padding-top: calc(env(safe-area-inset-top, 0px) + var(--kb-header-h, 0px) + 16px);
+    scroll-padding-top: calc(env(safe-area-inset-top, 0px) + var(--kb-header-h, 0px) + var(--spacing-md));
     /* While the statistics consent box shows, keyboard focus scrolls clear of it (WCAG 2.4.11; useConsentSpace). */
     scroll-padding-bottom: var(--kb-consent-h, 0px);
   }
@@ -20,6 +20,9 @@
     color: var(--text-primary);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    /* A word or an address too long for its line breaks instead of pushing the page wider: with a large
+       browser text size on a phone, "Benchmarking" or an email address no longer fits (WCAG 1.4.4). */
+    overflow-wrap: break-word;
     -moz-osx-font-smoothing: grayscale;
   }
   /* Tailwind v4 resets buttons to the default cursor; keep the pointer. */

@@ -16,6 +16,8 @@ export const REFLOW_VIEWPORT = { width: 320, height: 640 } as const;
 /** A 1280 x 1024 screen at 400% zoom, where the consent box is taller than the window (WCAG 1.4.10). */
 export const ZOOM_VIEWPORT = { width: 320, height: 256 } as const;
 export const THEMES: readonly Theme[] = ["light", "dark"];
+/** The browser's default text size for the large-text check: 200% of the usual 16px (WCAG 1.4.4). */
+export const LARGE_TEXT_PX = 32;
 /** The page whose screenshots open the image viewer. */
 export const LIGHTBOX_VIEW: View = VIEW.caseAutomotive;
 export const MAX_SR_STEPS = 2500;

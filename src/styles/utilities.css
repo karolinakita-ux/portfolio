@@ -1,14 +1,14 @@
 /* Named utilities and variants: layout grids, layers, glows, accordion rows, the scroll reveal. */
 
-/* Named layout utilities */
+/* Named layout utilities (column widths in rem, like the tokens: they grow with the browser's text size) */
 @utility grid-cols-case-md {
-  grid-template-columns: 224px minmax(0, 1fr);
+  grid-template-columns: 14rem minmax(0, 1fr);
 }
 @utility grid-cols-case-lg {
-  grid-template-columns: 300px minmax(0, 1fr);
+  grid-template-columns: 18.75rem minmax(0, 1fr);
 }
 @utility grid-cols-about-lg {
-  grid-template-columns: minmax(0, 1fr) 376px;
+  grid-template-columns: minmax(0, 1fr) 23.5rem;
 }
 @utility grid-cols-showcase {
   grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);

@@ -6,6 +6,14 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.4.0 - 2026-10-26
+
+#### Added
+
+- The site follows the browser's text size: spacing, type, layout widths, breakpoints and icons are in rem (Figma's px / 16), so a visitor who sets a larger default size gets a page that grows as with zoom. At the default size nothing moved: all boxes on 7 pages at 3 widths in both themes are the same to the pixel as before. At 200% text no page scrolls sideways and no text is cut off; long words break only where they do not fit (`overflow-wrap`), section headings may shrink beside their copy-link button, and button labels may wrap.
+- `yarn a11y` checks every page at a 200% browser text size (no sideways scrolling, no text cut off) and in a Windows contrast theme (forced colours: a focus outline on every Tab stop, plus a screenshot per page). Both pass.
+- `src/styles/relative-units.test.ts` fails when a stylesheet or the theme gets a px length where rem belongs (proved with a px probe file).
+
 ### 5.3.4 - 2026-10-26
 
 #### Added
