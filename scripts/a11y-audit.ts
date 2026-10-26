@@ -2,9 +2,10 @@
  * Accessibility audit in real Chromium: `yarn a11y`.
  *
  * For every view (light + dark, phone + desktop width) it records:
- *   - axe-core results for WCAG 2.0 / 2.1, levels A and AA (plus best-practice hints)
+ *   - axe-core results for WCAG 2.0 / 2.1 / 2.2, levels A and AA (plus best-practice hints)
  *   - what an emulated screen reader (Guidepup Virtual Screen Reader) announces, top to bottom
- *   - the Tab order, with each stop's focus style, size and position
+ *   - the Tab order, with each stop's focus style, size, position and whether anything hides it
+ *     (WCAG 2.4.11), also with the statistics consent box showing
  *   - horizontal overflow at 320 px wide (WCAG 1.4.10 Reflow)
  * plus the image viewer: opened, zoomed, Tab containment and focus return on Escape.
  * The checks live in scripts/a11y/.
@@ -21,7 +22,7 @@ import type { AuditContext } from "./a11y/a11y.types.ts";
 import { checkLightbox } from "./a11y/lightbox-checks.utils.ts";
 import { writeReport } from "./a11y/report.utils.ts";
 import { vsrBundlePath } from "./a11y/screen-reader.utils.ts";
-import { checkAxe, checkReflow, checkScreenReaderAndTab } from "./a11y/view-checks.utils.ts";
+import { checkAxe, checkFocusWithConsent, checkReflow, checkScreenReaderAndTab } from "./a11y/view-checks.utils.ts";
 
 async function main(): Promise<void> {
   // Clear the contents, not the folder: Windows will not remove a folder that a shell or editor has open.
@@ -45,6 +46,7 @@ async function main(): Promise<void> {
   try {
     await checkAxe(context);
     await checkScreenReaderAndTab(context);
+    await checkFocusWithConsent(context);
     await checkReflow(context);
     await checkLightbox(context);
   } finally {

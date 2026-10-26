@@ -4,6 +4,20 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Unreleased
+
+### 5.0.1 - 2026-10-26
+
+#### Fixed
+
+- Keyboard focus no longer ends up behind the statistics consent box (WCAG 2.2, 2.4.11 Focus Not Obscured). While the box shows, the page keeps the strip it covers clear: a focused link or button scrolls above it, the end of the page gets the same space so the last footer links can scroll clear, and Back to top moves up above it (`useConsentSpace`, `--kb-consent-h`).
+- On short windows (landscape phones, a laptop at 300-400% zoom) the consent box sits at the top of the page instead of floating over it, so all of its text can be scrolled to (WCAG 1.4.10 Reflow). Before, it was taller than the window and its top was out of reach.
+
+#### Changed
+
+- `yarn a11y`, the scroll reveal e2e and the stories test check WCAG 2.2 A/AA (axe tags `wcag22a` and `wcag22aa`).
+- `yarn a11y` hit-tests every Tab stop and reports the ones another element hides (2.4.11). It also tabs through four pages with the consent box showing, at phone, desktop and 400% zoom sizes, and checks at 400% zoom that all of the box can be scrolled to. Tab stops get the name a screen reader gives them: image alt text in, hidden text out.
+
 ## Release v5.0.0 - 2026-10-26
 
 - The project planning case study no longer names its product: it has a new address, /work/project-planning, and the product's logo is gone from its screenshots.

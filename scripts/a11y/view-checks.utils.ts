@@ -2,11 +2,11 @@ import { writeFile } from "node:fs/promises";
 
 import { VIEWS } from "#shared/lib/routes/routes.constants.ts";
 
-import { OUT, THEMES, VIEWPORTS } from "./a11y.constants.ts";
+import { CONSENT_VIEWS, OUT, THEMES, VIEWPORTS } from "./a11y.constants.ts";
 import type { AuditContext, ViewportName } from "./a11y.types.ts";
 import { runAxe } from "./axe.utils.ts";
-import { newPage, openView } from "./pages.utils.ts";
-import { reflow } from "./reflow.utils.ts";
+import { consentBox, newPage, openView, showConsentBox } from "./pages.utils.ts";
+import { inReach, reflow } from "./reflow.utils.ts";
 import { loadScreenReader, screenReaderTranscript } from "./screen-reader.utils.ts";
 import { formatTab, tabOrder } from "./tab-order.utils.ts";
 
@@ -41,7 +41,44 @@ export async function checkScreenReaderAndTab({ browser, base, vsrBundle, notes 
       await writeFile(`${OUT}/tab/${view}-${viewport}.txt`, formatTab(stops) + "\n");
       const missing = stops.filter((s) => !s.visibleIndicator).length;
       if (missing) notes.push(`${view} (${viewport}): ${missing} Tab stop(s) without a detectable focus style`);
+      const hidden = stops.filter((s) => s.shown === 0);
+      if (hidden.length)
+        notes.push(
+          `${view} (${viewport}): ${hidden.length} Tab stop(s) hidden when focused (2.4.11), e.g. "${hidden[0]?.name}"`,
+        );
       process.stdout.write("+");
+    }
+    await page.context().close();
+  }
+}
+
+/**
+ * 2b. Tab order with the statistics consent box showing (WCAG 2.4.11 Focus Not Obscured): the box stays at
+ * the bottom of every page until the visitor answers, so no focused element may end up entirely behind it.
+ * Phone and desktop width, and a 1280 x 1024 screen at 400% zoom, where the box is taller than the window
+ * and must sit in the page instead, all of it within reach of scrolling (WCAG 1.4.10 Reflow).
+ */
+export async function checkFocusWithConsent({ browser, base, notes }: AuditContext): Promise<void> {
+  for (const viewport of [...VIEWPORT_NAMES, "zoom"] as const) {
+    const page = await newPage(browser, viewport, "light");
+    await showConsentBox(page);
+    for (const view of CONSENT_VIEWS) {
+      await openView(page, base, view);
+      const box = consentBox(page);
+      if (!(await box.isVisible())) {
+        notes.push(`Consent box did not show on ${view} (${viewport}): the 2.4.11 check did not run`);
+        continue;
+      }
+      if (viewport === "zoom" && !(await inReach(box)))
+        notes.push(`${view} (400% zoom): part of the consent box cannot be scrolled to (1.4.10)`);
+      const stops = await tabOrder(page);
+      await writeFile(`${OUT}/tab/${view}-${viewport}-consent.txt`, formatTab(stops) + "\n");
+      const hidden = stops.filter((s) => s.shown === 0);
+      if (hidden.length)
+        notes.push(
+          `${view} (${viewport}, consent box showing): ${hidden.length} Tab stop(s) hidden when focused (2.4.11), e.g. "${hidden[0]?.name}" by ${hidden[0]?.coveredBy ?? "?"}`,
+        );
+      process.stdout.write("c");
     }
     await page.context().close();
   }

@@ -10,7 +10,7 @@
  * - Jumping to the case studies (link, button) leaves the first case card fully shown.
  * - Reduced motion, print and browsers without scroll-driven animations: every card is fully
  *   shown, with no animation, at any scroll position.
- * - axe finds no WCAG 2.1 A/AA violations at several scroll positions, half-revealed cards included.
+ * - axe finds no WCAG 2.2 A/AA violations at several scroll positions, half-revealed cards included.
  *   Early in a reveal (the card's top less than about 40px inside) axe does report colour-contrast
  *   on that card's text, because it applies the card's opacity and ignores the viewport: the
  *   flagged text is below the fold or cut by the viewport edge. A line of text is fully on screen
@@ -39,7 +39,7 @@ const HALF_PX = REVEAL_PX / 2;
 /** Early in a reveal: the card's top this far inside the viewport, its text still faint. */
 const EARLY_PX = [12, 24, 36];
 /** Same tags as scripts/a11y-audit.ts (without best-practice hints). */
-const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"];
+const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22a", "wcag22aa"];
 
 const PAGES = [VIEW.work, VIEW.about, VIEW.caseTheming, VIEW.caseProjectPlanning, VIEW.caseAutomotive].map(
   (view) => VIEW_PATHS[view],
@@ -351,7 +351,7 @@ interface Violation {
   detail: string;
 }
 
-/** axe with the WCAG 2.1 A/AA rules, or only `rule` when given. */
+/** axe with the WCAG 2.2 A/AA rules, or only `rule` when given. */
 async function wcagViolations(page: Page, rule?: string): Promise<Violation[]> {
   const builder = new AxeBuilder({ page }).withTags(WCAG_TAGS);
   const { violations } = await (rule ? builder.withRules([rule]) : builder).analyze();

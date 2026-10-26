@@ -29,7 +29,44 @@ export async function tabOrder(page: Page): Promise<TabStop[]> {
       const outline = style.outlineStyle !== "none" && parseFloat(style.outlineWidth) > 0;
       const shadow = style.boxShadow !== "none" && style.boxShadow !== "";
       const rect = el.getBoundingClientRect();
-      const name = (el.getAttribute("aria-label") ?? el.textContent).replace(/\s+/g, " ").trim();
+      // The name from content, roughly as a screen reader builds it: hidden parts out, images by their alt text.
+      const content = el.cloneNode(true) as HTMLElement;
+      for (const hidden of content.querySelectorAll('[aria-hidden="true"]')) hidden.remove();
+      for (const img of content.querySelectorAll("img")) img.replaceWith(img.alt);
+      const name = (el.getAttribute("aria-label") ?? content.textContent).replace(/\s+/g, " ").trim();
+      // WCAG 2.4.11 Focus Not Obscured: hit-test a 5 x 5 grid over the part of the element inside the
+      // viewport. A point counts as shown when the topmost element there is the focused one, inside it, or
+      // one of its ancestors; anything else (sticky header, consent box) covers it.
+      const left = Math.max(rect.left, 0);
+      const right = Math.min(rect.right, window.innerWidth);
+      const top = Math.max(rect.top, 0);
+      const bottom = Math.min(rect.bottom, window.innerHeight);
+      let shown = 0;
+      let total = 0;
+      let cover: Element | null = null;
+      if (right > left && bottom > top) {
+        for (let i = 0; i < 5; i++) {
+          for (let j = 0; j < 5; j++) {
+            const hit = document.elementFromPoint(
+              left + ((right - left) * (i + 0.5)) / 5,
+              top + ((bottom - top) * (j + 0.5)) / 5,
+            );
+            total++;
+            if (hit && (hit === el || el.contains(hit) || hit.contains(el))) shown++;
+            else cover ??= hit;
+          }
+        }
+      }
+      const describe = (n: Element | null): string => {
+        const box = n?.closest("header, footer, aside, dialog, nav, section[aria-labelledby], [role]") ?? n;
+        if (!box) return "nothing (off screen)";
+        const labelledBy = box.getAttribute("aria-labelledby");
+        const label =
+          box.getAttribute("aria-label") ??
+          (labelledBy ? document.getElementById(labelledBy)?.textContent.trim() : undefined) ??
+          box.id;
+        return `<${box.tagName.toLowerCase()}${label ? ` "${label}"` : ""}>`;
+      };
       return {
         index,
         tag: el.tagName.toLowerCase(),
@@ -40,6 +77,8 @@ export async function tabOrder(page: Page): Promise<TabStop[]> {
         visibleIndicator: outline || shadow,
         rect: { x: Math.round(rect.x), y: Math.round(rect.y), w: Math.round(rect.width), h: Math.round(rect.height) },
         inDialog: el.closest("dialog[open]") !== null,
+        shown: total ? shown / total : 0,
+        coveredBy: shown === total && total > 0 ? null : describe(cover),
       };
     }, index);
     if (stop === "wrapped") break;
@@ -53,14 +92,23 @@ export async function tabOrder(page: Page): Promise<TabStop[]> {
   return stops;
 }
 
-/** One line per Tab stop, flagging stops without a visible focus style. */
+/** WCAG 2.4.11 fails only when the focused element is entirely hidden; partly covered is noted (AAA 2.4.12). */
+function coverNote(s: TabStop): string {
+  if (s.shown === 0) return `  !! HIDDEN (2.4.11) by ${s.coveredBy ?? "?"}`;
+  if (s.shown < 1) return `  partly covered by ${s.coveredBy ?? "?"} (${String(Math.round(s.shown * 100))}% shown)`;
+  return "";
+}
+
+/** One line per Tab stop, flagging stops without a visible focus style and stops something hides. */
 export const formatTab = (stops: TabStop[]): string =>
   stops
     .map(
       (s) =>
         `${String(s.index + 1).padStart(3)}. <${s.tag}${s.role ? ` role=${s.role}` : ""}> "${s.name}"` +
         `${s.href ? ` href=${s.href}` : ""}${s.inDialog ? " [dialog]" : ""}` +
-        ` @(${s.rect.x},${s.rect.y} ${s.rect.w}x${s.rect.h})` +
-        `${s.visibleIndicator ? "" : "  !! NO VISIBLE FOCUS STYLE"}\n      ${s.focusStyle}`,
+        ` @(${String(s.rect.x)},${String(s.rect.y)} ${String(s.rect.w)}x${String(s.rect.h)})` +
+        (s.visibleIndicator ? "" : "  !! NO VISIBLE FOCUS STYLE") +
+        coverNote(s) +
+        `\n      ${s.focusStyle}`,
     )
     .join("\n");
