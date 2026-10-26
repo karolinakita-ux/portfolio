@@ -207,7 +207,7 @@ test("stops at once when switched off on the privacy page, and does not load aft
   await expect(consentBox(page)).toHaveCount(0);
 });
 
-test("neither asks nor loads on any other host (local preview, branch deploys)", async ({ page }) => {
+test("neither asks nor loads on any other host (local preview, Netlify's own addresses)", async ({ page }) => {
   const requests = umamiRequests(page);
   await page.goto("/about?ref=e2e-test");
   await waitForApp(page);

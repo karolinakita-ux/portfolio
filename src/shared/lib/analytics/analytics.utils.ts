@@ -25,7 +25,8 @@ import { sessionData } from "./session.utils.ts";
  * adding to it: docs/analytics.md.
  *
  * - Only the live site counts: a production build at the site root, served from karolina.kita.company.
- *   Dev, Netlify branch deploys, local previews, tests and the claude.ai artifact never load the script.
+ *   Dev, Netlify's own addresses (*.netlify.app), local previews, tests and the claude.ai artifact never
+ *   load the script.
  * - The script loads only after the visitor allows statistics (statistics-consent.utils.ts: the consent box
  *   or the switch on /privacy). With Do Not Track or Global Privacy Control on, nobody is asked.
  * - The tracker's own pageviews are off (data-auto-pageview="false"): it misses Back / Forward and would count

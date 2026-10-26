@@ -10,7 +10,8 @@ How work moves from a commit to the live site at karolina.kita.company.
 | `main`    | The live site. Netlify publishes every push to `main` to production. | Release merges only (below) |
 
 - Never commit straight to `main`. It changes only in a release.
-- Netlify builds `develop` as a branch deploy at `https://develop--karolina-kita.netlify.app` (behind Netlify team login), so changes can be checked before a release. Enable it once in Netlify: Project configuration → Build & deploy → Branches and deploy contexts → Branch deploys → add `develop`.
+- Netlify builds and deploys only `main`. Pushes to `develop` and pull requests are never built or deployed anywhere, so pushing `develop` costs nothing. In Netlify: Project configuration → Build & deploy → Continuous deployment → Branches and deploy contexts → Branch deploys: "Deploy only the production branch", Deploy Previews: "None". `netlify.toml` backs this up: its `ignore` command stops any build outside the production context.
+- Check a change before a release on your own machine: `yarn dev`, or `yarn build && yarn preview` for the production build with prerendered pages.
 
 ## Every commit
 

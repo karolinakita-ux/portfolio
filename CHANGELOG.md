@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.2.6 - 2026-10-26
+
+#### Changed
+
+- Netlify builds only `main`: pushes to `develop` and pull requests are never built or deployed. `netlify.toml` has one build command (tests, site, Storybook) and an `ignore` command that stops any build outside the production context. CONTRIBUTING.md lists the matching project settings (Branch deploys: only the production branch; Deploy Previews: none) and how to check a change locally instead. CLAUDE.md, the docs and two code comments no longer mention a `develop` branch deploy.
+
 ### 5.2.5 - 2026-10-26
 
 #### Added

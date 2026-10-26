@@ -64,7 +64,7 @@ describe("analyticsAllowed", () => {
     expect(analytics.analyticsAllowed(LIVE)).toBe(true);
     expect(analytics.analyticsAllowed({ ...LIVE, production: false })).toBe(false); // yarn dev
     expect(analytics.analyticsAllowed({ ...LIVE, base: "./" })).toBe(false); // the claude.ai artifact build
-    expect(analytics.analyticsAllowed({ ...LIVE, hostname: "develop--karolina-kita.netlify.app" })).toBe(false);
+    expect(analytics.analyticsAllowed({ ...LIVE, hostname: "main--karolina-kita.netlify.app" })).toBe(false);
     expect(analytics.analyticsAllowed({ ...LIVE, hostname: "localhost" })).toBe(false);
     expect(analytics.analyticsAllowed({ ...LIVE, hostname: "www.karolina.kita.company" })).toBe(false);
   });
