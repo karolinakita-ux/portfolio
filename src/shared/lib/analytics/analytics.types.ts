@@ -58,6 +58,11 @@ export interface SessionData {
   themeSource: "system" | "picked";
   /** The app whose built-in browser shows the site, or none. */
   inApp: InAppBrowser | "none";
+  /**
+   * The site's version the page was loaded with (package.json, as in the footer). Every call has it as
+   * Umami's tag too, but the dashboard lists the values of session properties, not of the tag.
+   */
+  version: string;
 }
 
 /** The properties each event carries: a wrong event name or property is a type error. */

@@ -4,6 +4,14 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Unreleased
+
+### 5.2.5 - 2026-10-26
+
+#### Added
+
+- Visitor statistics send the site's version (`version`, from `package.json`, as in the footer) with the session data, so Umami's Sessions page lists it among the properties with its values, beside the window width, theme and in-app browser. Every call already carried it as Umami's tag, which the dashboard offers as a filter and under Other → Tag, not among the properties. The version describes the site, not the visitor, and Umami already received it, so the privacy policy and the consent box stay as they are.
+
 ## Release v5.2.4 - 2026-10-26
 
 - Everything in release v5.2.3 below is now on the site: an automated check had stopped that release before it went live, and this release fixes the check.

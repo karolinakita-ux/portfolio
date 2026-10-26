@@ -73,7 +73,7 @@ Addresses are cleaned before anything goes (`payload.utils.ts`, applied to the t
 
 ## Session data
 
-Sent once per page load with `umami.identify()` (`session.utils.ts`), never with an id. Umami shows it on the Sessions page, and every report can be filtered by it.
+Sent once per page load with `umami.identify()` (`session.utils.ts`), never with an id. Umami shows it on the Sessions page (Properties: each property with its values), and every report can be filtered by it. Umami keeps one value per session and property: a later page load in the same session replaces it.
 
 | Property      | Values                                                                              | Question it answers                                 |
 | ------------- | ----------------------------------------------------------------------------------- | --------------------------------------------------- |
@@ -82,6 +82,7 @@ Sent once per page load with `umami.identify()` (`session.utils.ts`), never with
 | `theme`       | `light`, `dark`: the theme when the page loaded                                     | How many visitors see dark mode?                    |
 | `themeSource` | `system` (follows the device), `picked` (chosen with the switch)                    | Is dark mode a device default or a choice?          |
 | `inApp`       | `linkedin`, `messenger`, `instagram`, `facebook`, ... or `none`                     | How many visits come through an app's own browser?  |
+| `version`     | the site's version the page was loaded with (`package.json`, `5.2.5`), as the tag   | Which release did visitors see?                     |
 
 ## Speed reports
 
@@ -119,7 +120,7 @@ The Hobby plan allows 100,000 events a month and keeps data for 6 months, which 
 - **Goals**: `email-click` and `linkedin-click` (a visitor tries to get in touch), `case-open`.
 - **Funnel**: `/` → `case-open` (or a `/work/...` page) → `email-click` or `linkedin-click`.
 - **Journey**: which pages lead to Contact, and where visits end.
-- **Compare releases**: filter by tag (the version from `package.json`).
+- **Compare releases**: filter any report by tag (the version from `package.json`). Sessions → Properties → `version` lists the versions with their counts; so does Other → Tag behind "More" under any Overview table.
 - **Filter by session data**: `inApp` is `linkedin` for visits from LinkedIn's app; `viewport` for one layout.
 - **Performance tab**: p75 of LCP, INP and CLS per page and device. Google's limits: LCP 2.5 s, INP 200 ms, CLS 0.1.
 - **UTM report** for `utm_*` links; `link-ref` for `?ref=` tags.

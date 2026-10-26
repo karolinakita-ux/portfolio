@@ -10,9 +10,10 @@ import {
 import type { SessionData } from "./analytics.types.ts";
 
 /**
- * Session data: how the site is seen on this visit, sent once per page load with umami.identify() and
- * shown on Umami's Sessions page, where every report can be filtered by it. Ranges, not exact numbers:
- * enough to choose which layout or image size to improve, too coarse to tell visitors apart.
+ * Session data: how the site is seen on this visit and which version of it, sent once per page load with
+ * umami.identify() and shown on Umami's Sessions page, where every report can be filtered by it. Ranges,
+ * not exact numbers: enough to choose which layout or image size to improve, too coarse to tell visitors
+ * apart.
  */
 
 export const viewportBucket = (width: number): string =>
@@ -28,4 +29,5 @@ export const sessionData = (): SessionData => ({
   theme: document.documentElement.classList.contains("dark") ? "dark" : "light",
   themeSource: readStoredTheme() === null ? "system" : "picked",
   inApp: inAppBrowser(navigator.userAgent) ?? "none",
+  version: import.meta.env.APP_VERSION,
 });

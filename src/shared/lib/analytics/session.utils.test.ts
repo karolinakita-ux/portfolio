@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { THEME_STORAGE_KEY } from "#shared/hooks/theme/theme.constants.ts";
@@ -42,7 +44,7 @@ describe("pixelRatioBucket", () => {
 });
 
 describe("sessionData", () => {
-  it("describes how the site is seen: window, density, theme and where it came from, the in-app browser", () => {
+  it("describes how the site is seen: window, density, theme and where it came from, in-app browser, version", () => {
     vi.spyOn(window, "innerWidth", "get").mockReturnValue(390);
     vi.spyOn(window, "devicePixelRatio", "get").mockReturnValue(3);
     vi.spyOn(navigator, "userAgent", "get").mockReturnValue(UA.linkedin);
@@ -54,10 +56,16 @@ describe("sessionData", () => {
       theme: "dark",
       themeSource: "picked",
       inApp: "linkedin",
+      version: import.meta.env.APP_VERSION,
     });
   });
 
   it("says when the theme follows the device setting and the browser is an ordinary one", () => {
     expect(sessionData()).toMatchObject({ theme: "light", themeSource: "system", inApp: "none" });
+  });
+
+  it("names the site's version the page was loaded with: package.json's, as the footer shows it", () => {
+    const { version } = JSON.parse(readFileSync(join(process.cwd(), "package.json"), "utf8")) as { version: string };
+    expect(sessionData().version).toBe(version);
   });
 });

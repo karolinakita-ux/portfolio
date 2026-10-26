@@ -183,9 +183,16 @@ describe("trackPageview and track", () => {
     go("/about");
     analytics.trackPageview();
     loadTracker();
-    // jsdom: a 1024px window, pixel ratio 1, no theme class, an ordinary browser.
+    // jsdom: a 1024px window, pixel ratio 1, no theme class, an ordinary browser; the version from package.json.
     expect(identified).toEqual([
-      { viewport: "1024 - 1279px", pixelRatio: "1x", theme: "light", themeSource: "system", inApp: "none" },
+      {
+        viewport: "1024 - 1279px",
+        pixelRatio: "1x",
+        theme: "light",
+        themeSource: "system",
+        inApp: "none",
+        version: import.meta.env.APP_VERSION,
+      },
     ]);
     expect(identified[0]).not.toHaveProperty("id");
   });

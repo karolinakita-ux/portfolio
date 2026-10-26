@@ -42,6 +42,7 @@ import { sessionData } from "./session.utils.ts";
  *   text copies (clicks.utils.ts), prints and errors in the site's code (errors.utils.ts), and tags events
  *   a click or key started with the input (input.utils.ts). Those listeners run only while statistics are on.
  * - Each call carries the site's version as Umami's tag (data-tag), so the dashboard can compare releases.
+ *   The session data has it too (session.utils.ts), so it is listed with its values among the session properties.
  * - Never send names, email addresses or text the visitor typed or copied. umami.identify() gets session
  *   data only (session.utils.ts), never an id: visits are not linked to each other.
  */

@@ -29,6 +29,8 @@ interface Sent {
     url: string;
     title: string;
     referrer?: string;
+    /** The site's version (data-tag). */
+    tag?: string;
     name?: string;
     data?: Record<string, string>;
     ttfb?: number;
@@ -293,11 +295,15 @@ test("sends the session data once, and one speed report per page, none while rea
   await expect.poll(() => ofType(sent, "identify").length).toBe(1);
   // Desktop Chrome and Firefox have 1 pixel per CSS pixel, Desktop Safari 2.
   const ratio = await page.evaluate(() => window.devicePixelRatio);
-  expect(ofType(sent, "identify")[0]?.payload.data).toMatchObject({
+  const [session] = ofType(sent, "identify");
+  // The site's version is the tag of every call, and one of the session properties as well.
+  expect(session?.payload.tag).toMatch(/^\d+\.\d+\.\d+$/);
+  expect(session?.payload.data).toMatchObject({
     viewport: "1280px or wider",
     pixelRatio: ratio >= 1.75 ? "2x" : "1x",
     themeSource: "system",
     inApp: "none",
+    version: session?.payload.tag,
   });
 
   // Reading moves the hash (useSectionHash): not a new page, so the tracker's speed report waits.
