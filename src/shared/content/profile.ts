@@ -16,7 +16,7 @@ export const PROFILE = {
   repositoryUrl: "https://github.com/karolinakita-ux/portfolio" as string | null,
   /**
    * The component library (Storybook). Only production deploys build it, so builds link the live one,
-   * absolute, which works from branch deploys and the artifact too. `yarn dev` links the local
+   * absolute, which works from local previews and the artifact too. `yarn dev` links the local
    * `yarn storybook` instead (port 6006, package.json), so unreleased stories show there. null hides
    * its Work page links (hero button, Behind the Design banner).
    */

@@ -58,7 +58,7 @@ function assetSizes(): Plugin {
   };
 }
 
-/** The site's version: visitor statistics send it as Umami's tag (src/main.tsx). */
+/** The site's version: shown in the footer, sent to Umami as the tag (src/main.tsx) and in the session data. */
 const { version } = JSON.parse(readFileSync(new URL("package.json", import.meta.url), "utf8")) as { version: string };
 
 // https://vite.dev/config/

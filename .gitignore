@@ -26,6 +26,8 @@ desktop.ini
 .claude/*
 !.claude/agents/
 !.claude/skills/
+# Personal skills that use private notes or links (local-*) stay local.
+.claude/skills/local-*/
 CLAUDE.local.md
 *.local.md
 .mcp.json

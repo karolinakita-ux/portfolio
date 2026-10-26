@@ -1,10 +1,10 @@
-# Netlify builds `main` for production (releases only) and `develop` as a branch deploy; see CONTRIBUTING.md.
+# Netlify builds only `main`, for production (releases only). Pushes to `develop` and pull requests are never
+# built or deployed: the project settings deploy only the production branch, with no Deploy Previews, and the
+# ignore command below stops any other build in case one is turned on again (CONTRIBUTING.md, Branches).
 # Node version comes from .node-version; yarn is detected from yarn.lock.
 [build]
-  command = "yarn test:run && yarn build"
-  publish = "dist"
-
-# Production (main) also builds the component library into dist/storybook, served at /storybook/
-# (noindex: public/_headers). Branch deploys skip it to stay fast.
-[context.production]
+  # Also builds the component library into dist/storybook, served at /storybook/ (noindex: public/_headers).
   command = "yarn test:run && yarn build && yarn build-storybook"
+  publish = "dist"
+  # Runs in Bash before the build: exit 0 stops it, exit 1 lets it run. Only the production context builds.
+  ignore = '[ "$CONTEXT" != "production" ]'

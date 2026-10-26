@@ -1,4 +1,4 @@
-import { EVENT, MAX_PATH_LENGTH, MAX_QUEUED, MAX_REF_LENGTH, PASSIVE_EVENTS, UMAMI } from "./analytics.constants.ts";
+import { EVENT, MAX_PATH_LENGTH, MAX_QUEUED, PASSIVE_EVENTS, UMAMI } from "./analytics.constants.ts";
 import type {
   AnalyticsEvent,
   AnalyticsSite,
@@ -16,7 +16,7 @@ import { watchCopies, watchDeadClicks } from "./clicks.utils.ts";
 import { endStretch, startPage, watchEngagement, watchPrints } from "./engagement.utils.ts";
 import { watchErrors } from "./errors.utils.ts";
 import { recentInput, watchInput } from "./input.utils.ts";
-import { cleanPayload, cleanReferrer, cleanUrl } from "./payload.utils.ts";
+import { cleanPayload, cleanReferrer, cleanUrl, linkRef } from "./payload.utils.ts";
 import { sessionData } from "./session.utils.ts";
 
 /**
@@ -25,7 +25,8 @@ import { sessionData } from "./session.utils.ts";
  * adding to it: docs/analytics.md.
  *
  * - Only the live site counts: a production build at the site root, served from karolina.kita.company.
- *   Dev, Netlify branch deploys, local previews, tests and the claude.ai artifact never load the script.
+ *   Dev, Netlify's own addresses (*.netlify.app), local previews, tests and the claude.ai artifact never
+ *   load the script.
  * - The script loads only after the visitor allows statistics (statistics-consent.utils.ts: the consent box
  *   or the switch on /privacy). With Do Not Track or Global Privacy Control on, nobody is asked.
  * - The tracker's own pageviews are off (data-auto-pageview="false"): it misses Back / Forward and would count
@@ -42,6 +43,7 @@ import { sessionData } from "./session.utils.ts";
  *   text copies (clicks.utils.ts), prints and errors in the site's code (errors.utils.ts), and tags events
  *   a click or key started with the input (input.utils.ts). Those listeners run only while statistics are on.
  * - Each call carries the site's version as Umami's tag (data-tag), so the dashboard can compare releases.
+ *   The session data has it too (session.utils.ts), so it is listed with its values among the session properties.
  * - Never send names, email addresses or text the visitor typed or copied. umami.identify() gets session
  *   data only (session.utils.ts), never an id: visits are not linked to each other.
  */
@@ -105,13 +107,6 @@ const withPage =
 const sentData = <E extends AnalyticsEvent>(name: E, data: EventData[E]): SentData<E> => {
   const input = PASSIVE_EVENTS.includes(name) ? undefined : recentInput();
   return input ? { ...data, input } : data;
-};
-
-/** The tag of a tagged link (?ref=acme, else utm_source), or null. */
-const linkRef = (search: string): string | null => {
-  const params = new URLSearchParams(search);
-  const ref = (params.get("ref") ?? params.get("utm_source"))?.trim();
-  return ref ? ref.slice(0, MAX_REF_LENGTH) : null;
 };
 
 /** The stretch on the page being left, sent as that page (the address bar may show the next one already). */

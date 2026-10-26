@@ -50,6 +50,8 @@ export interface JsError {
 export interface SessionData {
   /** Browser window width (VIEWPORT_BUCKETS); Umami's own `screen` is the whole screen. */
   viewport: string;
+  /** Browser window height (VIEWPORT_HEIGHT_BUCKETS): how much of a page fits on the first screen. */
+  viewportHeight: string;
   /** Screen pixel density (PIXEL_RATIO_BUCKETS). */
   pixelRatio: string;
   /** The theme shown when the page loaded. */
@@ -58,6 +60,16 @@ export interface SessionData {
   themeSource: "system" | "picked";
   /** The app whose built-in browser shows the site, or none. */
   inApp: InAppBrowser | "none";
+  /**
+   * The site's version the page was loaded with (package.json, as in the footer). Every call has it as
+   * Umami's tag too, but the dashboard lists the values of session properties, not of the tag.
+   */
+  version: string;
+  /**
+   * The tag of the link that opened the page (?ref=acme, else utm_source), as link-ref sends it. Left out
+   * without one, so Umami keeps the tag an earlier visit in the same session brought.
+   */
+  ref?: string;
 }
 
 /** The properties each event carries: a wrong event name or property is a type error. */

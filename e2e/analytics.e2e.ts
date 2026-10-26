@@ -11,7 +11,13 @@
 import { AxeBuilder } from "@axe-core/playwright";
 import { expect, test, type Page, type Request } from "@playwright/test";
 
-import { EVENT, STATISTICS_CHOICE_KEY, UMAMI } from "#shared/lib/analytics/analytics.constants.ts";
+import {
+  EVENT,
+  STATISTICS_CHOICE_KEY,
+  UMAMI,
+  VIEWPORT_HEIGHT_BUCKET_LAST,
+  VIEWPORT_HEIGHT_BUCKETS,
+} from "#shared/lib/analytics/analytics.constants.ts";
 
 import { THEME_STORAGE_KEY } from "./helpers/helpers.constants.ts";
 import { themeButton, waitForApp } from "./helpers/page.utils.ts";
@@ -29,6 +35,8 @@ interface Sent {
     url: string;
     title: string;
     referrer?: string;
+    /** The site's version (data-tag). */
+    tag?: string;
     name?: string;
     data?: Record<string, string>;
     ttfb?: number;
@@ -138,6 +146,8 @@ test("counts pages and clicks after consent, without the hash, and stores only t
     data: { ref: "e2e-test" },
     url: SITE + "/about?ref=e2e-test",
   });
+  // The session data carries the tag as well, so Umami keeps it for the session's later visits.
+  await expect.poll(() => ofType(sent, "identify").map((call) => call.payload.data?.ref)).toEqual(["e2e-test"]);
 
   // A FAQ question opens: one event on this page.
   await page.locator("#faq").getByRole("button").first().click();
@@ -205,7 +215,7 @@ test("stops at once when switched off on the privacy page, and does not load aft
   await expect(consentBox(page)).toHaveCount(0);
 });
 
-test("neither asks nor loads on any other host (local preview, branch deploys)", async ({ page }) => {
+test("neither asks nor loads on any other host (local preview, Netlify's own addresses)", async ({ page }) => {
   const requests = umamiRequests(page);
   await page.goto("/about?ref=e2e-test");
   await waitForApp(page);
@@ -291,14 +301,21 @@ test("sends the session data once, and one speed report per page, none while rea
   const { sent } = await openAsLiveSite(page, baseURL, "/about");
   await allowStatistics(page);
   await expect.poll(() => ofType(sent, "identify").length).toBe(1);
-  // Desktop Chrome and Firefox have 1 pixel per CSS pixel, Desktop Safari 2.
-  const ratio = await page.evaluate(() => window.devicePixelRatio);
-  expect(ofType(sent, "identify")[0]?.payload.data).toMatchObject({
+  // Desktop Chrome and Firefox have 1 pixel per CSS pixel, Desktop Safari 2. The window height is the page's own.
+  const { ratio, height } = await page.evaluate(() => ({ ratio: window.devicePixelRatio, height: window.innerHeight }));
+  const heightRange = VIEWPORT_HEIGHT_BUCKETS.find(([limit]) => height < limit)?.[1] ?? VIEWPORT_HEIGHT_BUCKET_LAST;
+  const [session] = ofType(sent, "identify");
+  // The site's version is the tag of every call, and one of the session properties as well.
+  expect(session?.payload.tag).toMatch(/^\d+\.\d+\.\d+$/);
+  expect(session?.payload.data).toMatchObject({
     viewport: "1280px or wider",
+    viewportHeight: heightRange,
     pixelRatio: ratio >= 1.75 ? "2x" : "1x",
     themeSource: "system",
     inApp: "none",
+    version: session?.payload.tag,
   });
+  expect(session?.payload.data, "no link tag in the address, so none in the session data").not.toHaveProperty("ref");
 
   // Reading moves the hash (useSectionHash): not a new page, so the tracker's speed report waits.
   await page.mouse.wheel(0, 1500);

@@ -77,6 +77,18 @@ export const VIEWPORT_BUCKETS: ReadonlyArray<readonly [number, string]> = [
 ];
 export const VIEWPORT_BUCKET_LAST = "1280px or wider";
 
+/**
+ * Browser window height, for what fits on the first screen: landscape phones, then 768px-high laptops and
+ * small phones, most phones and 900px-high laptops, full HD desktops, taller screens.
+ */
+export const VIEWPORT_HEIGHT_BUCKETS: ReadonlyArray<readonly [number, string]> = [
+  [500, "under 500px"],
+  [700, "500 - 699px"],
+  [900, "700 - 899px"],
+  [1100, "900 - 1099px"],
+];
+export const VIEWPORT_HEIGHT_BUCKET_LAST = "1100px or taller";
+
 /** Screen pixel density (devicePixelRatio), for image sizes: each label holds the ratios below its limit. */
 export const PIXEL_RATIO_BUCKETS: ReadonlyArray<readonly [number, string]> = [
   [1.25, "1x"],

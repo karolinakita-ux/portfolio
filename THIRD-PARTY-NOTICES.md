@@ -4,7 +4,7 @@ The project's own licence is in [LICENSE](LICENSE) (all rights reserved). The ma
 
 ## Lucide icons
 
-The icon shapes in `src/shared/ui/icons.tsx` are drawn from [Lucide](https://lucide.dev). The LinkedIn, Figma and GitHub marks are trademarks of their owners.
+The icon shapes in `src/shared/ui/icons/icons.tsx` are drawn from [Lucide](https://lucide.dev). The LinkedIn, Figma and GitHub marks are trademarks of their owners.
 
 ```text
 ISC License
@@ -54,4 +54,9 @@ SOFTWARE.
 
 ## Fonts and packages
 
-Inter and Zilla Slab are installed from `@fontsource` under the SIL Open Font License 1.1, and every package in `package.json` keeps its own licence (see each package in `node_modules`).
+The site serves two fonts, installed from `@fontsource` (`@fontsource/inter`, `@fontsource/zilla-slab`), each under the [SIL Open Font License 1.1](https://openfontlicense.org/open-font-license-official-text/). The full licence text comes with each package (`node_modules/@fontsource/*/LICENSE`).
+
+- **Inter**: Copyright 2016 The Inter Project Authors (https://github.com/rsms/inter).
+- **Zilla Slab**: Copyright 2017, The Mozilla Foundation.
+
+Every other package in `package.json` keeps its own licence (see each package in `node_modules`).

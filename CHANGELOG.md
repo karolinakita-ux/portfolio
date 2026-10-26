@@ -4,6 +4,71 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Release v5.3.3 - 2026-10-26
+
+- Visitor statistics, which run only if you allow them, now also note the height of your browser window and which pages were read after opening a tagged link, such as one in a job application; the privacy page says so and explains more exactly how visits are counted.
+- Behind the scenes: updated libraries, clearer licence notes for the icons and fonts, and better accessibility checks.
+
+Versions: 5.2.5 - 5.3.3.
+
+### 5.3.3 - 2026-10-26
+
+#### Fixed
+
+- The privacy policy is more exact about what the statistics already did: Umami also uses the IP address, with the browser's details, to group page views into one session without a cookie, not only to work out the location; addresses keep `?ref=` and the `utm_` campaign tags, not only lose the click IDs; and a tagged link counts for the pages read on that visit or a later one in the same session. "What is recorded with it" is now "What is recorded with each visit", and its list reads more easily. Nothing new is collected, so nobody is asked again. The tracking plan says visits are linked only within Umami's own session.
+
+### 5.3.2 - 2026-10-26
+
+#### Added
+
+- Claude Code helpers for the requests that came up most often (215 requests over 14 sessions). Skills: `add-tracking` (statistics events and session data), `update-dependencies`, `sync-design-system` (Figma, tokens, components and the claude.ai design system) and `record-rule` ("remember ..."). Agents that only report: `ui-reviewer` (design tokens, components and UX patterns, with screenshots on phone and desktop in both themes), `docs-seo-reviewer`, `confidentiality-reviewer` (never writes a hidden name) and `pattern-sweeper` (the same root cause elsewhere, and a guard). CONTRIBUTING.md has a table of what to use when; `docs/claude-code.md`, CLAUDE.md and the README list them. Personal `local-*` skills stay out of the repo (`.gitignore`).
+- `yarn a11y`'s summary names the axe version that ran and lists the results axe could not decide ("Needs manual review by rule"). The audit ran axe 4.13 from `@axe-core/playwright` while Storybook ran 4.14, so the 2.5.3 rule (`label-content-name-mismatch`) was off in the page audit until the 5.2.7 update; now 34 scans, 0 violations, and 8 undecided contrast results, all decorative avatar initials.
+
+#### Changed
+
+- `a11y-reviewer` follows current practice: it starts from the changed files, also runs the motion e2e spec, rules on every result axe could not decide, walks a checklist of what tools miss on this site (text spacing, hover content, dragging, consistent help, status messages, and more), grades findings by severity with their evidence, and lists the limits of the run and the screen reader checks a person still has to do. Its description says to use it proactively.
+- The `release` skill can be started by Claude when the user asks for a release, not only by typing `/release`. It says what to do when the deploy fails and lists the caches to refresh. `ship-change` points to the e2e run and the reviewers after UI changes.
+
+### 5.3.1 - 2026-10-26
+
+#### Fixed
+
+- LICENSE and THIRD-PARTY-NOTICES.md name the icons' current file (`src/shared/ui/icons/icons.tsx`). LICENSE lists the two fonts (SIL Open Font License 1.1) and says more exactly what Anthropic's terms do: they assign to the user whatever rights Anthropic has in Claude's output. THIRD-PARTY-NOTICES.md gives the fonts' copyright lines and a link to the licence text. `package.json` says `SEE LICENSE IN LICENSE` instead of `UNLICENSED`, because the licence grants some uses (viewing, linking, forking on GitHub).
+- README: Netlify builds only `main` (with Storybook) and never `develop`; the docs list names the tracking plan; the notices cover fonts as well as icons; cache refreshing points to CONTRIBUTING.md.
+
+#### Added
+
+- CONTRIBUTING.md, release step 5: which services cache the site's previews and search results (LinkedIn, Facebook and Messenger, Google Search Console, Google's structured data test, Bing), the link to each tool and what to enter, and a fresh `?ref=` tag for apps without a refresh button.
+
+### 5.3.0 - 2026-10-26
+
+#### Added
+
+- Two more session properties in the visitor statistics: `viewportHeight`, the browser window's height in ranges (under 500px ... 1100px or taller), to see how much of a page fits on the first screen; and `ref`, the tag of a tagged link (`?ref=`, else `utm_source`) when the page was opened from one, so Umami's Sessions page lists the visits each application or channel brought, and their later visits in the same session stay under it. `linkRef` moved to `payload.utils.ts`, and the three range helpers share one function.
+- The tracking plan names what stays out on purpose: the browser's exact version, the time zone, the list of languages, fonts or supported features (fingerprinting signals). It says a Segment with Session data filters narrows any report to a session property.
+
+#### Changed
+
+- The privacy policy (dated 26 October 2026) says that the statistics note the window's height as well as its width, the version of the site you saw, and which pages were read after a tagged link. All three belong to kinds of data already listed (window size, tagged links, what Umami records with each visit), so visitors who allowed statistics are not asked again and the consent box stays as it is.
+
+### 5.2.7 - 2026-10-26
+
+#### Changed
+
+- Dependencies updated: React and React DOM 19.3.1 (also in `resolutions`), Vite 8.3.5, Vitest 5.0.5, Storybook 10.6.4 (all four packages), ESLint 10.13.0, typescript-eslint 8.72.1, @eslint-react/eslint-plugin 5.28.8, @vitest/eslint-plugin 1.6.28, Playwright 1.64.1, @axe-core/playwright 4.14.0, jsdom 30.1.3, Prettier 3.9.10 and @testing-library/user-event 14.6.8. TypeScript stays on 6.0: typescript-eslint 8.72 supports TypeScript below 6.1 only, so 7.0 waits for it. Checked with `yarn verify`, a Storybook build and the full e2e run in three browsers (347 passed).
+
+### 5.2.6 - 2026-10-26
+
+#### Changed
+
+- Netlify builds only `main`: pushes to `develop` and pull requests are never built or deployed. `netlify.toml` has one build command (tests, site, Storybook) and an `ignore` command that stops any build outside the production context. CONTRIBUTING.md lists the matching project settings (Branch deploys: only the production branch; Deploy Previews: none) and how to check a change locally instead. CLAUDE.md, the docs and two code comments no longer mention a `develop` branch deploy.
+
+### 5.2.5 - 2026-10-26
+
+#### Added
+
+- Visitor statistics send the site's version (`version`, from `package.json`, as in the footer) with the session data, so Umami's Sessions page lists it among the properties with its values, beside the window width, theme and in-app browser. Every call already carried it as Umami's tag, which the dashboard offers as a filter and under Other → Tag, not among the properties. The version describes the site, not the visitor, and Umami already received it, so the privacy policy and the consent box stay as they are.
+
 ## Release v5.2.4 - 2026-10-26
 
 - Everything in release v5.2.3 below is now on the site: an automated check had stopped that release before it went live, and this release fixes the check.

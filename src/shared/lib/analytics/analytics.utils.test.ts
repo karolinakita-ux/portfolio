@@ -64,7 +64,7 @@ describe("analyticsAllowed", () => {
     expect(analytics.analyticsAllowed(LIVE)).toBe(true);
     expect(analytics.analyticsAllowed({ ...LIVE, production: false })).toBe(false); // yarn dev
     expect(analytics.analyticsAllowed({ ...LIVE, base: "./" })).toBe(false); // the claude.ai artifact build
-    expect(analytics.analyticsAllowed({ ...LIVE, hostname: "develop--karolina-kita.netlify.app" })).toBe(false);
+    expect(analytics.analyticsAllowed({ ...LIVE, hostname: "main--karolina-kita.netlify.app" })).toBe(false);
     expect(analytics.analyticsAllowed({ ...LIVE, hostname: "localhost" })).toBe(false);
     expect(analytics.analyticsAllowed({ ...LIVE, hostname: "www.karolina.kita.company" })).toBe(false);
   });
@@ -183,9 +183,18 @@ describe("trackPageview and track", () => {
     go("/about");
     analytics.trackPageview();
     loadTracker();
-    // jsdom: a 1024px window, pixel ratio 1, no theme class, an ordinary browser.
+    // jsdom: a 1024 x 768px window, pixel ratio 1, no theme class, an ordinary browser, no link tag; the
+    // version from package.json.
     expect(identified).toEqual([
-      { viewport: "1024 - 1279px", pixelRatio: "1x", theme: "light", themeSource: "system", inApp: "none" },
+      {
+        viewport: "1024 - 1279px",
+        viewportHeight: "700 - 899px",
+        pixelRatio: "1x",
+        theme: "light",
+        themeSource: "system",
+        inApp: "none",
+        version: import.meta.env.APP_VERSION,
+      },
     ]);
     expect(identified[0]).not.toHaveProperty("id");
   });
@@ -259,6 +268,8 @@ describe("trackPageview and track", () => {
       ["link-ref", { ref: "acme" }],
       [undefined, undefined],
     ]);
+    // The session data has the tag too, so Umami keeps it for the session's later visits.
+    expect(identified.map((data) => data.ref)).toEqual(["acme"]);
   });
 
   it("use utm_source when there is no ref, and cap a tag's length", () => {

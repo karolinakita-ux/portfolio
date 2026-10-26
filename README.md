@@ -62,9 +62,9 @@ src/styles/                    tokens.css (light/dark), theme.css (Tailwind them
 e2e/                           Playwright specs and their helpers
 scripts/                       prerender.ts (static HTML per page), a11y-audit.ts (checks in a11y/),
                                favicons.ts (PNG and ICO icons from the SVG)
-docs/                          architecture, design source, working with Claude Code
+docs/                          architecture, design source, tracking plan (analytics.md), working with Claude Code
 .storybook/                    Storybook config and its Welcome page (stories sit next to their component)
-.claude/                       Claude Code skills (/release, ship-change) and review agents
+.claude/                       Claude Code skills and review agents (when to use each: CONTRIBUTING.md)
 ```
 
 ## Editing content
@@ -85,10 +85,10 @@ Images are cached for a week, so a changed image gets a new file name.
 
 ## Deploy and releases
 
-Work happens on `develop`; `main` is the live site and changes only in a release. Every commit bumps the version and adds a `CHANGELOG.md` entry. Branches, versions and the release steps: [CONTRIBUTING.md](CONTRIBUTING.md). Netlify builds with `yarn test:run && yarn build` and publishes `dist/`; a failing test blocks the deploy. Production builds also run `yarn build-storybook`, served at `/storybook/`.
+Work happens on `develop`; `main` is the live site and changes only in a release. Every commit bumps the version and adds a `CHANGELOG.md` entry. Branches, versions and the release steps: [CONTRIBUTING.md](CONTRIBUTING.md). Netlify builds only `main`, with `yarn test:run && yarn build && yarn build-storybook`, and publishes `dist/` (Storybook at `/storybook/`); a failing test blocks the deploy. `develop` is never built or deployed.
 
-Link previews are cached by apps: check LinkedIn at https://www.linkedin.com/post-inspector after changing the link-preview image.
+Link previews and search results are cached by other services: after a release that changes a page's title, description, link-preview image or the site icon, refresh them with the tools listed in [CONTRIBUTING.md](CONTRIBUTING.md#5-refresh-what-other-services-cached).
 
 ## Licence
 
-All rights reserved: the code, copy, images and design are published to be viewed, not reused. See [LICENSE](LICENSE); third-party icon notices are in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
+All rights reserved: the code, copy, images and design are published to be viewed, not reused. See [LICENSE](LICENSE); the notices for third-party icons and fonts are in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
