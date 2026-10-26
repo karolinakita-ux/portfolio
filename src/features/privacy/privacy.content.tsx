@@ -96,8 +96,8 @@ export const PRIVACY: PrivacyContent = {
           "If you open an address on this website that does not exist, I count that address, so I can fix the link that led there.",
         ),
         lead(
-          "What is recorded with it",
-          "Your browser, operating system, device type, screen size, language and approximate location (country, region and city), and the version of this website you saw. Umami uses your IP address only to work out the location; its data processing agreement does not list the IP address among the data it keeps.",
+          "What is recorded with each visit",
+          "Your browser, operating system, device type, screen size, language, approximate location (country, region and city) and the version of this website you saw. Umami uses your IP address to work out the location and, together with your browser's details, to group your page views into one session without a cookie; its data processing agreement does not list the IP address among the data it keeps.",
         ),
         lead(
           "Why I ask first",
@@ -107,7 +107,7 @@ export const PRIVACY: PrivacyContent = {
         lead("How long", "Umami keeps the statistics for 6 months, then deletes them."),
         lead(
           "Tagged links",
-          "Links I share, for example in job applications, may end in ?ref= and a company or channel name, so I can see which link brought a visit and which pages were read after it. They never contain a person's name. Other parts of an address, such as the click IDs that ads and social apps add, are removed before anything is sent.",
+          "Links I share, for example in job applications, may end in ?ref= and a company or channel name, so I can see which link brought you here and which pages you read after it, on that visit or a later one. They never contain a person's name. Other parts of an address, such as the click IDs that ads and social apps add, are removed before anything is sent; only ?ref= and the campaign tags that start with utm_ stay.",
         ),
       ],
       intro: [

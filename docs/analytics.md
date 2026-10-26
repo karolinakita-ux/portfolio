@@ -100,7 +100,7 @@ What is left out on purpose, such as accessibility settings, the browser's exact
 ## Not collected, on purpose
 
 - **Heatmaps and session replays.** Umami's `recorder.js` is a 190 KB rrweb recorder that copies the page's content to Umami, and the free Hobby plan does not include it. `dead-click`, `time-on-page` (scroll depth) and `text-copy` answer the same questions without recording the page.
-- **Distinct IDs** (`data-distinct-id`, `identify()` with an id): visits stay unlinked.
+- **Distinct IDs** (`data-distinct-id`, `identify()` with an id): visits are linked only within Umami's own session (the hash described above), never by an id.
 - **Accessibility settings** (reduced motion, forced colours, contrast): they can hint at health, and the site supports them for everyone anyway.
 - **Connection type, memory, battery, exact screen pixels beyond Umami's own `screen`**: more fingerprinting surface, and no decision depends on them.
 - **The browser's exact version, the time zone, the list of languages, fonts or supported features**: classic fingerprinting signals. Umami's browser name, country and language are enough, `js-error` shows where the site breaks, and reading more of the device would need a new consent text.

@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.3.3 - 2026-10-26
+
+#### Fixed
+
+- The privacy policy is more exact about what the statistics already did: Umami also uses the IP address, with the browser's details, to group page views into one session without a cookie, not only to work out the location; addresses keep `?ref=` and the `utm_` campaign tags, not only lose the click IDs; and a tagged link counts for the pages read on that visit or a later one in the same session. "What is recorded with it" is now "What is recorded with each visit", and its list reads more easily. Nothing new is collected, so nobody is asked again. The tracking plan says visits are linked only within Umami's own session.
+
 ### 5.3.2 - 2026-10-26
 
 #### Added
