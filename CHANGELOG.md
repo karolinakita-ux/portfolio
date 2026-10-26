@@ -4,7 +4,11 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v5.2.4 - 2026-10-26
+
+- Everything in release v5.2.3 below is now on the site: an automated check had stopped that release before it went live, and this release fixes the check.
+
+Versions: 5.2.4.
 
 ### 5.2.4 - 2026-10-26
 
