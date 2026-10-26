@@ -4,6 +4,14 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Unreleased
+
+### 5.3.4 - 2026-10-26
+
+#### Added
+
+- LICENSE has a Contributions section: everyone who contributes to the site, such as a co-author named in a commit, gives Karolina Kita a non-exclusive, perpetual licence to use, change, publish and sublicense the contribution under any terms she chooses, also for contributions made before it was added; contributors keep their copyright. CONTRIBUTING.md says so under Every commit.
+
 ## Release v5.3.3 - 2026-10-26
 
 - Visitor statistics, which run only if you allow them, now also note the height of your browser window and which pages were read after opening a tagged link, such as one in a job application; the privacy page says so and explains more exactly how visits are counted.

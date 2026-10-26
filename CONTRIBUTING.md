@@ -22,6 +22,8 @@ How work moves from a commit to the live site at karolina.kita.company.
 5. Commit to `develop` and push. Put the version in the commit subject, e.g. `Add zoom to the image viewer (1.1.0)`.
 6. Credit co-authors with trailers at the end of the message. Engineering commits (code structure, refactors, tooling, libraries) carry `Co-authored-by: Mateusz Kita <mkita.webdev@gmail.com>`; commits written with Claude carry its trailer too.
 
+By contributing, you license your contribution to Karolina Kita as [LICENSE](LICENSE) describes (Contributions); you keep the copyright in it.
+
 New code follows the file and folder rules in [docs/architecture.md](docs/architecture.md#files-and-folders): one component per folder with its `*.types.ts` and `*.styles.ts`, one folder per domain for other modules, files under 200 lines. ESLint enforces the slice boundaries, the class rule and the length cap. A new shared component gets a story next to it (`Name.stories.tsx`); `src/test/stories.test.tsx` fails without one.
 
 ### Version rules ([Semantic Versioning](https://semver.org/))

@@ -31,6 +31,15 @@ coding assistant from Anthropic. Anthropic's terms assign to the user whatever r
 Anthropic has in the assistant's output, and that output is part of the Work covered by
 this notice.
 
+CONTRIBUTIONS
+
+Everyone who contributes to the Work, such as a co-author named in a commit, gives
+Karolina Kita a worldwide, royalty-free, non-exclusive, perpetual and irrevocable
+licence to use, copy, change, publish and sublicense the contribution, as part of the
+Work or on its own, under these terms or any others she chooses. This also covers
+contributions made before this section was added. Contributors keep the copyright in
+their own contributions.
+
 THIRD-PARTY MATERIAL
 
 Some parts keep their own licences, and this notice does not change them:
