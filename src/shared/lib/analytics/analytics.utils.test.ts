@@ -229,14 +229,19 @@ describe("trackPageview and track", () => {
     analytics.startAnalytics(LIVE);
     const sent = loadTracker();
     go("/work/automotive", "Automotive");
-    analytics.track(EVENT.caseNav, { from: "case-automotive", to: "case-project-planning", direction: "next" });
+    analytics.track(EVENT.caseNav, {
+      from: "case-automotive",
+      to: "case-project-planning",
+      direction: "next",
+      place: "end",
+    });
     expect(sent).toEqual([
       {
         ...TRACKER_PAYLOAD,
         url: window.location.origin + "/work/automotive",
         title: "Automotive",
         name: "case-nav",
-        data: { from: "case-automotive", to: "case-project-planning", direction: "next" },
+        data: { from: "case-automotive", to: "case-project-planning", direction: "next", place: "end" },
       },
     ]);
   });

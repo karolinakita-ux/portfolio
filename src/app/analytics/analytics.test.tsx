@@ -196,7 +196,16 @@ describe("events on case studies", () => {
     expect(events()).toEqual([
       [EVENT.imageOpen, { case: "case-automotive", image: caseCards(AUTOMOTIVE_CASE)[0]?.id }],
       [EVENT.imageNav, { case: "case-automotive", image: caseCards(AUTOMOTIVE_CASE)[1]?.id, direction: "next" }],
-      [EVENT.caseNav, { from: "case-automotive", to: "case-project-planning", direction: "next" }],
+      [EVENT.caseNav, { from: "case-automotive", to: "case-project-planning", direction: "next", place: "end" }],
+    ]);
+  });
+
+  it("counts the previous / next links beside the breadcrumb as the top of the case study", async () => {
+    const { user } = renderApp("/work/project-planning");
+    const top = within(screen.getByRole("navigation", { name: "Previous and next case study" }));
+    await user.click(top.getByRole("link", { name: /^Previous/ }));
+    expect(events()).toEqual([
+      [EVENT.caseNav, { from: "case-project-planning", to: "case-automotive", direction: "prev", place: "top" }],
     ]);
   });
 });

@@ -1,3 +1,4 @@
+import { CasePager } from "#features/case-studies/components/CasePager/CasePager.tsx";
 import { MetaMatrix } from "#features/case-studies/components/MetaMatrix/MetaMatrix.tsx";
 import { WORK_CRUMB } from "#shared/ui/Breadcrumb/Breadcrumb.constants.ts";
 import { Breadcrumb } from "#shared/ui/Breadcrumb/Breadcrumb.tsx";
@@ -9,12 +10,15 @@ import { PageTitle } from "#shared/ui/PageTitle/PageTitle.tsx";
 import { styles } from "./CaseIntro.styles.ts";
 import type { CaseIntroProps } from "./CaseIntro.types.ts";
 
-/** Shared case-study opening: breadcrumb → eyebrow + title → details panel → notice. */
+/** Shared case-study opening: breadcrumb and previous / next → eyebrow + title → details panel → notice. */
 export function CaseIntro({ c, onNavigate }: CaseIntroProps) {
   return (
     <section aria-labelledby="case-title" className={styles.root}>
       <Container>
-        <Breadcrumb onNavigate={onNavigate} items={[WORK_CRUMB, { label: c.shortTitle }]} />
+        <div className={styles.topRow}>
+          <Breadcrumb onNavigate={onNavigate} items={[WORK_CRUMB, { label: c.shortTitle }]} />{" "}
+          <CasePager from={c.view} prev={c.prev} next={c.next} onNavigate={onNavigate} />
+        </div>
         <div className={styles.heading}>
           <Eyebrow parts={c.eyebrow} />
           <PageTitle id="case-title">{c.title}</PageTitle>

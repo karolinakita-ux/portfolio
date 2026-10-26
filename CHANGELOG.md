@@ -6,6 +6,13 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.2.0 - 2026-10-26
+
+#### Added
+
+- Previous and next case study links at the top of each case study, at the end of the breadcrumb row, so readers can move between cases without scrolling to the end. They say "← Previous" and "Next →"; screen readers hear the case name too ("Next case study: Enterprise White-Label Theme Generator"). On narrow phones they move to a row of their own, on the right. The first and the last case show one link: the breadcrumb's "Work" already leads back to the list. The full links with the case names still close each case study.
+- `CaseNavLink` has a `place` variant (`top`, `end`), and `case-nav` events carry it, so the statistics show which links readers use (tracking plan updated).
+
 ### 5.1.1 - 2026-10-26
 
 #### Fixed
