@@ -6,6 +6,13 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.5.0 - 2026-10-26
+
+#### Added
+
+- Stronger colours when a visitor's system asks for more contrast (macOS and iOS "Increase contrast"; `prefers-contrast: more`), in both themes. Secondary text, links, borders, focus rings and callout colours move to darker or lighter colours from the same palette, so reading text reaches 7:1 and borders 3:1; nothing changes for everyone else. The Figma colour collection has two new modes, "Light more contrast" and "Dark more contrast" (copies of Light and Dark with 20 tokens pointing elsewhere; all 106 semantic colours checked against the code), and the token export carries them. In light, the warning, error and success texts become near-black, because no warm palette colour reaches 7:1 on its tinted background.
+- `src/styles/contrast.test.ts` checks those targets (proved on the normal palette, where it fails), `tokens.test.ts` keeps the new modes in step with Figma, and `e2e/contrast.e2e.ts` checks in Chromium, Firefox and WebKit that the stronger colours apply with the setting and only then.
+
 ### 5.4.0 - 2026-10-26
 
 #### Added

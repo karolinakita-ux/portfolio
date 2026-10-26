@@ -6,17 +6,17 @@ The site's look comes from Karolina's KitaBranding design system in Figma.
 
 ## From Figma to code
 
-1. The variables live in the Figma collection "Kita Branding", with two modes: Light and Dark. Motion variables (`motion/duration/fast|medium|slow` in milliseconds, `motion/easing/standard` as a CSS easing) have the same value in both modes.
+1. The variables live in the Figma collection "Kita Branding", with four modes: Light, Dark, and their stronger versions "Light more contrast" and "Dark more contrast", used when a visitor's system asks for more contrast (macOS and iOS "Increase contrast"). The stronger modes copy Light and Dark and point 20 text, link, border, focus and status tokens to darker or lighter palette variables, so reading text reaches 7:1 and borders 3:1. Motion variables (`motion/duration/fast|medium|slow` in milliseconds, `motion/easing/standard` as a CSS easing) have the same value in both modes.
 2. They are exported as JSON to `src/styles/kita-branding.tokens.json`.
-3. `src/styles/tokens.css` turns each token into a CSS variable, for both modes. Dark mode swaps the variables when `<html>` has the `.dark` class.
+3. `src/styles/tokens.css` turns each token into a CSS variable, for both modes. Dark mode swaps the variables when `<html>` has the `.dark` class. The more-contrast modes come last, inside `@media (prefers-contrast: more)`, and list only the tokens they change.
 4. `src/styles/theme.css` (imported by `app.css`) maps the variables into Tailwind's theme (`bg-bg-canvas`, `text-text-secondary`, `p-md`, `rounded-lg`, `duration-medium ease-standard` ...) and removes Tailwind's default colours, radii, shadows, font sizes and easings, so only tokens can be used. Figma works in px; the code writes spacing, type, layout widths and breakpoints as rem (px / 16, so `spacing/md` 16px is `1rem`). At the browser's default text size the result is the same to the pixel, and visitors who set a larger text size get a page that grows with it.
-5. `src/styles/tokens.test.ts` fails when `tokens.css` and the JSON export drift apart; `src/styles/motion-tokens.test.ts` fails on a raw duration or easing in the code.
+5. `src/styles/tokens.test.ts` fails when `tokens.css` and the JSON export drift apart (all four modes); `src/styles/contrast.test.ts` checks the more-contrast targets; `src/styles/motion-tokens.test.ts` fails on a raw duration or easing in the code.
 
 ## Changing a token
 
 1. Change the variable in Figma first. Semantic tokens (for example `border/interactive/focus`) point to palette variables, so change the alias rather than typing a raw hex value.
 2. Re-export `kita-branding.tokens.json`.
-3. Update the variable in `tokens.css` in both modes (motion tokens once), and its mapping in `theme.css` if it is new.
+3. Update the variable in `tokens.css` in both modes (motion tokens once), and its mapping in `theme.css` if it is new. A new text, border or status token also gets its value in the two more-contrast modes, in Figma and in the `prefers-contrast: more` blocks.
 4. Mirror the change in the KitaBranding design system on claude.ai (its `tokens.json`), so design agents see the same values.
 5. Run `yarn verify`.
 

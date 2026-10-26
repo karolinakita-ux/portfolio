@@ -39,9 +39,19 @@ function readBlock(startMarker: string, endMarker?: string): Map<string, string>
 /** Where the light block starts (the motion block before it is a :root too). */
 const LIGHT_START = ":root {\n  color-scheme: light;";
 
+/** Where the more-contrast overrides start (prefers-contrast: more), after the dark block. */
+const MORE_CONTRAST_START = "/* More contrast";
+const MORE_CONTRAST_DARK_START = "@media screen and (prefers-contrast: more)";
+
 const MODES = {
   light: readBlock(LIGHT_START, "@media not print"),
-  dark: readBlock(":root.dark"),
+  dark: readBlock(":root.dark", MORE_CONTRAST_START),
+} as const;
+
+/** The more-contrast modes declare only the tokens they change; every other token keeps its base mode's value. */
+const MORE_CONTRAST = {
+  lightMoreContrast: { base: "light", overrides: readBlock(MORE_CONTRAST_START, MORE_CONTRAST_DARK_START) },
+  darkMoreContrast: { base: "dark", overrides: readBlock(MORE_CONTRAST_DARK_START) },
 } as const;
 
 describe.each(Object.entries(MODES))("tokens.css (%s)", (mode, vars) => {
@@ -61,6 +71,21 @@ describe.each(Object.entries(MODES))("tokens.css (%s)", (mode, vars) => {
 describe("tokens.css light / dark", () => {
   it("defines the same set of variables in both modes", () => {
     expect([...MODES.dark.keys()].sort()).toEqual([...MODES.light.keys()].sort());
+  });
+});
+
+describe.each(Object.entries(MORE_CONTRAST))("tokens.css (%s)", (mode, { base, overrides }) => {
+  const figma: Record<string, string | number> = figmaTokens.kitaBranding[mode as keyof typeof MORE_CONTRAST];
+
+  it("changes only tokens its base mode declares, the same ones in light and dark", () => {
+    expect(overrides.size).toBeGreaterThan(10);
+    for (const name of overrides.keys()) expect(MODES[base].has(name), `--${name}`).toBe(true);
+    expect([...overrides.keys()].sort()).toEqual([...MORE_CONTRAST.lightMoreContrast.overrides.keys()].sort());
+  });
+
+  it.each([...MODES[base]].filter(([name]) => !DERIVED.has(name)))("--%s matches Figma", (name, baseValue) => {
+    const value = overrides.get(name) ?? baseValue;
+    expect(value.toLowerCase()).toBe(String(figma[toFigmaName(name)]).toLowerCase());
   });
 });
 
