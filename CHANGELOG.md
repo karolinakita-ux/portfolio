@@ -6,6 +6,16 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.1.0 - 2026-10-26
+
+#### Added
+
+- The footer shows the site's version from `package.json` ("Version 5.1.0"), linked to the release notes (`CHANGELOG.md` on GitHub, newest release first), so a returning visitor can tell whether anything changed since their last visit. It ends the copyright line, two lines away from the Privacy link, because two small links on neighbouring lines would be closer than WCAG 2.5.8 allows. On phones it moves to the next line as a whole. The footer story and an App test check it against `package.json`.
+
+#### Changed
+
+- CLAUDE.md: the footer's version number does not count as a content change for a page's sitemap `<lastmod>`.
+
 ### 5.0.3 - 2026-10-26
 
 #### Fixed

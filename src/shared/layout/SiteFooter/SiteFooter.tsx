@@ -7,9 +7,11 @@ import { Container } from "#shared/ui/Container/Container.tsx";
 import { CopyEmail } from "#shared/ui/CopyEmail/CopyEmail.tsx";
 import { Linkedin, Mail } from "#shared/ui/icons/icons.tsx";
 import { NewTabNote } from "#shared/ui/NewTabNote/NewTabNote.tsx";
+import { TextLink } from "#shared/ui/TextLink/TextLink.tsx";
 import { ViewLink } from "#shared/ui/ViewLink/ViewLink.tsx";
+import { VisuallyHidden } from "#shared/ui/VisuallyHidden/VisuallyHidden.tsx";
 
-import { CURRENT_YEAR } from "./SiteFooter.constants.ts";
+import { CURRENT_YEAR, RELEASE_NOTES_URL, SITE_VERSION } from "./SiteFooter.constants.ts";
 import { styles } from "./SiteFooter.styles.ts";
 import type { SiteFooterProps } from "./SiteFooter.types.ts";
 
@@ -62,8 +64,18 @@ export function SiteFooter({ onNavigate }: SiteFooterProps) {
         </div>
 
         <div className={styles.legal}>
+          {/* The version sits on this line, two lines away from Privacy: two small links in a row would be
+              closer than 24px (WCAG 2.5.8). */}
           <p>
-            © {CURRENT_YEAR} {PROFILE.name} | All Rights Reserved
+            © {CURRENT_YEAR} {PROFILE.name} | All Rights Reserved |{" "}
+            {RELEASE_NOTES_URL ? (
+              <TextLink href={RELEASE_NOTES_URL} external className={styles.versionLink}>
+                Version {SITE_VERSION}
+                <VisuallyHidden> release notes</VisuallyHidden>
+              </TextLink>
+            ) : (
+              `Version ${SITE_VERSION}`
+            )}
           </p>
           <p>{PROFILE.builtWith}</p>
           <p>

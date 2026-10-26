@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
@@ -49,6 +51,14 @@ describe("App", () => {
     expect(
       within(screen.getByRole("contentinfo")).getByText(/prototyped & built with Claude AI assistance/),
     ).toBeInTheDocument();
+  });
+
+  it("shows the version from package.json in the footer, linked to the release notes", () => {
+    renderApp();
+    const { version } = JSON.parse(readFileSync(join(process.cwd(), "package.json"), "utf8")) as { version: string };
+    const link = within(screen.getByRole("contentinfo")).getByRole("link", { name: /^Version \d.*release notes/ });
+    expect(link).toHaveTextContent(`Version ${version} release notes (opens in a new tab)`);
+    expect(link).toHaveAttribute("href", "https://github.com/karolinakita-ux/portfolio/blob/main/CHANGELOG.md");
   });
 
   it("links each recommendation to its author and company on LinkedIn, and to the full recommendations", () => {

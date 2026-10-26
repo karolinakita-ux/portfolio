@@ -19,4 +19,6 @@ export const styles = {
   emailItem: clsx("flex flex-wrap items-center gap-xs"),
   legal: clsx("mt-4xl flex flex-col gap-2xs text-center text-body-sm text-text-secondary"),
   privacyLink: TEXT_LINK,
+  /** "Version 5.1.0" moves to the next line as a whole on narrow screens. */
+  versionLink: clsx("whitespace-nowrap"),
 };
