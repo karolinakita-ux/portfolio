@@ -14,7 +14,7 @@ export function CaseNav({ from, prev, next, onNavigate }: CaseNavProps) {
     <section aria-label="More case studies" className={styles.root}>
       <Container>
         <nav aria-label="Case study navigation" className={styles.nav(prev !== undefined, next !== undefined)}>
-          {prev && <CaseNavLink from={from} target={prev} direction="prev" onNavigate={onNavigate} />}
+          {prev && <CaseNavLink from={from} target={prev} direction="prev" onNavigate={onNavigate} />}{" "}
           {next && <CaseNavLink from={from} target={next} direction="next" onNavigate={onNavigate} />}
         </nav>
       </Container>

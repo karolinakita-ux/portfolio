@@ -39,7 +39,7 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
               }}
             >
               {HERO_ACTIONS.cases}
-            </Button>
+            </Button>{" "}
             <Button
               as="a"
               href={PROFILE.figmaWorkspaceUrl}
@@ -51,7 +51,7 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
             >
               {HERO_ACTIONS.figma}
               <NewTabNote />
-            </Button>
+            </Button>{" "}
             {PROFILE.repositoryUrl ? (
               <Button
                 as="a"
@@ -65,7 +65,7 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
                 {HERO_ACTIONS.source}
                 <NewTabNote />
               </Button>
-            ) : null}
+            ) : null}{" "}
             {PROFILE.storybookUrl ? (
               <Button
                 as="a"

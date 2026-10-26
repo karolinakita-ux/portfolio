@@ -27,7 +27,7 @@ export function TestimonialsSection() {
                 <p>{item.quote}</p>
               </blockquote>
               <figcaption className={styles.caption}>
-                <Avatar initials={item.initials} />
+                <Avatar initials={item.initials} />{" "}
                 <span className={styles.person}>
                   <span className={styles.name}>
                     <LinkedInTextLink
@@ -36,7 +36,7 @@ export function TestimonialsSection() {
                       destination="LinkedIn profile"
                       target="author"
                     />
-                  </span>
+                  </span>{" "}
                   <span className={styles.role}>
                     {item.role}
                     <span aria-hidden="true"> | </span>

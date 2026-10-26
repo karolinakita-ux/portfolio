@@ -32,7 +32,7 @@ export function PortraitCard({ src }: PortraitCardProps) {
         )}
       </div>
       <figcaption className={styles.caption}>
-        <span className={styles.captionLine}>Based in Poland</span>
+        <span className={styles.captionLine}>Based in Poland</span>{" "}
         <span className={styles.captionLine}>Product &amp; UX/UI Designer</span>
       </figcaption>
     </figure>

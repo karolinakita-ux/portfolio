@@ -25,7 +25,7 @@ export function CaseNavLink({ from, target, direction, onNavigate }: CaseNavLink
         {!isNext && arrow}
         {target.action ?? (isNext ? "Next Case Study" : "Previous Case Study")}
         {isNext && arrow}
-      </span>
+      </span>{" "}
       {target.label && <span className={styles.label}>{target.label}</span>}
     </a>
   );

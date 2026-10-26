@@ -16,12 +16,12 @@ export function ProcessBanner() {
         <div className={styles.links}>
           <BannerLink href={PROFILE.figmaWorkspaceUrl} icon={Figma} event={EVENT.figmaClick}>
             {PROCESS_BANNER.linkLabel}
-          </BannerLink>
+          </BannerLink>{" "}
           {PROFILE.repositoryUrl ? (
             <BannerLink href={PROFILE.repositoryUrl} icon={Github} event={EVENT.githubClick}>
               {PROCESS_BANNER.sourceLinkLabel}
             </BannerLink>
-          ) : null}
+          ) : null}{" "}
           {PROFILE.storybookUrl ? (
             <BannerLink href={PROFILE.storybookUrl} icon={Blocks} event={EVENT.storybookClick}>
               {PROCESS_BANNER.componentsLinkLabel}

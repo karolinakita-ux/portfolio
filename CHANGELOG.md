@@ -6,6 +6,16 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.0.3 - 2026-10-26
+
+#### Fixed
+
+- Words ran together for anything that reads the pages without CSS (search engines, AI assistants, reader modes, plain-text copies): "Back to All WorkNext Case StudyEnterprise", "SWStewart WilsonUX Director", "Based in PolandProduct & UX/UI Designer", the hero and banner link labels, the privacy page's policy links and a heading with a "Roadmap" badge, 21 places in all. The HTML now has a space between them. The layout does not change: every changed element's box matches the live site at 390 and 1280 px.
+
+#### Added
+
+- `src/app/plain-text.test.tsx` renders every page and fails when words from two elements touch with no space between them (`src/test/plain-text.ts`). It found the 21 places before the fix.
+
 ### 5.0.2 - 2026-10-26
 
 #### Fixed
