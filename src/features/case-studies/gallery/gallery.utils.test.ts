@@ -3,17 +3,42 @@ import { describe, expect, it } from "vitest";
 
 import { AUTOMOTIVE_CASE } from "#features/case-studies/content/automotive.content.ts";
 import { PROJECT_PLANNING_CASE } from "#features/case-studies/content/project-planning.content.tsx";
+import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.tsx";
 import { THEMING_CASE } from "#features/case-studies/content/theming.content.tsx";
 
-import { caseCards } from "./gallery.utils.ts";
+import { cardAssets, caseCards, featureStarts, sectionStarts } from "./gallery.utils.ts";
 
 describe("caseCards", () => {
-  it("lists a case study's screenshots in page order, section by section", () => {
+  it("lists a case study's screenshots in page order: feature sections first, then screenshot sections", () => {
     for (const c of [AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE]) {
-      expect(caseCards(c).map((card) => card.id)).toEqual(
-        c.sections.flatMap((section) => section.cards.map((card) => card.id)),
-      );
+      expect(caseCards(c).map((card) => card.id)).toEqual([
+        ...(c.features ?? []).flatMap((feature) => feature.media.map((card) => card.id)),
+        ...c.sections.flatMap((section) => section.cards.map((card) => card.id)),
+      ]);
     }
+  });
+
+  it("finds where each block's images start in the gallery", () => {
+    const cards = caseCards(PROJECT_PLANNING_CASE);
+    featureStarts(PROJECT_PLANNING_CASE).forEach((start, index) => {
+      expect(cards[start]?.id).toBe(PROJECT_PLANNING_CASE.features?.[index]?.media[0]?.id);
+    });
+    sectionStarts(AUTOMOTIVE_CASE).forEach((start, index) => {
+      expect(caseCards(AUTOMOTIVE_CASE)[start]?.id).toBe(AUTOMOTIVE_CASE.sections[index]?.cards[0]?.id);
+    });
+  });
+
+  it("lists the Smart Ticket screenshots in page order", () => {
+    const c = SMART_TICKET_CASE;
+    expect(caseCards(c).map((card) => card.id)).toEqual(
+      [
+        c.flow.media,
+        ...c.system.cards,
+        ...c.rebuild.comparisons.flatMap((comparison) => [...comparison.before.media, ...comparison.after.media]),
+        ...c.passenger.cards,
+        ...c.operations.screens,
+      ].map((card) => card.id),
+    );
   });
 
   it("lists the theming case's solution screenshots, then its safety ones", () => {
@@ -26,20 +51,20 @@ describe("caseCards", () => {
 describe("virtual:asset-sizes", () => {
   it("reads width and height from the PNG header", () => {
     // Sizes seen in the browser (naturalWidth x naturalHeight), so a swapped or misread field fails here.
-    expect(ASSET_SIZES["cases/automotive/research-surveymonkey-markets-v2.webp"]).toEqual([605, 481]);
+    expect(ASSET_SIZES["cases/automotive/multi-market-survey-light.webp"]).toEqual([2000, 1062]);
     expect(ASSET_SIZES["site/portrait.webp"]).toEqual([376, 566]);
   });
 
-  it.each([AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE, THEMING_CASE])(
+  it.each([SMART_TICKET_CASE, AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE, THEMING_CASE])(
     "knows the size of every $id screenshot, so the image viewer can draw its loading skeleton",
     (c) => {
       const cards = caseCards(c);
       expect(cards.length).toBeGreaterThan(0);
-      for (const card of cards) {
-        const size = ASSET_SIZES[card.asset];
-        expect(size, card.asset).toBeDefined();
-        expect(size?.[0], card.asset).toBeGreaterThan(0);
-        expect(size?.[1], card.asset).toBeGreaterThan(0);
+      for (const asset of cards.flatMap(cardAssets)) {
+        const size = ASSET_SIZES[asset];
+        expect(size, asset).toBeDefined();
+        expect(size?.[0], asset).toBeGreaterThan(0);
+        expect(size?.[1], asset).toBeGreaterThan(0);
       }
     },
   );

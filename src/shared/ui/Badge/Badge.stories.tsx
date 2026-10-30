@@ -11,3 +11,12 @@ type Story = StoryObj<typeof meta>;
 export const Regular: Story = {};
 
 export const Medium: Story = { args: { weight: "medium", children: "MVP" } };
+
+/** A measured result before a redesign (Smart Ticket comparison). */
+export const ErrorTone: Story = { args: { tone: "error", children: "3 text contrast failures" } };
+
+/** A measured result after a redesign. */
+export const SuccessTone: Story = { args: { tone: "success", children: "0 text contrast failures" } };
+
+/** A planned item, not shipped yet (Data Governance roadmap card). */
+export const WarningTone: Story = { args: { tone: "warning", weight: "medium", children: "Phase 2 · Roadmap" } };

@@ -1,380 +1,252 @@
 import type { CaseStudy } from "#features/case-studies/case-studies.types.ts";
 import { VIEW } from "#shared/lib/routes/routes.constants.ts";
-import { Lang } from "#shared/ui/Lang/Lang.tsx";
-import { Strong } from "#shared/ui/Strong/Strong.tsx";
+import { lead } from "#shared/ui/lead/lead.tsx";
 import { Swatch } from "#shared/ui/Swatch/Swatch.tsx";
 
 /*
- * Case study - Project Planning & Cost Management. The product is not named anywhere (copy, alt text, file names,
- * screenshots: the logo is painted out) until the client approves it; content-rules.test.ts fails on the old name.
- * Screenshot fields: see ShowcaseCard in case-studies.types.ts.
+ * Case study - Project Planning & Cost Management. The client is not named anywhere (copy, alt text, file names,
+ * screenshots); the screens are a sanitised rebuild with sample data. Layout and copy follow the Figma frame
+ * "case-project-planning - light" (Kita Branding file, Portfolio page). Claims are checked against the Planning & Cost
+ * Management Platform Figma file (notes, status pills and variables); screens marked "Proposal - needs sign-off"
+ * there are called proposals here. Screenshot fields: see ShowcaseCard in case-studies.types.ts; every screenshot
+ * has a Light and a Dark version.
  */
+const IMAGES = "cases/project-planning/";
+
 export const PROJECT_PLANNING_CASE: CaseStudy = {
   view: VIEW.caseProjectPlanning,
   id: "planning",
   shortTitle: "Project Planning",
-  eyebrow: ["B2B SaaS", "Design System & Web Application"],
+  eyebrow: ["B2B Enterprise SaaS", "Design System & PrimeNG", "Resource Management"],
   title: "Enterprise Project Planning & Cost Management Platform",
   meta: [
-    { label: "My Role", value: "Senior UX / Product Designer (Design Systems & Mentorship Lead)" },
+    {
+      label: "My role",
+      value: "Senior UX / Product Designer - end-to-end UX, design system architecture and engineering alignment",
+    },
     {
       label: "Team",
-      value:
-        "Senior UX Designer (myself), 1 UX Intern (mentorship), Project Managers, Frontend & Backend Engineering Team",
+      value: "Product owners, a business analyst, frontend and backend developers, and a UX intern I mentored",
     },
-    { label: "Timeline", value: "2023 - Present (Initial rollout & ongoing product evolution)" },
-    { label: "Platform", value: "Web App (Desktop only, PrimeNG)" },
+    { label: "Timeline", value: "2023 - present · initial release and ongoing evolution of the system" },
+    { label: "Platform", value: "Desktop web application built on PrimeNG (Angular)" },
     {
       label: "Key Outcome",
       wide: true,
       value:
-        "Designed an integrated planning tool and meeting cost tracker, replacing scattered spreadsheets with clear budget and team allocation views across concurrent projects.",
+        "Designed one workspace for time tracking, meeting cost, project budgets and portfolio reporting on a three-tier PrimeNG token system with Light and Dark modes. Logged time and meeting costs roll up into project budgets and PMO dashboards, and every new piece of business logic is labelled as a proposal for sign-off.",
     },
   ],
   notice: {
-    tone: "warning",
-    label: "Confidentiality & localization note",
-    text: "Due to confidentiality, the product name and logo have been removed, and the screens show sample data. They reflect the live deployment for Polish teams (PLN formatting, domestic regulations). The underlying PrimeNG component library and layout grids were structured to scale across multiple languages and currencies.",
+    tone: "info",
+    label: "About these screens",
+    text: "The screens and design artifacts in this case study are a curated, sanitised and refactored subset of a much larger production system, adapted for this portfolio. Real company names, logos and proprietary financial data have been generalised or removed under NDA, and the screens use realistic enterprise sample data in standard European formats (PLN currency, DD/MM/YYYY dates, 24-hour time).",
   },
-  summaryTitle: "Executive Summary & Problem Space",
+  summaryTitle: "Executive Summary",
+  summaryLead: "Budgets rarely break in one big mistake. They erode in everyday work.",
   summary: [
-    "Managing software project budgets often breaks down in daily operations. While managers track high-level numbers in spreadsheets, team hours quietly get lost in untracked meetings and misaligned task estimates, leading to sudden budget overruns.",
-    "This platform was built to solve that by connecting project planning directly with real-time meeting cost tracking. As the Senior UX Designer, I led the end-to-end interface design using the PrimeNG component system - simplifying resource scheduling, structuring clear budget dashboards, and mentoring a UX intern while collaborating closely with project managers and developers.",
+    {
+      title: "The problem",
+      body: "Teams planned hours in static spreadsheets. Long meetings, unclear task dependencies and unlogged calls slowly used up project margins and nobody saw it until the monthly report, when it was too late to change course.",
+    },
+    {
+      title: "My part",
+      body: "I led product design from problem definition to delivery. With the product owners, the business analyst and the developers, I turned complex resource workflows into one desktop app: a time tracker that stays visible, a calendar with day-level time entries, a meetings page that shows what each meeting costs, budget burn on every project and a portfolio view for the PMO - all on one PrimeNG token system. Screens that need new business logic are marked as proposals for the client to sign off.",
+    },
   ],
-  sections: [
+  features: [
     {
       id: "planning-foundations",
-      title: "Technical Foundation: Adopting PrimeNG & Semantic Tokens",
-      intro: [
-        "The initial prototype suffered from outdated legacy charting and fragmented UI patterns that were difficult to maintain. After aligning with product owners on required features and consulting with developers on delivery speed, we chose PrimeNG as our core front-end framework.",
-        "To ensure design consistency and prevent engineering bottlenecks, I customized PrimeNG's foundation first: defining our tokenized color architecture, interactive states, and accessibility standards before designing the complex scheduling and budget workflows.",
+      eyebrow: "Brand foundation & PrimeNG tokens",
+      title: "A calm interface for people who read numbers all day",
+      lead: "One palette, one type family and one token system, verified for contrast.",
+      bullets: [
+        lead(
+          "Palette with a job",
+          <>
+            Deep navy (<Swatch hex="#005D8F" />
+            #005D8F, primary/500) is used only for actions and selection. Cool slate neutrals (surface/50 to 950)
+            separate areas by tone and light 1 px borders instead of heavy lines, which keeps dense screens calm through
+            a full working day.
+          </>,
+        ),
+        lead(
+          "Verified contrast",
+          "White on primary reaches 7.09:1 (WCAG AAA). After an audit I moved danger text to red/800 (4.43 → 5.99:1), so every status tag passes AA. The timeline’s Today marker reaches 14.63:1.",
+        ),
+        lead(
+          "Colour is never alone",
+          "Every state has a text label, and risks add a warning icon, so status reads without colour - for colour-blind users and in Dark mode.",
+        ),
+        lead(
+          "Three-tier tokens",
+          "Primitive → semantic → component tokens map 1:1 to PrimeNG’s Aura preset. Screens use only semantic and component tokens, so components need no custom CSS overrides and Light / Dark modes switch in one place.",
+        ),
       ],
-      cards: [
+      media: [
         {
-          id: "tokens",
-          asset: "cases/project-planning/color-tokens-primeng.webp",
-          alt: "Two token tables: the navyblue primitive scale from 50 to 950 with hex values, and the primary scale mapping each step to its navyblue primitive.",
-          title: "Primary Palette & Token Aliasing",
-          intro: (
-            <>
-              The core interface is anchored around navy blue (<Swatch hex="#005D8F" />
-              #005D8F, primary.500), selected to provide high contrast and clear readability on dense data screens.
-            </>
-          ),
-          bullets: [
-            <>
-              <Strong>11-Step Primary Ramp:</Strong> Defined a full ramp (primary.50 to primary.950) to support subtle
-              container backgrounds, borders, and interactive states (hover, focus, active).
-            </>,
-            <>
-              <Strong>Reduced Eye Strain:</Strong> Chose a balanced, muted navy instead of oversaturated blue tones to
-              keep long daily scheduling sessions comfortable.
-            </>,
-            <>
-              <Strong>PrimeNG Semantic Tokens:</Strong> Mapped raw primitive tokens (navyblue) to semantic aliases
-              (primary), allowing engineering to manage colors centrally in Angular theme files.
-            </>,
-          ],
+          id: "brand-primary",
+          asset: IMAGES + "brand-primary-actions-light.webp",
+          darkAsset: IMAGES + "brand-primary-actions-dark.webp",
+          frameless: true,
+          alt: "Brand primary tokens for interactive actions: primary #005D8F, hover, active, contrast and subtle, each with its token name, hex value, contrast ratio and AAA badge.",
+          title: "Brand primary - interactive actions",
         },
         {
-          id: "contrast",
-          asset: "cases/project-planning/02-accessibility-contrast-checker.webp",
-          alt: "WCAG 2.1 contrast checker showing white text on #005D8F with a 7.09 contrast ratio, passing AA and AAA for normal and large text.",
-          title: "Accessibility: WCAG AAA Contrast Verification",
-          intro:
-            "To ensure comfortable reading on both low-contrast monitors and bright office displays, the primary interface color was tested against strict WCAG standards.",
-          bullets: [
-            <>
-              <Strong>Verified Contrast Ratio:</Strong> White text (#FFFFFF) on the #005D8F primary surface achieves a
-              7.09:1 contrast ratio.
-            </>,
-            <>
-              <Strong>Full AAA Compliance:</Strong> Passes the strict WCAG AAA threshold (7.0:1) for body text, primary
-              button labels, and navigation elements.
-            </>,
-            <>
-              <Strong>Visual Hierarchy:</Strong> Gives primary actions an unambiguous visual weight without causing eye
-              strain during all-day administrative tasks.
-            </>,
-          ],
+          id: "semantic-status",
+          asset: IMAGES + "semantic-status-tags-light.webp",
+          darkAsset: IMAGES + "semantic-status-tags-dark.webp",
+          frameless: true,
+          alt: "Semantic status tokens: Approved, At risk, Rejected, Sent and Not started tags with their contrast ratios, and decorative green, orange, red and neutral accents for bars and markers.",
+          title: "Semantic status - tags and indicators",
         },
       ],
     },
     {
       id: "planning-calendar",
-      title: "Calendar Architecture: Structuring the Scheduling Workspace",
-      intro:
-        "During initial discovery, product owners needed a centralized calendar to make meeting planning and cost tracking practical. I took this high-level idea and structured the complete desktop interface - designing flexible weekly and daily views along with an interactive mini-calendar navigation system for the PrimeNG implementation.",
-      cards: [
-        {
-          id: "week-grid",
-          asset: "cases/project-planning/03-calendar-weekly-grid-roles.webp",
-          alt: "Month overview with a participant/organizer toggle, project filter, mini month calendar and a weekly schedule grid of meetings.",
-          title: "Weekly Timeline & Role Perspectives",
-          intro:
-            "A high-level weekly schedule grid designed to help managers balance workloads across projects without visual clutter.",
-          bullets: [
-            <>
-              <Strong>Weekly Schedule Grid:</Strong> Structured clear 7-day columns and hourly slots, giving managers an
-              instant overview of recurring meetings and available team focus time.
-            </>,
-            <>
-              <Strong>Role Perspective Toggles:</Strong> Added intuitive view filters (Participant vs. Organizer / '
-              <Lang lang="pl">Uczestnik</Lang>' vs. '<Lang lang="pl">Organizator</Lang>') so users can separate sessions
-              they host from those they simply attend.
-            </>,
-            <>
-              <Strong>Consistent PrimeNG Styling:</Strong> Standardized card paddings, borders, and typography so
-              frontend developers could build the responsive grid using standard PrimeNG components.
-            </>,
-          ],
-        },
-        {
-          id: "day-view",
-          asset: "cases/project-planning/04-calendar-faceted-filter-density.webp",
-          alt: "Calendar in day view with a collapsed icon sidebar, the selected date highlighted in the mini calendar and its meetings listed inline.",
-          title: "Daily Detail View & Mini-Calendar Navigation",
-          intro:
-            "A granular daily breakdown paired with a persistent side panel for fast date jumping and project isolation.",
-          bullets: [
-            <>
-              <Strong>Day View Granularity:</Strong> Allowed users to switch easily into a focused single-day view,
-              showing exact meeting intervals and overlap warnings.
-            </>,
-            <>
-              <Strong>Interactive Mini-Calendar:</Strong> Integrated a persistent monthly calendar on the left with
-              meeting count indicators, enabling one-click navigation across dates without reloading the page.
-            </>,
-            <>
-              <Strong>Project-Specific Filtering:</Strong> Added a prominent project dropdown filter so leads can
-              isolate commitments tied to specific client contracts.
-            </>,
-            <>
-              <Strong>Developer-Ready Specifications:</Strong> Provided detailed layout specs, spacing, and interaction
-              states, removing guesswork for the engineering team during implementation.
-            </>,
-          ],
-        },
+      eyebrow: "Calendar architecture",
+      title: "Scheduling and time logging in one calendar",
+      lead: "People plan, attend and log time without switching context.",
+      bullets: [
+        lead(
+          "Weekly timetable",
+          "A 7-day grid shows every meeting across projects. A Participant / Organizer switch separates the meetings you run from the ones you only attend.",
+        ),
+        lead(
+          "Context on the left",
+          "A mini-calendar, a project filter and the selected day’s meeting list let people jump to any date without losing the grid.",
+        ),
+        lead(
+          "Current-time line",
+          "A line across today’s column marks the current time, so people stay oriented during a busy day.",
+        ),
+        lead(
+          "Log time in place",
+          "Clicking a day header opens a side drawer with that day’s work-time entries and their source (stopwatch, manual or from a report), where people add, edit or delete entries.",
+        ),
+        lead(
+          "Meeting cost",
+          "A separate Meetings page lists synced meetings with their cost: duration × attendees × each attendee’s department average hourly rate.",
+        ),
       ],
-    },
-    {
-      id: "planning-cockpits",
-      title: "Project Dashboards & Budget Tracking Tables",
-      intro:
-        "Dense operational data quickly becomes overwhelming without a clear hierarchy. I organized the analytics workspace into two connected layers: high-level meeting habit KPIs up top, and an actionable project table below that highlights budget risks at a glance.",
-      cards: [
+      media: [
         {
-          id: "kpis",
-          asset: "cases/project-planning/05-telemetry-kpi-sparklines.webp",
-          alt: "Seven meeting KPI cards, each with a percentage or cost value, a coloured trend sparkline and the change versus the previous period.",
-          title: "Meeting Health Metrics & Trend Sparklines",
-          intro: "Summary KPI cards showing scheduling discipline, team habits, and meeting delay costs.",
-          bullets: [
-            <>
-              <Strong>Quick Trend Scanning:</Strong> Paired core percentages with directional sparklines and color-coded
-              arrows, letting team leads spot velocity changes without digging through raw logs.
-            </>,
-            <>
-              <Strong>Operational & Habit Metrics:</Strong> Surfaced key habit indicators such as break intervals ('
-              <Lang lang="pl">Kultura przerw</Lang>'), agenda compliance ('
-              <Lang lang="pl">Procent spotkań z agendą</Lang>'), and on-time starts directly alongside financial metrics
-              ('<Lang lang="pl">Koszt opóźnień</Lang>' / Delay costs).
-            </>,
-            <>
-              <Strong>Standardized KPI Cards:</Strong> Structured clean PrimeNG summary cards ('
-              <Lang lang="pl">Szczegóły spotkań</Lang>' / Meeting Details) that keep essential health indicators easy to
-              read during morning check-ins.
-            </>,
-          ],
-        },
-        {
-          id: "portfolio-table",
-          asset: "cases/project-planning/06-pmo-portfolio-data-tables.webp",
-          alt: "Project list table with budget progress bars, time and cost deltas, meeting hours, task counts, team size and end dates with warning icons.",
-          title: "Project Budget Table & Visual Progress Bars",
-          intro:
-            "A centralized portfolio table summarizing budget consumption, tracked hours, and delivery dates across active client streams.",
-          bullets: [
-            <>
-              <Strong>Visual Budget Bars:</Strong> Embedded colored progress bars directly into the project table ('
-              <Lang lang="pl">Lista projektów</Lang>'), giving managers an immediate visual alert for projects nearing
-              or exceeding their budget limit.
-            </>,
-            <>
-              <Strong>Scannable Data Hierarchy:</Strong> Applied strict table alignment rules - left-aligned project
-              names and right-aligned numeric data (consumed hours, meeting counts, team size) for fast row-by-row
-              comparisons.
-            </>,
-            <>
-              <Strong>Status Flags & Deadlines:</Strong> Highlighted critical delivery dates ('
-              <Lang lang="pl">Data Zakończenia</Lang>') with warning badges, helping managers spot schedule and budget
-              risks early.
-            </>,
-          ],
+          id: "week-view",
+          asset: IMAGES + "calendar-week-view-light.webp",
+          darkAsset: IMAGES + "calendar-week-view-dark.webp",
+          alt: "Month overview in week view: a Participant and Organizer switch, a project filter, a mini calendar with meeting counts, the selected day's meetings and a weekly grid of meetings with a current-time line.",
+          title: "Month overview - week view",
         },
       ],
     },
     {
       id: "planning-roadmap",
-      title: "Project Roadmap & Goal Hierarchy",
-      intro:
-        "Accurate budget estimation requires breaking projects down into manageable milestones. Following an initial discovery workshop with stakeholders, we aligned on a familiar mental model - combining a structured goal hierarchy with an interactive timeline so managers could track project progress without steep learning curves.",
-      cards: [
+      eyebrow: "Project roadmap & goal hierarchy",
+      title: "Goals & milestones timeline (proposal)",
+      lead: "A proposed view that answers “are we on track?” for every goal in a project. Its goal-tracking logic is new, so it waits for the client’s sign-off.",
+      bullets: [
+        lead(
+          "Two layers, one row",
+          "On the left, an expandable tree of goals, key results and milestones with owner and status. On the right, a Gantt-style timeline aligned row by row.",
+        ),
+        lead(
+          "Actual vs expected",
+          "Each bar shows actual progress against the expected pace at today (linear from goal start to target date). A goal is at risk when it trails that pace by 10 percentage points or more.",
+        ),
+        lead(
+          "Flexible scale",
+          "Weeks, Months or Quarters, a Today button and a neutral Today marker with 14.63:1 contrast.",
+        ),
+        lead(
+          "Risks with a reason",
+          "Milestones show as diamonds with dependencies. An at-risk milestone opens a popover with the blocker, the delay and who reported it.",
+        ),
+        lead(
+          "Details without leaving",
+          "Clicking a row opens a goal drawer (Details, Updates, Logged time, Comments) while the timeline stays visible. Owners log progress in a dialog that validates the value as they type.",
+        ),
+      ],
+      media: [
         {
-          id: "workshop",
-          asset: "cases/project-planning/07-discovery-workshop-miro-board.webp",
-          alt: "Discovery workshop board with sticky notes grouped into Strategic Goals, Client Pain Points, UX Solutions and Technical Alignment.",
-          title: "Discovery Workshop & Scope Alignment",
-          intro:
-            "A structured workshop mapping business pain points, UX solutions, and technical feasibility before opening Figma.",
-          bullets: [
-            <>
-              <Strong>Identifying Core Friction:</Strong> Mapped project pain points with product owners and PMs,
-              confirming that budget overruns were caused by disconnected task estimates and lack of milestone tracking.
-            </>,
-            <>
-              <Strong>Structured Synthesis:</Strong> Categorized insights into Strategic Goals, Client Pain Points, UX
-              Solutions, and Technical Alignment, ensuring every feature directly addressed a real problem.
-            </>,
-            <>
-              <Strong>Familiar UX Patterns:</Strong> Decided to adopt proven mental models (Jira-style task trees and
-              clean Gantt-style schedules), utilizing PrimeNG's TreeTable component to speed up delivery.
-            </>,
-          ],
-        },
-        {
-          id: "roadmap",
-          asset: "cases/project-planning/08-roadmap-gantt-goals-decomposition.webp",
-          alt: "Project Goals tab: project list on the left, an expandable goals and tasks tree with status badges, and a Gantt timeline with a Today line and an overdue warning.",
-          title: "Master-Detail Roadmap & Timeline View",
-          intro: "A split-screen layout keeping project navigation on the left and interactive timelines on the right.",
-          bullets: [
-            <>
-              <Strong>Master-Detail Layout:</Strong> Designed a persistent project sidebar on the left, letting managers
-              switch between client streams without losing their workspace context.
-            </>,
-            <>
-              <Strong>
-                Goal & Task Hierarchy ('<Lang lang="pl">Cele</Lang>'):
-              </Strong>{" "}
-              Structured an expandable tree view under the Goals tab ('<Lang lang="pl">Cele</Lang>') that breaks
-              top-level objectives into actionable phases and tasks with delivery deadlines.
-            </>,
-            <>
-              <Strong>Interactive Schedule Grid:</Strong> Paired tasks with a clear timeline featuring a prominent
-              'Today' indicator line and time scale toggles (Weeks, Months, Quarters / '
-              <Lang lang="pl">Tygodnie, Miesiące, Kwartały</Lang>') for long-range planning.
-            </>,
-            <>
-              <Strong>Delivery-Focused Design:</Strong> Delivered component specs to developers ensuring smooth handling
-              of dates, progress indicators, and overdue milestone alerts.
-            </>,
-          ],
+          id: "goals-timeline",
+          asset: IMAGES + "goals-milestones-timeline-light.webp",
+          darkAsset: IMAGES + "goals-milestones-timeline-dark.webp",
+          alt: "Goals and milestones timeline: a tree of goals, key results and milestones with owners and status tags beside a Gantt chart with progress bars, milestone diamonds, dependencies, a Today marker and an at-risk popover.",
+          title: "Goals & milestones timeline",
         },
       ],
     },
     {
-      id: "planning-operations",
-      title: "Organization Settings & Project Budget Transparency",
-      intro:
-        "SaaS budgeting tools often fail when they ignore daily working habits or make hourly rate configuration tedious. I designed centralized administrative controls allowing companies to set reasonable meeting rules, track project spend breakdown, and manage employee rates without heavy operational friction.",
-      cards: [
+      id: "planning-cockpits",
+      eyebrow: "Dashboards, budget tracking & team policies",
+      title: "From one project’s budget to the whole portfolio",
+      lead: "Finance, delivery and the PMO look at the same numbers, at the level of detail they need.",
+      bullets: [
+        lead(
+          "Portfolio KPIs",
+          "The PMO dashboard opens with cards for active projects, labour cost, meeting cost, tasks, delayed and over-budget projects, compared with the previous period.",
+        ),
+        lead(
+          "Budget burn in the table",
+          "Budget-used bars sit in each project row next to logged time and meeting cost. Budgets over 100% and overdue end dates are highlighted.",
+        ),
+        lead(
+          "Organisation cost breakdown",
+          "A drill-down sunburst (portfolio → project → goal) with a table of cost, share and difference against plan.",
+        ),
+        lead(
+          "Healthy meeting rules",
+          "Each department sets a maximum meeting duration, a maximum number of attendees and whether weekly work reports are required. A proposed approval flow lets managers approve or reject reports, with a reason for a rejection.",
+        ),
+      ],
+      media: [
         {
-          id: "hygiene",
-          asset: "cases/project-planning/09-meeting-hygiene-break-culture.webp",
-          alt: "HR panel Organization settings: focus blocks by weekday, standard working hours, agenda requirement, maximum participants and minimum break between meetings.",
-          title: "Meeting Policies & Work-Life Balance Settings",
-          intro:
-            "A configuration panel where administrators define team-wide scheduling guidelines to prevent meeting overload.",
-          bullets: [
-            <>
-              <Strong>Healthy Scheduling Rules:</Strong> Designed intuitive configuration controls in the HR Panel ('
-              <Lang lang="pl">Panel HR</Lang>') for core policies, such as required 20-minute buffers between calls ('
-              <Lang lang="pl">Minimalna przerwa między spotkaniami</Lang>') and protected focus blocks ('
-              <Lang lang="pl">Bloki skupienia</Lang>').
-            </>,
-            <>
-              <Strong>Agenda Requirements:</Strong> Added clear toggles to enforce meeting agendas ('
-              <Lang lang="pl">Wymagania agendy</Lang>'), encouraging organizers to set discussion goals before booking
-              team hours.
-            </>,
-            <>
-              <Strong>
-                Encouraging Better Habits ('<Lang lang="pl">Kultura przerw</Lang>'):
-              </Strong>{" "}
-              Focused on positive defaults rather than aggressive blocking modals, helping teams protect uninterrupted
-              deep work organically.
-            </>,
-          ],
+          id: "cost-distribution",
+          asset: IMAGES + "cost-distribution-light.webp",
+          darkAsset: IMAGES + "cost-distribution-dark.webp",
+          alt: "Cost distribution: a drill-down sunburst chart beside a table of programmes with cost in PLN, share and difference against plan.",
+          title: "PMO - cost distribution",
         },
         {
-          id: "budget",
-          asset: "cases/project-planning/10-project-budget-cost-telemetry.webp",
-          alt: "Project details with an 84% budget bar, four cost KPI cards and a pie chart splitting costs into meetings, external costs and labor.",
-          title: "Project Cost Breakdown & Spend Visibility",
-          intro:
-            "Detailed financial cards giving project managers clear visibility into where project budget is being consumed.",
-          bullets: [
-            <>
-              <Strong>Budget Consumption Alerts:</Strong> Placed a prominent progress bar at the top of project details
-              ('<Lang lang="pl">Szczegóły projektu</Lang>'), showing real-time budget usage (e.g., 84%) before reaching
-              financial limits.
-            </>,
-            <>
-              <Strong>Categorized Spend Distribution:</Strong> Designed a clean breakdown chart dividing total
-              expenditure between internal meetings, external costs, and tracked delivery hours.
-            </>,
-            <>
-              <Strong>Key Financial Metrics:</Strong> Grouped total budget, actual spend, and logged hours into
-              scannable KPI summary cards formatted in local currency (PLN).
-            </>,
-          ],
-        },
-        {
-          id: "rates",
-          asset: "cases/project-planning/11-batch-rate-import-csv-tables.webp",
-          alt: "Departments and Employees tables with hourly rates, department badges, role tags and CSV import and export buttons with tooltips.",
-          title: "Hourly Rate Management & CSV Batch Updates",
-          intro: "Streamlined administration tables to maintain department baselines and individual contributor rates.",
-          bullets: [
-            <>
-              <Strong>Two-Tier Rate Tables:</Strong> Structured separate views for Departments ('
-              <Lang lang="pl">Działy</Lang>') and individual Employees ('<Lang lang="pl">Pracownicy</Lang>'), making
-              hourly rate adjustments easy to find and review.
-            </>,
-            <>
-              <Strong>CSV Import & Export Actions:</Strong> Designed prominent bulk action buttons allowing controllers
-              to upload or export rate sheets ('<Lang lang="pl">Pobierz dane / Importuj dane z pliku CSV</Lang>'),
-              eliminating repetitive manual data entry.
-            </>,
-            <>
-              <Strong>Department Filtering & Role Tags:</Strong> Included quick filters ('
-              <Lang lang="pl">Wszystkie działy</Lang>') and role badges to keep large personnel listings manageable and
-              error-free.
-            </>,
-          ],
+          id: "budget-table",
+          asset: IMAGES + "projects-budget-table-light.webp",
+          darkAsset: IMAGES + "projects-budget-table-dark.webp",
+          alt: "Projects table with search and filters: main projects and sub-projects with type and status tags, budget used bars in blue, orange and red, logged time, meeting cost and end dates.",
+          title: "Projects - budget burn table",
         },
       ],
     },
   ],
-  outcomesTitle: "Outcomes & Key Takeaways",
-  outcomesIntro:
-    "The platform brought a fragmented planning process into one desktop tool, giving project managers a clear view of time and meeting costs.",
-  outcomes: [
-    {
-      title: "Centralized Budget & Cost Visibility",
-      body: "Replaced disconnected spreadsheets with an integrated schedule and cost calculator. Project managers gained immediate visibility into meeting expenses and budget burn rates during the planning stage, preventing surprises at monthly reconciliations.",
-    },
-    {
-      title: "Accelerated Implementation via PrimeNG",
-      body: "Customizing standard PrimeNG components rather than designing custom elements from scratch allowed the engineering team to build screens quickly and maintain consistent design patterns throughout the four-month timeline.",
-    },
-    {
-      title: "Mentorship & Cross-Functional Handover",
-      body: "Leading UI architecture while mentoring a junior UX intern proved the value of clear component guidelines. Detailed Figma specifications and token mapping enabled smooth handoffs to developers without back-and-forth communication bottlenecks.",
-    },
-  ],
-  // Middle case in the Work order (Automotive → Project Planning → Data Governance).
-  prev: { view: "case-automotive", label: "Automotive B2B Marketplace: Research-Backed Redesign" },
+  sections: [],
+  impact: {
+    id: "planning-outcomes",
+    eyebrow: "Design outcomes",
+    title: "What the design system delivers",
+    stats: [
+      {
+        value: "Light & Dark",
+        label:
+          "One token collection with a Light and a Dark mode: the same screens and components switch mode through token values instead of being redrawn.",
+      },
+      {
+        value: "AA+",
+        label: "Every status tag pair passes WCAG AA in Light and Dark; primary actions reach AAA (7.09:1).",
+      },
+    ],
+    bullets: [
+      lead("Mentoring", "Guided a UX intern through design tokens, design-to-dev handoff and component documentation."),
+      lead(
+        "Density without noise",
+        "Dense tables separate rows with tonal surfaces and 1 px light lines instead of heavy borders, and status is never shown by colour alone.",
+      ),
+    ],
+  },
+  // No designFile yet: the Planning & Cost Management Platform Figma file still shows the product name, which
+  // has no approval. Link it again (title, body, "Open the Figma file") once Karolina has painted it out there.
+  // Third case in the Work order (Smart Ticket → Automotive → Project Planning → Data Governance).
+  prev: {
+    view: "case-automotive",
+    label: "Automotive B2B Ecosystem: From Dealer Research Across Europe to a Validated Redesign",
+  },
   next: { view: "case-theming", label: "Enterprise White-Label Theme Generator" },
 };

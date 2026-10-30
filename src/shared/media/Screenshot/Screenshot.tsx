@@ -1,6 +1,8 @@
 import { useState } from "react";
 
+import { useDocumentTheme } from "#shared/hooks/theme/useDocumentTheme.ts";
 import { useImageStatus } from "#shared/media/image-status/useImageStatus.ts";
+import { themedSources } from "#shared/media/themed-image/themed-image.utils.ts";
 import { ThumbnailScaffold } from "#shared/media/ThumbnailScaffold/ThumbnailScaffold.tsx";
 import { Maximize2 } from "#shared/ui/icons/icons.tsx";
 import { VisuallyHidden } from "#shared/ui/VisuallyHidden/VisuallyHidden.tsx";
@@ -8,15 +10,21 @@ import { VisuallyHidden } from "#shared/ui/VisuallyHidden/VisuallyHidden.tsx";
 import { styles } from "./Screenshot.styles.ts";
 import type { ScreenshotProps } from "./Screenshot.types.ts";
 
-/** Case-study screenshot at its natural aspect ratio (no cropping). */
-export function Screenshot({ src, fallbackSrc, alt, onExpand }: ScreenshotProps) {
-  // Which src failed: once the close-up fails, show the fallback for that src.
-  const [failedSrc, setFailedSrc] = useState<string | null>(null);
-  const currentSrc = fallbackSrc && failedSrc === src ? fallbackSrc : src;
+/**
+ * Case-study screenshot at its natural aspect ratio (no cropping). In Dark mode it shows `darkSrc` when given;
+ * a broken file falls back to the next one (dark version → `src` → `fallbackSrc`).
+ */
+export function Screenshot({ src, darkSrc, fallbackSrc, alt, onExpand, frameless = false }: ScreenshotProps) {
+  const theme = useDocumentTheme();
+  const sources = themedSources(theme, src, darkSrc, fallbackSrc);
+  // Files that failed to load: the image moves on to the next source in the list.
+  const [failed, setFailed] = useState<readonly string[]>([]);
+  const currentSrc = sources.find((source) => !failed.includes(source)) ?? src;
   const { status, setStatus, ref } = useImageStatus(currentSrc);
+  const hasNext = sources.indexOf(currentSrc) < sources.length - 1;
 
   const handleError = () => {
-    if (fallbackSrc && currentSrc !== fallbackSrc) setFailedSrc(src);
+    if (hasNext) setFailed((list) => [...list, currentSrc]);
     else setStatus("error");
   };
 
@@ -42,14 +50,14 @@ export function Screenshot({ src, fallbackSrc, alt, onExpand }: ScreenshotProps)
     />
   );
 
-  if (!onExpand) return <div className={styles.frame}>{image}</div>;
+  if (!onExpand) return <div className={styles.frame(frameless)}>{image}</div>;
 
   return (
     <button
       type="button"
       aria-haspopup="dialog"
       onClick={(event) => onExpand(event.currentTarget)}
-      className={styles.button}
+      className={styles.button(frameless)}
     >
       <VisuallyHidden>View full size: </VisuallyHidden>
       {image}

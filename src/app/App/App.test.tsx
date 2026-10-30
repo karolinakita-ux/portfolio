@@ -133,19 +133,20 @@ describe("App", () => {
   it("opens a case study from its thumbnail, without an extra Tab stop or screen reader link", async () => {
     const { user } = renderApp();
     const thumbnailLinks = document.querySelectorAll<HTMLAnchorElement>("a[data-case-thumbnail-link]");
-    expect(thumbnailLinks).toHaveLength(3);
+    expect(thumbnailLinks).toHaveLength(4);
     for (const link of thumbnailLinks) {
       expect(link).toHaveAttribute("tabindex", "-1");
       expect(link).toHaveAttribute("aria-hidden", "true");
     }
     // Readers that ignore ARIA (search engines, text extractors) still get a named link: the card title.
     expect([...thumbnailLinks].map((link) => link.textContent)).toEqual([
+      "Smart Ticket: Mobile Ticketing & Transit Operations",
       "Automotive B2B Marketplace Redesign",
       "Project Planning & Cost Management Platform",
       "Enterprise White-Label Theme Generator",
     ]);
     // The image stays readable: the overlay sits beside it, not around it.
-    const thumbnail = screen.getByRole("img", { name: /^A Create New Theme panel between two Edit Theme panels/ });
+    const thumbnail = screen.getByRole("img", { name: /^The same data table in a read-only base theme/ });
     expect(thumbnail.closest("a")).toBeNull();
     // Only the CTA reaches the theming case from the keyboard / accessibility tree.
     const themingPath = "/work/data-governance";
@@ -161,7 +162,9 @@ describe("App", () => {
     const { user } = renderApp();
 
     await user.click(screen.getByRole("link", { name: "View Discovery Case" }));
-    expect(h1()).toHaveTextContent("Automotive B2B Marketplace: Research-Backed Redesign");
+    expect(h1()).toHaveTextContent(
+      "Automotive B2B Ecosystem: From Dealer Research Across Europe to a Validated Redesign",
+    );
     // Work is the current section; only the breadcrumb marks the case study as the current page.
     expect(within(primaryNav()).getByRole("link", { name: "Work" })).toHaveAttribute("aria-current", "true");
 
@@ -203,11 +206,11 @@ describe("App", () => {
 
     await user.click(firstScreenshot);
     const dialog = screen.getByRole("dialog");
-    expect(within(dialog).getByRole("heading", { name: "Multi-Market Survey Analysis" })).toBeInTheDocument();
+    expect(within(dialog).getByRole("heading", { name: "Multi-Market Data Synthesis" })).toBeInTheDocument();
     expect(within(dialog).getByText(/^1 \/ \d+$/)).toBeInTheDocument();
 
     await user.keyboard("{ArrowRight}");
-    expect(within(dialog).getByRole("heading", { name: "1-on-1 Customer Interviews" })).toBeInTheDocument();
+    expect(within(dialog).getByRole("heading", { name: "1:1 Interviews in Polish" })).toBeInTheDocument();
 
     await user.click(within(dialog).getByRole("button", { name: "Close image viewer" }));
     expect(dialog).not.toHaveAttribute("open");

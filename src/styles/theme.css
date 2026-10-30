@@ -105,6 +105,8 @@
   --font-*: initial;
   --font-display: "Zilla Slab", Georgia, serif;
   --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  /* Code snippets (case-study formulas): the system monospace, no web font to load. */
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
 
   /* Type scale */
   --text-*: initial;
@@ -166,9 +168,13 @@
   --container-footer: 38rem;
   /* Reading width for long text (the privacy page): about 75 characters per line at Body Medium. */
   --container-reading: 36rem;
+  /* A phone screenshot in a case study (Figma: 278px screen in a 376px card). */
+  --container-phone: 17.5rem;
 
   /* Aspect ratios */
   --aspect-thumb: 4 / 3;
+  /* Work page case thumbnails (the images are drawn at 16:10) */
+  --aspect-case: 16 / 10;
   --aspect-portrait: 3 / 5;
 
   /* Motion (motionDuration* / motionEasing* tokens). Tailwind's own durations and

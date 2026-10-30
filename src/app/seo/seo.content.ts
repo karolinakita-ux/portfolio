@@ -22,8 +22,10 @@ export const PAGE_DESCRIPTIONS: Readonly<Record<View, string>> = {
     "Case study: a visual theme generator for a B2B data governance platform that picks readable text colours automatically, so custom tenant themes stay accessible.",
   [VIEW.caseProjectPlanning]:
     "Case study: an enterprise project planning and cost management platform, designed from discovery to release with a Figma library for PrimeNG.",
+  [VIEW.caseSmartTicket]:
+    "Case study: a mobile ticketing app with offline QR passes and two-step boarding, plus a web console for transit operations, rebuilt on WCAG 2.2 design tokens.",
   [VIEW.caseAutomotive]:
-    "Case study: research-backed redesign of a B2B vehicle marketplace across 6 European markets, from interviews and benchmarking to the checkout flow.",
+    "Case study: research-backed redesign of a B2B vehicle marketplace across 7 European markets, from interviews and benchmarking to the checkout flow.",
 };
 
 /** The home page's name in the breadcrumb of pages outside Work (About, Contact, Privacy), as on the page. */
@@ -39,4 +41,5 @@ export const PAGE_NAMES: Readonly<Record<View, string>> = {
   [VIEW.caseTheming]: "Enterprise White-Label Theme Generator",
   [VIEW.caseProjectPlanning]: "Project Planning & Cost Management Platform",
   [VIEW.caseAutomotive]: "Automotive B2B Marketplace Redesign",
+  [VIEW.caseSmartTicket]: "Smart Ticket: Mobile Ticketing & Transit Operations",
 };

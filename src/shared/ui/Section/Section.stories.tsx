@@ -27,3 +27,18 @@ export const Default: Story = {
     );
   },
 };
+
+/** With an eyebrow: the case-study impact section ("What the design system delivers"). */
+export const WithEyebrow: Story = {
+  args: {
+    id: "planning-outcomes",
+    eyebrow: "Design outcomes",
+    title: "What the design system delivers",
+    description: undefined,
+    children: <p>Every status tag pair passes WCAG AA in Light and Dark; primary actions reach AAA (7.09:1).</p>,
+  },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole("heading", { level: 2, name: "What the design system delivers" })).toBeVisible();
+    await expect(canvas.getByText("Design outcomes")).toBeVisible();
+  },
+};

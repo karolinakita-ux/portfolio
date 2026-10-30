@@ -4,9 +4,11 @@ import { AboutView } from "#features/about/index.ts";
 import { AccessibilityView } from "#features/accessibility/index.ts";
 import {
   AUTOMOTIVE_CASE,
+  CaseSmartTicketView,
   CaseStudyView,
   CaseThemingView,
   PROJECT_PLANNING_CASE,
+  SMART_TICKET_CASE,
   THEMING_CASE,
 } from "#features/case-studies/index.ts";
 import { ContactView } from "#features/contact/index.ts";
@@ -33,7 +35,10 @@ export const VIEW_RENDERERS: Record<View, (ctx: ViewContext) => ReactNode> = {
   [VIEW.caseAutomotive]: ({ navigate, resolveAsset }) => (
     <CaseStudyView c={AUTOMOTIVE_CASE} resolveAsset={resolveAsset} onNavigate={navigate} />
   ),
+  [VIEW.caseSmartTicket]: ({ navigate, resolveAsset }) => (
+    <CaseSmartTicketView c={SMART_TICKET_CASE} resolveAsset={resolveAsset} onNavigate={navigate} />
+  ),
 };
 
 /** Every case study, for preloading their screenshots in the background. */
-export const ALL_CASES = [AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE, THEMING_CASE] as const;
+export const ALL_CASES = [SMART_TICKET_CASE, AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE, THEMING_CASE] as const;

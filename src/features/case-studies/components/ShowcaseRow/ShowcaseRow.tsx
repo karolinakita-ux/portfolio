@@ -2,27 +2,30 @@ import { useId } from "react";
 
 import { BULLET_LIST } from "#shared/lib/ui/ui.styles.ts";
 import { Screenshot } from "#shared/media/Screenshot/Screenshot.tsx";
-import { Card } from "#shared/ui/Card/Card.tsx";
 
 import { styles } from "./ShowcaseRow.styles.ts";
 import type { ShowcaseRowProps } from "./ShowcaseRow.types.ts";
 
-/** Screenshot left, rationale right (stacks on mobile). */
-export function ShowcaseRow({ src, previewSrc, item, onExpand }: ShowcaseRowProps) {
+/**
+ * One screenshot with its rationale, in the feature-row layout every case study shares: a 440px text column
+ * beside the framed screenshot from lg, the sides alternating row by row (`reverse`); stacked, text first, below lg.
+ * A phone screen (`device: "phone"`) flips the proportions: a wide text column beside a 376px card holding the screen.
+ */
+export function ShowcaseRow({ src, darkSrc, previewSrc, item, onExpand, reverse = false }: ShowcaseRowProps) {
   const titleId = useId();
+  const phone = item.device === "phone";
   return (
-    <Card layout="media" gap="lg" aria-labelledby={titleId} className={styles.root}>
-      <Screenshot
-        src={previewSrc ?? src}
-        fallbackSrc={previewSrc ? src : undefined}
-        alt={item.alt}
-        onExpand={onExpand}
-      />
+    <article data-card="" aria-labelledby={titleId} className={styles.root(reverse, phone)}>
       <div className={styles.body}>
         <h3 id={titleId} className={styles.title}>
           {item.title}
         </h3>
         {item.intro ? <p className={styles.intro}>{item.intro}</p> : null}
+        {item.paragraphs?.map((paragraph) => (
+          <p key={paragraph.slice(0, 24)} className={styles.intro}>
+            {paragraph}
+          </p>
+        ))}
         {/* Optional secondary titled paragraphs within one screenshot row */}
         {item.blocks?.map((block) => (
           <div key={block.title} className={styles.block}>
@@ -38,7 +41,19 @@ export function ShowcaseRow({ src, previewSrc, item, onExpand }: ShowcaseRowProp
             ))}
           </ul>
         )}
+      </div>{" "}
+      <div className={styles.media(reverse, phone)}>
+        <div className={styles.screen(phone)}>
+          <Screenshot
+            src={previewSrc ?? src}
+            darkSrc={previewSrc ? undefined : darkSrc}
+            fallbackSrc={previewSrc ? src : undefined}
+            alt={item.alt}
+            onExpand={onExpand}
+            frameless={item.frameless}
+          />
+        </div>
       </div>
-    </Card>
+    </article>
   );
 }

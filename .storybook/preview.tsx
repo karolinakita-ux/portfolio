@@ -3,6 +3,7 @@ import type { Decorator, Preview } from "@storybook/react-vite";
 import "@fontsource/inter/400.css";
 import "@fontsource/inter/500.css";
 import "@fontsource/inter/600.css";
+import "@fontsource/inter/700.css";
 import "@fontsource/zilla-slab/400.css";
 import "@fontsource/zilla-slab/500.css";
 import "../src/styles/app.css";

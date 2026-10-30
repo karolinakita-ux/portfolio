@@ -6,6 +6,134 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.13.1 - 2026-10-30
+
+#### Changed
+
+- 5.7.0 - 5.13.0 were built outside this repo and are committed here together. Before that, every image and text was checked for names and figures that may not be published:
+  - The Project Planning product name is painted out of its Work thumbnail and its calendar screenshot (Light and Dark), removed from this changelog and a code comment, and added to the hidden-name test.
+  - The Automotive persona, survey and interview boards hide the respondent counts, the salary, the per-market response counts, shares and bars, and the dealer's sales quote again, as decided on 2026-10-26. The case text keeps its totals and rounded figures (545 responses, 7 of 8 markets, over 40% from one market).
+  - Project Planning shows no Figma link for now: the linked file still shows the product name.
+- The Work thumbnails are `thumbnail-light.webp` / `thumbnail-dark.webp` in every case folder (one name for all four; they were never published under another).
+- New case images carry no Content Credentials metadata (a 5.8 KB chunk per file, removed losslessly).
+
+#### Fixed
+
+- The numbered bento cards that close the Data Governance case stay still, like every closing section (`Card` takes `reveal={false}`; new "Still" story).
+- Status badges (success, warning, error) keep their tinted fill and border but write the label in the body text colour, as Figma's bento badge does: the green label reached only 3.9:1 at Label Small (WCAG 1.4.3 needs 4.5:1).
+- The property names in the Data Governance code card use Figma's orange (`status-warning-text`); the link colour reached only 3.8:1 on the Dark code fill.
+- The Data Governance code card carries its name on a figure: ARIA does not allow `aria-label` on `<pre>` (WCAG 4.1.2).
+- Smart Ticket prices read "PLN 4.40" in the text and alt texts, so a screen reader no longer reads the Polish "zł" in an English voice (WCAG 3.1.2).
+- The tests follow the new content: four Work cards, the new Automotive headings, and link names in jsdom. The scroll-reveal e2e covers Smart Ticket too, and counts cards side by side as entering together.
+
+### 5.13.0 - 2026-10-29
+
+#### Added
+
+- `BentoCards`: numbered cards (01, 02 ...) on the Card surface with a status badge, a title, a short body and an optional small visual (tags, checks, label samples, colour swatches, a code snippet or two phases on a line). Wide cards span two columns of a three-column grid; every colour is a token, so Light and Dark mode work without extra rules. Sample brand colours inside a visual are content and stay the same in both modes.
+- Badge `warning` tone for planned, not-yet-shipped items ("Phase 2 · Roadmap"), with a story.
+- `--font-mono` (system monospace, no web font) for code snippets.
+
+#### Changed
+
+- Data Governance: MVP Delivery (01 - 04) and Developer Handoff (05 - 06) now use `BentoCards` instead of text lists, with the facts aligned in 5.12.0: label samples for the automatic white / near-black labels, swatches for hover (+30% black), pressed (+30% white) and disabled (40% opacity), and the selection rules as stylesheet variables.
+
+### 5.12.0 - 2026-10-29
+
+#### Changed
+
+- Data Governance case study: 8 new screenshots, each in a Light and a Dark version (`cases/data-governance/<name>-light.webp` / `-dark.webp`, 2000 px wide); the old ones are no longer shipped.
+- Data Governance copy checked against the new screens: the state rules now match them (hover +30% black, pressed +30% white, disabled 40% opacity, labels white or near-black; selected rows and sidebar items at full colour, 35% tint on hover, +8% black when pressed; navigation tabs +35% white or +8% black). The theme editor is described as a full-page editor with sections, not a modal; Custom CSS sits last, marked Advanced, with a re-test checkbox. The colour-vision preview stays labelled Phase 2, and the confidentiality note says the screens are rebuilt with sample data and that "Tallyst", "Harbor Bank" and "Northwind Health" are fictional.
+- MVP Delivery: the status moved from the titles into badges ("Shipped · MVP", "Phase 2 · Roadmap"). Key Takeaways use the numbered cards (`NumberedCards`), as in Automotive.
+
+### 5.11.1 - 2026-10-29
+
+#### Changed
+
+- Automotive case study: the copy now credits each step to the right person. The Team Leader (Design Lead) built the coded prototype, the UX Researcher ran the sessions with UK dealers, and Karolina audited the prototype and turned the research and audit findings into refined designs in Figma (Overview, Auditing the Coded Prototype, Testing & Final Design, Reflections).
+
+### 5.11.0 - 2026-10-29
+
+#### Changed
+
+- Automotive case study rewritten as "Automotive B2B Ecosystem: From Dealer Research Across Europe to a Validated Redesign": new Overview & Problem, five sections (Research Across 7 European Markets; Personas, Journeys & Usability Audit; Benchmarking, Flows & Specifications; Auditing the Coded Prototype; Testing & Final Design) with 17 screenshots, each in a Light and a Dark version (`cases/automotive/<name>-light.webp` / `-dark.webp`, 2000 px wide), and a new confidentiality note. The Work card and the page description now say 7 European markets; the previous / next labels on Smart Ticket and Project Planning use the new title.
+- The old Automotive screenshots and the replaced Work thumbnails (`thumbnail-v2.webp`, `smart-ticket/thumbnail.webp`) are no longer shipped (moved out of `public/`), so no unused image stays reachable by URL.
+
+#### Added
+
+- `NumberedCards`: numbered takeaway cards (01, 02, 03) in the info colours, an opt-in closing layout for case studies (`reflections.layout: "numbered"`), used by Automotive's Reflections.
+- `CaseSummary`: summary columns may leave out their title; untitled columns read as plain paragraphs in one column.
+
+### 5.10.0 - 2026-10-29
+
+#### Changed
+
+- Work page: new case thumbnails for all four case studies, each in a Light and a Dark version that switches with the theme (`thumbnail-light.webp` / `thumbnail-dark.webp`, 1440x900). The thumbnail frame is now 16:10 (new `aspect-case`) and the image fills it edge to edge: no border, no inner padding, no letterboxing, corners rounded to match the card (`rounded-md`). Hover keeps the slight zoom; the border colour change is gone with the border.
+
+### 5.9.0 - 2026-10-28
+
+#### Added
+
+- Case studies with a Figma file (Smart Ticket, Project Planning) link it at the top too: "Open the Figma file" with the Figma icon sits right under the details panel, so the design files are one click from the start. The Design files banner at the end stays. Both links share one component (`DesignFileLink`) and count as the same `figma-click` (`place: "case"`). Cases without a file (Automotive, Data Governance) show no link.
+
+### 5.8.5 - 2026-10-28
+
+#### Changed
+
+- Before / after comparison cards: from tablet width the two columns share their rows (CSS subgrid), so the screens of "Legacy concept" and "Modern rebuild" start on the same line however long the text and chips above them are. Every preview keeps the same width, height, frame and spacing.
+- Comparison card titles ("Legacy concept (2022)", "Modern rebuild (2026)", "2022 brief", "2026 decision") and the reasoning titles below the cards use the body text colour and bold (700) instead of grey or link blue. The site and Storybook now load Inter 700.
+
+### 5.8.4 - 2026-10-28
+
+#### Changed
+
+- Smart Ticket, "Visual foundation" comparison: the 2026 column shows the Create account screen in Light and Dark mode side by side, as in the Figma frame, so it fills the column like the two 2022 screens without making the card taller. This pair shows both token modes, so it does not switch with the site's theme.
+
+### 5.8.3 - 2026-10-28
+
+#### Changed
+
+- Project Planning: the "46 screens" outcome card is replaced by "Light & Dark" (one token collection with two modes; the same screens switch mode through token values). The outcome cards now hold no screen counts, only facts the Figma file's variables and contrast checks show.
+
+### 5.8.2 - 2026-10-28
+
+#### Changed
+
+- Project Planning: the outcome cards keep only facts from the Figma file (46 screens with status pills, AA+); the extra "1:1 PrimeNG" card that stood in for the removed sprint-velocity claim is gone, and the token mapping stays in the brand foundation section. Two cards now share a row from 768px (`CaseImpact` picks two or three columns by count).
+- Project Planning: the note under the header ("About these screens") says the screens are a curated, sanitised and refactored subset of a larger production system, adapted for the portfolio, with company names, logos and financial data generalised or removed under NDA and realistic sample data in European formats. The Key Outcome leads with the token system; the outcomes section is "Design outcomes - What the design system delivers".
+
+### 5.8.1 - 2026-10-27
+
+#### Changed
+
+- Smart Ticket and Project Planning copy checked against the Figma files (screens, notes, status pills and variables), and every claim the canvas does not show is rewritten or removed:
+  - Project Planning: the unproven "~35% faster sprint velocity" and "4 → 1 spreadsheets" stats are replaced by what the file shows (46 desktop screens with status pills - 29 production ready, 17 proposals; a 1:1 PrimeNG Aura token mapping; AA+). The goals and milestones timeline is labelled a proposal, as in Figma. The calendar no longer claims to show meeting cost (the Meetings page does), and the budget-bar, drawer, KPI and approval copy follows the Figma notes.
+  - Smart Ticket: 56 mobile screens and states (not 53 or 76), the offline pass describes the signed token as an engineering requirement, the 2022 "black lines" claim and the "sign-out in red" shift are replaced by what the 2022 screens show, status colours use the real token values, checkout names the Review & Pay sheet and the Smart Wallet, and "0 passenger data fields" becomes "No passenger browsing" (one masked record by exact reference, 15 minutes, logged).
+  - The Project Planning Work card summary follows the same facts.
+
+### 5.8.0 - 2026-10-27
+
+#### Added
+
+- A new case study at `/work/smart-ticket`: "Smart Ticket: Mobile Ticketing & Transit Operations", first on the Work page and first in the case navigation (Smart Ticket → Automotive → Project Planning → Data Governance). It follows the Figma frame "Case Study / Smart Ticket (2026)": details table and info note, executive summary, three rider personas as text cards, the user flow, design system rows, two 2022 vs 2026 comparisons with measured results, five passenger app features beside their phone screens, the operations console with eight captioned screens, six outcome cards with a note that they are design decisions, lessons learned, and a design files banner linking the Smart Ticket Figma file. It has a page title, a search description, a sitemap entry and a Work card with its own thumbnail.
+- 43 screenshots and a thumbnail in `cases/smart-ticket/`: every 2026 screen in Light and Dark (they switch with the site's theme, in the page and the image viewer); the five 2022 screens and the Lock Screen exist in one version and show as they are in both themes.
+- `CaseSmartTicketView` and its building blocks in the case-studies slice: `PersonaCard`, `ComparisonBlock`, `ComparisonSide`, `ScreenGrid`. `ShowcaseRow` takes phone screens (`device: "phone"`: a wide text column beside a 376px phone card) and extra paragraphs; `CaseImpact` takes a note under the cards.
+- `Badge` takes a `tone` (`neutral`, `error`, `success`) for measured results, with stories.
+
+### 5.7.0 - 2026-10-27
+
+#### Added
+
+- The Project Planning case follows its new Figma layout: a details table and an info note, an executive summary with a lead line and "The problem" / "My part" columns, four feature sections (brand foundation and tokens, calendar, goals and milestones timeline, dashboards and budget) with a text column beside the screenshots, and a "What changed" section with three stat cards. Twelve new screenshots (six screens, each in Light and Dark), WebP at quality 90; the eleven old screenshots and the old thumbnail are removed.
+- Light and Dark screenshots: a screenshot card can name a `darkAsset`, shown while the site is in Dark mode, in the card, the image viewer and the background preload. A missing or broken dark file falls back to the light one. `useDocumentTheme` reads the theme from `<html>`, so images switch in the same frame as the colours. The Work page thumbnail takes an optional `darkAsset` too.
+- A design files banner near the end of a case study (`designFile` in the case content): an info banner with a link to the case's Figma file, opened in a new tab and counted as `figma-click` with `place: "case"`. The Project Planning case links its Figma file.
+- `Section` takes an optional `eyebrow` above its heading, with a story.
+
+#### Changed
+
+- Every case study shares the new layout: screenshot rows drop their card box for a 440px text column beside a framed screenshot (12px radius, medium shadow), alternating sides from 1024px and stacked text first below it; the executive summary uses titled columns in all three cases; the details table uses Title Medium labels and Body Large values with 24px padding; confidentiality notes use the info tone.
+- The Project Planning thumbnail on the Work page is the new dashboard composition (`thumbnail-v2.webp`).
+
 ### 5.6.1 - 2026-10-26
 
 #### Changed

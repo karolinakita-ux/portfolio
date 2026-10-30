@@ -2,7 +2,8 @@ import type { NavItem, View } from "./routes.types.ts";
 
 /**
  * Information architecture
- *   Work            /  ─┬─ /work/data-governance  (Data Governance theming case)
+ *   Work            /  ─┬─ /work/smart-ticket  (Smart Ticket: mobile ticketing and transit operations)
+ *                       ├─ /work/data-governance  (Data Governance theming case)
  *                       ├─ /work/project-planning
  *                       └─ /work/automotive
  *   About /about · Contact /contact
@@ -22,6 +23,7 @@ export const VIEW = {
   caseTheming: "case-theming",
   caseProjectPlanning: "case-project-planning",
   caseAutomotive: "case-automotive",
+  caseSmartTicket: "case-smart-ticket",
   contact: "contact",
   privacy: "privacy",
   accessibility: "accessibility",
@@ -44,6 +46,7 @@ export const VIEW_PATHS = {
   [VIEW.caseTheming]: "/work/data-governance",
   [VIEW.caseProjectPlanning]: "/work/project-planning",
   [VIEW.caseAutomotive]: "/work/automotive",
+  [VIEW.caseSmartTicket]: "/work/smart-ticket",
 } as const satisfies Record<View, string>;
 
 /** Section anchors that other views link to (the section's element id). */
@@ -84,4 +87,5 @@ export const VIEW_TITLES: Readonly<Record<View, string>> = {
   [VIEW.caseTheming]: "Data Governance Case Study - " + SITE_NAME,
   [VIEW.caseProjectPlanning]: "Project Planning Case Study - " + SITE_NAME,
   [VIEW.caseAutomotive]: "Automotive Ecosystem Case Study - " + SITE_NAME,
+  [VIEW.caseSmartTicket]: "Smart Ticket Case Study - " + SITE_NAME,
 };

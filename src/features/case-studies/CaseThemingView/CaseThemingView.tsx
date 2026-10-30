@@ -1,10 +1,12 @@
 import { useMemo } from "react";
 
 import type { CaseViewProps, ThemingCaseStudy } from "#features/case-studies/case-studies.types.ts";
+import { BentoCards } from "#features/case-studies/components/BentoCards/BentoCards.tsx";
 import { CaseIntro } from "#features/case-studies/components/CaseIntro/CaseIntro.tsx";
 import { CaseNav } from "#features/case-studies/components/CaseNav/CaseNav.tsx";
 import { CaseSummary } from "#features/case-studies/components/CaseSummary/CaseSummary.tsx";
-import { DetailList } from "#features/case-studies/components/DetailList/DetailList.tsx";
+import { DesignFilesBanner } from "#features/case-studies/components/DesignFilesBanner/DesignFilesBanner.tsx";
+import { NumberedCards } from "#features/case-studies/components/NumberedCards/NumberedCards.tsx";
 import { ShowcaseRows } from "#features/case-studies/components/ShowcaseRows/ShowcaseRows.tsx";
 import { caseCards } from "#features/case-studies/gallery/gallery.utils.ts";
 import { useCaseGallery } from "#features/case-studies/gallery/useCaseGallery.ts";
@@ -60,7 +62,7 @@ export function CaseThemingView({ c, resolveAsset, onNavigate }: CaseViewProps<T
       </Section>
 
       <Section id="case-delivery" title="MVP Delivery & Phased Roadmap" description={c.deliveryIntro}>
-        <DetailList items={c.delivery} />
+        <BentoCards items={c.delivery} />
       </Section>
 
       <Section
@@ -68,12 +70,14 @@ export function CaseThemingView({ c, resolveAsset, onNavigate }: CaseViewProps<T
         title="Developer Handoff & Technical Collaboration"
         description={c.engineeringIntro}
       >
-        <DetailList items={c.engineering} />
+        <BentoCards items={c.engineering} start={c.delivery.length + 1} columns={2} />
       </Section>
 
       <Section id="case-takeaways" title="Key Takeaways & Retrospective">
-        <DetailList items={c.takeaways} />
+        <NumberedCards items={c.takeaways} />
       </Section>
+
+      {c.designFile && <DesignFilesBanner file={c.designFile} caseView={c.view} />}
 
       <CaseNav from={c.view} prev={c.prev} next={c.next} onNavigate={onNavigate} />
     </>

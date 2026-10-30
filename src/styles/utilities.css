@@ -10,8 +10,19 @@
 @utility grid-cols-about-lg {
   grid-template-columns: minmax(0, 1fr) 23.5rem;
 }
-@utility grid-cols-showcase {
-  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+/* Case-study feature row (Figma: 440px text column beside a fluid visual column), and its mirror */
+@utility grid-cols-feature {
+  grid-template-columns: minmax(0, 27.5rem) minmax(0, 1fr);
+}
+@utility grid-cols-feature-reverse {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 27.5rem);
+}
+/* Case-study phone row (Figma: wide text column beside a 376px phone card), and its mirror */
+@utility grid-cols-phone {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 23.5rem);
+}
+@utility grid-cols-phone-reverse {
+  grid-template-columns: minmax(0, 23.5rem) minmax(0, 1fr);
 }
 @utility grid-cols-term {
   grid-template-columns: auto minmax(0, 1fr);

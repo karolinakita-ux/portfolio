@@ -7,9 +7,10 @@ import { describe, expect, it } from "vitest";
 import { PAGE_DESCRIPTIONS, PAGE_NAMES } from "#app/seo/seo.content.ts";
 import { ABOUT_INTRO, FAQ, MILESTONES, PRINCIPLES } from "#features/about/about.content.ts";
 import { ACCESSIBILITY } from "#features/accessibility/accessibility.content.tsx";
-import type { CaseStudy, ShowcaseCard, ThemingCaseStudy } from "#features/case-studies/case-studies.types.ts";
+import type { AnyCase, ShowcaseCard } from "#features/case-studies/case-studies.types.ts";
 import { AUTOMOTIVE_CASE } from "#features/case-studies/content/automotive.content.ts";
 import { PROJECT_PLANNING_CASE } from "#features/case-studies/content/project-planning.content.tsx";
+import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.tsx";
 import { THEMING_CASE } from "#features/case-studies/content/theming.content.tsx";
 import { CONTACT } from "#features/contact/contact.content.ts";
 import { PRIVACY } from "#features/privacy/privacy.content.tsx";
@@ -43,10 +44,40 @@ function collectText(value: unknown): string[] {
   return [];
 }
 
-const CASES: ReadonlyArray<CaseStudy | ThemingCaseStudy> = [AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE, THEMING_CASE];
+const CASES: readonly AnyCase[] = [SMART_TICKET_CASE, AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE, THEMING_CASE];
 
-const caseCards = (c: CaseStudy | ThemingCaseStudy): ShowcaseCard[] =>
-  "sections" in c ? c.sections.flatMap((section) => [...section.cards]) : [...c.solution, ...c.safety];
+/** Every screenshot card of a case, as the case gallery lists them (an independent copy of gallery.utils.ts). */
+const caseCards = (c: AnyCase): ShowcaseCard[] => {
+  if ("sections" in c)
+    return [...(c.features ?? []).flatMap((feature) => [...feature.media]), ...c.sections.flatMap((s) => [...s.cards])];
+  if ("personas" in c)
+    return [
+      c.flow.media,
+      ...c.system.cards,
+      ...c.rebuild.comparisons.flatMap((comparison) => [...comparison.before.media, ...comparison.after.media]),
+      ...c.passenger.cards,
+      ...c.operations.screens,
+    ];
+  return [...c.solution, ...c.safety];
+};
+
+/**
+ * Bullets outside the screenshot cards: feature sections, the impact section, the theming case's reality list,
+ * Smart Ticket's personas, comparison reasoning and console decisions.
+ */
+const caseBullets = (c: AnyCase): ReactNode[] => {
+  if ("sections" in c)
+    return [...(c.features ?? []).flatMap((feature) => [...feature.bullets]), ...(c.impact?.bullets ?? [])];
+  if ("personas" in c)
+    return [
+      ...c.personas.personas.flatMap((persona) => [...persona.problems, ...persona.helps]),
+      ...c.rebuild.comparisons.flatMap((comparison) =>
+        (comparison.rationale ?? []).flatMap((column) => [...column.points]),
+      ),
+      ...c.operations.decisions,
+    ];
+  return [...c.reality];
+};
 
 const ALL_CONTENT = {
   ABOUT_INTRO,
@@ -76,7 +107,7 @@ describe("copy style", () => {
   });
 });
 
-const CASE_TABLE = CASES.map((c): [string, CaseStudy | ThemingCaseStudy] => [c.shortTitle, c]);
+const CASE_TABLE = CASES.map((c): [string, AnyCase] => [c.shortTitle, c]);
 
 describe.each(CASE_TABLE)("case study: %s", (_name, c) => {
   const cards = caseCards(c);
@@ -87,7 +118,7 @@ describe.each(CASE_TABLE)("case study: %s", (_name, c) => {
   });
 
   it("opens every bullet with a bold lead-in term and a colon", () => {
-    const bullets: ReactNode[] = [...cards.flatMap((card) => card.bullets ?? []), ...("reality" in c ? c.reality : [])];
+    const bullets: ReactNode[] = [...cards.flatMap((card) => card.bullets ?? []), ...caseBullets(c)];
     for (const bullet of bullets) {
       expect(isValidElement(bullet), "bullet must be JSX (use lead())").toBe(true);
       const children = (bullet as ReactElement<{ children?: ReactNode }>).props.children;
@@ -107,11 +138,11 @@ describe.each(CASE_TABLE)("case study: %s", (_name, c) => {
     }
   });
 
-  it("uses unique keys (card ids, meta labels, summary openings)", () => {
+  it("uses unique keys (card ids, meta labels, summary columns)", () => {
     const unique = (values: string[]) => expect(new Set(values).size).toBe(values.length);
     unique(cards.map((card) => card.id));
     unique(c.meta.map((entry) => entry.label));
-    unique(c.summary.map((paragraph) => paragraph.slice(0, 24)));
+    unique(c.summary.map((column) => column.title ?? column.body));
   });
 
   it("marks Polish phrases in case studies with lang=pl (WCAG 3.1.2)", () => {
@@ -136,6 +167,10 @@ describe.each(CASE_TABLE)("case study: %s", (_name, c) => {
       expect(card.asset).toMatch(ASSET_PATH);
       expect(card.asset.startsWith(folder), card.asset).toBe(true);
       if (card.detail) expect(card.detail).toMatch(ASSET_PATH);
+      if (card.darkAsset) {
+        expect(card.darkAsset).toMatch(ASSET_PATH);
+        expect(card.darkAsset.startsWith(folder), card.darkAsset).toBe(true);
+      }
     }
   });
 });
@@ -155,6 +190,7 @@ describe("work page", () => {
   it("chains case studies in the same order as the Work page", () => {
     const order = WORK_CASES.map((item) => item.view);
     const byView = {
+      "case-smart-ticket": SMART_TICKET_CASE,
       "case-automotive": AUTOMOTIVE_CASE,
       "case-project-planning": PROJECT_PLANNING_CASE,
       "case-theming": THEMING_CASE,
@@ -197,6 +233,7 @@ const HIDDEN = new Set([
   "beda72b106b728363d8b45b78cb527a9ab8df56695f3e465960879fe00ddc7fb",
   "7027542b1ad0924626b41ebe16f9303e2ade2cb1887ada8d2bdf675f29f868a3",
   "3a1fb2a2fdad893fef49c0e259a4cf6d51a20a6144b0e2cc94ac7e050b39eeaf",
+  "e203fa2d1d3bd4dbbb4d499c1a625c3c5d3ad954ca22809c31b4f233db4ca959",
 ]);
 const HIDDEN_IN_CASES = new Set([
   ...HIDDEN,
@@ -258,8 +295,12 @@ describe("confidentiality", () => {
   it("ships no case image that no page shows: an unused original, say before redaction, stays reachable by URL", () => {
     const assets = join(process.cwd(), "public", "assets");
     const used = new Set([
-      ...CASES.flatMap(caseCards).flatMap((card) => [card.asset, card.detail ?? card.asset]),
-      ...WORK_CASES.map((item) => item.asset),
+      ...CASES.flatMap(caseCards).flatMap((card) => [
+        card.asset,
+        card.detail ?? card.asset,
+        card.darkAsset ?? card.asset,
+      ]),
+      ...WORK_CASES.flatMap((item) => [item.asset, item.darkAsset ?? item.asset]),
     ]);
     const shipped = readdirSync(join(assets, "cases"), { recursive: true, withFileTypes: true })
       .filter((entry) => entry.isFile())

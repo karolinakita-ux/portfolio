@@ -82,7 +82,8 @@ export interface EventData {
   [EVENT.imageOpen]: { case: View; image: string };
   /** The next or previous screenshot in the image viewer (arrow, key or swipe); image: the one now shown. */
   [EVENT.imageNav]: { case: View; image: string; direction: "prev" | "next" };
-  [EVENT.figmaClick]: { place: "hero" | "banner" };
+  /** case: the case study whose design files banner was used (place "case"). */
+  [EVENT.figmaClick]: { place: "hero" | "banner" } | { place: "case"; case: View };
   [EVENT.githubClick]: { place: "hero" | "banner" };
   [EVENT.storybookClick]: { place: "hero" | "banner" };
   [EVENT.linkedinClick]: {

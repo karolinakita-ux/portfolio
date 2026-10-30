@@ -41,11 +41,20 @@ const EARLY_PX = [12, 24, 36];
 /** Same tags as scripts/a11y-audit.ts (without best-practice hints). */
 const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22a", "wcag22aa"];
 
-const PAGES = [VIEW.work, VIEW.about, VIEW.caseTheming, VIEW.caseProjectPlanning, VIEW.caseAutomotive].map(
-  (view) => VIEW_PATHS[view],
-);
-/** A tall screen (a large monitor, or zoomed out): every page then has cards on its first screen. */
+const PAGES = [
+  VIEW.work,
+  VIEW.about,
+  VIEW.caseSmartTicket,
+  VIEW.caseTheming,
+  VIEW.caseProjectPlanning,
+  VIEW.caseAutomotive,
+].map((view) => VIEW_PATHS[view]);
+/** A tall screen (a large monitor, or zoomed out): most pages then have cards on their first screen. */
 const TALL = { width: 1280, height: 2000 };
+const NO_CARDS_ON_TALL_FIRST_SCREEN = new Set<string>([
+  VIEW_PATHS[VIEW.caseSmartTicket],
+  VIEW_PATHS[VIEW.caseProjectPlanning],
+]);
 
 interface CardState {
   /** Heading or caption text, for messages. */
@@ -365,15 +374,22 @@ async function wcagViolations(page: Page, rule?: string): Promise<Violation[]> {
 }
 const formatViolation = ({ rule, target, detail }: Violation): string => `${rule} ${target}: ${detail}`;
 
-/** Whether the element is inside card `index`, and whether its box is fully inside the viewport. */
+/**
+ * Whether the element is inside card `index` or a card in the same row (cards side by side enter together),
+ * and whether its box is fully inside the viewport.
+ */
 async function placeOf(page: Page, target: string, index: number): Promise<{ inCard: boolean; onScreen: boolean }> {
   return page.evaluate(
     ({ selector, cardSelector, cardIndex }) => {
       const element = document.querySelector(selector);
       if (!element) return { inCard: false, onScreen: false };
       const box = element.getBoundingClientRect();
+      const cards = [...document.querySelectorAll(cardSelector)];
+      const rowTop = cards[cardIndex]?.getBoundingClientRect().top;
+      const inRow = (card: Element) =>
+        rowTop !== undefined && Math.abs(card.getBoundingClientRect().top - rowTop) < 2 && card.contains(element);
       return {
-        inCard: document.querySelectorAll(cardSelector)[cardIndex]?.contains(element) ?? false,
+        inCard: cards.some(inRow),
         onScreen: box.top >= 0 && box.bottom <= document.documentElement.clientHeight,
       };
     },
@@ -493,7 +509,10 @@ test.describe("motion allowed", () => {
         expect([...checked].sort(), "cards checked: every card inside the viewport at the end").toEqual(
           expect.arrayContaining(inside.map((card) => card.name)),
         );
-        if (viewport === TALL) expect(checked.size, "cards on the tall first screen").toBeGreaterThan(0);
+        // Smart Ticket and Project Planning open with details, a summary and screens that do not fade: no card in 2000px.
+        if (viewport === TALL && !NO_CARDS_ON_TALL_FIRST_SCREEN.has(path)) {
+          expect(checked.size, "cards on the tall first screen").toBeGreaterThan(0);
+        }
       });
     }
   }

@@ -41,9 +41,22 @@ export const TESTIMONIALS: readonly Testimonial[] = [
 
 const CASES: readonly WorkCase[] = [
   {
+    id: "smart-ticket",
+    asset: "cases/smart-ticket/thumbnail-light.webp",
+    darkAsset: "cases/smart-ticket/thumbnail-dark.webp",
+    alt: "The Smart Ticket operations console with fare revenue and an hourly boarding chart, beside a phone showing an active offline ticket with a QR code.",
+    eyebrow: ["Public Mobility", "Mobile App & Operations Console"],
+    title: "Smart Ticket: Mobile Ticketing & Transit Operations",
+    summary:
+      "Rebuilt a 2022 transit ticketing concept into a token-based system: offline QR passes, buy-now-start-later boarding and a privacy-safe web console for transit operations, checked against WCAG 2.2 and European transit data standards.",
+    cta: "View Case Study",
+    view: VIEW.caseSmartTicket,
+  },
+  {
     id: "theming-system",
-    asset: "cases/data-governance/thumbnail-v2.webp",
-    alt: "A Create New Theme panel between two Edit Theme panels from a data governance platform, showing the header, navigation and general color settings used to brand each tenant.",
+    asset: "cases/data-governance/thumbnail-light.webp",
+    darkAsset: "cases/data-governance/thumbnail-dark.webp",
+    alt: "The same data table in a read-only base theme and in a custom tenant theme under a tritanopia simulation, beside contrast guardrails that pick readable text colours automatically.",
     eyebrow: ["B2B Platform", "Feature Design"],
     title: "Enterprise White-Label Theme Generator",
     summary:
@@ -53,30 +66,32 @@ const CASES: readonly WorkCase[] = [
   },
   {
     id: "project-planning",
-    asset: "cases/project-planning/thumbnail.webp",
-    alt: "Month overview: a participant calendar with a mini month picker beside a weekly schedule of meetings.",
+    asset: "cases/project-planning/thumbnail-light.webp",
+    darkAsset: "cases/project-planning/thumbnail-dark.webp",
+    alt: "Sample project dashboards: a goals and milestones timeline, a budget burn table, and budget guardrails that flag projects at 80% and 100% of their budget.",
     eyebrow: ["Enterprise SaaS", "Design System & Product Design"],
     title: "Project Planning & Cost Management Platform",
     summary:
-      "Designed an enterprise resource planning and budget estimation platform from discovery to release. Built a scalable Figma component library aligned with PrimeNG, mentored a junior designer, and transformed complex spreadsheet workflows into an intuitive planning tool.",
+      "Designed a desktop platform for time tracking, meeting cost, project budgets and portfolio reporting, built on PrimeNG design tokens with Light and Dark modes. Mentored a UX intern and labelled every new piece of business logic as a proposal for client sign-off.",
     cta: "View Case Study",
     view: VIEW.caseProjectPlanning,
   },
   {
     id: "automotive-discovery",
-    asset: "cases/automotive/thumbnail-v2.webp",
-    alt: "UX benchmarking page that lists best practices to adopt and flaws to avoid on vehicle search.",
+    asset: "cases/automotive/thumbnail-light.webp",
+    darkAsset: "cases/automotive/thumbnail-dark.webp",
+    alt: "A contrast check of the marketplace status chips, a vehicle basket with mixed funding and a vehicle detail page with Great Deal and Bid & Buy Now tags.",
     eyebrow: ["European Automotive B2B", "UX Research & Interface Design"],
     title: "Automotive B2B Marketplace Redesign",
     summary:
-      "Redesigned the core vehicle purchasing flow across 6 European markets. Synthesized qualitative interviews and competitor data into a streamlined transaction architecture, eliminating checkout friction and reducing cognitive overload for commercial buyers.",
+      "Redesigned the core vehicle purchasing flow across 7 European markets. Synthesized qualitative interviews and competitor data into a streamlined transaction architecture, eliminating checkout friction and reducing cognitive overload for commercial buyers.",
     cta: "View Discovery Case",
     view: VIEW.caseAutomotive,
   },
 ];
 
 /** Work page order: most recent and highest-impact first. */
-const WORK_CASE_ORDER = ["automotive-discovery", "project-planning", "theming-system"] as const;
+const WORK_CASE_ORDER = ["smart-ticket", "automotive-discovery", "project-planning", "theming-system"] as const;
 
 export const WORK_CASES: readonly WorkCase[] = WORK_CASE_ORDER.map((id) => CASES.find((item) => item.id === id)).filter(
   (item): item is WorkCase => item !== undefined,
