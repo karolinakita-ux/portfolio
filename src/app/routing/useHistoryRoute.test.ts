@@ -35,6 +35,14 @@ describe("useHistoryRoute", () => {
     expect(window.location.hash).toBe("#career");
   });
 
+  it("drops a tracking tag an app wrote after the hash, and keeps the section and the query", () => {
+    const result = start("/about?ref=section-link#career?fbclid=IwAR0abc");
+    expect(result.current[0]).toMatchObject({ view: VIEW.about, anchor: "career" });
+    expect(window.location.pathname + window.location.search + window.location.hash).toBe(
+      "/about?ref=section-link#career",
+    );
+  });
+
   it("turns old hash links and aliases into paths", () => {
     start("/#case-theming");
     expect(window.location.pathname).toBe("/work/data-governance");

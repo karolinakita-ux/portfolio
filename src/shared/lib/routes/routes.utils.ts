@@ -41,9 +41,15 @@ export const viewForPath = (pathname: string): View | null => {
   return segment.includes("/") ? null : resolveView(segment);
 };
 
+/**
+ * The section id in a hash. A tracking tag that an app's link wrapper writes after the hash instead of before it
+ * (#career?fbclid=..., #career&fbclid=...) is not part of it: section ids never hold "?" or "&". The first load
+ * then writes the address without it (useHistoryRoute).
+ */
 const decodeHash = (hash: string): string => {
+  const fragment = hash.replace(/^#/, "").split(/[?&]/, 1)[0] ?? "";
   try {
-    return decodeURIComponent(hash.replace(/^#/, ""));
+    return decodeURIComponent(fragment);
   } catch {
     return ""; // malformed percent-encoding
   }

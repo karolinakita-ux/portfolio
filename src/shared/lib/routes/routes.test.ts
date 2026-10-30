@@ -135,6 +135,20 @@ describe("readRoute", () => {
   it("survives malformed percent-encoding", () => {
     expect(at("/about#%E0%A4%A")).toEqual({ view: VIEW.about, anchor: null });
   });
+
+  it.each([
+    ["/about#career?fbclid=IwAR0abc", VIEW.about, "career"],
+    ["/about#career&fbclid=IwAR0abc", VIEW.about, "career"],
+    ["/about?ref=section-link#career?fbclid=IwAR0abc&utm_source=x", VIEW.about, "career"],
+    ["/#enterprise-cases?fbclid=IwAR0abc", VIEW.work, "enterprise-cases"],
+    ["/about#?fbclid=IwAR0abc", VIEW.about, null],
+  ])("reads the section in %s without the tracking tag an app wrote after the hash", (url, view, anchor) => {
+    expect(at(url)).toEqual({ view, anchor });
+  });
+
+  it("still redirects an old hash link with a tracking tag after it", () => {
+    expect(at("/#about?fbclid=IwAR0abc")).toEqual({ view: VIEW.about, anchor: null });
+  });
 });
 
 describe("hrefForView", () => {
@@ -193,6 +207,10 @@ describe("hash routing (one-page builds, e.g. the claude.ai artifact)", () => {
     });
     expect(readRoute({ pathname: page, hash: "#/about#career" })).toEqual({ view: VIEW.about, anchor: "career" });
     expect(readRoute({ pathname: page, hash: "#about" })).toEqual({ view: VIEW.about, anchor: null }); // old view hash
+    expect(readRoute({ pathname: page, hash: "#/about#career?fbclid=IwAR0abc" })).toEqual({
+      view: VIEW.about,
+      anchor: "career",
+    });
   });
 
   it("keeps the page's own path and query string in addresses", () => {

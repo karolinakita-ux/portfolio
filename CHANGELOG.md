@@ -6,6 +6,13 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.25 - 2026-10-30
+
+#### Fixed
+
+- A link to a section still opens that section when an app adds its tracking tag after the `#` instead of before it (`/about#career?fbclid=...` or `#career&fbclid=...`). The page used to stay at the top. The address bar then shows only the section (`/about#career`).
+- Tests: `readRoute` and `useHistoryRoute` cases for tags after the hash, and a new `e2e/section-links.e2e.ts` that opens section links on an Android phone in Messenger's in-app browser (Chromium). The Messenger user agents for e2e now live in `e2e/helpers/helpers.constants.ts`.
+
 ### 5.14.24 - 2026-10-30
 
 #### Changed
