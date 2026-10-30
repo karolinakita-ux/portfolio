@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.12 - 2026-10-30
+
+#### Changed
+
+- Docs: Karolina's answers of 30 October are project rules now. Figma is the design source: a design change starts there or is mirrored there the same day, and when Figma and the site differ without a decision, she is asked (CLAUDE.md, docs/design.md, the design-sync skill). Figma uses only the Kita Branding variables. She cleans her screenshots before handing them over, so anything that still looks confidential is a question for her, not an edit (CLAUDE.md, the confidentiality reviewer). The case studies keep one order everywhere: Smart Ticket, Automotive, Project Planning, Theme Generator.
+
 ### 5.14.11 - 2026-10-30
 
 #### Changed

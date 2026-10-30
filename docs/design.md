@@ -2,6 +2,8 @@
 
 The site's look comes from Karolina's KitaBranding design system in Figma.
 
+**Figma is the source of truth for the design** (Karolina, 30 October 2026). A design change starts in Figma, or is mirrored there the same day when it starts in code, so the Figma file and `develop` show the same thing; the live site follows at the next release. When the two differ and nobody has decided which is right, ask Karolina rather than copying one over the other. In Figma, use only the Kita Branding variables, text styles and components: no values from other libraries (the old Portfolio library) and no new custom colours.
+
 - Figma file: [Karolina Kita Branding](https://www.figma.com/design/U5ke9Li7uZq06u8VM2VMCB/%F0%9F%A6%86-Karolina-Kita-Branding?node-id=0-1) - colour, typography, spacing, radius, shadow and motion variables in Light and Dark mode. The Work page links to it as "Explore the Figma Workspace".
 
 ## From Figma to code
