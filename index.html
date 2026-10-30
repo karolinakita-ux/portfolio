@@ -188,28 +188,39 @@
           removeEventListener("hashchange", release);
           for (var i = 0; i < inputs.length; i++) removeEventListener(inputs[i], release, true);
         }
-        // The browser's jump puts the element the hash names at the top of the scroll area.
-        function jumped() {
-          if (!jumpTarget) return false;
+        // How far the element the hash names sits from the top of the scroll area, where the browser's jump puts it.
+        function offJump() {
+          if (!jumpTarget) return NaN;
           var top = px(getComputedStyle(root).scrollPaddingTop) + px(getComputedStyle(jumpTarget).scrollMarginTop);
-          return Math.abs(jumpTarget.getBoundingClientRect().top - top) < 1;
+          return jumpTarget.getBoundingClientRect().top - top;
+        }
+        // The browser's own jump puts that element at the top; a fling still running carries the page on by a frame's
+        // worth. Put it right while holding, else undo it: the page goes where it would be without the jump.
+        function undoJump() {
+          var off = offJump();
+          var size = Math.abs(off);
+          var jumped = size < 1 || (size < 60 && 3 * size < Math.abs(scrollY - lastY));
+          if (!jumped) return false;
+          if (holding) align();
+          else scrollTo(scrollX, lastY - off);
+          lastY = scrollY;
+          return true;
         }
         // Browsers jump to the hash when the HTML is parsed (Firefox), when the page's scripts have run (Chromium:
-        // DOMContentLoaded) and may again at load, even after the visitor has scrolled: watch the next two frames.
+        // DOMContentLoaded) and may again at load, even after the visitor has scrolled. Chromium may paint the jump
+        // before it reports the scroll: check in the next two frames, before they are painted, and on each scroll.
         function expectJump() {
           watching++;
           requestAnimationFrame(function () {
+            undoJump();
             requestAnimationFrame(function () {
+              undoJump();
               watching--;
             });
           });
         }
         function onScroll() {
-          if (watching > 0 && jumped()) {
-            if (holding) align();
-            else scrollTo(scrollX, lastY);
-            return;
-          }
+          if (watching > 0 && undoJump()) return;
           lastY = scrollY;
           var target = holding ? find() : null;
           if (holding && (!target || Math.abs(target.getBoundingClientRect().top - placedAt) > 2)) release();

@@ -6,6 +6,16 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.27 - 2026-10-31
+
+#### Fixed
+
+- A visitor who flings the page while it is still loading (a section link on a slow phone) is no longer thrown back to the section when the site's script arrives. The browser's own jump to the section came while the fling was still moving the page, so the page did not recognise it as a jump and showed it (up to 2,000px in a test). It is now undone in the same frame, before it is painted, and the fling carries on.
+
+#### Changed
+
+- Tests: a new Playwright project, `android`, runs the tests tagged `@android` as a Pixel 7 in Messenger's in-app browser, in the full Chromium build, which keeps flinging after a swipe as a phone does (the default headless shell stops with the finger). `e2e/section-links.e2e.ts` uses it, with a test that lets the app's script in mid-fling and checks that no painted frame jumps. CLAUDE.md, CONTRIBUTING.md, the README and the architecture doc mention it.
+
 ### 5.14.26 - 2026-10-30
 
 #### Fixed

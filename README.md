@@ -35,7 +35,7 @@ yarn dev       # http://localhost:5173
 | `yarn dev`             | Dev server with hot reload                                                             |
 | `yarn verify`          | Typecheck, lint (zero warnings), format check, tests, build and prerender              |
 | `yarn test`            | Vitest in watch mode (`yarn test:run` for a single run)                                |
-| `yarn e2e`             | Playwright tests in Chromium, Firefox and WebKit against the production build          |
+| `yarn e2e`             | Playwright in Chromium, Firefox, WebKit and an Android phone, production build         |
 | `yarn build`           | Typecheck, build to `dist/`, then prerender every page (`yarn prerender`)              |
 | `yarn preview`         | Serve the production build locally                                                     |
 | `yarn lint`            | ESLint, zero warnings allowed                                                          |

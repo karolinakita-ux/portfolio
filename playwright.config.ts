@@ -11,6 +11,8 @@
  */
 import { defineConfig, devices } from "@playwright/test";
 
+import { MESSENGER_UA } from "./e2e/helpers/helpers.constants.ts";
+
 // E2E_PORT: a second run at the same time (another checkout or agent) needs its own port.
 const PORT = Number(process.env.E2E_PORT ?? 5190);
 // An IPv4 address, not "localhost": Node binds that to ::1 only, and Firefox may try 127.0.0.1.
@@ -24,6 +26,13 @@ const DESKTOP = { width: 1280, height: 800 };
  * what visitors get. Drop it once Playwright bundles Firefox 159 or later.
  */
 const FIREFOX_PREFS = { "layout.css.scroll-driven-animations.enabled": true };
+/**
+ * Tests tagged @android run only in the "android" project: an Android phone in Messenger's in-app browser (a Chromium
+ * WebView), as Playwright's Pixel 7 (412 x 839 CSS px, touch) with Messenger's user agent. It runs the full Chromium
+ * build (channel "chromium"), whose compositor flings the page on after a swipe; the default headless shell stops
+ * with the finger.
+ */
+const ANDROID = /@android/;
 
 export default defineConfig({
   testDir: "e2e",
@@ -39,12 +48,18 @@ export default defineConfig({
     trace: "retain-on-failure",
   },
   projects: [
-    { name: "chromium", use: { ...devices["Desktop Chrome"], viewport: DESKTOP } },
+    { name: "chromium", grepInvert: ANDROID, use: { ...devices["Desktop Chrome"], viewport: DESKTOP } },
     {
       name: "firefox",
+      grepInvert: ANDROID,
       use: { ...devices["Desktop Firefox"], viewport: DESKTOP, launchOptions: { firefoxUserPrefs: FIREFOX_PREFS } },
     },
-    { name: "webkit", use: { ...devices["Desktop Safari"], viewport: DESKTOP } },
+    { name: "webkit", grepInvert: ANDROID, use: { ...devices["Desktop Safari"], viewport: DESKTOP } },
+    {
+      name: "android",
+      grep: ANDROID,
+      use: { ...devices["Pixel 7"], userAgent: MESSENGER_UA.android, channel: "chromium" },
+    },
   ],
   webServer: {
     command: DEV

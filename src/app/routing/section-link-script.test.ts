@@ -173,6 +173,35 @@ describe("the section-link script in index.html", () => {
     expect(scrollY).toBe(1300);
   });
 
+  it("undoes that jump also when the visitor's fling carries the page on in the same frame", () => {
+    const { scrollTo } = open("/about#career");
+    window.dispatchEvent(new Event("touchstart"));
+    scrollBy(1300);
+    window.dispatchEvent(new Event("DOMContentLoaded"));
+    scrollBy(2000 - 6); // the jump, then 6px more of the fling (upwards)
+    expect(scrollTo).toHaveBeenCalledWith(0, 1300 - 6);
+  });
+
+  it("undoes that jump in the next frame even before the browser reports the scroll", () => {
+    const { scrollTo } = open("/about#career");
+    window.dispatchEvent(new Event("touchstart"));
+    scrollBy(1300);
+    window.dispatchEvent(new Event("DOMContentLoaded"));
+    scrollY = 2000; // jumped; no scroll event yet
+    runFrames();
+    expect(scrollTo).toHaveBeenCalledWith(0, 1300);
+    expect(scrollY).toBe(1300);
+  });
+
+  it("takes a scroll near the section for the visitor's own when it moved the page only a little", () => {
+    const { scrollTo } = open("/about#career");
+    window.dispatchEvent(new Event("touchstart"));
+    scrollBy(1960);
+    window.dispatchEvent(new Event("DOMContentLoaded"));
+    scrollBy(1990); // 30px of the visitor's own scrolling, ending 10px from the section's top
+    expect(scrollTo).not.toHaveBeenCalled();
+  });
+
   it("watches for that jump only in the frames after DOMContentLoaded and load", () => {
     const { scrollTo } = open("/about#career");
     window.dispatchEvent(new Event("touchstart"));

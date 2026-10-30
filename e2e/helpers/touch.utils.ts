@@ -2,7 +2,8 @@ import type { Page } from "@playwright/test";
 
 /*
  * Touch scrolling as a phone sends it, in Chromium (the DevTools protocol's raw touch events: Playwright's own
- * touchscreen only taps). Needs a context with hasTouch, e.g. MESSENGER_ANDROID.
+ * touchscreen only taps), and where the page sits in the frames it paints. Needs a context with hasTouch, e.g.
+ * MESSENGER_ANDROID.
  */
 
 /**
@@ -22,6 +23,58 @@ export async function touchDrag(page: Page, distance: number): Promise<void> {
   await page.waitForTimeout(200); // still: no speed left to fling with
   await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
   await cdp.detach();
+}
+
+/** A quick swipe of `distance` px that lifts while still moving: the page flings on after the finger has left. */
+export async function touchFling(page: Page, distance: number): Promise<void> {
+  const cdp = await page.context().newCDPSession(page);
+  const x = 200;
+  const start = distance > 0 ? 150 : 650;
+  const steps = 10;
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x, y: start }] });
+  for (let step = 1; step <= steps; step++) {
+    const y = start + (distance * step) / steps;
+    await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x, y }] });
+    // 8 ms per step, as a finger moves; Playwright's waitForTimeout is too coarse to leave the fling its speed.
+    await new Promise((resolve) => setTimeout(resolve, 8));
+  }
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+  await cdp.detach();
+}
+
+/**
+ * Records where the page is scrolled in every frame it paints, from the first script on (call before page.goto();
+ * read with largestPaintedStep()). Each frame is read in the first task after its animation callbacks, so a page
+ * script that corrects the position in requestAnimationFrame counts, as it does on screen.
+ */
+export async function recordPaintedScroll(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    const frames: Array<{ t: number; y: number }> = [];
+    Object.assign(window, { __kbPaintedScroll: frames });
+    const channel = new MessageChannel();
+    channel.port1.onmessage = () => frames.push({ t: performance.now(), y: window.scrollY });
+    const frame = () => {
+      channel.port2.postMessage(0);
+      requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+  });
+}
+
+/** The page's clock now (performance.now()), to pass to largestPaintedStep(). */
+export const pageNow = (page: Page): Promise<number> => page.evaluate(() => performance.now());
+
+/** The largest move of the page between two frames painted after `since`, in px. */
+export async function largestPaintedStep(page: Page, since: number): Promise<number> {
+  return page.evaluate((from) => {
+    const frames = (window as unknown as { __kbPaintedScroll: Array<{ t: number; y: number }> }).__kbPaintedScroll;
+    const after = frames.filter((frame) => frame.t >= from);
+    let largest = 0;
+    for (let i = 1; i < after.length; i++) {
+      largest = Math.max(largest, Math.abs((after[i]?.y ?? 0) - (after[i - 1]?.y ?? 0)));
+    }
+    return Math.round(largest);
+  }, since);
 }
 
 /** The scroll position once it has not changed for 10 frames in a row. */

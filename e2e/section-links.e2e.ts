@@ -5,9 +5,10 @@
  *   loaded (seconds on a slow phone), and the app only moves focus there.
  * - A visitor who starts scrolling while the app loads keeps their place: neither the browser's own jump to the hash
  *   nor the app pulls them back.
- * - On an Android phone in Messenger's in-app browser (a Chromium WebView): the heading stays in place when the window
- *   grows after the app has started (the keyboard closing, a sheet pulled up: past the short-screen layout the header
- *   turns sticky), until the visitor touches the page.
+ * - On an Android phone in Messenger's in-app browser (a Chromium WebView; tag @android: the "android" project): the
+ *   heading stays in place when the window grows after the app has started (the keyboard closing, a sheet pulled up:
+ *   past the short-screen layout the header turns sticky), until the visitor touches the page; a fling still running
+ *   when the app's script arrives carries on, without the browser's jump to the hash.
  * - An app's link wrapper may write its tracking tag after the hash (#career?fbclid=...): the link still lands, and
  *   the address keeps only the section.
  * Production build: the dev server sends an empty page, so there the app lands the link itself, once.
@@ -16,9 +17,15 @@ import { expect, test, type Page } from "@playwright/test";
 
 import { ANCHOR_HELD_ATTRIBUTE } from "#app/routing/anchor.constants.ts";
 
-import { MESSENGER_ANDROID } from "./helpers/helpers.constants.ts";
 import { appRan, holdScriptFiles, waitForApp } from "./helpers/page.utils.ts";
-import { settledScrollY, touchDrag } from "./helpers/touch.utils.ts";
+import {
+  largestPaintedStep,
+  pageNow,
+  recordPaintedScroll,
+  settledScrollY,
+  touchDrag,
+  touchFling,
+} from "./helpers/touch.utils.ts";
 
 const DEV = process.env.E2E_DEV === "1";
 const NO_HTML = "the dev server sends an empty page: the app lands the link with one scroll";
@@ -103,10 +110,7 @@ test.describe("a section link", () => {
   });
 });
 
-test.describe("a section link opened in Messenger on an Android phone", () => {
-  test.skip(({ browserName }) => browserName !== "chromium", "Android's in-app browsers are Chromium WebViews");
-  test.use(MESSENGER_ANDROID);
-
+test.describe("a section link opened in Messenger on an Android phone", { tag: "@android" }, () => {
   test("lands on the section's heading, below the header", async ({ page }) => {
     await page.goto("/about#career");
     await waitForApp(page);
@@ -133,6 +137,23 @@ test.describe("a section link opened in Messenger on an Android phone", () => {
     expect(visitorY).toBeLessThan(landed - 300);
     await startApp(page, release);
     expect(Math.abs((await settledScrollY(page)) - visitorY)).toBeLessThanOrEqual(1);
+  });
+
+  test("a fling still running when the app's script arrives carries on: the browser's jump is never painted", async ({
+    page,
+  }) => {
+    test.skip(DEV, NO_HTML);
+    await recordPaintedScroll(page);
+    const release = await openBeforeApp(page, "/work/smart-ticket#ticket-outcomes");
+    await expectPlaced(page, "ticket-outcomes");
+    for (let drag = 0; drag < 3; drag++) await touchDrag(page, 450); // back up the page, well away from the section
+    await settledScrollY(page);
+    await touchFling(page, 300);
+    const since = await pageNow(page);
+    await startApp(page, release); // Chromium jumps to the hash at DOMContentLoaded, mid-fling
+    await settledScrollY(page);
+    // A fling moves the page some tens of px per frame; the jump back to the section would be over 1000px.
+    expect(await largestPaintedStep(page, since)).toBeLessThan(250);
   });
 
   test("keeps the heading in place when the window grows past the short-screen layout", async ({ page }) => {
