@@ -13,7 +13,7 @@ function Header({ view = VIEW.work, theme = "light" }: { view?: View; theme?: Th
 }
 
 const navLinks = () => within(screen.getByRole("navigation", { name: "Primary" })).getAllByRole("link");
-const themeGroup = () => screen.getByRole("group", { name: "Color theme" });
+const themeGroup = () => screen.getByRole("group", { name: "Colour theme" });
 const pillsIn = (element: HTMLElement) => [...element.querySelectorAll<HTMLElement>("[data-pill]")];
 /** The one pill inside an item; fails when there is none or more than one. */
 const pillOf = (element: HTMLElement) => {

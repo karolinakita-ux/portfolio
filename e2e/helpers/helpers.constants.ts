@@ -18,6 +18,6 @@ export const THEME_LABEL: Readonly<Record<Theme, string>> = { light: "Light them
 export const SELECTOR = {
   primaryNav: 'nav[aria-label="Primary"]',
   navPills: 'nav[aria-label="Primary"] [data-pill]',
-  themeGroup: '[role="group"][aria-label="Color theme"]',
-  themePills: '[role="group"][aria-label="Color theme"] [data-pill]',
+  themeGroup: '[role="group"][aria-label="Colour theme"]',
+  themePills: '[role="group"][aria-label="Colour theme"] [data-pill]',
 } as const;

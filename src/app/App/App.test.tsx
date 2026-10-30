@@ -184,7 +184,7 @@ describe("App", () => {
     const header = screen.getByRole("banner");
     const logo = within(header).getByRole("link", { name: "K.Kita - Karolina Kita, home page" });
     const nav = within(header).getByRole("navigation", { name: "Primary" });
-    const themeSwitch = within(header).getByRole("group", { name: "Color theme" });
+    const themeSwitch = within(header).getByRole("group", { name: "Colour theme" });
 
     expect(logo.compareDocumentPosition(nav) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(nav.compareDocumentPosition(themeSwitch) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();

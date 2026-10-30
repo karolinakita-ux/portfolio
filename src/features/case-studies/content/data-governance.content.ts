@@ -39,15 +39,15 @@ export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
   summary: [
     {
       title: "The context",
-      body: "The platform is an enterprise data governance tool deployed across multi-tenant environments, including healthcare organizations and public sector agencies.",
+      body: "The platform is an enterprise data governance tool deployed across multi-tenant environments, including healthcare organisations and public sector agencies.",
     },
     {
       title: "The problem",
-      body: "To support institutional white-labeling, executive management initially proposed an open color picker allowing administrators to freely rebrand the user interface. However, unrestricted customization posed a severe usability risk: non-designer admins could unintentionally choose low-contrast color combinations, making dense data views unreadable and violating mandatory accessibility requirements (WCAG 2.1 AA).",
+      body: "To support institutional white-labelling, executive management initially proposed an open colour picker allowing administrators to freely rebrand the user interface. However, unrestricted customisation posed a severe usability risk: non-designer admins could unintentionally choose low-contrast colour combinations, making dense data views unreadable and violating mandatory accessibility requirements (WCAG 2.1 AA).",
     },
   ],
   assumption:
-    "Give client administrators complete freedom to apply their corporate brand colors to any interface component.",
+    "Give client administrators complete freedom to apply their corporate brand colours to any interface component.",
   reality: [
     lead(
       "High risk of human error",
@@ -73,11 +73,11 @@ export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
       bullets: [
         lead(
           "Scoped Brand Surfaces",
-          "Limited customization to a few named surfaces - the header bar, action buttons, navigation sidebar and table selection - while table text and canvas areas stay on neutral system colors.",
+          "Limited customisation to a few named surfaces - the header bar, action buttons, navigation sidebar and table selection - while table text and canvas areas stay on neutral system colours.",
         ),
         lead(
           "Contextual Guidance",
-          "Every color field shows its contrast rating and a short note on what it affects, and a live preview updates as admins edit, before anything reaches users.",
+          "Every colour field shows its contrast rating and a short note on what it affects, and a live preview updates as admins edit, before anything reaches users.",
         ),
         lead(
           "Structured Theme Editor",
@@ -88,17 +88,17 @@ export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
     {
       ...shot("derived-states-buttons-nav"),
       alt: "State rules for four brand colours: each Create button in default, hover (+30% black), pressed (+30% white) and disabled (40% opacity) states with its label contrast ratio, and navigation tabs on dark and light backgrounds.",
-      title: "Automated Component States from One Base Color",
+      title: "Automated Component States from One Base Colour",
       intro:
-        "A simple system rule for developers: administrators pick one base color, and every interactive state is calculated from it.",
+        "A simple system rule for developers: administrators pick one base colour, and every interactive state is calculated from it.",
       bullets: [
         lead(
           "No Manual State Tuning",
-          "Instead of asking admins for separate hover, pressed and disabled colors, the system mixes the base color: +30% black for hover, +30% white for pressed and 40% opacity for disabled.",
+          "Instead of asking admins for separate hover, pressed and disabled colours, the system mixes the base colour: +30% black for hover, +30% white for pressed and 40% opacity for disabled.",
         ),
         lead(
           "Automatic Label Contrast",
-          "Labels and icons switch between white and near-black (#12141A), whichever contrasts more with the background, so text stays readable on any brand color.",
+          "Labels and icons switch between white and near-black (#12141A), whichever contrasts more with the background, so text stays readable on any brand colour.",
         ),
         lead(
           "Navigation Tabs",
@@ -114,11 +114,11 @@ export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
       bullets: [
         lead(
           "Clear Selection States",
-          "The active sidebar item and selected table row use the full chosen color, hover uses a 35% tint, and pressed adds 8% black, so dense records stay easy to scan.",
+          "The active sidebar item and selected table row use the full chosen colour, hover uses a 35% tint, and pressed adds 8% black, so dense records stay easy to scan.",
         ),
         lead(
           "Readable Text in Every State",
-          "Text color is recalculated for each state, so a light or dark brand color never hides the row or item label.",
+          "Text colour is recalculated for each state, so a light or dark brand colour never hides the row or item label.",
         ),
         lead(
           "One Reusable Function",
@@ -131,7 +131,7 @@ export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
       alt: "Three themes - System Default, Northwind Health and Harbor Bank - each shown under typical vision, protanopia, deuteranopia and tritanopia, with a note that status colours always come with an icon and a text label.",
       title: "Advocating for Accessibility in Team Reviews",
       intro:
-        "A visual comparison matrix I presented during a team meeting to demonstrate why color guardrails were critical for real users.",
+        "A visual comparison matrix I presented during a team meeting to demonstrate why colour guardrails were critical for real users.",
       bullets: [
         lead(
           "Demonstrating Real Usability Risks",
@@ -143,16 +143,16 @@ export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
         ),
         lead(
           "Aligning the Team on Accessibility",
-          "Used this practical comparison to convince stakeholders and developers that we needed built-in contrast rules, and status colors that always come with an icon and a text label, not an unconstrained color picker.",
+          "Used this practical comparison to convince stakeholders and developers that we needed built-in contrast rules, and status colours that always come with an icon and a text label, not an unconstrained colour picker.",
         ),
       ],
     },
     {
       ...shot("color-vision-preview"),
       alt: "Branding page with the Harbor Bank theme's Accessibility tab: typical vision and tritanopia previews side by side and four contrast checks that all pass.",
-      title: "Color-Vision Accessibility Preview (Phase 2)",
+      title: "Colour-Vision Accessibility Preview (Phase 2)",
       intro:
-        "A designed preview in the theme's details panel to help administrators see the impact of their color choices before publishing.",
+        "A designed preview in the theme's details panel to help administrators see the impact of their colour choices before publishing.",
       bullets: [
         lead(
           "Accessibility Tab",
@@ -160,7 +160,7 @@ export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
         ),
         lead(
           "Showing Real Usability Issues",
-          "Side-by-side previews show admins how colors that look distinct to them can blur together for other users.",
+          "Side-by-side previews show admins how colours that look distinct to them can blur together for other users.",
         ),
         lead(
           "Moved to Phase 2",
@@ -170,7 +170,7 @@ export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
     },
   ],
   safetyIntro:
-    "Changing visual themes in an enterprise multi-tenant tool directly affects active users across organizations. To prevent critical mistakes and broken layouts, I designed three clear safety mechanisms into the publishing workflow.",
+    "Changing visual themes in an enterprise multi-tenant tool directly affects active users across organisations. To prevent critical mistakes and broken layouts, I designed three clear safety mechanisms into the publishing workflow.",
   safety: [
     {
       ...shot("theme-library"),
@@ -222,19 +222,19 @@ export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
     },
   ],
   deliveryIntro:
-    "To launch quickly while keeping enterprise standards high, our team prioritized core functionality for the MVP and moved advanced educational tools to the next release.",
+    "To launch quickly while keeping enterprise standards high, our team prioritised core functionality for the MVP and moved advanced educational tools to the next release.",
   delivery: [
     {
       title: "Self-Service Theming",
       status: { label: "Shipped · MVP", tone: "shipped" },
       wide: true,
-      body: "Launched the administrative customizer, allowing enterprise clients to rebrand key portal areas on their own without filing custom engineering tickets.",
+      body: "Launched the administrative customiser, allowing enterprise clients to rebrand key portal areas on their own without filing custom engineering tickets.",
       visual: { kind: "tags", items: ["Enterprise", "Healthcare", "Public sector"] },
     },
     {
       title: "Automated Contrast & State Rules",
       status: { label: "Shipped · MVP", tone: "shipped" },
-      body: "Integrated baseline WCAG 2.1 AA contrast checks, automatic label colors (white or near-black) and state colors calculated from one base color, so components stay accessible by default.",
+      body: "Integrated baseline WCAG 2.1 AA contrast checks, automatic label colours (white or near-black) and state colours calculated from one base colour, so components stay accessible by default.",
       visual: {
         kind: "labels",
         items: [
@@ -250,14 +250,14 @@ export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
       visual: { kind: "checks", items: ["Locked system theme", "Duplicate to customize", "Publish confirmation"] },
     },
     {
-      title: "Color-Vision Accessibility Preview",
+      title: "Colour-Vision Accessibility Preview",
       status: { label: "Phase 2 · Roadmap", tone: "roadmap" },
       wide: true,
-      body: "While the contrast rules launched in the MVP, the interactive preview simulating color blindness was documented as a Phase 2 feature for future sprints.",
+      body: "While the contrast rules launched in the MVP, the interactive preview simulating colour blindness was documented as a Phase 2 feature for future sprints.",
       visual: {
         kind: "phases",
         from: { label: "MVP", note: "Contrast & state rules" },
-        to: { label: "Phase 2", note: "Color-vision preview" },
+        to: { label: "Phase 2", note: "Colour-vision preview" },
       },
     },
   ],
@@ -266,7 +266,7 @@ export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
   engineering: [
     {
       title: "A Short Rule Set Instead of Endless Hex Codes",
-      body: "Documented every state as a rule on the base color: +30% black for hover, +30% white for pressed and 40% opacity for disabled; the selected sidebar item or table row uses the full color, with a 35% tint on hover and +8% black when pressed; labels switch to white or near-black, whichever contrasts more.",
+      body: "Documented every state as a rule on the base colour: +30% black for hover, +30% white for pressed and 40% opacity for disabled; the selected sidebar item or table row uses the full colour, with a 35% tint on hover and +8% black when pressed; labels switch to white or near-black, whichever contrasts more.",
       visual: {
         kind: "swatches",
         items: [
@@ -279,7 +279,7 @@ export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
     },
     {
       title: "Collaborative Implementation",
-      body: "Worked closely with frontend developers so they could turn these rules into one shared stylesheet function, keeping component behavior consistent across any client palette.",
+      body: "Worked closely with frontend developers so they could turn these rules into one shared stylesheet function, keeping component behaviour consistent across any client palette.",
       visual: {
         kind: "code",
         label: "Selection rules as stylesheet variables",
@@ -295,7 +295,7 @@ export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
   takeaways: [
     {
       title: "Guardrails Protect Real Usability",
-      body: "In enterprise tools, unlimited user freedom often leads to broken interfaces. Designing sensible boundaries - like locking core text contrast and restricting brand customization to key areas - protects legibility without frustrating administrators.",
+      body: "In enterprise tools, unlimited user freedom often leads to broken interfaces. Designing sensible boundaries - like locking core text contrast and restricting brand customisation to key areas - protects legibility without frustrating administrators.",
     },
     {
       title: "Designing for High-Impact Mistakes",

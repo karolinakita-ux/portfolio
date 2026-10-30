@@ -2,7 +2,7 @@ import type { FaqItem, Milestone, Principle } from "./about.types.ts";
 
 export const ABOUT_INTRO: readonly string[] = [
   "I am a Senior Product Designer with a background in psychology. Since 2018, I have been turning complicated software into clear, practical tools that people actually enjoy using. My psychology foundation helps me understand how people think, make decisions, and deal with cognitive overload in fast-paced work environments.",
-  "I specialize in data-heavy enterprise workflows, B2B SaaS platforms, and multi-brand design systems. Working closely with product managers and engineers, I bridge the gap between human behavior, design consistency, and technical feasibility.",
+  "I specialise in data-heavy enterprise workflows, B2B SaaS platforms, and multi-brand design systems. Working closely with product managers and engineers, I bridge the gap between human behaviour, design consistency, and technical feasibility.",
 ];
 
 /** The hero's buttons, under the intro: the CV (secondary), then the case studies (primary). */
@@ -22,12 +22,12 @@ export const MILESTONES: readonly Milestone[] = [
     title: "Academic Foundation in Psychology",
     org: "University of Zielona Góra - MSc in Psychology",
     focus:
-      "Built a strong foundation in human behavior, decision-making, and research methodology. Conducted quantitative and qualitative studies, learning how to analyze user needs objectively and design interfaces that reduce cognitive strain.",
+      "Built a strong foundation in human behaviour, decision-making, and research methodology. Conducted quantitative and qualitative studies, learning how to analyse user needs objectively and design interfaces that reduce cognitive strain.",
     tags: [
       "Cognitive Psychology",
       "Quantitative Research",
       "Qualitative Research",
-      "Behavioral Analysis",
+      "Behavioural Analysis",
       "Research Methodology",
     ],
   },
@@ -80,7 +80,7 @@ export const FAQ: { title: string; intro: string; items: readonly FaqItem[] } = 
       id: "psychology",
       question: "How does a background in psychology shape your design work?",
       answer:
-        "Psychology helps me understand how people process information, make choices, and handle heavy workloads. In complex business tools, good design reduces mental fatigue by organizing information clearly and preventing mistakes before they happen.",
+        "Psychology helps me understand how people process information, make choices, and handle heavy workloads. In complex business tools, good design reduces mental fatigue by organising information clearly and preventing mistakes before they happen.",
     },
     {
       id: "engineers",
@@ -89,7 +89,7 @@ export const FAQ: { title: string; intro: string; items: readonly FaqItem[] } = 
       points: [
         [
           "Product Managers",
-          "Partner early to understand business goals, prioritize requirements, and define realistic delivery phases.",
+          "Partner early to understand business goals, prioritise requirements, and define realistic delivery phases.",
         ],
         [
           "Frontend Developers",
@@ -114,7 +114,7 @@ export const PRINCIPLES: readonly Principle[] = [
   {
     id: "utility",
     title: "Clarity First",
-    body: "Complex tools don't have to feel messy. I organize information so users can quickly find what they need without feeling lost in buttons and tables.",
+    body: "Complex tools don't have to feel messy. I organise information so users can quickly find what they need without feeling lost in buttons and tables.",
   },
   {
     id: "edge-cases",

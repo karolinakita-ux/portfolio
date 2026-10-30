@@ -13,7 +13,7 @@ const meta = {
   args: {
     src: "/assets/cases/project-planning/calendar-week-view-light.webp",
     darkSrc: "/assets/cases/project-planning/calendar-week-view-dark.webp",
-    alt: "Month overview in week view: a participant and organizer switch, a project filter, a mini calendar with meeting counts and a weekly grid of meetings with a current-time line.",
+    alt: "Month overview in week view: a Participant and Organizer switch, a project filter, a mini calendar with meeting counts, the selected day's meetings and a weekly grid of meetings with a current-time line.",
   },
 } satisfies Meta<typeof Screenshot>;
 
@@ -35,7 +35,7 @@ export const Frameless: Story = {
   args: {
     src: "/assets/cases/project-planning/brand-primary-actions-light.webp",
     darkSrc: "/assets/cases/project-planning/brand-primary-actions-dark.webp",
-    alt: "Brand primary colour tokens for interactive actions: primary, hover, active, contrast and subtle, each with its hex value and contrast ratio.",
+    alt: "Brand primary tokens for interactive actions: primary #005D8F, hover, active, contrast and subtle, each with its token name, hex value, contrast ratio and AAA badge.",
     frameless: true,
   },
 };

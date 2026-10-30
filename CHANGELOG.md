@@ -6,6 +6,16 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.10 - 2026-10-30
+
+#### Changed
+
+- Copy: the whole site now uses British spelling, like the CV: colour, organisation, behaviour, customise, specialise, analyse, prioritise, tokenised, white-labelling and artefacts. This changes About, the Work page (the Theme Generator card, the Behind the Design banner and the confidentiality note) and the Theme Generator, Smart Ticket and Project Planning cases. Only the spelling changed, and Smart Ticket writes "Dark mode" as the rest of the site does.
+- Theme Generator: the card titles read "Automated Component States from One Base Colour" and "Colour-Vision Accessibility Preview". Product labels quoted from the screenshots ("Duplicate to customize", the "Participant / Organizer" switch) and the fictional "Harbor Bank" stay as the screens show them.
+- Header: screen readers now call the light / dark switch "Colour theme".
+- Link previews and search: the pages say they are in British English (og:locale en_GB).
+- Tests and docs: a new check fails when common US spellings appear in the copy, the search copy and structured data, llms.txt, the link previews, the components' text and label constants, the Storybook stories or Storybook's Welcome page. Quotes from real people and the screenshot labels are exempt. CLAUDE.md and the copy reviewer record the rule and the words to check by eye (licence / license, practice / practise, programme / program). The Screenshot stories use the site's alt texts word for word.
+
 ### 5.14.9 - 2026-10-30
 
 #### Changed

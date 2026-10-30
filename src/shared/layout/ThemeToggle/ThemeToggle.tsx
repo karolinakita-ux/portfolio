@@ -13,7 +13,7 @@ import type { ThemeToggleProps } from "./ThemeToggle.types.ts";
 export function ThemeToggle({ theme, onChange }: ThemeToggleProps) {
   const groupRef = useSlidingPill<HTMLDivElement>(theme);
   return (
-    <div ref={groupRef} role="group" aria-label="Color theme" className={styles.group}>
+    <div ref={groupRef} role="group" aria-label="Colour theme" className={styles.group}>
       {THEME_OPTIONS.map(({ value, label, Icon }) => (
         <button
           key={value}

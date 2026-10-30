@@ -4,8 +4,9 @@ import { join, relative, sep } from "node:path";
 import { isValidElement, type ReactElement, type ReactNode } from "react";
 import { describe, expect, it } from "vitest";
 
-import { PAGE_DESCRIPTIONS, PAGE_NAMES } from "#app/seo/seo.content.ts";
-import { ABOUT_INTRO, FAQ, MILESTONES, PRINCIPLES } from "#features/about/about.content.ts";
+import { HOME_NAME, PAGE_DESCRIPTIONS, PAGE_NAMES } from "#app/seo/seo.content.ts";
+import { headFor, llmsTxt } from "#app/seo/seo.utils.ts";
+import { ABOUT_ACTIONS, ABOUT_INTRO, FAQ, MILESTONES, PRINCIPLES } from "#features/about/about.content.ts";
 import { ACCESSIBILITY } from "#features/accessibility/accessibility.content.tsx";
 import type { AnyCase, ShowcaseCard } from "#features/case-studies/case-studies.types.ts";
 import { AUTOMOTIVE_CASE } from "#features/case-studies/content/automotive.content.ts";
@@ -16,7 +17,15 @@ import { CONTACT } from "#features/contact/contact.content.ts";
 import { CV, CV_PAGE } from "#features/cv/cv.content.ts";
 import { formatMonthYear } from "#features/cv/dates/dates.utils.ts";
 import { PRIVACY } from "#features/privacy/privacy.content.tsx";
-import { HERO_LEAD, PROCESS_BANNER, TESTIMONIALS, WORK_CASES, WORK_INTRO } from "#features/work/work.content.ts";
+import {
+  HERO_ACTIONS,
+  HERO_LEAD,
+  PROCESS_BANNER,
+  RECOMMENDATIONS_LINK_LABEL,
+  TESTIMONIALS,
+  WORK_CASES,
+  WORK_INTRO,
+} from "#features/work/work.content.ts";
 import { PROFILE } from "#shared/content/profile.ts";
 import { linkRef } from "#shared/lib/analytics/payload.utils.ts";
 import { VIEW, VIEW_PATHS, VIEW_TITLES, VIEWS } from "#shared/lib/routes/routes.constants.ts";
@@ -33,6 +42,7 @@ const ASSET_PATH = /^(?:[a-z0-9-]+\/)*[a-z0-9-]+\.(png|jpe?g|webp)$/;
  *   - Short hyphens with spaces ("word - word", "2019 - 2026"), never en or em dashes.
  *   - The CV is plain text for applicant tracking systems: no curly quotes either, ISO dates.
  *   - H1 headings never end with a trailing period.
+ *   - British spelling everywhere, like the CV; quotes from real people, names and screenshot labels stay as written.
  *   - Every case-study bullet opens with a bold lead-in term and a colon.
  *   - Navigation targets and image file names are valid on Netlify (Linux: case-sensitive).
  *   - Client and product names that may not be published never appear: not in a case study, not in
@@ -117,6 +127,123 @@ describe("copy style", () => {
   it("never ends an H1 with a period", () => {
     const h1s = [...CASES.map((c) => c.title), CONTACT.title, PRIVACY.title, ACCESSIBILITY.title, CV.header.name];
     for (const title of h1s) expect(title.trimEnd()).not.toMatch(/\.$/);
+  });
+});
+
+/**
+ * Common US spellings, as whole words in any case with their inflections: the site writes British English
+ * everywhere, like the CV (Karolina, 2026-10-30). -ize and -yze (size, seize, prize and their kin keep the z), -or
+ * for -our, -er for -re, one l where British doubles it (with their common prefixes: multicolor, dishonor,
+ * relabeled), and single words. Not listed, because British English uses them too: "dialog" (a software dialog),
+ * "program" (software; a plan is a programme), "license" (the verb; the noun is licence) and "practice" (the noun;
+ * the verb is practise, so practiced and practicing are listed). Their other senses are checked by eye.
+ */
+const US_SPELLING = new RegExp(
+  [
+    String.raw`\b(?!(?:re|down|up|over|under|out|cap)?siz|seiz|priz|maiz|baiz)[a-z]+[iy]z(?:e|es|ed|ing|ation|ations|er|ers|able)\b`,
+    String.raw`\b(?:multi|water|tri|dis|re|un|mis)?(?:col|behavi|fav|hon|hum|lab|neighb|flav|harb|rum|vap|endeav|arm|od|cand|vig|val|sav|parl|clam|rig|tum|splend|ard|ferv|demean)or(?:s|ed|ing|ful|fully|less|al|ally|ite|ites|able|ably|y|blind|hood|hoods)?\b`,
+    String.raw`\b(?:cent|theat|fib|lit|somb|calib|spect|lust|sab|(?:kilo|centi|milli)met)ers?\b|\bcenter(?:ed|ing|piece|pieces)\b`,
+    String.raw`\b(?:re|un|mis)?(?:label|model|travel|cancel|level|signal|fuel|total|channel|funnel|tunnel|counsel|marvel|jewel|dial|duel|quarrel|rival|shovel|unravel|panel|pedal|equal|initial|spiral)(?:ed|ing)\b`,
+    String.raw`\b(?:travel|model|label|level|jewel)ers?\b|\bcounselors?\b|\bjewelry\b|\bmarvelous(?:ly)?\b`,
+    String.raw`\b(?:enroll(?:s|ment|ments)?|fulfill(?:s|ment|ments)?|skillful(?:ly)?|willful(?:ly)?|installments?)\b`,
+    String.raw`\b(?:gray(?:s|ed|ing|ish|scale)?|defenses?|offenses?|pretenses?|artifacts?|catalog(?:s|ed|ing)?|analogs?|skeptic(?:al|ally|ism|s)?)\b`,
+    String.raw`\b(?:acknowledgments?|practic(?:ed|ing)|esthetics?|maneuver(?:s|ed|ing|able)?)\b`,
+  ].join("|"),
+  "gi",
+);
+
+/** Written as they are: a fictional company's name, and product labels quoted as the screenshots show them. */
+const KEPT_AS_WRITTEN = /\bHarbor Bank\b|\bDuplicate to customize\b|\bParticipant (?:\/|and) Organizer\b/gi;
+
+/** Strings in content data that are code or a real person's words, not the site's copy. */
+const NOT_COPY = new Set(["id", "asset", "darkAsset", "detail", "color", "background", "quote"]);
+
+/** A value that is code under a key that elsewhere holds copy: a view id ("View CV" is copy), a stylesheet's lines. */
+const isCode = (key: string, item: unknown, parent: object): boolean =>
+  (key === "view" && typeof item === "string" && isView(item)) ||
+  (key === "lines" && "kind" in parent && parent.kind === "code");
+
+/** collectText without ids, image paths, CSS values, stylesheet lines and quotes from real people. */
+function collectCopy(value: unknown): string[] {
+  if (isValidElement(value)) return collectCopy((value.props as { children?: ReactNode }).children);
+  if (Array.isArray(value)) return value.flatMap(collectCopy);
+  if (value !== null && typeof value === "object")
+    return Object.entries(value).flatMap(([key, item]) =>
+      NOT_COPY.has(key) || isCode(key, item, value) ? [] : collectCopy(item),
+    );
+  return collectText(value).filter((text) => !/^(?:https?|mailto):/.test(text));
+}
+
+/** US spellings in texts, ignoring the kept phrases and web addresses. */
+const usSpellings = (texts: readonly string[]): string[] =>
+  texts.flatMap((text) =>
+    (
+      text
+        .replace(KEPT_AS_WRITTEN, "")
+        .replace(/(?:https?|mailto):[^\s)"]+/g, "")
+        .match(US_SPELLING) ?? []
+    ).map((word) => `${word}: ${text.slice(0, 80)}`),
+  );
+
+/** Source files with visible text: components, stories, label constants, Storybook's pages and toolbar. */
+const SOURCE_WITH_TEXT = /\.(?:tsx?|mdx)$/;
+/** Copy files are checked as data; styles, types and tests are code; icon names are lucide's ("maximize-2"). */
+const SOURCE_WITHOUT_TEXT = /\.(?:test|content|styles|types|d)\.tsx?$|\/icons\//;
+/** CSS media queries in code ("(prefers-color-scheme: dark)"). */
+const MEDIA_QUERY = /^\(prefers-[a-z-]+: [a-z-]+\)$/;
+
+describe("British spelling", () => {
+  it("in the copy, the search copy, the structured data, llms.txt and the link previews (quotes stay verbatim)", () => {
+    const html = readFileSync(join(process.cwd(), "index.html"), "utf8");
+    const meta = [...html.matchAll(/<meta\s[^>]*content="([^"]*)"/g)].map((match) => match[1] ?? "");
+    const title = /<title>([^<]*)<\/title>/.exec(html)?.[1] ?? "";
+    const siteJsonLd = JSON.parse(
+      /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(html)?.[1] ?? "{}",
+    ) as unknown;
+    const pageJsonLd = VIEWS.map((view) => headFor(view).jsonLd);
+    const copy = [
+      ...collectCopy({
+        ...ALL_CONTENT,
+        ABOUT_ACTIONS,
+        HERO_ACTIONS,
+        RECOMMENDATIONS_LINK_LABEL,
+        HOME_NAME,
+        PAGE_DESCRIPTIONS,
+        PAGE_NAMES,
+        VIEW_TITLES,
+        siteJsonLd,
+        pageJsonLd,
+      }),
+      ...meta,
+      title,
+      ...llmsTxt().split("\n"),
+    ];
+    expect(copy.length).toBeGreaterThan(1000);
+    expect(copy).toContain("UX case study");
+    expect(copy).toContain(CONTACT.cv.view);
+    expect(usSpellings(copy)).toEqual([]);
+    expect(html).toContain('<meta property="og:locale" content="en_GB" />');
+  });
+
+  it("in the components' own text and labels, the label constants, the stories and Storybook's pages", () => {
+    const files = [...publishedFiles("src"), ...publishedFiles(".storybook")].filter(
+      (path) => SOURCE_WITH_TEXT.test(path) && !SOURCE_WITHOUT_TEXT.test(path),
+    );
+    expect(files.length).toBeGreaterThan(200);
+    expect(files).toContain(".storybook/Welcome.mdx");
+    const hits = files.flatMap((path) => {
+      const code = readFileSync(join(process.cwd(), path), "utf8")
+        .replace(/\/\*[\s\S]*?\*\//g, "")
+        .replace(/(^|\s)\/\/.*$/gm, "$1");
+      // String literals, template literals and JSX text; an MDX page is prose throughout.
+      const strings = path.endsWith(".mdx")
+        ? [code]
+        : [...code.matchAll(/"([^"\n]*)"|`([^`]*)`|[>}]([^<>{}]+)[<{]/g)].map(
+            (match) => match[1] ?? match[2] ?? match[3] ?? "",
+          );
+      return usSpellings(strings.filter((text) => !MEDIA_QUERY.test(text))).map((hit) => `${path}: ${hit}`);
+    });
+    expect(hits).toEqual([]);
   });
 });
 

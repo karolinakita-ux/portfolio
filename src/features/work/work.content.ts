@@ -65,7 +65,7 @@ const CASES: readonly WorkCase[] = [
     eyebrow: ["B2B Platform", "Feature Design"],
     title: "Enterprise White-Label Theme Generator",
     summary:
-      "Replaced a raw CSS configuration panel with a visual theme generator for non-technical users. Automated text color selection based on contrast so custom themes stayed readable, and provided developers with clear rules for calculating interactive states like hovers.",
+      "Replaced a raw CSS configuration panel with a visual theme generator for non-technical users. Automated text colour selection based on contrast so custom themes stayed readable, and provided developers with clear rules for calculating interactive states like hovers.",
     cta: "View Case Study",
     view: VIEW.caseDataGovernance,
   },
@@ -105,7 +105,7 @@ export const WORK_CASES: readonly WorkCase[] = WORK_CASE_ORDER.map((id) => CASES
 /** Work page banner below the case-study grid. */
 export const PROCESS_BANNER = {
   title: "Behind the Design",
-  body: "I treat design handoff seriously. Components and flows are organized with clear states, responsive layouts, and practical documentation so developers don't have to guess how things should behave.",
+  body: "I treat design handoff seriously. Components and flows are organised with clear states, responsive layouts, and practical documentation so developers don't have to guess how things should behave.",
   linkLabel: "Explore the Figma Workspace",
   /** Shown while PROFILE.repositoryUrl is set. */
   sourceLinkLabel: "Explore the Code on GitHub",

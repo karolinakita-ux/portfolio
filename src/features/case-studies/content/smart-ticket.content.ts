@@ -33,13 +33,13 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
       label: "Key Outcome",
       wide: true,
       value:
-        "Redesigned the 2022 transit concept in Figma: created a tokenized WCAG 2.2 design system, designed offline ticketing flows, and framed a municipal web console.",
+        "Redesigned the 2022 transit concept in Figma: created a tokenised WCAG 2.2 design system, designed offline ticketing flows, and framed a municipal web console.",
     },
   ],
   notice: {
     tone: "info",
     label: "About this case study",
-    text: "The original 2022 concept was handed over to developers after client approval. In 2026, I revisited the initial research to rebuild the product for my portfolio - creating a tokenized design system, privacy-safe admin flows, and aligning it with real European transit data standards (GTFS-RT, SIRI).",
+    text: "The original 2022 concept was handed over to developers after client approval. In 2026, I revisited the initial research to rebuild the product for my portfolio - creating a tokenised design system, privacy-safe admin flows, and aligning it with real European transit data standards (GTFS-RT, SIRI).",
   },
   summaryTitle: "Executive Summary",
   summaryLead: "Ticketing apps usually fail riders at the worst moment.",
@@ -260,7 +260,7 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
       {
         id: "profile-security",
         title: "Profile and security",
-        intro: "Mostly readable in 2022, but every colour was a one-off value that could not support Dark Mode.",
+        intro: "Mostly readable in 2022, but every colour was a one-off value that could not support Dark mode.",
         before: {
           label: "Legacy concept (2022)",
           text: "Most text passed, but grey helper text on the security screen reached only 2.5:1. None of the colours were linked to a system, so one change meant editing every screen.",

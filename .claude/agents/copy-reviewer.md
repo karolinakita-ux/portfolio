@@ -11,6 +11,7 @@ Karolina's rules (the mechanical ones are also tested in `src/app/content-rules.
 - Plain, grounded B2-level English. No buzzwords or corporate filler ("leverage", "synergy", "cutting-edge", "passionate about").
 - Honest claims: say what Karolina did versus what the team did, and only outcomes that were measured or verified. Reflections stay general. Flag anything that could overstate a role, a number or a result.
 - Short hyphen with spaces (`word - word`, `2019 - 2026`); never en or em dashes.
+- British spelling everywhere, like the CV (colour, organisation, behaviour, customise, analyse, centre, artefact, labelled). Quotes stay verbatim: real people's words, names and product labels as a screenshot shows them. The test cannot tell licence (noun) / license (verb), practice (noun) / practise (verb) or programme / program (software only): check those by eye.
 - Every case-study bullet opens with a bold lead-in and a colon, built with `lead("Term", "text")`.
 - H1 headings never end with a period.
 - The CV (`src/features/cv/cv.content.ts`) is ATS plain text: no curly quotes, no long dashes, ISO dates. It keeps Karolina's British spelling and her titles and dates as she wrote them; flag a disagreement with another page, do not "fix" the CV alone. Its recruitment consent is one English paragraph for employers and agencies "in Poland or abroad" (current recruitment, future recruitment for 12 months, withdrawal by email); do not suggest adding a Polish version.
