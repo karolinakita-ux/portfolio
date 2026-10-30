@@ -16,7 +16,12 @@ import { describe, expect, it } from "vitest";
  *   - in CSS: a time (120ms, 0.3s) or an easing keyword (ease-out, linear) in a transition,
  *     animation, duration, delay or easing declaration;
  *   - in TS / TSX: a numeric `duration:` option (Web Animations API): read the token at runtime;
- *   - a duration-* / ease-* utility that app.css's theme does not define.
+ *   - a duration-* / ease-* / animate-* utility that app.css's theme does not define (theme.css
+ *     resets Tailwind's animate-spin, -ping, -bounce and -pulse: they loop forever), an animation
+ *     written into a class (animate-[…], [animation-iteration-count:…]): name it in theme.css;
+ *   - anything that loops forever: `infinite` in a CSS animation, `iterations: Infinity` in TS
+ *     (WCAG 2.2.2: nothing moves on its own for more than 5 s; animations.test.ts checks the
+ *     theme's own animations end within 5 s).
  * The fixture tables at the end run the same scanner on good and bad snippets, so the guard
  * cannot pass by matching nothing.
  */
@@ -55,12 +60,17 @@ const APP_VARS = new Map(
 interface Theme {
   duration: ReadonlySet<string>;
   ease: ReadonlySet<string>;
+  animate: ReadonlySet<string>;
 }
 const themeNames = (pattern: RegExp) => new Set([...APP_CSS.matchAll(pattern)].map(([, name = ""]) => name));
-/** Time utilities the theme defines: duration-fast|medium|slow (--transition-duration-*), ease-standard (--ease-*). */
+/**
+ * Motion utilities the theme defines: duration-fast|medium|slow (--transition-duration-*), ease-standard
+ * (--ease-*) and the named animations (--animate-*: view-in, slide-in-next, slide-in-prev, skeleton-pulse).
+ */
 const THEME: Theme = {
   duration: themeNames(/--transition-duration-([a-z][\w-]*)\s*:/g),
   ease: themeNames(/--ease-([a-z][\w-]*)\s*:/g),
+  animate: themeNames(/--animate-([a-z][\w-]*)\s*:/g),
 };
 
 /** The ::backdrop fade, with the token values written out (see ALLOWED). */
@@ -79,12 +89,20 @@ const ALLOWED: ReadonlyArray<{ file: string; declaration: string }> = [
   // The prefers-reduced-motion reset: a near-zero override that switches motion off, not a design value.
   { file: "src/styles/motion.css", declaration: "animation-duration: 0.01ms !important" },
   { file: "src/styles/motion.css", declaration: "transition-duration: 0.01ms !important" },
+  // The loading skeleton's slow breath: one 2 s cycle, twice (4 s, under the 5 s of WCAG 2.2.2). No motion token is
+  // that long, and it is not a transition: it says "still loading" while an image is on its way (docs/motion.md).
+  {
+    file: "src/styles/theme.css",
+    declaration: "--animate-skeleton-pulse: skeleton-pulse 2s var(--motion-easing-standard) 2",
+  },
 ];
 
 const RULES = {
   rawUtility: "raw Tailwind time utility: use duration-fast|medium|slow",
   builtinEase: "Tailwind's own easing: use ease-standard",
   notInTheme: "not defined in the theme (theme.css)",
+  arbitraryAnimation: "animation written into a class: name it as an --animate-* in theme.css",
+  loopsForever: "loops forever: nothing may move on its own for more than 5 s (WCAG 2.2.2)",
   easingFunction: "easing function written out: use var(--motion-easing-standard)",
   cssTime: "time written out: use var(--motion-duration-…)",
   cssKeyword: "CSS easing keyword: use var(--motion-easing-standard)",
@@ -99,11 +117,21 @@ const RAW_UTILITY = /(?<![\w-])(?:(?:duration|delay)-\d[\d.]*|(?:duration|delay|
 const BUILTIN_EASE = /(?<![\w-])ease-(?:linear|in-out|in|out)(?![\w-])/g;
 /** Named time utilities, checked against the theme (duration-fast, ease-standard). */
 const NAMED_UTILITY = /(?<![\w-])(duration|ease)-([a-z][a-z0-9-]*)(?![\w-])/g;
+/** Named animations (animate-view-in), checked against the theme; Tailwind's own (animate-spin) are reset there. */
+const NAMED_ANIMATION = /(?<![\w-])animate-([a-z][a-z0-9-]*)(?![\w-])/g;
+/** An animation in a class: animate-[wiggle_1s_infinite], animate-(--x), [animation-iteration-count:2]. */
+const ARBITRARY_ANIMATION = /(?<![\w-])animate-(?:\[[^\]\s]*\]|\([^)\s]*\))|\[animation[\w-]*:[^\]\s]*\]/g;
 /** Names Tailwind defines itself: `initial` (back to the default, which is a token) and the easings BUILTIN_EASE reports. */
 const TAILWIND_NAMES: Theme = {
   duration: new Set(["initial"]),
   ease: new Set(["initial", "linear", "in", "out", "in-out"]),
+  // animate-none switches an animation off; it is not one of the theme's --animate-* values.
+  animate: new Set(["none"]),
 };
+/** CSS: an animation (or iteration count) that never ends. */
+const CSS_INFINITE = /(?<![\w-])infinite(?![\w-])/g;
+/** TS: element.animate(frames, { iterations: Infinity }). */
+const TS_INFINITE = /(?<![\w$])iterations["']?\s*:\s*(?:Infinity|Number\.POSITIVE_INFINITY)/g;
 
 const EASING_FUNCTION = /(?:cubic-bezier|steps)\(/g;
 /** A CSS declaration, property and value. A value may span lines (Prettier wraps long lists). */
@@ -136,10 +164,16 @@ function scan(path: string, source: string, theme: Theme): Finding[] {
     const name = m[2] ?? "";
     if (!theme[kind].has(name) && !TAILWIND_NAMES[kind].has(name)) report(RULES.notInTheme, m[0], m.index);
   }
+  for (const m of code.matchAll(NAMED_ANIMATION)) {
+    const name = m[1] ?? "";
+    if (!theme.animate.has(name) && !TAILWIND_NAMES.animate.has(name)) report(RULES.notInTheme, m[0], m.index);
+  }
+  for (const m of code.matchAll(ARBITRARY_ANIMATION)) report(RULES.arbitraryAnimation, m[0], m.index);
 
   if (!isCss) {
     for (const m of code.matchAll(EASING_FUNCTION)) report(RULES.easingFunction, m[0], m.index);
     for (const m of code.matchAll(NUMERIC_DURATION)) report(RULES.numericDuration, m[0], m.index);
+    for (const m of code.matchAll(TS_INFINITE)) report(RULES.loopsForever, m[0], m.index);
     return findings;
   }
 
@@ -151,6 +185,7 @@ function scan(path: string, source: string, theme: Theme): Finding[] {
     if (!MOTION_PROPERTY.test(property)) continue;
     for (const v of value.matchAll(CSS_TIME)) report(RULES.cssTime, v[0], valueStart + v.index);
     for (const v of value.matchAll(CSS_EASING_KEYWORD)) report(RULES.cssKeyword, v[0], valueStart + v.index);
+    for (const v of value.matchAll(CSS_INFINITE)) report(RULES.loopsForever, v[0], valueStart + v.index);
   }
   return findings;
 }
@@ -225,6 +260,36 @@ const BAD: ReadonlyArray<[match: string, file: string, snippet: string]> = [
   ["ease-in-out", "src/styles/app.css", `.a { transition-timing-function: ease-in-out; }`],
   ["linear", "src/styles/app.css", `.a { animation: spin var(--motion-duration-slow) linear infinite; }`],
   ["duration-200", "src/styles/app.css", `.a { @apply transition-colors duration-200; }`],
+  // Tailwind's looping animations (reset in theme.css), animations written into a class, and endless loops.
+  ["animate-spin", "src/shared/ui/Spinner.tsx", `"motion-safe:animate-spin"`],
+  ["animate-ping", "src/shared/ui/Badge.tsx", `"animate-ping"`],
+  ["animate-bounce", "src/shared/ui/Button.tsx", `"group-hover:animate-bounce"`],
+  ["animate-pulse", "src/shared/media/Skeleton.tsx", `"motion-safe:animate-pulse"`],
+  ["animate-wiggle", "src/styles/app.css", `.a { @apply animate-wiggle; }`],
+  [
+    "animate-[wiggle_1s_ease-in-out_infinite]",
+    "src/shared/ui/Button.tsx",
+    `"animate-[wiggle_1s_ease-in-out_infinite]"`,
+  ],
+  ["animate-(--wiggle)", "src/shared/ui/Button.tsx", `"animate-(--wiggle)"`],
+  [
+    "[animation-iteration-count:2]",
+    "src/shared/media/Skeleton.tsx",
+    `"motion-safe:animate-skeleton-pulse motion-safe:[animation-iteration-count:2]"`,
+  ],
+  [
+    "infinite",
+    "src/styles/app.css",
+    `.a { animation: x var(--motion-duration-slow) var(--motion-easing-standard) infinite; }`,
+  ],
+  ["infinite", "src/styles/app.css", `.a {\n  animation-iteration-count:\n    infinite;\n}`],
+  [
+    "infinite",
+    "src/styles/theme.css",
+    `--animate-glow: glow var(--motion-duration-slow) var(--motion-easing-standard) infinite;`,
+  ],
+  ["iterations: Infinity", "src/shared/hooks/useFade.ts", `el.animate(frames, { iterations: Infinity });`],
+  ["iterations: Number.POSITIVE_INFINITY", "src/shared/hooks/useFade.ts", `{ iterations: Number.POSITIVE_INFINITY }`],
   // The allowed literals pass only where they are allowed, and only with the token values.
   ["0.01ms", "src/styles/print.css", `.a { transition-duration: 0.01ms !important; }`],
   ["200ms", "src/styles/dialog.css", `.kb-dialog[open]::backdrop { animation: backdrop-in 200ms ease; }`],
@@ -246,8 +311,13 @@ const GOOD: ReadonlyArray<[file: string, snippet: string]> = [
   ["src/styles/theme.css", `--ease-*: initial;\n--ease-standard: var(--motion-easing-standard);`],
   [
     "src/styles/app.css",
-    `--animate-view-in: view-in var(--motion-duration-medium) var(--motion-easing-standard) both;`,
+    `--animate-view-in: view-in var(--motion-duration-medium) var(--motion-easing-standard) backwards;`,
   ],
+  ["src/shared/ui/Dialog.tsx", `"motion-safe:animate-view-in print:animate-none"`],
+  ["src/shared/media/Skeleton.tsx", `"h-full w-full motion-safe:animate-skeleton-pulse"`],
+  ["src/styles/print.css", `.motion-safe\\:animate-view-in, .reveal-on-scroll { animation: none !important; }`],
+  ["src/shared/hooks/useFade.ts", `el.animate(frames, { duration: d, iterations: 2 }); // never Infinity`],
+  ["src/features/about/about.content.ts", `"No infinite scroll: the list ends."`],
   ["src/styles/app.css", `.a { transform: translateY(8px); background-image: linear-gradient(red, blue); }`],
   [
     "src/styles/motion.css",

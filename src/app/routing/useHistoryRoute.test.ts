@@ -91,6 +91,20 @@ describe("useHistoryRoute", () => {
     expect(window.history.length).toBe(before);
   });
 
+  it("never scrolls a new view smoothly: it starts at its top at once, while it fades in", () => {
+    const result = start("/about");
+
+    act(() => result.current[1](VIEW.work, null, { smooth: true }));
+    expect(result.current[0]).toMatchObject({ view: VIEW.work, viewKey: 1, smooth: false });
+
+    act(() => result.current[1](VIEW.about, "career", { smooth: true }));
+    expect(result.current[0]).toMatchObject({ view: VIEW.about, anchor: "career", viewKey: 2, smooth: false });
+
+    // A jump within the view keeps it.
+    act(() => result.current[1](VIEW.about, "faq", { smooth: true }));
+    expect(result.current[0]).toMatchObject({ view: VIEW.about, anchor: "faq", viewKey: 2, smooth: true });
+  });
+
   it("shows a tracker only new views: the first address and same-view jumps go past its wrapper", () => {
     window.history.replaceState(null, "", "/resume");
     // Umami's tracker wraps the methods on the history object itself; it takes each call as a new page.

@@ -122,32 +122,39 @@
     radial-gradient(120% 70% at 50% 100%, var(--bg-avatar-glow-warm), transparent 72%);
 }
 
-/* Cards in a list fade up as they scroll into view: a CSS scroll-driven animation, no script.
+/* Cards in a list fade up as they scroll into view: a CSS scroll-driven animation, no script
+   (which cards: docs/motion.md, Scroll reveal).
    It follows the scroll position, not the clock, so it works on the prerendered HTML, does not
    replay when React takes the page over, and nothing moves until the visitor scrolls.
-   The range starts when the card's top enters the viewport and ends 96px (spacing4xl) of
-   scrolling later, so even a card taller than the screen is fully shown long before it is read.
+   The range starts when the card's top enters the viewport and ends 96px of scrolling later, so
+   even a card taller than the screen is fully shown long before it is read.
    No duration: a scroll timeline sets the pace (duration auto).
    Fill backwards: below the viewport the card waits transparent and 16px low; once the range is
    scrolled past, the animation lets go and the card is exactly its own state again (fill both
    would leave a 0px translate and an animated opacity on every card for good).
    animation-timeline comes after the shorthand, which resets it.
-   Only with motion allowed, no forced colours (Windows high contrast) and no request for more
-   or less contrast, and where the browser supports it; anywhere else (and in print, see
-   print.css) the card simply shows. A browser that does not know one of these media features
-   treats the query as false, so the card shows there too. */
+   The distances are px, like every motion offset: the same movement at any browser text size.
+   Only from md (tablet width) up, with motion allowed, no forced colours (Windows high contrast)
+   and no request for more or less contrast, and where the browser supports it; anywhere else (on
+   phones, and in print, see print.css) the card simply shows. A browser that does not know one of
+   these media features treats the query as false, so the card shows there too.
+   A card that holds keyboard focus is shown in full: Firefox does not scroll a partly visible
+   focused element further in, so its focus ring would otherwise sit in a faint card. */
 @utility reveal-on-scroll {
-  @media (prefers-reduced-motion: no-preference) and (forced-colors: none) and (prefers-contrast: no-preference) {
+  @media (prefers-reduced-motion: no-preference) and (forced-colors: none) and (prefers-contrast: no-preference) and (width >= 48rem) {
     @supports (animation-timeline: view()) {
       animation: reveal-on-scroll var(--motion-easing-standard) backwards;
       animation-timeline: view();
-      animation-range: entry 0% entry var(--spacing-4xl);
+      animation-range: entry 0% entry 96px;
+      &:focus-within {
+        animation: none;
+      }
     }
   }
 }
 @keyframes reveal-on-scroll {
   from {
     opacity: 0;
-    translate: 0 var(--spacing-md);
+    translate: 0 16px;
   }
 }

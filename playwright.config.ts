@@ -18,6 +18,12 @@ const HOST = "127.0.0.1";
 const BASE_URL = `http://${HOST}:${PORT}`;
 const DEV = process.env.E2E_DEV === "1";
 const DESKTOP = { width: 1280, height: 800 };
+/**
+ * Firefox 159 (2026-10-27) turns scroll-driven animations on, so visitors' Firefox runs the cards' scroll reveal.
+ * The Firefox that Playwright 1.64 bundles (157) has them behind this pref: switched on, the Firefox project tests
+ * what visitors get. Drop it once Playwright bundles Firefox 159 or later.
+ */
+const FIREFOX_PREFS = { "layout.css.scroll-driven-animations.enabled": true };
 
 export default defineConfig({
   testDir: "e2e",
@@ -34,7 +40,10 @@ export default defineConfig({
   },
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"], viewport: DESKTOP } },
-    { name: "firefox", use: { ...devices["Desktop Firefox"], viewport: DESKTOP } },
+    {
+      name: "firefox",
+      use: { ...devices["Desktop Firefox"], viewport: DESKTOP, launchOptions: { firefoxUserPrefs: FIREFOX_PREFS } },
+    },
     { name: "webkit", use: { ...devices["Desktop Safari"], viewport: DESKTOP } },
   ],
   webServer: {

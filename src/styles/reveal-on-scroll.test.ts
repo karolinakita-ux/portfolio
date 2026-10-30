@@ -5,9 +5,10 @@ import { describe, expect, it } from "vitest";
 
 /**
  * The scroll reveal on cards (`reveal-on-scroll` in utilities.css): a scroll-driven CSS animation that
- * may only run with motion allowed and where the browser supports view timelines, so anywhere
- * else the cards simply show. Print switches it off (print.css). The browsers' side (what a card
- * looks like at each scroll position) is checked in e2e/scroll-reveal.e2e.ts.
+ * may only run with motion allowed, from tablet width (md) up and where the browser supports view
+ * timelines, so anywhere else (phones included) the cards simply show; a card holding keyboard focus
+ * shows in full. Print switches it off (print.css). The browsers' side (what a card looks like at each
+ * scroll position) is checked in e2e/scroll-reveal.e2e.ts; which cards reveal, in each view's tests.
  */
 // Resolved with node:path: the jsdom test environment's global URL mis-resolves file: URLs on Windows.
 const read = (name: string) => readFileSync(join(dirname(fileURLToPath(import.meta.url)), name), "utf8");
@@ -76,10 +77,14 @@ const APP = parse(
 );
 const PRINT = parse(read("print.css"));
 const UTILITY = "@utility reveal-on-scroll";
-/** Motion allowed, no forced colours, no contrast preference: a fading card never fights a contrast setting. */
+/**
+ * Motion allowed, no forced colours, no contrast preference (a fading card never fights a contrast setting), and
+ * from md (48rem, tablet width) up: on phones the cards simply show (Karolina's decision, 2026-10-30).
+ */
 const MOTION_ALLOWED =
-  "@media (prefers-reduced-motion: no-preference) and (forced-colors: none) and (prefers-contrast: no-preference)";
+  "@media (prefers-reduced-motion: no-preference) and (forced-colors: none) and (prefers-contrast: no-preference) and (width >= 48rem)";
 const SUPPORTED = "@supports (animation-timeline: view())";
+const FOCUS_WITHIN = "&:focus-within";
 
 /** Rules that mention the reveal anywhere: in the path (selector, utility) or a declaration. */
 const mentionsReveal = ({ path, block }: { path: string[]; block: Block }) =>
@@ -90,8 +95,11 @@ describe("reveal-on-scroll (app stylesheet)", () => {
   const revealRules = rules(APP).filter(mentionsReveal);
   const utility = revealRules.filter(({ path }) => path[0] === UTILITY);
 
-  it("declares its animation only with motion allowed, no contrast settings and view timelines supported", () => {
-    expect(utility.map(({ path }) => path)).toEqual([[UTILITY, MOTION_ALLOWED, SUPPORTED]]);
+  it("declares its animation only with motion allowed, no contrast settings, from md and with view timelines", () => {
+    expect(utility.map(({ path }) => path)).toEqual([
+      [UTILITY, MOTION_ALLOWED, SUPPORTED],
+      [UTILITY, MOTION_ALLOWED, SUPPORTED, FOCUS_WITHIN],
+    ]);
     // Nothing applies outside those conditions: no declarations directly in the utility or the media query.
     const top = APP.blocks.filter((block) => block.prelude === UTILITY);
     expect(top).toHaveLength(1);
@@ -101,18 +109,24 @@ describe("reveal-on-scroll (app stylesheet)", () => {
     expect(top[0]?.blocks[0]?.blocks.map((block) => block.prelude)).toEqual([SUPPORTED]);
   });
 
-  it("runs on the card's view timeline from its entry for spacing4xl, standard easing, no time values", () => {
+  it("runs on the card's view timeline from its entry for 96px, standard easing, no time values", () => {
     const declarations = utility[0]?.block.declarations;
     expect(declarations).toEqual([
       // Fill backwards: waits hidden below the viewport, lets go once revealed.
       ["animation", "reveal-on-scroll var(--motion-easing-standard) backwards"],
       // After the shorthand, which resets it.
       ["animation-timeline", "view()"],
-      ["animation-range", "entry 0% entry var(--spacing-4xl)"],
+      ["animation-range", "entry 0% entry 96px"],
     ]);
   });
 
-  it("fades up by spacingMd from transparent to the card's own state", () => {
+  it("shows a card that holds keyboard focus in full, inside the same guards", () => {
+    // Firefox does not scroll a partly visible focused element further in: its focus ring would sit in a faint card.
+    expect(utility[1]?.path).toEqual([UTILITY, MOTION_ALLOWED, SUPPORTED, FOCUS_WITHIN]);
+    expect(utility[1]?.block.declarations).toEqual([["animation", "none"]]);
+  });
+
+  it("fades up by 16px from transparent to the card's own state", () => {
     const keyframes = APP.blocks.filter((block) => block.prelude === "@keyframes reveal-on-scroll");
     expect(keyframes).toHaveLength(1);
     expect(keyframes[0]?.blocks).toEqual([
@@ -120,16 +134,18 @@ describe("reveal-on-scroll (app stylesheet)", () => {
         prelude: "from",
         declarations: [
           ["opacity", "0"],
-          ["translate", "0 var(--spacing-md)"],
+          ["translate", "0 16px"],
         ],
         blocks: [],
       },
     ]);
   });
 
-  it("uses spacing tokens the theme defines", () => {
+  it("keeps its distances in px, like every motion offset, and starts at the md breakpoint", () => {
     const theme = APP.blocks.find((block) => block.prelude === "@theme inline");
-    // 16px and 96px at the browser's default text size (relative-units.test.ts).
+    // 16px rise over 96px of scrolling at any browser text size (spacingMd and spacing4xl at the default size);
+    // the media query's 48rem is md, so the reveal starts with the tablet layout (relative-units.test.ts).
+    expect(theme?.declarations).toContainEqual(["--breakpoint-md", "48rem"]);
     expect(theme?.declarations).toContainEqual(["--spacing-md", "1rem"]);
     expect(theme?.declarations).toContainEqual(["--spacing-4xl", "6rem"]);
   });

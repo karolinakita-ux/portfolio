@@ -6,6 +6,18 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.21 - 2026-10-30
+
+#### Changed
+
+- Cards fade in on scroll only from tablet width up; on phones they simply show. On every case page all cards up to the impact stats fade in (Smart Ticket's 2022 vs 2026 comparisons now too), and the closing sections after the impact stay still.
+- The logo from another page opens Work at its top at once instead of sweeping it up; smooth scrolling stays for jumps within a page. A button's trailing arrow now nudges the way it points (down, right, up and right).
+
+#### Fixed
+
+- A card that holds keyboard focus is fully shown, so its focus ring never sits in a half-faded card (Firefox 159 and later). Page fades no longer leave a transform on the page once they end.
+- Tests and docs: Tailwind's looping animations are reset and a test bans any other animate-* utility and anything infinite; the Firefox e2e project runs the scroll reveal; docs/motion.md lists every motion on the site with its test.
+
 ### 5.14.20 - 2026-10-30
 
 #### Changed

@@ -4,6 +4,7 @@ export interface Route {
   view: View;
   /** Section id to land on after navigating (instead of the top). */
   anchor: string | null;
+  /** Scroll there smoothly: only for a jump within the view (Explore Case Studies). A new view starts there at once. */
   smooth: boolean;
   /** Scroll position to restore (Back / Forward), or null for a fresh visit. */
   restoreY: number | null;

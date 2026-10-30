@@ -45,9 +45,21 @@ export const button = cva(
   { variants: { variant: VARIANT }, defaultVariants: { variant: "primary" } },
 );
 
+/**
+ * On hover a trailing arrow nudges the way it points, only with motion allowed: right or down 4px (spacing2xs), up and
+ * right 2px (spacing3xs) each way, as BannerLink's arrow. Any other trailing icon stays still. Keyed by the icon's
+ * name (createIcon in icons.utils.tsx).
+ */
+const NUDGE: Readonly<Record<string, string>> = {
+  "arrow-right": clsx("motion-safe:group-hover/button:translate-x-2xs"),
+  "arrow-down": clsx("motion-safe:group-hover/button:translate-y-2xs"),
+  "arrow-up-right": clsx(
+    "motion-safe:group-hover/button:translate-x-3xs motion-safe:group-hover/button:-translate-y-3xs",
+  ),
+};
+
 export const styles = {
   iconLeft: clsx("shrink-0"),
-  iconRight: clsx(
-    "shrink-0 transition-transform duration-fast ease-standard motion-safe:group-hover/button:translate-x-2xs",
-  ),
+  iconRight: (icon: string | undefined) =>
+    clsx("shrink-0 transition-transform duration-fast ease-standard", NUDGE[icon ?? ""]),
 };

@@ -1,11 +1,14 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent } from "storybook/test";
 
-import { ArrowRight, ArrowUpRight, Figma } from "#shared/ui/icons/icons.tsx";
+import { ArrowDown, ArrowRight, ArrowUpRight, Figma } from "#shared/ui/icons/icons.tsx";
 
 import { Button } from "./Button.tsx";
 
-/** Figma: Button. Type = Primary | Secondary | Subtle | Link; with or without an icon; default, hover, disabled. */
+/**
+ * Figma: Button. Type = Primary | Secondary | Subtle | Link; with or without an icon; default, hover, disabled.
+ * On hover a trailing arrow nudges the way it points (down, right, up and right); other icons stay still.
+ */
 const meta = {
   title: "UI/Button",
   component: Button,
@@ -16,6 +19,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Primary: Story = {
+  args: { iconRight: ArrowDown },
   play: async ({ canvas, args }) => {
     await userEvent.click(canvas.getByRole("button", { name: "Explore Case Studies" }));
     await expect(args.onClick).toHaveBeenCalledOnce();

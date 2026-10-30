@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.ts";
 import { caseCards } from "#features/case-studies/gallery/gallery.utils.ts";
 import { styles as screenshot } from "#shared/media/Screenshot/Screenshot.styles.ts";
+import { cardsBefore, REVEAL, revealing, revealsAround } from "#test/reveal.ts";
 
 import { CaseSmartTicketView } from "./CaseSmartTicketView.tsx";
 
@@ -104,5 +105,38 @@ describe("CaseSmartTicketView", () => {
     expect(
       within(screen.getByRole("region", { name: c.title })).getByRole("link", { name: /^Explore the Figma File/ }),
     ).toBe(links[0]);
+  });
+});
+
+describe("CaseSmartTicketView scroll reveal", () => {
+  it("fades in every card up to the impact: personas, screenshot rows, comparisons and stat cards", () => {
+    renderCase();
+    const lessons = screen.getByRole("region", { name: c.lessons.title });
+    expect(revealing()).toEqual(cardsBefore([lessons]));
+
+    const personas = within(screen.getByRole("region", { name: c.personas.title })).getAllByRole("article");
+    const rows = [...c.system.cards, ...c.passenger.cards].map((card) =>
+      screen.getByRole("article", { name: card.title }),
+    );
+    const comparisons = c.rebuild.comparisons.map((comparison) =>
+      screen.getByRole("article", { name: comparison.title }),
+    );
+    const stats = c.impact.stats.map((stat) => screen.getByText(stat.value).closest("[data-card]"));
+    expect(personas).toHaveLength(c.personas.personas.length);
+    for (const card of [...personas, ...rows, ...comparisons, ...stats]) expect(card).toHaveClass(REVEAL);
+  });
+
+  it("keeps the intro, the headings, the screens outside cards and the closing lessons still", () => {
+    renderCase();
+    const still = [
+      screen.getByRole("region", { name: c.title }),
+      screen.getByRole("heading", { level: 1 }),
+      ...screen.getAllByRole("heading", { level: 2 }),
+      screen.getByRole("region", { name: c.flow.title }),
+      screen.getByRole("list", { name: c.operations.title + " - screens" }),
+      screen.getByRole("region", { name: c.lessons.title }),
+      screen.getByRole("navigation", { name: "Case study navigation" }),
+    ];
+    expect(still.flatMap(revealsAround)).toEqual([]);
   });
 });

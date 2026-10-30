@@ -4,7 +4,7 @@
  *   its outline (a fading ring starts in the label colour, below 3:1 on the active pill in dark),
  *   and nothing hidden until focus fades in with its ring (the copy-link icons did until 5.1.1).
  * - Nothing loops: with images still loading, every time-based animation on the page ends within
- *   5 s (WCAG 2.2.2); the loading skeleton pulses twice and then holds still.
+ *   5 s (WCAG 2.2.2); the loading skeleton pulses twice and then holds still (skeleton-pulse, theme.css).
  * - The scroll reveal stays off for people who set forced colours (Windows high contrast) or ask
  *   for more contrast: a card half-way into its reveal is fully shown.
  */
@@ -55,7 +55,7 @@ test.describe("nothing loops past 5 seconds", () => {
           };
         }),
     );
-    const pulses = timed.filter((animation) => animation.name === "pulse");
+    const pulses = timed.filter((animation) => animation.name === "skeleton-pulse");
     expect(pulses.length, "the loading skeletons should be pulsing").toBeGreaterThan(0);
     for (const pulse of pulses) expect(pulse.iterations).toBe(2);
     expect(timed.filter((animation) => animation.iterations === Infinity)).toEqual([]);

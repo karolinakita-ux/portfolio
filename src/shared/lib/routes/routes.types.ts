@@ -4,7 +4,10 @@ import type { VIEW } from "./routes.constants.ts";
 export type View = (typeof VIEW)[keyof typeof VIEW];
 
 export interface NavigateOptions {
-  /** Glide to the top or the anchor instead of jumping (ignored with prefers-reduced-motion). */
+  /**
+   * Glide to the top or the anchor instead of jumping, within the same view only: a new view always starts there
+   * at once (ignored with prefers-reduced-motion too).
+   */
   smooth?: boolean;
 }
 

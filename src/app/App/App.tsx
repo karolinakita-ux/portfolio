@@ -49,14 +49,14 @@ export function App({ assetBase = ASSET_BASE, portraitSrc = assetBase + "/site/p
   useSectionHash(route.key);
   useRouteFocus(route, mainRef);
 
-  /** Logo: home reset. Already home → glide to top without re-mounting the view. */
+  /** Logo: home reset. Already home → glide to top without re-mounting the view; elsewhere Work starts at its top. */
   const goHome = useCallback(() => {
     if (route.view === VIEW.work) {
       window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" });
       mainRef.current?.focus({ preventScroll: true });
       return;
     }
-    navigate(VIEW.work, null, { smooth: true });
+    navigate(VIEW.work);
   }, [route.view, navigate]);
 
   const backToTop = useCallback(() => {

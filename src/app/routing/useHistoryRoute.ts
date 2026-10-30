@@ -105,7 +105,9 @@ export function useHistoryRoute(initialView: View = VIEW.work): [Route, Navigate
     setRoute((current) => ({
       view,
       anchor,
-      smooth: Boolean(options.smooth),
+      // Only within the view: a new view mounts at the old scroll position, so a smooth scroll would sweep it
+      // while it fades in. It starts at its top (or anchor) at once.
+      smooth: Boolean(options.smooth) && view === current.view,
       restoreY: null,
       key: current.key + 1,
       viewKey: nextViewKey(current, view),

@@ -64,7 +64,7 @@ src/styles/                    tokens.css (light/dark), theme.css (Tailwind them
 e2e/                           Playwright specs and their helpers
 scripts/                       prerender.ts (static HTML per page), a11y-audit.ts (checks in a11y/),
                                favicons.ts (PNG and ICO icons from the SVG), cv-pdf.ts (the CV's PDF)
-docs/                          architecture, design source, tracking plan (analytics.md), working with Claude Code
+docs/                          architecture, design source, motion guide (motion.md), tracking plan (analytics.md), working with Claude Code
 .storybook/                    Storybook config and its Welcome page (stories sit next to their component)
 .claude/                       Claude Code skills and review agents (when to use each: CONTRIBUTING.md)
 ```

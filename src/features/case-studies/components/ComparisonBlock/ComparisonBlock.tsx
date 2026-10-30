@@ -11,6 +11,7 @@ import type { ComparisonBlockProps } from "./ComparisonBlock.types.ts";
  * Figma: Compare. A before / after comparison: H3 and intro, the two columns side by side from md (stacked
  * below), then the reasoning - titled columns of points, or a "Strategic Shift" list in an info banner, its title
  * an H4 like the columns' titles.
+ * Like the other cards before a case's closing sections, it fades up as it scrolls into view (docs/motion.md).
  * `data-card`: visitor statistics name a click on it that does nothing by its title (shared/lib/analytics).
  */
 export function ComparisonBlock({ comparison, beforeRows, afterRows }: ComparisonBlockProps) {

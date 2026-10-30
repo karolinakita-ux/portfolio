@@ -132,6 +132,25 @@ describe("App", () => {
     expect(within(primaryNav()).getByRole("link", { name: "About" })).toHaveAttribute("aria-current", "page");
   });
 
+  it("takes the logo home from another page at once: Work starts at its top, without a smooth scroll", async () => {
+    const { user } = renderApp("/about");
+    const scrollTo = vi.spyOn(window, "scrollTo");
+    try {
+      await user.click(screen.getByRole("link", { name: /home page$/ }));
+      expect(window.location.pathname).toBe("/");
+      expect(h1()).toHaveTextContent("Clarity for Complex Enterprise Software");
+      expect(scrollTo).toHaveBeenCalledWith({ top: 0, behavior: "auto" });
+      expect(scrollTo).not.toHaveBeenCalledWith(expect.objectContaining({ behavior: "smooth" }));
+
+      // Already home: the logo glides to the top, as Back to top does.
+      scrollTo.mockClear();
+      await user.click(screen.getByRole("link", { name: /home page$/ }));
+      expect(scrollTo).toHaveBeenCalledWith({ top: 0, behavior: "smooth" });
+    } finally {
+      scrollTo.mockRestore();
+    }
+  });
+
   it("opens a case study from its thumbnail, without an extra Tab stop or screen reader link", async () => {
     const { user } = renderApp();
     const thumbnailLinks = document.querySelectorAll<HTMLAnchorElement>("a[data-case-thumbnail-link]");

@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import { AUTOMOTIVE_CASE } from "#features/case-studies/content/automotive.content.ts";
 import { PROJECT_PLANNING_CASE } from "#features/case-studies/content/project-planning.content.tsx";
 import { caseCards } from "#features/case-studies/gallery/gallery.utils.ts";
-import { REVEAL, revealsAround } from "#test/reveal.ts";
+import { cards, cardsBefore, REVEAL, revealing, revealsAround } from "#test/reveal.ts";
 
 import { CaseStudyView } from "./CaseStudyView.tsx";
 
@@ -30,6 +30,22 @@ describe("CaseStudyView scroll reveal (Project Planning)", () => {
     expect(stats.length).toBeGreaterThan(0);
     for (const stat of stats) expect(stat).toHaveClass(REVEAL);
     expect(Array.from(document.querySelectorAll(`.${REVEAL}`))).toEqual(stats);
+  });
+});
+
+describe("CaseStudyView scroll reveal: every card fades in, except after the impact", () => {
+  it("Automotive: the screenshot rows fade in, the numbered reflections that close it stay still", () => {
+    render(<CaseStudyView c={AUTOMOTIVE_CASE} resolveAsset={resolveAsset} onNavigate={() => undefined} />);
+    const reflections = screen.getByRole("region", { name: AUTOMOTIVE_CASE.reflections?.title ?? "(no reflections)" });
+    expect(cards().filter((card) => reflections.contains(card)).length).toBeGreaterThan(0);
+    expect(revealing()).toEqual(cardsBefore([reflections]));
+  });
+
+  it("Project Planning: it closes with the impact, so every card fades in, the stats included", () => {
+    render(<CaseStudyView c={PROJECT_PLANNING_CASE} resolveAsset={resolveAsset} onNavigate={() => undefined} />);
+    expect(PROJECT_PLANNING_CASE.reflections).toBeUndefined();
+    expect(cards().length).toBeGreaterThan(0);
+    expect(revealing()).toEqual(cards());
   });
 });
 

@@ -1,0 +1,110 @@
+# Motion
+
+The site's motion in one place: the principles, the tokens, every motion on the site with the test that guards it, the scroll reveal, smooth scrolling, what was left out and why, and a checklist for adding motion. The motion variables live in Karolina's Figma file ([design source](design.md): `motion/duration/fast|medium|slow`, `motion/easing/standard`), and a change to one starts there.
+
+## Principles
+
+- **Motion has a job.** It shows where something came from or went (a pill travels to the new page, the next image slides in from its side), confirms an action (Copied), or helps the eye follow a list as it scrolls in. Nothing moves for decoration.
+- **Calm.** Short distances (2 to 24px), short durations (150 to 300ms), one easing. Nothing bounces, spins or overshoots.
+- **The first screen is still at load.** Nothing animates when a page opens, and the prerendered page looks the same before and after the app takes it over.
+- **Nothing moves on its own for more than 5 seconds** (WCAG 2.2.2). Nothing loops: the loading skeleton pulses twice and then holds still.
+- **Reduced motion makes every change instant.** The rule in `src/styles/motion.css` brings every CSS transition and animation down to a near-zero time and every scroll to instant; Tailwind animations and transforms carry `motion-safe:`; motion started from script asks `prefersReducedMotion()` or `animationTiming()` first.
+- **Focus rings never animate.** A ring appears at once in its final colour (focusable elements list the properties they transition, never `outline`), an element hidden until focus appears at once, and a card that holds keyboard focus shows in full.
+- **Leaving is never slower than arriving.** The image viewer closes at once; nothing waits for an exit animation.
+- **Content never waits for motion.** Headings and text never fade in. The scroll reveal is on cards only, and without JavaScript, or where a browser or a setting rules it out, every card simply shows.
+
+## Tokens
+
+| Token (Figma)            | Value                        | Tailwind          | Use it for                                                                                                               |
+| ------------------------ | ---------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `motion/duration/fast`   | 150ms                        | `duration-fast`   | Hover and colour changes, small nudges (arrows, a pressed icon button). A transition without a duration utility gets it. |
+| `motion/duration/medium` | 240ms                        | `duration-medium` | Enter, leave and travel: the view fade, the nav and theme pills, the theme cross-fade, the image viewer, the accordion.  |
+| `motion/duration/slow`   | 300ms                        | `duration-slow`   | Images: the fade-in after loading, the hover zoom.                                                                       |
+| `motion/easing/standard` | `cubic-bezier(0.2, 0, 0, 1)` | `ease-standard`   | Everything: a quick start and a soft landing.                                                                            |
+
+- `src/styles/tokens.css` holds the values (once: motion tokens have no light or dark mode), `src/styles/theme.css` maps them to the utilities and resets Tailwind's own durations and easings.
+- Named animations are `--animate-*` in `theme.css`: `animate-view-in`, `animate-slide-in-next`, `animate-slide-in-prev` and `animate-skeleton-pulse`. Tailwind's `animate-spin`, `animate-ping`, `animate-bounce` and `animate-pulse` are reset: they loop.
+- Entrances fill `backwards`: they start from their first keyframe and, once ended, leave the element exactly its own state. `both` would keep a 0px transform on it for good, which makes it a stacking context and the containing block of anything fixed inside.
+- Distances in keyframes and in the scroll reveal are px (8px view fade, 24px image slide, 16px reveal over 96px of scrolling): the same movement at any browser text size. Small nudges use the spacing tokens (`translate-x-2xs` is 4px, `3xs` 2px), like the rem-sized icons they move.
+- The one time value that is not a token is the skeleton's 2 s pulse: a slow "still loading" signal, not a transition. `motion-tokens.test.ts` allows exactly that declaration.
+
+## Every motion on the site
+
+Reduced motion means the visitor's `prefers-reduced-motion: reduce`. "Instant" means the change happens without a transition.
+
+| Motion                  | Where                                                                   | Trigger                                                                 | What moves, how far                                                                                  | Time, easing              | With reduced motion                  | Guarded by                                                                                          |
+| ----------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| View fade               | The page content (`main > div`, `App.styles.ts`)                        | Opening another page; never on the first load or a jump within the page | Opacity 0 to 1, 8px rise; fills backwards                                                            | medium, standard          | None                                 | `animations.test.ts`, `e2e/motion-details.e2e.ts`                                                   |
+| Scroll reveal           | Cards in lists (`reveal-on-scroll`, see below)                          | A card's top scrolling into view, from tablet width up                  | Opacity 0 to 1, 16px rise, over the first 96px of scrolling                                          | Scroll position, standard | None (also off on phones, see below) | `reveal-on-scroll.test.ts`, each view's tests, `e2e/scroll-reveal.e2e.ts`, `e2e/motion-a11y.e2e.ts` |
+| Nav pill                | Header nav (`useSlidingPill`)                                           | The current page changes                                                | The yellow pill travels from the old item to the new one; fades where there is no old one (/privacy) | medium, standard          | Jumps                                | `e2e/header-motion.e2e.ts`, `useSlidingPill.test.tsx`                                               |
+| Theme switch            | Theme toggle and the page (`changeTheme`, `motion.css`)                 | Choosing Light or Dark                                                  | The pill travels as the nav pill does; the page cross-fades through a view transition                | medium, standard          | Instant                              | `e2e/header-motion.e2e.ts`, `e2e/theme-system.e2e.ts`                                               |
+| Header and nav colours  | Header links, theme buttons                                             | Hover, the current page changing                                        | Text and background colour, with the pill                                                            | medium, standard          | Instant                              | `e2e/motion-a11y.e2e.ts` (no focus ring fades)                                                      |
+| Header shadow           | Site header                                                             | Scrolling away from the top                                             | A small shadow appears under the sticky header                                                       | medium, standard          | Instant                              | -                                                                                                   |
+| Button and link colours | `Button`, `IconButton`, `CopyEmail`, case navigation, accordion headers | Hover, press                                                            | Colours only, listed per element                                                                     | fast, standard            | Instant                              | `e2e/motion-a11y.e2e.ts` (no focus ring fades)                                                      |
+| Arrow nudge             | A `Button`'s trailing arrow, `BannerLink`, Previous and Next case links | Hover                                                                   | The arrow moves the way it points: right or down 4px, up and right 2px each way; Previous left 4px   | fast, standard            | None                                 | `Button.test.tsx`, `e2e/motion-details.e2e.ts`                                                      |
+| Pressed icon button     | `IconButton` (image viewer controls)                                    | Pressing                                                                | Scales to 95%                                                                                        | fast, standard            | None                                 | -                                                                                                   |
+| Accordion               | `AccordionItem` (About FAQ)                                             | Opening or closing an answer                                            | The answer's height (grid rows 0fr to 1fr); the chevron turns 180 degrees                            | medium, standard          | Instant                              | `Accordion.stories.tsx` (opens and closes)                                                          |
+| Back to top             | `BackToTop`                                                             | Scrolling down, or back to the top                                      | The button fades in and rises 8px; it fades out the same way                                         | medium, standard          | Instant                              | `BackToTop.test.tsx` (shows and hides)                                                              |
+| Image fade-in           | Case thumbnails, the About portrait (`useImageStatus`)                  | An image the app adds later finishes loading                            | Opacity 0 to 1; images in the first HTML show at once                                                | slow, standard            | Instant                              | `useImageStatus.test.tsx`, `e2e/hydration.e2e.ts`                                                   |
+| Hover zoom              | Case thumbnails, screenshots that open the image viewer                 | Hover                                                                   | The image scales to 102% inside its frame (content kept out of the clipped edge)                     | slow, standard            | None                                 | `src/app/zoom-margins.test.ts`                                                                      |
+| Loading skeleton        | `ThumbnailScaffold`                                                     | A thumbnail still loading                                               | The wireframe dims to half opacity and back, twice, then holds still                                 | 2 s x 2, standard         | None                                 | `animations.test.ts`, `e2e/motion-a11y.e2e.ts`                                                      |
+| Image viewer opens      | `LightboxDialog`, its backdrop (`dialog.css`)                           | Opening a screenshot                                                    | The panel fades in with an 8px rise (view fade); the backdrop fades in                               | medium, standard          | None                                 | `LightboxProvider.test.tsx`                                                                         |
+| Next or previous image  | The image in the viewer                                                 | Arrow keys, the buttons, a swipe                                        | Fades in from 24px on the side it comes from                                                         | medium, standard          | None                                 | `LightboxProvider.test.tsx`                                                                         |
+| Image viewer closes     | `LightboxDialog`                                                        | Close, Escape, a click on the backdrop                                  | Nothing: it closes at once                                                                           | -                         | -                                    | -                                                                                                   |
+| Copied bubble           | `CopyEmail`                                                             | Copying the email address                                               | The "Copied" bubble fades in with an 8px rise (view fade)                                            | medium, standard          | None                                 | `animations.test.ts` (the view fade)                                                                |
+| Copy-link icon          | `HeadingAnchor` beside each section heading                             | Hover or focus on the heading                                           | Nothing: it appears at once, so its focus ring does too                                              | -                         | -                                    | `e2e/motion-a11y.e2e.ts`                                                                            |
+| Smooth scrolls          | See below                                                               | An explicit jump within the page                                        | The page scrolls to the target                                                                       | The browser's             | Instant                              | `useHistoryRoute.test.ts`, `App.test.tsx`, `e2e/motion-details.e2e.ts`                              |
+
+The CV page has no motion of its own, and print switches the view fade and the scroll reveal off (`print.css`).
+
+## Scroll reveal
+
+Cards in a list fade up as they scroll into view. It is a CSS scroll-driven animation (`animation-timeline: view()`, the `reveal-on-scroll` utility in `src/styles/utilities.css`), so it needs no script, follows the scroll position rather than the clock, works on the prerendered HTML and never replays when the app takes over.
+
+- **What reveals:** cards in lists. On Work the case cards and the recommendations, on About the principles and the career milestones, and on a case page every card up to and including the impact stats: screenshot rows, persona cards, the 2022 vs 2026 comparisons, the Theme Generator's two problem cards and the stat cards.
+- **What stays still:** headings, intros and body text, callouts and banners, screenshots outside a card (Project Planning's feature sections, Smart Ticket's user flow and operations screens), and the closing sections after the impact: reflections, takeaways, the roadmap and the handoff (bento cards), and the lessons. This is Karolina's rule (2026-10-30), the same on every case page.
+- **Where:** from tablet width up (the md breakpoint, 48rem: 768px at the default text size), never on phones. Also off with reduced motion, forced colours (Windows contrast themes), a request for more or less contrast, in print and in browsers without scroll-driven animations: the card simply shows. Firefox has them from version 159.
+- **How far:** the card waits transparent and 16px low below the viewport and reaches its own state 96px of scrolling after its top enters, so even a card taller than the screen is fully shown long before it is read. It fills backwards, so after the reveal the card keeps no transform. Scrolling back up hides it again below the fold.
+- **Focus:** a card that holds keyboard focus shows in full (`:focus-within`). Firefox does not scroll a partly visible focused element further in, so its focus ring would otherwise sit in a faint card.
+- **In code:** `Card` reveals by default; `reveal={false}` keeps it still (`BentoCards`). Other cards add `reveal-on-scroll` to their root (`ShowcaseRow`, `ComparisonBlock`); `NumberedCards` and `DetailList` have none. Each view's tests pin which elements reveal (`cardsBefore` in `src/test/reveal.ts` states the case pages' rule).
+
+## Smooth scrolling
+
+- **Only for a jump the visitor asked for, within the page they are on:** Explore Case Studies, the logo on Work, Back to top, and a heading's copy-link button.
+- **Never across a change of page.** A new page starts at its top (or its section) at once while it fades in; a smooth scroll would sweep the new page while it arrives. `useHistoryRoute` keeps `smooth` only when the view stays the same, and Back and Forward restore the position at once.
+- **Never as a page-wide default.** No `scroll-behavior: smooth` on the page: it would also animate find-in-page, Page Down and Space, and links from other sites to a section.
+- **Reduced motion:** every scroll is instant (`prefersReducedMotion()` in the code, `scroll-behavior: auto` in `motion.css`).
+- After a jump, focus moves with `preventScroll`, so the browser adds no jump of its own.
+
+## Left out on purpose
+
+- **Headings and intros fading up:** they are what visitors scan; a deep link would land on faint text, and a second fade on one screen is busy.
+- **Fading body text:** content that waits for an animation is hidden content.
+- **Staggered reveals:** a delay per card slows reading and leaves cards side by side at different contrasts.
+- **A card lifting on hover:** a card is not one link, so lifting the whole card promises a click it does not have.
+- **A cross-fade between pages (view transitions):** in-app browsers such as Messenger snapshot it badly, the old page cannot be clicked during it, and it costs more than the view fade.
+- **An entrance on the first screen at load:** it breaks the still first screen and delays the largest paint.
+- **Parallax:** it moves the background against the scroll, a known trigger for vestibular disorders (WCAG 2.3.3).
+- **Counting up the stats:** slow, tied to the clock, and the number is wrong while it counts.
+- **A header that hides on scroll:** the page's scroll padding (`--kb-header-h`) keeps focused elements clear of it (WCAG 2.4.11); a header that comes and goes breaks that.
+- **Smooth scrolling as a default:** see above.
+- **A reading progress bar, a zoom from the thumbnail into the image viewer, a fade when the viewer closes, animated underlines, cursors and looping decoration:** none has a job here.
+- **A reveal that runs once from a script:** it needs JavaScript before the cards show, replays on the app's takeover, and leaves cards hidden when the script fails.
+- **Reveals on phones:** a phone screen shows one card at a time, so the reveal adds movement without helping the eye (Karolina's decision, 2026-10-30).
+
+## Adding motion
+
+1. Name its job: where something came from or went, an action confirmed, or a list followed. Without one, leave it out.
+2. Pick the token: fast for hover, colour and nudges, medium for entering, leaving and travelling, slow for images. Always `ease-standard`. Exits are instant or faster than entrances.
+3. Keep it small: 2 to 24px. Distances in keyframes are px; Tailwind nudges use the spacing tokens.
+4. Animations and transforms carry `motion-safe:`; a focusable element lists the properties it transitions (`transition-[color,background-color]`), never `transition-colors` (it would fade the focus ring) or `transition-all`.
+5. A new named animation goes into `theme.css` as an `--animate-*` with its keyframes: it ends within 5 seconds, an entrance fills `backwards`, nothing is `infinite`. Motion from script takes its timing from `animationTiming()` (`shared/lib/motion`), which returns null with reduced motion.
+6. Nothing moves on the first screen at load, nothing hides content until it has played, and nothing keeps a focused element faint or moving.
+7. Test it: a unit test for the class or state, an e2e test for what the browser does. Run `yarn verify`, the motion specs in all three browsers (`yarn e2e scroll-reveal motion-a11y motion-details header-motion`) and `yarn a11y`.
+8. Add a row to the table above, and tell Karolina, so the Figma file shows it too.
+
+## Tests
+
+- Unit (part of `yarn verify`): `src/styles/motion-tokens.test.ts` (every time and easing from the tokens; no Tailwind looping animation, no animation written into a class, nothing infinite), `src/styles/animations.test.ts` (the named animations), `src/styles/reveal-on-scroll.test.ts` (the reveal's guards, distances and focus rule), `src/styles/relative-units.test.ts` (motion offsets in px), each view's reveal tests, `useHistoryRoute.test.ts` and `App.test.tsx` (smooth scrolling), `Button.test.tsx` (arrow nudges).
+- Browsers (`yarn e2e`, not part of `yarn verify`): `e2e/scroll-reveal.e2e.ts`, `e2e/motion-a11y.e2e.ts`, `e2e/motion-details.e2e.ts`, `e2e/header-motion.e2e.ts`, `e2e/theme-system.e2e.ts`, `e2e/hydration.e2e.ts`. The Firefox project switches on `layout.css.scroll-driven-animations.enabled` (`playwright.config.ts`): Firefox 159 has it on, and the Firefox that Playwright 1.64 bundles (157) has it behind that pref, so Firefox runs the reveal as visitors see it.
+- `yarn a11y` audits every page with reduced motion on (so every card shows in full) and in forced colours, and hit-tests every Tab stop.

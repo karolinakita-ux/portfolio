@@ -2,9 +2,8 @@ import { clsx } from "clsx";
 
 export const styles = {
   root: clsx("absolute inset-0 flex flex-col items-center justify-center gap-xs p-md"),
-  /** Pulses twice (2 x 2s) while loading, then holds still: nothing loops past 5 s (WCAG 2.2.2). */
-  wireframe: (failed: boolean) =>
-    clsx("h-full w-full", !failed && "motion-safe:animate-pulse motion-safe:[animation-iteration-count:2]"),
+  /** Pulses twice (2 x 2s, theme.css) while loading, then holds still: nothing loops past 5 s (WCAG 2.2.2). */
+  wireframe: (failed: boolean) => clsx("h-full w-full", !failed && "motion-safe:animate-skeleton-pulse"),
   frame: clsx("fill-bg-surface-raised stroke-border-subtle"),
   titleBar: clsx("fill-bg-accent-brand-subtle"),
   mark: clsx("fill-border-default"),
