@@ -60,6 +60,23 @@ describe("CaseSmartTicketView", () => {
     }
   });
 
+  it("nests its headings as they read: each comparison's reasoning under it, the design files banner on its own", () => {
+    renderCase();
+    for (const comparison of c.rebuild.comparisons) {
+      const block = within(screen.getByRole("article", { name: comparison.title }));
+      const reasoning = [...(comparison.rationale ?? []), ...(comparison.shift ? [comparison.shift] : [])];
+      expect(reasoning, comparison.id).not.toHaveLength(0);
+      for (const { title } of reasoning) expect(block.getByRole("heading", { level: 4, name: title })).toBeVisible();
+    }
+    // It follows the lessons section, not part of it.
+    expect(screen.getByRole("heading", { level: 2, name: c.designFile?.title })).toBeVisible();
+
+    const levels = screen.getAllByRole("heading").map((heading) => Number(heading.tagName.slice(1)));
+    levels.forEach((level, index) => {
+      expect(level - (levels[index - 1] ?? 0), `heading ${String(index)}`).toBeLessThanOrEqual(1);
+    });
+  });
+
   it("switches the 2026 screens to their dark versions, and keeps the 2022 ones", async () => {
     renderCase();
     const themed = c.passenger.cards[0];

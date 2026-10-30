@@ -28,6 +28,9 @@ interface PrerenderModule {
   headFor: (view: string) => PageHead;
   llmsTxt: () => string;
   renderPage: () => string;
+  /** Head tags and structured data into the template (src/app/seo/static-head.utils.ts). */
+  applyHead: (template: string, head: PageHead, options?: { noindex?: boolean }) => string;
+  withRootContent: (page: string, appHtml: string) => string;
 }
 
 const BROWSER_GLOBALS = [
@@ -67,50 +70,6 @@ function installWindow(url: string, html: string): void {
   Object.defineProperty(globalThis, "matchMedia", { value: media, configurable: true, writable: true });
 }
 
-const escapeHtml = (text: string): string =>
-  text.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
-/** Replaces one pattern; a template change that breaks a pattern fails the build instead of shipping stale tags. */
-function replaceOnce(html: string, pattern: RegExp, replacement: string, what: string): string {
-  if (!pattern.test(html)) throw new Error(`prerender: ${what} not found in dist/index.html`);
-  return html.replace(pattern, replacement);
-}
-
-function applyHead(template: string, head: PageHead, { noindex = false } = {}): string {
-  const title = escapeHtml(head.title);
-  const description = escapeHtml(head.description);
-  let html = template;
-  html = replaceOnce(html, /<title>[^<]*<\/title>/, `<title>${title}</title>`, "<title>");
-  html = replaceOnce(html, /(<meta\s+name="description"\s+content=")[^"]*(")/, `$1${description}$2`, "description");
-  html = replaceOnce(html, /(<link rel="canonical" href=")[^"]*(")/, `$1${head.url}$2`, "canonical");
-  html = replaceOnce(html, /(<meta property="og:url" content=")[^"]*(")/, `$1${head.url}$2`, "og:url");
-  html = replaceOnce(html, /(<meta property="og:title" content=")[^"]*(")/, `$1${title}$2`, "og:title");
-  html = replaceOnce(
-    html,
-    /(<meta\s+property="og:description"\s+content=")[^"]*(")/,
-    `$1${description}$2`,
-    "og:description",
-  );
-  html = replaceOnce(html, /(<meta name="twitter:title" content=")[^"]*(")/, `$1${title}$2`, "twitter:title");
-  html = replaceOnce(
-    html,
-    /(<meta\s+name="twitter:description"\s+content=")[^"]*(")/,
-    `$1${description}$2`,
-    "twitter:description",
-  );
-  if (noindex) {
-    html = replaceOnce(html, /(<meta name="robots" content=")[^"]*(")/, "$1noindex, follow$2", "robots");
-  }
-  // "<" inside JSON-LD would end the script element early.
-  const jsonLd = JSON.stringify(head.jsonLd).replace(/</g, "\\u003c");
-  // data-page: App replaces this block's JSON on client-side navigation.
-  return html.replace("</head>", `    <script type="application/ld+json" data-page>${jsonLd}</script>\n  </head>`);
-}
-
-function withContent(page: string, appHtml: string): string {
-  return replaceOnce(page, /<div id="root"><\/div>/, `<div id="root">${appHtml}</div>`, '<div id="root">');
-}
-
 /** The site icons (index.html). Search engines read each page's own head, so every page must keep them. */
 const ICON_LINK = /<link rel="(?:icon|apple-touch-icon)"[^>]*>/g;
 
@@ -136,7 +95,7 @@ for (const view of ssr.VIEWS) {
   if (!path) throw new Error(`prerender: no path for ${view}`);
   const head = ssr.headFor(view);
   installWindow(head.url, template);
-  const page = keepsIcons(withContent(applyHead(template, head), ssr.renderPage()), iconLinks, path);
+  const page = keepsIcons(ssr.withRootContent(ssr.applyHead(template, head), ssr.renderPage()), iconLinks, path);
   if (path === "/") {
     await write(join(DIST, "index.html"), page);
   } else {
@@ -150,7 +109,10 @@ for (const view of ssr.VIEWS) {
 // Unknown paths: Netlify serves 404.html with status 404; the app then shows Work at /.
 const workView = ssr.VIEWS[0] ?? "work";
 installWindow("https://karolina.kita.company/", template);
-const notFound = withContent(applyHead(template, ssr.headFor(workView), { noindex: true }), ssr.renderPage());
+const notFound = ssr.withRootContent(
+  ssr.applyHead(template, ssr.headFor(workView), { noindex: true }),
+  ssr.renderPage(),
+);
 await write(join(DIST, "404.html"), keepsIcons(notFound, iconLinks, "404.html"));
 await write(join(DIST, "llms.txt"), ssr.llmsTxt());
 console.log("prerendered 404.html and llms.txt");

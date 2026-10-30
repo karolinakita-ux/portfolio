@@ -2,21 +2,21 @@ import { useEffect } from "react";
 
 import type { View } from "#shared/lib/routes/routes.types.ts";
 
-import { headFor } from "./seo.utils.ts";
+import { HEAD_TAGS } from "./seo.constants.ts";
+import { headFor, headTagSelector } from "./seo.utils.ts";
 
 /**
- * Title, description, canonical URL and the page's structured data follow the view
- * (the prerendered HTML already carries them for the first page).
+ * The title, the head tags in HEAD_TAGS (description, canonical URL, og and twitter tags) and the page's structured
+ * data follow the view, so anything that reads the open page gets one page's data, not a mix of two (the
+ * prerendered HTML already carries them for the first page). The robots tag stays as it was loaded.
  */
 export function useDocumentHead(view: View): void {
   useEffect(() => {
     const head = headFor(view);
     document.title = head.title;
-    const set = (selector: string, attribute: string, value: string) =>
-      document.querySelector(selector)?.setAttribute(attribute, value);
-    set('meta[name="description"]', "content", head.description);
-    set('link[rel="canonical"]', "href", head.url);
-    set('meta[property="og:url"]', "content", head.url);
+    for (const tag of HEAD_TAGS) {
+      document.querySelector(headTagSelector(tag))?.setAttribute(tag.attribute, head[tag.field]);
+    }
     const pageData = document.querySelector('script[type="application/ld+json"][data-page]');
     if (pageData) pageData.textContent = JSON.stringify(head.jsonLd);
   }, [view]);

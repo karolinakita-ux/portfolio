@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- One <url> per view in src/shared/lib/routes/routes.constants.ts (VIEW_PATHS); content-rules.test.ts keeps them in sync. Set a page's <lastmod> to the release date when its content changes. -->
+<!-- One <url> per view in src/shared/lib/routes/routes.constants.ts (VIEW_PATHS); case studies in the Work page order; content-rules.test.ts keeps them in sync. Set a page's <lastmod> to the release date when its content changes. -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://karolina.kita.company/</loc>
     <lastmod>2026-10-30</lastmod>
   </url>
   <url>
-    <loc>https://karolina.kita.company/work/data-governance</loc>
-    <lastmod>2026-10-30</lastmod>
-  </url>
-  <url>
-    <loc>https://karolina.kita.company/work/project-planning</loc>
+    <loc>https://karolina.kita.company/work/smart-ticket</loc>
     <lastmod>2026-10-30</lastmod>
   </url>
   <url>
@@ -18,7 +14,11 @@
     <lastmod>2026-10-30</lastmod>
   </url>
   <url>
-    <loc>https://karolina.kita.company/work/smart-ticket</loc>
+    <loc>https://karolina.kita.company/work/project-planning</loc>
+    <lastmod>2026-10-30</lastmod>
+  </url>
+  <url>
+    <loc>https://karolina.kita.company/work/data-governance</loc>
     <lastmod>2026-10-30</lastmod>
   </url>
   <url>

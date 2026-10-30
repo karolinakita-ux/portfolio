@@ -76,9 +76,22 @@ describe("viewForPath", () => {
     expect(viewForPath("/projects")).toBe(VIEW.work);
   });
 
+  it.each([
+    ["/about.html", VIEW.about],
+    ["/about/index.html", VIEW.about],
+    ["/index.html", VIEW.work],
+    ["/work/automotive.html", VIEW.caseAutomotive],
+    ["/work/automotive/index.html", VIEW.caseAutomotive],
+    ["/CV.HTML", VIEW.cv],
+  ])("opens the prerendered file form %s as its page, not Work", (path, view) => {
+    expect(viewForPath(path)).toBe(view);
+  });
+
   it("returns null for unknown paths", () => {
     expect(viewForPath("/blog")).toBeNull();
     expect(viewForPath("/work/unknown")).toBeNull();
+    expect(viewForPath("/blog.html")).toBeNull();
+    expect(viewForPath("/work/unknown/index.html")).toBeNull();
   });
 });
 
@@ -95,6 +108,10 @@ describe("readRoute", () => {
     ["/#case-theming", VIEW.caseDataGovernance],
   ])("redirects the old hash link %s to its view", (url, view) => {
     expect(at(url)).toEqual({ view, anchor: null });
+  });
+
+  it("reads a file-form address with its section, so the first load can change it to the page's path", () => {
+    expect(at("/about.html#career")).toEqual({ view: VIEW.about, anchor: "career" });
   });
 
   it("treats other hashes on the root as section anchors", () => {

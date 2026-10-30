@@ -1,13 +1,20 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
+import {
+  AUTOMOTIVE_CASE,
+  DATA_GOVERNANCE_CASE,
+  PROJECT_PLANNING_CASE,
+  SMART_TICKET_CASE,
+} from "#features/case-studies/index.ts";
+import { WORK_CASES } from "#features/work/index.ts";
 import { PROFILE } from "#shared/content/profile.ts";
 import { VIEW, VIEWS } from "#shared/lib/routes/routes.constants.ts";
-import { titleForView } from "#shared/lib/routes/routes.utils.ts";
+import { isCaseView, titleForView } from "#shared/lib/routes/routes.utils.ts";
 
 import { SITE_URL } from "./seo.constants.ts";
-import { PAGE_DESCRIPTIONS, PAGE_NAMES } from "./seo.content.ts";
+import { CASE_PERIODS, PAGE_DESCRIPTIONS, PAGE_NAMES } from "./seo.content.ts";
 import { absoluteUrl, headFor, llmsTxt } from "./seo.utils.ts";
 
 type Node = Record<string, unknown>;
@@ -21,6 +28,11 @@ describe("page descriptions", () => {
     expect(text).not.toMatch(/[–—]/); // no long dashes
     expect(text).not.toMatch(/['"]/); // curly quotes, as in all site copy but the CV (search results show them)
   });
+
+  it("gives every page its own description and title (Google asks for one per page)", () => {
+    expect(new Set(VIEWS.map((view) => headFor(view).description)).size).toBe(VIEWS.length);
+    expect(new Set(VIEWS.map((view) => headFor(view).title)).size).toBe(VIEWS.length);
+  });
 });
 
 describe("headFor", () => {
@@ -31,15 +43,13 @@ describe("headFor", () => {
     for (const view of VIEWS) expect(headFor(view).title).toBe(titleForView(view));
   });
 
-  it("marks pages about Karolina as profile pages and case studies as her creative work", () => {
-    expect(graph(VIEW.about)[0]).toMatchObject({
-      "@type": "ProfilePage",
-      mainEntity: { "@id": SITE_URL + "/#person" },
-    });
-    expect(graph(VIEW.cv)[0]).toMatchObject({
-      "@type": "ProfilePage",
-      mainEntity: { "@id": SITE_URL + "/#person" },
-    });
+  it("marks About and the CV as profile pages, Work as her list of case studies, and each case as her work", () => {
+    for (const view of [VIEW.about, VIEW.cv]) {
+      expect(graph(view)[0]).toMatchObject({ "@type": "ProfilePage", mainEntity: { "@id": SITE_URL + "/#person" } });
+    }
+    // Google's ProfilePage guide: a home page with much else on it is not one.
+    expect(graph(VIEW.work)[0]).toMatchObject({ "@type": "CollectionPage", about: { "@id": SITE_URL + "/#person" } });
+    expect(graph(VIEW.work)[0]).not.toHaveProperty("mainEntity");
     expect(graph(VIEW.contact)[0]).toMatchObject({ "@type": "WebPage" });
     expect(graph(VIEW.caseAutomotive)[1]).toMatchObject({
       "@type": "CreativeWork",
@@ -48,19 +58,54 @@ describe("headFor", () => {
     });
   });
 
-  it("adds a breadcrumb from Work to a case study, and from Home to the other pages", () => {
+  it("names, pictures and dates each case study as the site shows it", () => {
+    const cases = [SMART_TICKET_CASE, AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE, DATA_GOVERNANCE_CASE];
+    /** The ways the page may write one end of a period: "present", a year, or a month or quarter with its year. */
+    const writtenAs = (date: string): string[] => {
+      const [year = "", month = ""] = date.split("-");
+      const number = Number(month);
+      if (date === "..") return ["present"];
+      if (!month) return [year];
+      const name = new Date(2000, number - 1).toLocaleString("en-GB", { month: "long" });
+      return [`${name} ${year}`, `Q${String(Math.ceil(number / 3))} ${year}`];
+    };
+    expect(cases.map((c) => c.view).sort()).toEqual(VIEWS.filter(isCaseView).sort());
+    for (const c of cases) {
+      const work = graph(c.view)[1];
+      const card = WORK_CASES.find((item) => item.view === c.view);
+      // The name and picture of its card on the Work page.
+      expect(work?.name, c.view).toBe(card?.title);
+      expect(work?.image, c.view).toBe(`${SITE_URL}/assets/${card?.asset ?? "(none)"}`);
+      expect(existsSync(join(process.cwd(), "public", "assets", card?.asset ?? "(none)")), c.view).toBe(true);
+      // Its period, as the Timeline or Duration line on the page says.
+      const shown = c.meta.find((entry) => /^(?:Timeline|Duration)$/.test(entry.label))?.value ?? "";
+      expect(CASE_PERIODS[c.view], c.view).toMatch(/^\d{4}(?:-\d{2})?\/(?:\d{4}(?:-\d{2})?|\.\.)$/);
+      expect(work?.temporalCoverage, c.view).toBe(CASE_PERIODS[c.view]);
+      for (const date of (CASE_PERIODS[c.view] ?? "").split("/")) {
+        expect(
+          writtenAs(date).some((text) => shown.includes(text)),
+          `${c.view}: ${date} in "${shown}"`,
+        ).toBe(true);
+      }
+    }
+  });
+
+  it("adds a two-step breadcrumb with the labels on the page: Work and the case's short name, or Home and the page", () => {
     const crumbs = (view: (typeof VIEWS)[number]) =>
-      (graph(view)[0]?.breadcrumb as { itemListElement: Node[] }).itemListElement;
-    expect(crumbs(VIEW.caseDataGovernance).map((item) => item.item)).toEqual([
-      SITE_URL + "/",
-      SITE_URL + "/work/data-governance",
-    ]);
-    expect(crumbs(VIEW.caseDataGovernance)[0]?.name).toBe("Work");
+      (graph(view)[0]?.breadcrumb as { itemListElement: Node[] } | undefined)?.itemListElement ?? [];
+    const cases = [SMART_TICKET_CASE, AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE, DATA_GOVERNANCE_CASE];
+    for (const c of cases) {
+      expect(crumbs(c.view).map((item) => item.name)).toEqual(["Work", c.shortTitle]);
+      expect(crumbs(c.view).map((item) => item.item)).toEqual([SITE_URL + "/", absoluteUrl(c.view)]);
+    }
     for (const view of [VIEW.about, VIEW.contact, VIEW.cv, VIEW.privacy, VIEW.accessibility]) {
       expect(crumbs(view).map((item) => item.name)).toEqual(["Home", PAGE_NAMES[view]]);
-      expect(crumbs(view)[0]?.item).toBe(SITE_URL + "/");
+      expect(crumbs(view).map((item) => item.item)).toEqual([SITE_URL + "/", absoluteUrl(view)]);
     }
-    expect(crumbs(VIEW.work).map((item) => item.name)).toEqual(["Work"]);
+    for (const view of VIEWS)
+      expect(crumbs(view).map((item) => item.position)).toEqual(view === VIEW.work ? [] : [1, 2]);
+    // Work, the home page, shows no breadcrumb, and Google asks for at least two items.
+    expect(graph(VIEW.work)[0]).not.toHaveProperty("breadcrumb");
   });
 });
 
@@ -73,6 +118,19 @@ describe("llmsTxt", () => {
     expect(text).toContain(`- GitHub: ${PROFILE.githubProfileUrl}`);
     expect(text).toContain("- CV (PDF, 2 pages): https://karolina.kita.company/karolina-kita-cv.pdf");
   });
+
+  it("lists the case studies in the Work page order, and the pages a reader can skip last, under Optional", () => {
+    const text = llmsTxt();
+    const at = (view: (typeof VIEWS)[number]) => text.indexOf(`](${absoluteUrl(view)}): `);
+    const order = WORK_CASES.map((item) => item.view);
+    expect([...order].sort((a, b) => at(a) - at(b))).toEqual(order);
+    const optional = text.indexOf("\n## Optional\n");
+    expect(optional).toBeGreaterThan(text.indexOf("\n## Contact\n"));
+    for (const view of VIEWS) {
+      const skippable = view === VIEW.privacy || view === VIEW.accessibility;
+      expect(at(view) > optional, view).toBe(skippable);
+    }
+  });
 });
 
 describe("site-wide structured data (index.html)", () => {
@@ -82,5 +140,10 @@ describe("site-wide structured data (index.html)", () => {
     const nodes = (JSON.parse(json) as { "@graph": Node[] })["@graph"];
     const person = nodes.find((node) => node["@type"] === "Person");
     expect(person?.sameAs).toEqual([PROFILE.linkedinUrl, PROFILE.githubProfileUrl]);
+  });
+
+  it("says the site is in British English (og:locale), as the copy is spelled", () => {
+    const html = readFileSync(join(process.cwd(), "index.html"), "utf8");
+    expect(html).toContain('<meta property="og:locale" content="en_GB" />');
   });
 });

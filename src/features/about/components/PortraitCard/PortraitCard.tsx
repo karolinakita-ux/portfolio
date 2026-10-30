@@ -11,6 +11,8 @@ import type { PortraitCardProps } from "./PortraitCard.types.ts";
  * height above the caption (flex-1), and the image covers it anchored to the
  * top - so the caption's bottom lines up with the 4th card. If the image
  * cannot load, the glow frame stays on its own.
+ * Default fetch priority: on phones the portrait is below the first screen, and with a high one the preload React
+ * puts at the top of the prerendered page would compete with the styles, fonts and script.
  */
 export function PortraitCard({ src }: PortraitCardProps) {
   const { status, setStatus, ref } = useImageStatus(src);
@@ -24,7 +26,6 @@ export function PortraitCard({ src }: PortraitCardProps) {
             src={src}
             alt={PROFILE.name}
             decoding="async"
-            fetchPriority="high"
             onLoad={() => setStatus("loaded")}
             onError={() => setStatus("error")}
             className={styles.image(loaded)}

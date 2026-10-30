@@ -6,6 +6,19 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.18 - 2026-10-30
+
+#### Fixed
+
+- Addresses like /about.html or /about/index.html, which the host also serves, now open their page instead of Work, and the address becomes /about.
+- After moving to another page, the link-preview title and description (Open Graph, X) now match that page, not the one before. The search breadcrumbs use the labels on the page (Work, then the case's short name), and the home page no longer has a one-step breadcrumb.
+
+#### Changed
+
+- Search data: Work is a collection page about Karolina, and only About and the CV are profile pages. Each case study gets its Work card picture and its period. The site is marked as British English, and the unshown languages entry is gone. llms.txt and the sitemap list the cases in Work page order, with Privacy and Accessibility last in llms.txt under Optional. The old og-image.png address redirects to the new cover. The consent box is kept out of search snippets. The About portrait no longer asks for high fetch priority.
+- Headings: the Smart Ticket "Inspect the design files" banner is now an H2 instead of sitting under the lessons section, and its "Strategic shift" title is an H4 like the other comparison's reasoning (new `headingLevel` on Callout).
+- Tests and docs: new checks that the head follows navigation, that breadcrumb data matches the page, that a `$` in copy stays as text, that titles and descriptions are unique, that index.html shows the Work page's data, the sitemap order and the old image redirect. architecture.md and design.md are updated.
+
 ### 5.14.17 - 2026-10-30
 
 #### Fixed

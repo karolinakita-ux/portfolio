@@ -18,8 +18,9 @@ import { newEntryId, nextViewKey, saveScrollPosition, urlFor } from "./history.u
  *   entry id and written to the history only when leaving an entry, never while
  *   scrolling: in-app browsers (Messenger, LinkedIn) flash their loading bar on every write.
  * - Re-selecting the current view resets it to the top (or to its anchor) without adding history.
- * - The first load normalises the URL: old hash links (/#about) and aliases (/resume)
- *   become their path, an unknown path becomes /, a section hash (/about#career) stays.
+ * - The first load normalises the URL: old hash links (/#about), aliases (/resume) and the
+ *   file forms the host also serves (/about.html, /about/index.html) become their path, an
+ *   unknown path becomes /, a section hash (/about#career) stays.
  *
  * route.key changes on every navigation; App uses it to apply scroll / focus once
  * the view has rendered. route.viewKey changes only when the view changes; App

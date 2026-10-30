@@ -6,7 +6,7 @@ import { createElement, isValidElement, type ReactElement, type ReactNode } from
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import { App } from "#app/App/App.tsx";
-import { HOME_NAME, PAGE_DESCRIPTIONS, PAGE_NAMES } from "#app/seo/seo.content.ts";
+import { PAGE_DESCRIPTIONS, PAGE_NAMES } from "#app/seo/seo.content.ts";
 import { headFor, llmsTxt } from "#app/seo/seo.utils.ts";
 import { ABOUT_ACTIONS, ABOUT_INTRO, FAQ, MILESTONES, PRINCIPLES } from "#features/about/about.content.ts";
 import { ACCESSIBILITY } from "#features/accessibility/accessibility.content.tsx";
@@ -34,6 +34,7 @@ import { linkRef } from "#shared/lib/analytics/payload.utils.ts";
 import { SECTION, VIEW, VIEW_PATHS, VIEW_TITLES, VIEWS } from "#shared/lib/routes/routes.constants.ts";
 import type { View } from "#shared/lib/routes/routes.types.ts";
 import { hrefForView, isCaseView, isView } from "#shared/lib/routes/routes.utils.ts";
+import { HOME_CRUMB } from "#shared/ui/Breadcrumb/Breadcrumb.constants.ts";
 import { Lang } from "#shared/ui/Lang/Lang.tsx";
 import { Strong } from "#shared/ui/Strong/Strong.tsx";
 import {
@@ -136,7 +137,7 @@ const SITE_COPY = {
   ABOUT_ACTIONS,
   HERO_ACTIONS,
   RECOMMENDATIONS_LINK_LABEL,
-  HOME_NAME,
+  HOME_CRUMB,
   PAGE_DESCRIPTIONS,
   PAGE_NAMES,
   VIEW_TITLES,
@@ -880,6 +881,12 @@ describe("sitemap", () => {
     const xml = readFileSync(join(process.cwd(), "public", "sitemap.xml"), "utf8");
     const locs = [...xml.matchAll(/<loc>https:\/\/karolina\.kita\.company(\/[^<]*)<\/loc>/g)].map((m) => m[1]);
     expect(new Set(locs)).toEqual(new Set(VIEWS.map((view) => VIEW_PATHS[view])));
+  });
+
+  it("lists the case studies in the Work page order", () => {
+    const xml = readFileSync(join(process.cwd(), "public", "sitemap.xml"), "utf8");
+    const locs = [...xml.matchAll(/<loc>https:\/\/karolina\.kita\.company(\/work\/[^<]*)<\/loc>/g)].map((m) => m[1]);
+    expect(locs).toEqual(WORK_CASES.map((item) => VIEW_PATHS[item.view]));
   });
 
   it("gives every page a last-changed date (ISO, never in the future)", () => {

@@ -32,7 +32,10 @@ export const VIEW = {
   accessibility: "accessibility",
 } as const;
 
-/** Every view, in page order (sitemap, prerendering, audits). */
+/**
+ * Every view (prerendering, audits), Work first. Not the case studies' order on the Work page, which the sitemap and
+ * llms.txt follow: WORK_CASES in features/work.
+ */
 export const VIEWS: readonly View[] = Object.values(VIEW);
 
 /**

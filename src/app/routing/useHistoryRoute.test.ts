@@ -48,6 +48,15 @@ describe("useHistoryRoute", () => {
     expect(window.location.hash).toBe("");
   });
 
+  it("turns the file forms the host also serves (/about.html, /about/index.html) into the page's path", () => {
+    const result = start("/about.html?ref=linkedin#career");
+    expect(result.current[0]).toMatchObject({ view: VIEW.about, anchor: "career" });
+    expect(window.location.pathname + window.location.search + window.location.hash).toBe("/about?ref=linkedin#career");
+
+    start("/work/automotive/index.html");
+    expect(window.location.pathname).toBe("/work/automotive");
+  });
+
   it("sends unknown paths to Work at /", () => {
     const result = start("/blog?ref=cv");
     expect(result.current[0].view).toBe(VIEW.work);

@@ -31,6 +31,8 @@ describe("StatisticsConsent", () => {
     expect(screen.getByRole("button", { name: copy.allow })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: copy.decline })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: copy.details })).toHaveAttribute("href", "/privacy");
+    // Google's renderer sees the box too: its text must never become the page's snippet in search results.
+    expect(box).toHaveAttribute("data-nosnippet");
   });
 
   it("keeps the choice and goes away after either answer", async () => {

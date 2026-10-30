@@ -26,9 +26,15 @@ export const resolveView = (value: string): View | null => {
 
 const trimSlash = (path: string): string => (path.length > 1 ? path.replace(/\/+$/, "") : path);
 
+/**
+ * A page's address without its file form: the host also serves every prerendered page as /about.html and
+ * /about/index.html (and Work as /index.html), and those must open the page, not Work.
+ */
+const withoutHtmlFile = (path: string): string => path.replace(/(?:\/index)?\.html$/, "") || "/";
+
 /** The view at a URL path, or null for an unknown path. */
 export const viewForPath = (pathname: string): View | null => {
-  const path = trimSlash(pathname).toLowerCase();
+  const path = withoutHtmlFile(trimSlash(pathname).toLowerCase());
   const match = VIEWS.find((view) => VIEW_PATHS[view] === path);
   if (match) return match;
   const segment = path.replace(/^\//, "");
