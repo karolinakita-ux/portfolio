@@ -8,7 +8,7 @@ A single-page React app, prerendered to static HTML per page at build time. No b
 src/app        shell: App, routing/, seo/, analytics/, prerender entry
    │  imports features only through their index.ts
    ▼
-src/features   work · about · contact · case-studies · image-viewer · privacy · accessibility
+src/features   work · about · contact · cv · case-studies · image-viewer · privacy · accessibility
    │  never import each other
    ▼
 src/shared     ui · layout · media · hooks · lib · content
@@ -87,7 +87,7 @@ Every shared component (`shared/ui`, `shared/layout`, `shared/media`) and the co
 ## Routing
 
 - `src/shared/lib/routes/` is the single source: `VIEW` (ids), `VIEW_PATHS` (URLs), `SECTION` (anchors other pages link to), titles and nav items. They are `as const` objects with derived union types, so a wrong id is a type error.
-- `src/app/routing/useHistoryRoute.ts` keeps the view in browser history: one entry per view change, scroll position restored on Back and Forward. Positions are kept in memory by entry id (`kbId`) and written into the history only when leaving a page (a navigation, `pagehide`), never while scrolling: in-app browsers (Messenger, Instagram, LinkedIn) flash their loading bar on every history write. A new view remounts and fades in; a jump within the same view (Explore Case Studies) only scrolls. On first load it normalises the URL: old hash links (`/#about`, used before 3.0.0) and aliases (`/resume`, and `/cv`: the CV page, removed in 4.0.0, now opens About) become their path; unknown paths become `/`.
+- `src/app/routing/useHistoryRoute.ts` keeps the view in browser history: one entry per view change, scroll position restored on Back and Forward. Positions are kept in memory by entry id (`kbId`) and written into the history only when leaving a page (a navigation, `pagehide`), never while scrolling: in-app browsers (Messenger, Instagram, LinkedIn) flash their loading bar on every history write. A new view remounts and fades in; a jump within the same view (Explore Case Studies) only scrolls. On first load it normalises the URL: old hash links (`/#about`, used before 3.0.0) and aliases (`/resume`, the CV's old name, opens `/cv`) become their path; unknown paths become `/`.
 - A one-page build with a relative base (`vite build --base ./`, e.g. a claude.ai artifact) has no other paths to load, so `src/main.tsx` turns on hash routing: the path travels in the hash (`#/about`, `#/about#career`). The site itself always uses real paths.
 - The URL hash is a **section anchor** (`/about#career`). `Section` (`src/shared/ui/Section/Section.tsx`) gives every section heading a `HeadingAnchor` link that copies the section's address. `src/app/routing/useSectionHash.ts` keeps the hash on the section in view while scrolling, with `replaceState` (no history entries). Not in in-app browsers (`inAppBrowser()` in `src/shared/lib/browser/`, by user agent), for the loading-bar reason above; `e2e/history.e2e.ts` checks both in three browsers.
 
@@ -103,6 +103,12 @@ The prerendered pages are written with no stored theme, so their theme switch sa
 Tests keep the pieces in step: every view needs a path, a description (at most 160 characters) and a sitemap entry.
 
 Google Search Console verifies the site's owner with `public/googlecf978c6093e1d8a5.html` (the HTML file method). Google checks it again from time to time, so the file stays as issued: `src/app/seo/site-verification.test.ts` fails if it is removed or edited, and `_headers` marks it `noindex`. The sitemap (`/sitemap.xml`) is submitted there.
+
+## The CV and its PDF
+
+`/cv` (`src/features/cv/`) is Karolina's CV as a page, built from the Figma CV frames with the site's tokens: Light or Dark on screen, always light on paper. Its two-column layout comes from the `sheet:` variant (`utilities.css`): from md on screen, and always in print, where A4 is narrower than md. The page is the version for people and search engines: it follows the browser's text size and contrast settings, and `yarn a11y`, the plain-text test and the prerender loop cover it like any page.
+
+The PDF is made from that page, not from Figma: `yarn cv-pdf` (`scripts/cv-pdf.ts`) builds the site into `node_modules/.tmp/cv-pdf`, opens `/cv` in Playwright's Chromium in the light theme and prints it to `public/karolina-kita-cv.pdf`: A4, tagged (headings, lists, links, the Polish consent as `/Lang (pl)`), with an outline from the headings, clickable links and a footer in CSS `@page` margin boxes. The portfolio link gets its `data-pdf-href` (`?ref=cv`) only in the PDF. The footer takes the Label/Small type style and text/secondary from the build. The script also writes `scripts/cv-pdf.lock.json` (hashes of the sheet's text and of its elements and classes, and the page count), and `src/app/seo/cv-pdf.test.tsx` fails when the page's text, markup or classes no longer match it, or when the PDF loses its tags, links, A4 size, title or page count. Token or `print.css` changes do not show in the hashes: run `yarn cv-pdf` by hand after one that reaches the CV. The PDF is committed (`.gitignore` excludes every other PDF) and served under a fixed name, revalidated on every visit, with a canonical link to `/cv` (`public/_headers`). Netlify never runs the script.
 
 ## Visitor statistics
 
@@ -138,7 +144,8 @@ Tailwind v4 with the defaults removed: only KitaBranding token utilities exist (
 
 - Vitest + Testing Library in jsdom; tests sit next to the code and query by role and accessible name.
 - `src/app/content-rules.test.ts` checks the copy rules across all features; `src/styles/tokens.test.ts` checks the CSS tokens against the Figma export; `src/test/stories.test.tsx` runs every Storybook story (see Storybook above).
-- Behaviour that needs a real browser (layout, focus, scrolling, motion, analytics) is checked with Playwright (`e2e/*.e2e.ts`, helpers in `e2e/helpers/`) and `yarn a11y` (`scripts/a11y-audit.ts`, checks in `scripts/a11y/`).
+- Behaviour that needs a real browser (layout, focus, scrolling, motion, analytics, the CV in print) is checked with Playwright (`e2e/*.e2e.ts`, helpers in `e2e/helpers/`) and `yarn a11y` (`scripts/a11y-audit.ts`, checks in `scripts/a11y/`).
+- `src/app/seo/cv-pdf.test.tsx` keeps the committed CV PDF in step with the CV page (see The CV and its PDF).
 
 ## Adding a page
 

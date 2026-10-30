@@ -50,6 +50,11 @@ export const Copy = createIcon("copy", [
   ["rect", { width: 14, height: 14, x: 8, y: 8, rx: 2, ry: 2 }],
   ["path", { d: "M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" }],
 ]);
+export const Download = createIcon("download", [
+  ["path", { d: "M12 15V3" }],
+  ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" }],
+  ["path", { d: "m7 10 5 5 5-5" }],
+]);
 export const ExternalLink = createIcon("external-link", [
   ["path", { d: "M15 3h6v6" }],
   ["path", { d: "M10 14 21 3" }],
@@ -61,6 +66,13 @@ export const Figma = createIcon("figma", [
   ["path", { d: "M12 12.5a3.5 3.5 0 1 1 7 0 3.5 3.5 0 1 1-7 0z" }],
   ["path", { d: "M5 19.5A3.5 3.5 0 0 1 8.5 16H12v3.5a3.5 3.5 0 1 1-7 0z" }],
   ["path", { d: "M5 12.5A3.5 3.5 0 0 1 8.5 9H12v7H8.5A3.5 3.5 0 0 1 5 12.5z" }],
+]);
+export const FileText = createIcon("file-text", [
+  ["path", { d: "M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" }],
+  ["path", { d: "M14 2v4a2 2 0 0 0 2 2h4" }],
+  ["path", { d: "M10 9H8" }],
+  ["path", { d: "M16 13H8" }],
+  ["path", { d: "M16 17H8" }],
 ]);
 export const Github = createIcon("github", [
   [

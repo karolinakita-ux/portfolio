@@ -17,7 +17,7 @@ export const ACCESSIBILITY: AccessibilityContent = {
   title: "Accessibility",
   intro:
     "How this website works for people who use it in different ways, and what to do if something does not work for you.",
-  updated: { iso: "2026-10-26", label: "26 October 2026" },
+  updated: { iso: "2026-10-30", label: "30 October 2026" },
   sections: [
     {
       id: "in-short",
@@ -58,6 +58,10 @@ export const ACCESSIBILITY: AccessibilityContent = {
           "Screenshots",
           "the image viewer opens each one full size. You can zoom in, and move between screenshots with the arrow keys or a swipe.",
         ),
+        lead(
+          "CV",
+          "read it as a web page like the others, or download the PDF. The PDF has real text with tagged headings, lists and links, bookmarks for its sections, and the Polish consent marked as Polish.",
+        ),
       ],
     },
     {
@@ -67,6 +71,10 @@ export const ACCESSIBILITY: AccessibilityContent = {
         lead(
           "Screenshots",
           "the case studies show screenshots of the products I worked on. Their descriptions say what each one shows, not every word in it, and text inside a screenshot does not follow your text size or contrast settings. You can zoom in on it in the image viewer.",
+        ),
+        lead(
+          "CV as a PDF",
+          "it is A4 and always light, and it does not follow your text size or contrast settings. The CV page has the same content and follows them.",
         ),
         lead(
           "Other websites",

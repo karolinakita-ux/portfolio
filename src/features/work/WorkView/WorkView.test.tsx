@@ -1,7 +1,9 @@
 import { render, screen, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
 
 import { TESTIMONIALS, WORK_CASES } from "#features/work/work.content.ts";
+import { VIEW } from "#shared/lib/routes/routes.constants.ts";
 import { REVEAL } from "#test/reveal.ts";
 
 import { WorkView } from "./WorkView.tsx";
@@ -9,6 +11,24 @@ import { WorkView } from "./WorkView.tsx";
 const renderWork = () => render(<WorkView resolveAsset={(name) => "/assets/" + name} onNavigate={() => undefined} />);
 
 describe("WorkView", () => {
+  it("puts the CV next to the case studies in the hero's first row, and the tools in the second", async () => {
+    const onNavigate = vi.fn();
+    const user = userEvent.setup();
+    render(<WorkView resolveAsset={(name) => "/assets/" + name} onNavigate={onNavigate} />);
+    const cv = screen.getByRole("link", { name: "View CV" });
+    expect(cv).toHaveAttribute("href", "/cv");
+    expect(cv).not.toHaveAttribute("target");
+    const cases = screen.getByRole("link", { name: "Explore Case Studies" });
+    expect(cv.parentElement).toBe(cases.parentElement);
+    expect(cases.compareDocumentPosition(cv) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    const figma = screen.getByRole("link", { name: /^Inspect Figma Workspace/ });
+    expect(figma.parentElement).not.toBe(cv.parentElement);
+    expect(figma.parentElement?.parentElement).toBe(cv.parentElement?.parentElement);
+
+    await user.click(cv);
+    expect(onNavigate).toHaveBeenCalledWith(VIEW.cv);
+  });
+
   it("links the source code next to the Figma workspace, in a new tab", () => {
     renderWork();
     const link = screen.getByRole("link", { name: /^View Code on GitHub.*opens in a new tab/ });

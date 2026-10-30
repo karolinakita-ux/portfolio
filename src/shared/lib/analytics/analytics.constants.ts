@@ -26,6 +26,8 @@ export const EVENT = {
   linkedinClick: "linkedin-click",
   emailClick: "email-click",
   outboundClick: "outbound-click",
+  cvOpen: "cv-open",
+  cvDownload: "cv-download",
   faqOpen: "faq-open",
   sectionLinkCopy: "section-link-copy",
   textCopy: "text-copy",

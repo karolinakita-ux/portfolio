@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
+import { PROFILE } from "#shared/content/profile.ts";
 import { Lang } from "#shared/ui/Lang/Lang.tsx";
 import { lead } from "#shared/ui/lead/lead.tsx";
 import { NewTabNote } from "#shared/ui/NewTabNote/NewTabNote.tsx";
@@ -30,6 +31,15 @@ export const OtherLanguage: Story = {
     <p>
       The button said &quot;<Lang lang="pl">Zapisz zmiany</Lang>&quot;.
     </p>
+  ),
+};
+
+/** A whole paragraph in another language (as="p"), like the CV's Polish consent: PDFs tag its language too. */
+export const OtherLanguageParagraph: Story = {
+  render: () => (
+    <Lang lang="pl" as="p">
+      Zgodę mogę wycofać w każdej chwili, pisząc na adres {PROFILE.email}.
+    </Lang>
   ),
 };
 

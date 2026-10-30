@@ -8,4 +8,7 @@ export const PERSON_ID = SITE_URL + "/#person";
 export const WEBSITE_ID = SITE_URL + "/#website";
 
 /** Pages about Karolina herself: Google reads them as profile pages. */
-export const PROFILE_PAGES: ReadonlySet<View> = new Set([VIEW.work, VIEW.about]);
+export const PROFILE_PAGES: ReadonlySet<View> = new Set([VIEW.work, VIEW.about, VIEW.cv]);
+
+/** The CV as a PDF (public/, made by `yarn cv-pdf`), listed in llms.txt next to the CV page. */
+export const CV_PDF_URL = SITE_URL + "/karolina-kita-cv.pdf";

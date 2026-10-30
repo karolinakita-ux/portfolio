@@ -15,6 +15,9 @@
  *   on that card's text, because it applies the card's opacity and ignores the viewport: the
  *   flagged text is below the fold or cut by the viewport edge. A line of text is fully on screen
  *   only once the card is far enough in to pass; the early-reveal test holds axe to exactly that.
+ *   A page can open with a card just inside the fold (Work at 1280 x 800 since its hero has two rows
+ *   of buttons), so the other audits leave out the same artefact, and only that: colour contrast on
+ *   text of a card still fading in that is not fully on screen (fadingOffScreen).
  * Bundled engines (Playwright 1.64): Chromium and WebKit support it; Firefox does not (behind a
  * pref there), so it runs the fallback expectations.
  */
@@ -74,6 +77,8 @@ interface Snapshot {
   maxScrollY: number;
   /** Height of the scrollport (the view timeline's viewport). */
   viewport: number;
+  /** The page's scroll padding under the sticky header (base.css), in px. */
+  scrollPaddingTop: number;
   cards: CardState[];
 }
 
@@ -144,6 +149,7 @@ function installRevealProbe({ selector, record }: ProbeOptions): void {
       scrollY: window.scrollY,
       maxScrollY: root.scrollHeight - root.clientHeight,
       viewport: root.clientHeight,
+      scrollPaddingTop: Number.parseFloat(getComputedStyle(root).scrollPaddingTop) || 0,
       cards: Array.from(document.querySelectorAll(selector), read),
     };
   };
@@ -307,7 +313,11 @@ function revealProblems(snap: Snapshot): string[] {
   return snap.cards.flatMap((card) => {
     const inside = snap.viewport - card.top;
     const waiting = card.opacity === 0 && Math.abs(card.translateY - OFFSET_PX) < 0.01;
-    const shown = card.opacity === 1 && card.translate === "none";
+    // WebKit 26 ends a view timeline at the scroll padding, and at the one position where a card's bottom edge sits
+    // exactly on it, it shows the animation's end state (translate: 0px) instead of letting go: the same look,
+    // one pixel of scrolling. Found on 2026-10-30 when the About hero grew 2px and a scroll stop landed there.
+    const atTimelineEnd = card.translate === "0px" && Math.abs(card.bottom - snap.scrollPaddingTop) < 0.5;
+    const shown = card.opacity === 1 && (card.translate === "none" || atTimelineEnd);
     const between = card.opacity >= 0 && card.opacity <= 1 && card.translateY >= 0 && card.translateY <= OFFSET_PX;
     const ok = inside <= -2 ? waiting : inside >= REVEAL_PX + 2 ? shown : between;
     return ok ? [] : [describeCard(card, snap)];
@@ -394,6 +404,25 @@ async function placeOf(page: Page, target: string, index: number): Promise<{ inC
       };
     },
     { selector: target, cardSelector: CARD, cardIndex: index },
+  );
+}
+
+/**
+ * The axe artefact of an entering card (see the header): a colour-contrast hit on text inside a card that is still
+ * fading in (opacity below 1) and is not fully on screen. Faint text that is fully on screen still counts.
+ */
+async function fadingOffScreen(page: Page, { rule, target }: Violation): Promise<boolean> {
+  if (rule !== "color-contrast") return false;
+  return page.evaluate(
+    ({ selector, cardSelector }) => {
+      const element = document.querySelector(selector);
+      const card = element?.closest(cardSelector);
+      if (!element || !card) return false;
+      const box = element.getBoundingClientRect();
+      const onScreen = box.top >= 0 && box.bottom <= document.documentElement.clientHeight;
+      return Number(getComputedStyle(card).opacity) < 1 && !onScreen;
+    },
+    { selector: target, cardSelector: CARD },
   );
 }
 
@@ -555,9 +584,13 @@ test.describe("motion allowed", () => {
         test.slow(); // axe runs several times on a long page
         await openCards(page, path, { theme });
         const found: string[] = [];
+        const artefacts: string[] = [];
         const audit = async (what: string) => {
           const { scrollY } = await snapshot(page);
-          found.push(...(await wcagViolations(page)).map((v) => `${what} (scrollY ${scrollY}): ${formatViolation(v)}`));
+          for (const violation of await wcagViolations(page)) {
+            const line = `${what} (scrollY ${scrollY}): ${formatViolation(violation)}`;
+            ((await fadingOffScreen(page, violation)) ? artefacts : found).push(line);
+          }
         };
 
         await audit("top");
@@ -568,6 +601,10 @@ test.describe("motion allowed", () => {
         // every card has been revealed, so this run checks them all.
         await walkToBottom(page, () => undefined);
         await audit("bottom");
+        test.info().annotations.push({
+          type: "colour-contrast on fading card text not fully on screen (axe artefact)",
+          description: artefacts.join("\n") || "none",
+        });
         expect(found, "axe WCAG 2.2 A/AA violations").toEqual([]);
       });
 

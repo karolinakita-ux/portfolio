@@ -12,6 +12,8 @@ export const CONTACT = {
       body: "Full-time (Remote) or B2B Contract / Consulting. Available for long-term product teams or focused design system engagements.",
     },
   ] satisfies Engagement[],
+  /** The CV under the channels: the page, and its PDF (the label adds the page count). */
+  cv: { label: "CV", view: "View CV", download: "Download PDF" },
   targetRoles: ["Senior Product Designer", "Senior UX/UI Designer", "Design System Specialist"],
   location: "Poland (CET / UTC+1)",
   collaboration:

@@ -5,10 +5,11 @@ import { track } from "#shared/lib/analytics/analytics.utils.ts";
 import { SECTION, VIEW } from "#shared/lib/routes/routes.constants.ts";
 import { hrefForView } from "#shared/lib/routes/routes.utils.ts";
 import { EXTERNAL_LINK } from "#shared/lib/ui/ui.constants.ts";
+import { isPlainLeftClick } from "#shared/lib/ui/ui.utils.ts";
 import { Button } from "#shared/ui/Button/Button.tsx";
 import { Container } from "#shared/ui/Container/Container.tsx";
 import { Eyebrow } from "#shared/ui/Eyebrow/Eyebrow.tsx";
-import { ArrowDown, ArrowUpRight, Blocks, Figma, Github } from "#shared/ui/icons/icons.tsx";
+import { ArrowDown, ArrowUpRight, Blocks, Figma, FileText, Github } from "#shared/ui/icons/icons.tsx";
 import { NewTabNote } from "#shared/ui/NewTabNote/NewTabNote.tsx";
 import { PageTitle } from "#shared/ui/PageTitle/PageTitle.tsx";
 
@@ -28,58 +29,77 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
             digital products. With a background in psychology, I focus on how people actually think and work - combining
             practical research with solid design systems that engineers can easily build.
           </p>
+          {/* Two rows from sm: the case studies and the CV, then the design files, the code and the library. */}
           <div className={styles.actions}>
-            <Button
-              as="a"
-              href={hrefForView(VIEW.work, SECTION.workCases)}
-              iconRight={ArrowDown}
-              onClick={(event) => {
-                event.preventDefault();
-                onNavigate(VIEW.work, SECTION.workCases, { smooth: true });
-              }}
-            >
-              {HERO_ACTIONS.cases}
-            </Button>{" "}
-            <Button
-              as="a"
-              href={PROFILE.figmaWorkspaceUrl}
-              {...EXTERNAL_LINK}
-              variant="secondary"
-              iconLeft={Figma}
-              iconRight={ArrowUpRight}
-              onClick={() => track(EVENT.figmaClick, { place: "hero" })}
-            >
-              {HERO_ACTIONS.figma}
-              <NewTabNote />
-            </Button>{" "}
-            {PROFILE.repositoryUrl ? (
+            <div className={styles.actionRow}>
               <Button
                 as="a"
-                href={PROFILE.repositoryUrl}
-                {...EXTERNAL_LINK}
-                variant="secondary"
-                iconLeft={Github}
-                iconRight={ArrowUpRight}
-                onClick={() => track(EVENT.githubClick, { place: "hero" })}
+                href={hrefForView(VIEW.work, SECTION.workCases)}
+                iconRight={ArrowDown}
+                onClick={(event) => {
+                  event.preventDefault();
+                  onNavigate(VIEW.work, SECTION.workCases, { smooth: true });
+                }}
               >
-                {HERO_ACTIONS.source}
-                <NewTabNote />
-              </Button>
-            ) : null}{" "}
-            {PROFILE.storybookUrl ? (
+                {HERO_ACTIONS.cases}
+              </Button>{" "}
               <Button
                 as="a"
-                href={PROFILE.storybookUrl}
+                href={hrefForView(VIEW.cv)}
+                variant="secondary"
+                iconLeft={FileText}
+                onClick={(event) => {
+                  track(EVENT.cvOpen, { place: "hero" });
+                  if (!isPlainLeftClick(event)) return; // a new tab or window: the browser opens it
+                  event.preventDefault();
+                  onNavigate(VIEW.cv);
+                }}
+              >
+                {HERO_ACTIONS.cv}
+              </Button>
+            </div>{" "}
+            <div className={styles.actionRow}>
+              <Button
+                as="a"
+                href={PROFILE.figmaWorkspaceUrl}
                 {...EXTERNAL_LINK}
                 variant="secondary"
-                iconLeft={Blocks}
+                iconLeft={Figma}
                 iconRight={ArrowUpRight}
-                onClick={() => track(EVENT.storybookClick, { place: "hero" })}
+                onClick={() => track(EVENT.figmaClick, { place: "hero" })}
               >
-                {HERO_ACTIONS.components}
+                {HERO_ACTIONS.figma}
                 <NewTabNote />
-              </Button>
-            ) : null}
+              </Button>{" "}
+              {PROFILE.repositoryUrl ? (
+                <Button
+                  as="a"
+                  href={PROFILE.repositoryUrl}
+                  {...EXTERNAL_LINK}
+                  variant="secondary"
+                  iconLeft={Github}
+                  iconRight={ArrowUpRight}
+                  onClick={() => track(EVENT.githubClick, { place: "hero" })}
+                >
+                  {HERO_ACTIONS.source}
+                  <NewTabNote />
+                </Button>
+              ) : null}{" "}
+              {PROFILE.storybookUrl ? (
+                <Button
+                  as="a"
+                  href={PROFILE.storybookUrl}
+                  {...EXTERNAL_LINK}
+                  variant="secondary"
+                  iconLeft={Blocks}
+                  iconRight={ArrowUpRight}
+                  onClick={() => track(EVENT.storybookClick, { place: "hero" })}
+                >
+                  {HERO_ACTIONS.components}
+                  <NewTabNote />
+                </Button>
+              ) : null}
+            </div>
           </div>
         </div>
       </Container>

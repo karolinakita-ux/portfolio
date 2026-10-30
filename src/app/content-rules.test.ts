@@ -13,6 +13,8 @@ import { PROJECT_PLANNING_CASE } from "#features/case-studies/content/project-pl
 import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.tsx";
 import { THEMING_CASE } from "#features/case-studies/content/theming.content.tsx";
 import { CONTACT } from "#features/contact/contact.content.ts";
+import { CV, CV_PAGE } from "#features/cv/cv.content.ts";
+import { formatMonthYear } from "#features/cv/dates/dates.utils.ts";
 import { PRIVACY } from "#features/privacy/privacy.content.tsx";
 import { PROCESS_BANNER, TESTIMONIALS, WORK_CASES, WORK_INTRO } from "#features/work/work.content.ts";
 import { PROFILE } from "#shared/content/profile.ts";
@@ -27,6 +29,7 @@ const ASSET_PATH = /^(?:[a-z0-9-]+\/)*[a-z0-9-]+\.(png|jpe?g|webp)$/;
 /**
  * Content rules for the portfolio copy, so they hold for every future edit:
  *   - Short hyphens with spaces ("word - word", "2019 - 2026"), never en or em dashes.
+ *   - The CV is plain text for applicant tracking systems: no curly quotes either, ISO dates.
  *   - H1 headings never end with a trailing period.
  *   - Every case-study bullet opens with a bold lead-in term and a colon.
  *   - Navigation targets and image file names are valid on Netlify (Linux: case-sensitive).
@@ -86,6 +89,8 @@ const ALL_CONTENT = {
   MILESTONES,
   PRINCIPLES,
   CONTACT,
+  CV,
+  CV_PAGE,
   PRIVACY,
   PROFILE,
   PROCESS_BANNER,
@@ -101,8 +106,13 @@ describe("copy style", () => {
     expect(offending).toEqual([]);
   });
 
+  it("keeps the CV ATS-safe (no curly quotes)", () => {
+    const offending = collectText({ CV }).filter((text) => /[‘’“”]/.test(text));
+    expect(offending).toEqual([]);
+  });
+
   it("never ends an H1 with a period", () => {
-    const h1s = [...CASES.map((c) => c.title), CONTACT.title, PRIVACY.title, ACCESSIBILITY.title];
+    const h1s = [...CASES.map((c) => c.title), CONTACT.title, PRIVACY.title, ACCESSIBILITY.title, CV.header.name];
     for (const title of h1s) expect(title.trimEnd()).not.toMatch(/\.$/);
   });
 });
@@ -200,6 +210,49 @@ describe("work page", () => {
       const next = order[index + 1];
       if (next) expect(c.next?.view).toBe(next);
     });
+  });
+});
+
+describe("CV", () => {
+  const entries = [...CV.experience, ...CV.education];
+
+  it("uses valid ISO dates, the start before the end", () => {
+    for (const entry of entries) {
+      expect(() => formatMonthYear(entry.start), entry.id).not.toThrow();
+      if (entry.end) {
+        expect(() => formatMonthYear(entry.end ?? ""), entry.id).not.toThrow();
+        expect(entry.start <= entry.end, entry.id).toBe(true);
+      }
+    }
+  });
+
+  it("writes lead-ins without their own colon (lead() adds it) and gives each entry its own id", () => {
+    for (const bullet of entries.flatMap((entry) => entry.bullets)) expect(bullet.lead).not.toMatch(/:\s*$/);
+    expect(new Set(entries.map((entry) => entry.id)).size).toBe(entries.length);
+  });
+
+  it("shares the contact details with the profile, and tags the portfolio link for the PDF", () => {
+    expect(CV.header.name).toBe(PROFILE.name);
+    expect(CV.header.email).toBe(PROFILE.email);
+    expect(CV.header.linkedin.href).toBe(PROFILE.linkedinUrl);
+    expect(CV.header.site.pdfHref).toBe("https://" + CV.header.site.label + "/?ref=cv");
+    expect(CV.footer).toBe(PROFILE.name + " · " + PROFILE.role);
+  });
+
+  it("gives the recruitment consent in English and in Polish, each with the email address once", () => {
+    const { en, pl } = CV.consent;
+    for (const text of [en, pl]) expect(text.split("{email}")).toHaveLength(2);
+    expect(en).toMatch(/^I consent to the processing of my personal data/);
+    expect(en).toContain("GDPR (Regulation (EU) 2016/679)");
+    expect(en).toContain("future recruitment processes");
+    expect(en).toMatch(/withdraw my consent at any time/);
+    expect(pl).toMatch(/^Wyrażam zgodę na przetwarzanie moich danych osobowych/);
+    expect(pl).toContain("RODO (rozporządzenie (UE) 2016/679)");
+    expect(pl).toContain("przyszłych procesów rekrutacji");
+    expect(pl).toMatch(/wycofać w każdej chwili/);
+    // The same retention period in both languages.
+    expect(/\d+ months/.exec(en)?.[0]).toBe("12 months");
+    expect(/\d+ miesięcy/.exec(pl)?.[0]).toBe("12 miesięcy");
   });
 });
 

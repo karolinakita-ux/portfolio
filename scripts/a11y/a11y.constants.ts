@@ -7,7 +7,7 @@ import type { Theme } from "./a11y.types.ts";
 export const OUT = "a11y-report";
 export const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22a", "wcag22aa"];
 /** Views tabbed through with the statistics consent box showing (WCAG 2.4.11: focus must not hide behind it). */
-export const CONSENT_VIEWS: readonly View[] = [VIEW.work, VIEW.about, VIEW.caseAutomotive, VIEW.privacy];
+export const CONSENT_VIEWS: readonly View[] = [VIEW.work, VIEW.about, VIEW.caseAutomotive, VIEW.cv, VIEW.privacy];
 export const VIEWPORTS = {
   phone: { width: 390, height: 844 },
   desktop: { width: 1280, height: 800 },

@@ -57,6 +57,8 @@ const EVENT_PROPERTIES: { [E in AnalyticsEvent]: Record<KeysOfUnion<EventData[E]
   [EVENT.linkedinClick]: { target: true, place: true },
   [EVENT.emailClick]: { action: true, place: true },
   [EVENT.outboundClick]: { host: true },
+  [EVENT.cvOpen]: { place: true },
+  [EVENT.cvDownload]: { place: true },
   [EVENT.faqOpen]: { question: true },
   [EVENT.sectionLinkCopy]: { section: true },
   [EVENT.textCopy]: { element: true, area: true, label: true },

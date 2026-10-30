@@ -40,8 +40,8 @@ describe("useHistoryRoute", () => {
     expect(window.location.pathname).toBe("/work/data-governance");
     expect(window.location.hash).toBe("");
 
-    start("/cv"); // the CV page, removed in 4.0.0
-    expect(window.location.pathname).toBe("/about");
+    start("/resume"); // the CV's old name
+    expect(window.location.pathname).toBe("/cv");
 
     const result = start("/#projects");
     expect(result.current[0].view).toBe(VIEW.work);
@@ -92,9 +92,9 @@ describe("useHistoryRoute", () => {
     Object.assign(window.history, { replaceState: replace, pushState: push });
     try {
       const result = renderHook(() => useHistoryRoute()).result;
-      expect(window.location.pathname).toBe("/about"); // the alias, normalised
-      act(() => result.current[1](VIEW.about, "faq"));
-      expect(window.location.hash).toBe("#faq");
+      expect(window.location.pathname).toBe("/cv"); // the alias, normalised
+      act(() => result.current[1](VIEW.cv, "experience"));
+      expect(window.location.hash).toBe("#experience");
       act(() => result.current[1](VIEW.contact));
       // Saving the scroll position passes no address, which the tracker ignores.
       expect(replace.mock.calls.filter((args: unknown[]) => args[2] !== undefined)).toEqual([]);

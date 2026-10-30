@@ -20,6 +20,13 @@
 /apple-touch-icon.png
   Cache-Control: public, max-age=86400, stale-while-revalidate=604800
 
+# The CV as a PDF (`yarn cv-pdf`). Recruiters save this address, so the name never changes and every visit checks
+# for a newer file (an old CV with wrong dates is worse than a quick check). Search engines should show the CV
+# page, which has the same content: the canonical link points there. Never an X-Robots-Tag here.
+/karolina-kita-cv.pdf
+  Cache-Control: public, max-age=0, must-revalidate
+  Link: <https://karolina.kita.company/cv>; rel="canonical"
+
 # The component library (Storybook, production only): not for search engines (linked from the Work page hero).
 /storybook/*
   X-Robots-Tag: noindex, nofollow

@@ -98,13 +98,19 @@ export interface EventData {
   [EVENT.figmaClick]: { place: "hero" | "banner" } | { place: "top" | "end"; case: View };
   [EVENT.githubClick]: { place: "hero" | "banner" };
   [EVENT.storybookClick]: { place: "hero" | "banner" };
+  /** cv: the links in the CV's header (the /cv page). */
   [EVENT.linkedinClick]: {
     target: "profile" | "recommendations" | "author" | "company";
-    place: "footer" | "contact" | "testimonials";
+    place: "footer" | "contact" | "testimonials" | "cv";
   };
-  [EVENT.emailClick]: { action: "copy" | "mailto"; place: "footer" | "contact" };
+  /** cv: the links in the CV's header and consent (the /cv page). */
+  [EVENT.emailClick]: { action: "copy" | "mailto"; place: "footer" | "contact" | "cv" };
   /** A link to another website that has no event of its own (TextLink external); host: that website. */
   [EVENT.outboundClick]: { host: string };
+  /** A link to the CV page: the Work page hero, the About page hero or the Contact page. */
+  [EVENT.cvOpen]: { place: "hero" | "about" | "contact" };
+  /** A link to the CV's PDF (PROFILE.cvPdfUrl): its Download button on the CV page, or the Contact page. */
+  [EVENT.cvDownload]: { place: "cv" | "contact" };
   /** question: the FAQ item's id. Sent when it opens, not when it closes. */
   [EVENT.faqOpen]: { question: string };
   /** section: the section id (the URL hash the copied link ends in). */

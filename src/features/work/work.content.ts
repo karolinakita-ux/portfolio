@@ -5,6 +5,7 @@ import type { Testimonial, WorkCase } from "./work.types.ts";
 /** Hero buttons below the intro. The arrows are icons, not part of the label. */
 export const HERO_ACTIONS = {
   cases: "Explore Case Studies",
+  cv: "View CV",
   figma: "Inspect Figma Workspace",
   source: "View Code on GitHub",
   components: "View Components in Storybook",

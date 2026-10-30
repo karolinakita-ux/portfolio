@@ -7,6 +7,7 @@ import type { NavItem, View } from "./routes.types.ts";
  *                       ├─ /work/project-planning
  *                       └─ /work/automotive
  *   About /about · Contact /contact
+ *   CV /cv (linked from the Work and About heroes and Contact; not in the primary nav)
  *   Privacy /privacy · Accessibility /accessibility (linked from the footer)
  *
  * Every view has its own path and browser-history entry, so Back / Forward (and
@@ -25,6 +26,7 @@ export const VIEW = {
   caseAutomotive: "case-automotive",
   caseSmartTicket: "case-smart-ticket",
   contact: "contact",
+  cv: "cv",
   privacy: "privacy",
   accessibility: "accessibility",
 } as const;
@@ -41,6 +43,7 @@ export const VIEW_PATHS = {
   [VIEW.work]: "/",
   [VIEW.about]: "/about",
   [VIEW.contact]: "/contact",
+  [VIEW.cv]: "/cv",
   [VIEW.privacy]: "/privacy",
   [VIEW.accessibility]: "/accessibility",
   [VIEW.caseTheming]: "/work/data-governance",
@@ -56,15 +59,15 @@ export const SECTION = {
 
 /**
  * Short names that resolve to a view: as a hash (old links, /#resume) or as a path (/resume).
- * The CV page was removed in 4.0.0: its old links open About (Netlify redirects /cv in _redirects).
+ * /resume opens the CV (Netlify redirects it in public/_redirects). The CV page was gone in 4.0.0 - 5.13.4,
+ * when /cv and /resume opened About; 5.14.0 brought it back.
  */
 export const VIEW_ALIASES: Readonly<Record<string, View>> = {
   "": VIEW.work,
   home: VIEW.work,
   landing: VIEW.work,
   projects: VIEW.work,
-  cv: VIEW.about,
-  resume: VIEW.about,
+  resume: VIEW.cv,
 };
 
 export const NAV_ITEMS: readonly NavItem[] = [
@@ -77,11 +80,14 @@ export const SITE_NAME = "Karolina Kita";
 
 /**
  * Document title per view (shown in the tab and in the history menu).
+ * The CV's title leads with the name: it is the PDF's title (scripts/cv-pdf.ts) and the file name browsers
+ * suggest when the page is saved as a PDF.
  */
 export const VIEW_TITLES: Readonly<Record<View, string>> = {
   [VIEW.work]: SITE_NAME + " - Senior Product Designer",
   [VIEW.about]: "About - " + SITE_NAME,
   [VIEW.contact]: "Contact - " + SITE_NAME,
+  [VIEW.cv]: SITE_NAME + " - CV",
   [VIEW.privacy]: "Privacy - " + SITE_NAME,
   [VIEW.accessibility]: "Accessibility - " + SITE_NAME,
   [VIEW.caseTheming]: "Data Governance Case Study - " + SITE_NAME,

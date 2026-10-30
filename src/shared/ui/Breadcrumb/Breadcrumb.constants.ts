@@ -9,5 +9,5 @@ import type { BreadcrumbItem } from "./Breadcrumb.types.ts";
  */
 export const WORK_CRUMB: BreadcrumbItem = { label: "Work", view: VIEW.work, anchor: SECTION.workCases };
 
-/** Breadcrumb root of the pages outside Work (About, Contact, Privacy): the home page. */
+/** Breadcrumb root of the pages outside Work (About, Contact, CV, Privacy, Accessibility): the home page. */
 export const HOME_CRUMB: BreadcrumbItem = { label: "Home", view: VIEW.work, icon: House };

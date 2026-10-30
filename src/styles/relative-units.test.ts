@@ -27,6 +27,25 @@ describe("relative units", () => {
     expect(notRem).toEqual([]);
   });
 
+  it("switches layouts in the other stylesheets only at a breakpoint token (the CV's sheet variant: md)", () => {
+    const breakpoints = new Map(
+      [...read("theme.css").matchAll(/--breakpoint-([a-z0-9]+):\s*([^;]+);/g)].map(([, name = "", value = ""]) => [
+        value.trim(),
+        name,
+      ]),
+    );
+    const files = readdirSync(dir).filter(
+      (file) => file.endsWith(".css") && file !== "tokens.css" && file !== "theme.css",
+    );
+    const widths = files.flatMap((file) =>
+      [...withoutComments(read(file)).matchAll(/\((?:width\s*[<>]=?|(?:min|max)-width:)\s*([^)]+)\)/g)].map(
+        ([query, value = ""]) => `${file}: ${query} = ${breakpoints.get(value.trim()) ?? "no breakpoint"}`,
+      ),
+    );
+    expect(widths).toContain("utilities.css: (width >= 48rem) = md");
+    expect(widths.filter((width) => width.endsWith("= no breakpoint"))).toEqual([]);
+  });
+
   it("uses no px length above 2px in the other stylesheets (hairlines and outlines may stay in px)", () => {
     const files = readdirSync(dir).filter(
       (file) => file.endsWith(".css") && file !== "tokens.css" && file !== "theme.css",

@@ -23,6 +23,13 @@ export const PROFILE = {
   storybookUrl: (import.meta.env.MODE === "development"
     ? `http://${window.location.hostname}:6006/`
     : "https://karolina.kita.company/storybook/") as string | null,
+  /**
+   * The CV as a PDF, made from the /cv page by `yarn cv-pdf` (scripts/cv-pdf.ts) and served from public/. The
+   * name never changes: recruiters save the link. Vite's base keeps it next to the page in a one-page build
+   * (the claude.ai artifact). The pages are in the download labels; src/app/seo/cv-pdf.test.tsx checks them.
+   */
+  cvPdfUrl: import.meta.env.BASE_URL + "karolina-kita-cv.pdf",
+  cvPdfPages: 2,
   /** Discreet footer note on how the site was made. */
   builtWith: "Designed in Figma, prototyped & built with Claude AI assistance",
 } as const;

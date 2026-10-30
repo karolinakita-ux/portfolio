@@ -170,6 +170,8 @@
   --container-reading: 36rem;
   /* A phone screenshot in a case study (Figma: 278px screen in a 376px card). */
   --container-phone: 17.5rem;
+  /* The CV sheet on screen: Figma's A4 frame at 96 dpi, 794px wide. */
+  --container-sheet: 49.625rem;
 
   /* Aspect ratios */
   --aspect-thumb: 4 / 3;

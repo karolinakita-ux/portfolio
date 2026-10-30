@@ -35,6 +35,10 @@ describe("headFor", () => {
       "@type": "ProfilePage",
       mainEntity: { "@id": SITE_URL + "/#person" },
     });
+    expect(graph(VIEW.cv)[0]).toMatchObject({
+      "@type": "ProfilePage",
+      mainEntity: { "@id": SITE_URL + "/#person" },
+    });
     expect(graph(VIEW.contact)[0]).toMatchObject({ "@type": "WebPage" });
     expect(graph(VIEW.caseAutomotive)[1]).toMatchObject({
       "@type": "CreativeWork",
@@ -51,7 +55,7 @@ describe("headFor", () => {
       SITE_URL + "/work/data-governance",
     ]);
     expect(crumbs(VIEW.caseTheming)[0]?.name).toBe("Work");
-    for (const view of [VIEW.about, VIEW.contact, VIEW.privacy]) {
+    for (const view of [VIEW.about, VIEW.contact, VIEW.cv, VIEW.privacy, VIEW.accessibility]) {
       expect(crumbs(view).map((item) => item.name)).toEqual(["Home", PAGE_NAMES[view]]);
       expect(crumbs(view)[0]?.item).toBe(SITE_URL + "/");
     }
@@ -66,6 +70,7 @@ describe("llmsTxt", () => {
     for (const view of VIEWS) expect(text).toContain(`](${absoluteUrl(view)}): `);
     expect(text).toContain("karolina.kita.zg@gmail.com");
     expect(text).toContain(`- GitHub: ${PROFILE.githubProfileUrl}`);
+    expect(text).toContain("- CV (PDF, 2 pages): https://karolina.kita.company/karolina-kita-cv.pdf");
   });
 });
 

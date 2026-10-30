@@ -1,12 +1,29 @@
 import { render, screen, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
 
-import { FAQ, MILESTONES, PRINCIPLES } from "#features/about/about.content.ts";
+import { ABOUT_ACTIONS, FAQ, MILESTONES, PRINCIPLES } from "#features/about/about.content.ts";
+import { VIEW } from "#shared/lib/routes/routes.constants.ts";
 import { REVEAL } from "#test/reveal.ts";
 
 import { AboutView } from "./AboutView.tsx";
 
 const renderAbout = () => render(<AboutView portraitSrc="/assets/site/portrait.webp" onNavigate={() => undefined} />);
+
+describe("AboutView hero", () => {
+  it("offers the CV beside the case studies, the primary button last", async () => {
+    const onNavigate = vi.fn();
+    const user = userEvent.setup();
+    render(<AboutView portraitSrc="/assets/site/portrait.webp" onNavigate={onNavigate} />);
+    const cv = screen.getByRole("link", { name: ABOUT_ACTIONS.cv });
+    const work = screen.getByRole("link", { name: ABOUT_ACTIONS.work });
+    expect(cv).toHaveAttribute("href", "/cv");
+    expect(cv.parentElement).toBe(work.parentElement);
+    expect(cv.compareDocumentPosition(work) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    await user.click(cv);
+    expect(onNavigate).toHaveBeenCalledWith(VIEW.cv);
+  });
+});
 
 describe("AboutView scroll reveal", () => {
   it("fades up each principle card and each career milestone, and nothing else", () => {

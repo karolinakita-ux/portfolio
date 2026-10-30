@@ -235,6 +235,67 @@ describe("events on the About page", () => {
   });
 });
 
+describe("events for the CV", () => {
+  const h1 = () => screen.getByRole("heading", { level: 1 });
+
+  it("counts each way to the CV page: the Work hero, the About hero and the Contact page", async () => {
+    const { user } = renderApp("/");
+    await user.click(screen.getByRole("link", { name: "View CV" }));
+    expect(window.location.pathname).toBe("/cv");
+    expect(h1()).toHaveTextContent("Karolina Kita");
+
+    const primary = within(screen.getByRole("navigation", { name: "Primary" }));
+    await user.click(primary.getByRole("link", { name: "About" }));
+    await user.click(screen.getByRole("link", { name: "View CV" }));
+    expect(window.location.pathname).toBe("/cv");
+
+    await user.click(primary.getByRole("link", { name: "Contact" }));
+    await user.click(screen.getByRole("link", { name: "View CV" }));
+    expect(window.location.pathname).toBe("/cv");
+
+    expect(events()).toEqual([
+      [EVENT.cvOpen, { place: "hero" }],
+      [EVENT.cvOpen, { place: "about" }],
+      [EVENT.cvOpen, { place: "contact" }],
+    ]);
+  });
+
+  it("counts a View CV link opened in a new tab too, without leaving the page", () => {
+    renderApp("/");
+    // After the app's own handler: stops jsdom from loading the link, which a browser opens in a new tab.
+    document.addEventListener("click", (event) => event.preventDefault(), { once: true });
+    fireEvent.click(screen.getByRole("link", { name: "View CV" }), { ctrlKey: true });
+    expect(window.location.pathname).toBe("/");
+    expect(events()).toEqual([[EVENT.cvOpen, { place: "hero" }]]);
+  });
+
+  it.each([
+    ["/cv", "cv"],
+    ["/contact", "contact"],
+  ] as const)("counts the PDF download on %s", (url, place) => {
+    renderApp(url);
+    clickLink(screen.getByRole("link", { name: /^Download PDF \(2\spages\)$/ }));
+    expect(events()).toEqual([[EVENT.cvDownload, { place }]]);
+  });
+
+  it("counts the CV's email and LinkedIn links; its portfolio link is tagged only in the PDF", () => {
+    renderApp("/cv");
+    const sheet = within(screen.getByRole("article", { name: "Karolina Kita" }));
+    const contacts = within(sheet.getByRole("list", { name: "Contact details" }));
+    clickLink(contacts.getByRole("link", { name: /^linkedin\.com\/in\/karolinakita/ }));
+    clickLink(contacts.getByRole("link", { name: "karolina.kita.zg@gmail.com" }));
+    const [, consentEmail] = sheet.getAllByRole("link", { name: "karolina.kita.zg@gmail.com" });
+    clickLink(consentEmail!);
+    expect(events()).toEqual([
+      [EVENT.linkedinClick, { target: "profile", place: "cv" }],
+      [EVENT.emailClick, { action: "mailto", place: "cv" }],
+      [EVENT.emailClick, { action: "mailto", place: "cv" }],
+    ]);
+    // On the site the link has no tag, so a visit from the CV page does not count as a tagged link (link-ref).
+    expect(contacts.getByRole("link", { name: "karolina.kita.company" })).toHaveAttribute("href", "/");
+  });
+});
+
 describe("dead clicks", () => {
   it("are described from the page's own markup: the hero, section ids and card titles", () => {
     renderApp("/");

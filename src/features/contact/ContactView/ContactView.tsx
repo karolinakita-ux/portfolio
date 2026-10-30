@@ -1,20 +1,23 @@
 import { EngagementTiers } from "#features/contact/components/EngagementTiers/EngagementTiers.tsx";
 import { CONTACT } from "#features/contact/contact.content.ts";
 import { PROFILE } from "#shared/content/profile.ts";
+import { cvPdfLabel } from "#shared/content/profile.utils.ts";
 import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import { track } from "#shared/lib/analytics/analytics.utils.ts";
+import { VIEW } from "#shared/lib/routes/routes.constants.ts";
 import { EXTERNAL_LINK } from "#shared/lib/ui/ui.constants.ts";
 import { HOME_CRUMB } from "#shared/ui/Breadcrumb/Breadcrumb.constants.ts";
 import { Breadcrumb } from "#shared/ui/Breadcrumb/Breadcrumb.tsx";
 import { Container } from "#shared/ui/Container/Container.tsx";
 import { CopyEmail } from "#shared/ui/CopyEmail/CopyEmail.tsx";
 import { Eyebrow } from "#shared/ui/Eyebrow/Eyebrow.tsx";
-import { ExternalLink } from "#shared/ui/icons/icons.tsx";
+import { Download, ExternalLink, FileText } from "#shared/ui/icons/icons.tsx";
 import { InfoTable } from "#shared/ui/InfoTable/InfoTable.tsx";
 import { InfoTableCell } from "#shared/ui/InfoTableCell/InfoTableCell.tsx";
 import { NewTabNote } from "#shared/ui/NewTabNote/NewTabNote.tsx";
 import { PageTitle } from "#shared/ui/PageTitle/PageTitle.tsx";
 import { Section } from "#shared/ui/Section/Section.tsx";
+import { ViewLink } from "#shared/ui/ViewLink/ViewLink.tsx";
 
 import { styles } from "./ContactView.styles.ts";
 import type { ContactViewProps } from "./ContactView.types.ts";
@@ -48,9 +51,33 @@ export function ContactView({ onNavigate }: ContactViewProps) {
               className={styles.linkedinLink}
             >
               {PROFILE.name} | LinkedIn
-              <ExternalLink aria-hidden="true" size={16} className={styles.linkedinIcon} />
+              <ExternalLink aria-hidden="true" size={16} className={styles.linkIcon} />
               <NewTabNote />
             </a>
+          </InfoTableCell>
+        </InfoTable>
+        <InfoTable columns={1}>
+          <InfoTableCell label={CONTACT.cv.label}>
+            <span className={styles.cvLinks}>
+              <ViewLink
+                view={VIEW.cv}
+                onNavigate={onNavigate}
+                onClick={() => track(EVENT.cvOpen, { place: "contact" })}
+                className={styles.cvLink}
+              >
+                <FileText aria-hidden="true" size={16} className={styles.linkIcon} />
+                {CONTACT.cv.view}
+              </ViewLink>{" "}
+              <a
+                href={PROFILE.cvPdfUrl}
+                download
+                onClick={() => track(EVENT.cvDownload, { place: "contact" })}
+                className={styles.cvLink}
+              >
+                <Download aria-hidden="true" size={16} className={styles.linkIcon} />
+                {cvPdfLabel(CONTACT.cv.download)}
+              </a>
+            </span>
           </InfoTableCell>
         </InfoTable>
       </Section>

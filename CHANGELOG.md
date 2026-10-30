@@ -6,6 +6,65 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.0 - 2026-10-30
+
+#### Added
+
+- A CV page at /cv, built from Karolina's Long CV in Figma with the site's design tokens. It shows Light or Dark on screen and is always light on paper. It has two columns from md and in print. Every section heading has a link to copy (/cv#experience). Opening one of these links leaves as much space under the header as on other pages. The breadcrumb reads Home > CV. The text is the Long CV as she wrote it, with the broken spacing of the Figma export fixed. There is no phone number or street address.
+- A recruitment consent at the end of the CV, in English and in Polish (the Polish paragraph is marked as Polish). It covers:
+  - the current recruitment, and future recruitment for 12 months;
+  - an agency may send the CV only for a role she agreed to;
+  - how to withdraw by email.
+- The CV as a PDF, `public/karolina-kita-cv.pdf`, made from the page by `yarn cv-pdf` (`scripts/cv-pdf.ts`).
+  - It is A4, 2 pages and always light. The footer has page numbers and takes its type style and colour from the design tokens. The page break is where Figma has it.
+  - It has tagged headings, lists and links, bookmarks for its sections, clickable links, and the Polish consent tagged as Polish.
+  - Its portfolio link carries `?ref=cv`.
+  - The CV page has a Download PDF (2 pages) button. In an app's built-in browser (LinkedIn, Messenger), a short hint says the PDF opens best in the phone's browser. Screen readers hear this hint with the button.
+- Ways to the CV:
+  - Work hero: View CV next to Explore Case Studies, at the same height. From 480px wide the hero has two rows of buttons: the case studies and the CV, then Figma, GitHub and Storybook. Phones stack them as before.
+  - About hero: View CV next to Explore Selected Work.
+  - Contact page: a CV cell with View CV and Download PDF links. They sit as close to their label as the LinkedIn link does.
+  - "(2 pages)" never breaks across two lines. One helper (`cvPdfLabel`) builds this label for the CV page and Contact.
+- Statistics:
+  - New `cv-open` (`place`: `hero`, `about`, `contact`) and `cv-download` (`place`: `cv`, `contact`) events.
+  - `email-click` and `linkedin-click` get `place: "cv"` for the CV's own links.
+  - "download" joins the verbs in the tracking plan.
+  - The privacy policy's "What I count" names links to the CV and to its PDF (updated 30 October 2026).
+  - Not a new kind of data: the consent box already covers what visitors click, so `STORED_CHOICE` stays `on-3`.
+- New tests:
+  - `src/app/seo/cv-pdf.test.tsx` fails when the CV's text, markup or classes change without a new PDF. It compares them with two hashes in `scripts/cv-pdf.lock.json`.
+    - It also checks the PDF's A4 size, page count, tags, title, languages and links, its `_headers` rule, and that git publishes it.
+    - A change in `tokens.css` or `print.css` still needs `yarn cv-pdf` by hand.
+  - `e2e/cv.e2e.ts` checks in Chromium, Firefox and WebKit:
+    - the page in both themes and light in print;
+    - the download, and the in-app hint and its link to the button;
+    - /resume, and the page at 320px;
+    - section links on the CV;
+    - the Work hero's first row;
+    - the Contact page's CV cell.
+  - `relative-units.test.ts`: width media queries in the stylesheets must use a breakpoint token (the CV's `sheet:` variant is md).
+- Icons: FileText and Download (Lucide).
+
+#### Changed
+
+- /resume and /#resume open the CV again, not About. /cv is now the CV page; the 4.0.0 redirect from /cv to About is gone.
+- Search and AI assistants: /cv is a profile page with its own description. It is in the sitemap and in `llms.txt`, together with the PDF's address.
+- `public/_headers`: the PDF keeps its address and is checked again on every visit. A canonical link points search engines at /cv. `.gitignore` publishes this one PDF and still ignores every other PDF. `.gitattributes` marks PDFs as binary.
+- The accessibility statement names the CV under what you can do: read it as a page or download the PDF. Its known limits add that the PDF is A4 and always light, and does not follow text size or contrast settings; the CV page does (updated 30 October 2026).
+- `Lang` can mark a whole paragraph (`as="p"`). Chromium tags a paragraph's language in a PDF, but not a span's. New "Other language, paragraph" story.
+- `yarn a11y` also tabs through /cv with the consent box showing.
+- Sitemap dates for the pages that changed: Work, About, Contact, CV, Privacy and Accessibility.
+- Docs:
+  - CLAUDE.md, README (now four case studies), architecture, the tracking plan, and third-party notices (new icons, fonts embedded in the PDF).
+  - The copy reviewer now checks that facts agree across Work, About, Contact and the CV.
+
+#### Fixed
+
+- `e2e/scroll-reveal.e2e.ts` failed after the heroes grew. Two checks now leave out exactly two cases, and nothing else:
+  - axe's colour-contrast report on a fading card whose text is not on screen. At 1280 x 800, Work now opens with its first case card at the fold.
+  - WebKit's `translate: 0px` at the one scroll position where a card's bottom meets the scroll padding (the end of WebKit's view timeline).
+  - Faint text on screen, and a `fill: both` regression, still fail.
+
 ### 5.13.4 - 2026-10-30
 
 #### Fixed

@@ -42,6 +42,9 @@ tmp/
 # Personal documents and design sources: CVs, cover letters, unredacted client
 # screens. Only the exported, anonymised PNGs in public/assets/ are published.
 *.pdf
+# ...except the CV that the site publishes on purpose: made from the /cv page by `yarn cv-pdf`, with only what
+# the page shows (no phone number or street address).
+!public/karolina-kita-cv.pdf
 *.doc
 *.docx
 *.odt

@@ -14,6 +14,8 @@ export const PAGE_DESCRIPTIONS: Readonly<Record<View, string>> = {
     "Background, principles and career of Karolina Kita, a Product and UX/UI Designer with a psychology degree who works on enterprise workflows and design systems.",
   [VIEW.contact]:
     "Contact Karolina Kita, Senior Product Designer and Design Systems specialist, open to new opportunities: email, LinkedIn, availability and working hours.",
+  [VIEW.cv]:
+    "CV of Karolina Kita, Senior Product Designer: 8+ years in product design, mostly B2B and enterprise platforms, design systems and UX research. Also as a PDF.",
   [VIEW.privacy]:
     "How Karolina Kita's portfolio handles your data: no cookies, visitor statistics with Umami only if you allow them, hosting on Netlify, and your GDPR rights.",
   [VIEW.accessibility]:
@@ -28,7 +30,7 @@ export const PAGE_DESCRIPTIONS: Readonly<Record<View, string>> = {
     "Case study: research-backed redesign of a B2B vehicle marketplace across 7 European markets, from interviews and benchmarking to the checkout flow.",
 };
 
-/** The home page's name in the breadcrumb of pages outside Work (About, Contact, Privacy), as on the page. */
+/** The home page's name in the breadcrumb of pages outside Work (About, Contact, CV, Privacy ...), as on the page. */
 export const HOME_NAME = "Home";
 
 /** Short page names for breadcrumbs in structured data. */
@@ -36,6 +38,7 @@ export const PAGE_NAMES: Readonly<Record<View, string>> = {
   [VIEW.work]: "Work",
   [VIEW.about]: "About",
   [VIEW.contact]: "Contact",
+  [VIEW.cv]: "CV",
   [VIEW.privacy]: "Privacy",
   [VIEW.accessibility]: "Accessibility",
   [VIEW.caseTheming]: "Enterprise White-Label Theme Generator",

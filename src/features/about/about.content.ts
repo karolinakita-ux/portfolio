@@ -5,6 +5,12 @@ export const ABOUT_INTRO: readonly string[] = [
   "I specialize in data-heavy enterprise workflows, B2B SaaS platforms, and multi-brand design systems. Working closely with product managers and engineers, I bridge the gap between human behavior, design consistency, and technical feasibility.",
 ];
 
+/** The hero's buttons, under the intro: the CV (secondary), then the case studies (primary). */
+export const ABOUT_ACTIONS = {
+  cv: "View CV",
+  work: "Explore Selected Work",
+};
+
 /** Authored oldest → newest; the About timeline reads newest first. `lesson` (quote block) is optional. */
 export const MILESTONES: readonly Milestone[] = [
   {
