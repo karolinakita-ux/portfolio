@@ -2,6 +2,7 @@ import { PROCESS_BANNER } from "#features/work/work.content.ts";
 import { PROFILE } from "#shared/content/profile.ts";
 import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import { track } from "#shared/lib/analytics/analytics.utils.ts";
+import { SECTION } from "#shared/lib/routes/routes.constants.ts";
 import { BannerLink } from "#shared/ui/BannerLink/BannerLink.tsx";
 import { Callout } from "#shared/ui/Callout/Callout.tsx";
 import { Blocks, Figma, Github } from "#shared/ui/icons/icons.tsx";
@@ -10,11 +11,11 @@ import { styles } from "./ProcessBanner.styles.ts";
 
 /**
  * "How this portfolio was built": links to the Figma workspace, the source code and the component library, each
- * counted with place: "banner".
+ * counted with place: "banner". Linkable as /#behind-the-design, with a copy-link anchor beside its title.
  */
 export function ProcessBanner() {
   return (
-    <Callout tone="info" label="How this portfolio was built" title={PROCESS_BANNER.title}>
+    <Callout tone="info" label="How this portfolio was built" title={PROCESS_BANNER.title} id={SECTION.behindTheDesign}>
       <div className={styles.body}>
         <p>{PROCESS_BANNER.body}</p>
         <div className={styles.links}>

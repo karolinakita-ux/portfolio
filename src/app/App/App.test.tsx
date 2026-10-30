@@ -121,6 +121,21 @@ describe("App", () => {
     );
   });
 
+  it("lands on the Behind the Design banner from /#behind-the-design, on Work, with a copyable link", async () => {
+    const scrollIntoView = vi.spyOn(Element.prototype, "scrollIntoView");
+    renderApp("/#behind-the-design");
+    expect(h1()).toHaveTextContent("Clarity for Complex Enterprise Software");
+    const banner = within(screen.getByRole("complementary", { name: "How this portfolio was built" }));
+    const heading = banner.getByRole("heading", { level: 3, name: "Behind the Design" });
+    await waitFor(() => expect(heading).toHaveFocus());
+    expect(scrollIntoView.mock.contexts).toEqual([heading]);
+    expect(window.location.pathname + window.location.hash).toBe("/#behind-the-design");
+    expect(banner.getByRole("link", { name: "Copy link to section: Behind the Design" })).toHaveAttribute(
+      "href",
+      "#behind-the-design",
+    );
+  });
+
   it("navigates with the primary nav and updates URL, title and active pill", async () => {
     const { user } = renderApp();
 

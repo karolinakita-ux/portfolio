@@ -56,9 +56,14 @@ export const VIEW_PATHS = {
   [VIEW.caseSmartTicket]: "/work/smart-ticket",
 } as const satisfies Record<View, string>;
 
-/** Section anchors that other views link to (the section's element id). */
+/**
+ * Section anchors that other views or shared links point to: the element's id and the URL hash (/#enterprise-cases).
+ * Keep them stable, and never the name of a view or alias: /#about opens About (an old hash link).
+ */
 export const SECTION = {
   workCases: "enterprise-cases",
+  /** The Behind the Design banner below the Work page's case studies (ProcessBanner). */
+  behindTheDesign: "behind-the-design",
 } as const;
 
 /**

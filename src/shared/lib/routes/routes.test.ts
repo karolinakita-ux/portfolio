@@ -116,6 +116,14 @@ describe("readRoute", () => {
 
   it("treats other hashes on the root as section anchors", () => {
     expect(at("/#enterprise-cases")).toEqual({ view: VIEW.work, anchor: "enterprise-cases" });
+    expect(at("/#behind-the-design")).toEqual({ view: VIEW.work, anchor: SECTION.behindTheDesign });
+  });
+
+  it("never gives a section anchor the name of a view or alias, which would open that view instead", () => {
+    for (const anchor of Object.values(SECTION)) {
+      expect(resolveView(anchor), anchor).toBeNull();
+      expect(at("/#" + anchor)).toEqual({ view: VIEW.work, anchor });
+    }
   });
 
   it("no longer knows the removed cover letter page", () => {

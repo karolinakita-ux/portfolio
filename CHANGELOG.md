@@ -6,6 +6,14 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.22 - 2026-10-30
+
+#### Changed
+
+- The Behind the Design banner on the Work page has its own link, /#behind-the-design: it opens Work at the banner with its title focused. A copy-link icon sits beside the title, as on every section heading, and the address follows the banner while it is read. Its place and look do not change.
+- `Callout` takes an optional `id` that makes a titled banner linkable; the anchor is `SECTION.behindTheDesign`.
+- Tests: /#behind-the-design lands on the banner (App), the section hash follows a banner inside a section, a routes check keeps section anchors from taking a view's name, and a Callout test and story cover the linkable banner. CLAUDE.md, the architecture doc and the tracking plan describe it.
+
 ### 5.14.21 - 2026-10-30
 
 #### Changed

@@ -13,5 +13,11 @@ export const callout = cva("rounded-md border p-lg text-body-lg", { variants: { 
 
 export const styles = {
   titled: clsx("flex flex-col gap-sm"),
-  title: clsx("text-title-md font-semibold"),
+  /** A linkable banner's title and its copy-link anchor, as in a Section (the anchor is as tall as the title line). */
+  titleRow: clsx("group flex items-center gap-xs"),
+  /**
+   * A linkable banner's title takes focus when a link lands on it (no ring, as a Section heading) and stops a little
+   * below the sticky header, with the banner's top edge in view; min-w-0 lets a long word break beside the anchor.
+   */
+  title: clsx("min-w-0 scroll-mt-lg text-title-md font-semibold focus:outline-none"),
 };

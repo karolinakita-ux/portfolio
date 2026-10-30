@@ -10,14 +10,16 @@ import { READING_LINE } from "./section-hash.constants.ts";
  * Keeps the URL hash on the section being read (/about#career), so the address bar
  * always holds a link to the current spot. Replaces the address (replaceAddress): no history
  * entries, no scroll jumps, and not a new page for the statistics. Above the first anchored section the hash is cleared.
- * Sections opt in with `data-anchor` (see shared/ui/Section).
+ * Sections opt in with `data-anchor` (see shared/ui/Section), and so does a linkable banner inside one (a Callout
+ * with an id: Behind the Design). The elements come in page order, so a banner counts from its own top edge
+ * until the next section's reaches the line.
  * `routeKey` re-collects the sections after every navigation.
  * Off in in-app browsers (Messenger, LinkedIn...): they show a loading bar on every history write.
  */
 export function useSectionHash(routeKey: number): void {
   useEffect(() => {
     if (inAppBrowser(navigator.userAgent) !== null) return undefined;
-    const sections = [...document.querySelectorAll<HTMLElement>("main section[data-anchor][id]")];
+    const sections = [...document.querySelectorAll<HTMLElement>("main [data-anchor][id]")];
     if (sections.length === 0) return undefined;
 
     let frame = 0;

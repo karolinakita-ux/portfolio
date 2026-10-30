@@ -34,6 +34,32 @@ export const InfoWithTitle: Story = {
   },
 };
 
+/** With an `id`, a titled banner is linkable like a Section: the copy-link icon shows on hover and focus. */
+export const Linkable: Story = {
+  args: {
+    tone: "info",
+    label: "How this portfolio was built",
+    title: "Behind the Design",
+    id: "behind-the-design",
+    children: (
+      <p>
+        I treat design handoff seriously. Components and flows are organised with clear states, responsive layouts, and
+        practical documentation so developers don’t have to guess how things should behave.
+      </p>
+    ),
+  },
+  play: async ({ canvas }) => {
+    await expect(canvas.getByRole("complementary", { name: "How this portfolio was built" })).toHaveAttribute(
+      "id",
+      "behind-the-design",
+    );
+    await expect(canvas.getByRole("link", { name: "Copy link to section: Behind the Design" })).toHaveAttribute(
+      "href",
+      "#behind-the-design",
+    );
+  },
+};
+
 export const BetweenSections: Story = {
   args: {
     tone: "info",
