@@ -23,7 +23,7 @@ import { EDGES, edgesInZoomBand, zoomOf, type Edge, type ZoomCheck } from "#test
  * A cut image gets padding in the file itself: its canvas extended evenly with its own background.
  */
 const SCREENSHOT_ZOOM = zoomOf(screenshotStyles.image(true));
-const THUMBNAIL_ZOOM = zoomOf(thumbnailStyles.image("loaded", true));
+const THUMBNAIL_ZOOM = zoomOf(thumbnailStyles.image(true, true, false));
 
 /**
  * UI that runs to the edge of a full-screen capture, checked by eye: what the zoom trims there is not content.

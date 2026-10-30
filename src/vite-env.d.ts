@@ -3,6 +3,8 @@
 interface ImportMetaEnv {
   /** The version in package.json, set by vite.config.ts (define). */
   readonly APP_VERSION: string;
+  /** The year of the build (the footer's copyright year), set by vite.config.ts (define). */
+  readonly APP_BUILD_YEAR: number;
 }
 
 declare module "virtual:asset-sizes" {

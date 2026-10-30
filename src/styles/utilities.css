@@ -108,6 +108,14 @@
     radial-gradient(circle at 28% 24%, var(--bg-avatar-glow-warm), transparent 62%),
     radial-gradient(circle at 76% 80%, var(--bg-avatar-glow-cold), transparent 58%);
 }
+/* The Light file of an image that has a Dark one, in the first HTML. The pages are prerendered light, and the
+   inline script in index.html makes the page dark before the app runs: there the image waits hidden, as it did
+   before it loaded, until the app shows the Dark file (CaseThumbnail). */
+@utility light-page-only {
+  :root.dark & {
+    opacity: 0;
+  }
+}
 @utility bg-portrait-glow {
   background-image:
     radial-gradient(120% 70% at 50% 0%, var(--bg-avatar-glow-cold), transparent 70%),

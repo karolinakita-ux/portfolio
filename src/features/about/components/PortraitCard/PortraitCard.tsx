@@ -15,10 +15,11 @@ import type { PortraitCardProps } from "./PortraitCard.types.ts";
  * Default fetch priority: on phones the portrait is below the first screen, and with a high one the preload React
  * puts at the top of the prerendered page would compete with the styles, fonts and script.
  * The frame sets the size; the image still carries its file's width and height, as every image does.
+ * The first HTML shows the portrait as it arrives, with no fade on About's first screen (`shown`); after a
+ * navigation within the site it fades in once loaded, unless the browser already has it.
  */
 export function PortraitCard({ src }: PortraitCardProps) {
-  const { status, setStatus, ref } = useImageStatus(src);
-  const loaded = status === "loaded";
+  const { status, setStatus, ref, shown } = useImageStatus(src);
   const size = assetSize(src);
   return (
     <figure className={styles.root}>
@@ -33,7 +34,7 @@ export function PortraitCard({ src }: PortraitCardProps) {
             decoding="async"
             onLoad={() => setStatus("loaded")}
             onError={() => setStatus("error")}
-            className={styles.image(loaded)}
+            className={styles.image(shown)}
           />
         )}
       </div>

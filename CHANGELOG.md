@@ -6,6 +6,18 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.20 - 2026-10-30
+
+#### Changed
+
+- Pages open faster and stay still when the site's script starts: the browser keeps the page it already received instead of drawing it again, so the largest paint is recorded once (About on a slow phone: about 4.0 s to 1.3 s).
+- The About portrait and the Work thumbnails show as soon as they load, also without JavaScript, with no fade on the first screen. Images that appear later still fade in; on a dark page the thumbnails wait for their Dark versions.
+
+#### Fixed
+
+- The footer's copyright year comes from the build, so the first HTML and the app always show the same year.
+- Tests: every page is hydrated in Light and Dark and fails on any mismatch warning (`src/app/hydration/hydration.test.tsx`); `e2e/hydration.e2e.ts` checks the kept page, old hash links and the images in three browsers; `docs/architecture.md` and `CLAUDE.md` describe the hydration rules.
+
 ### 5.14.19 - 2026-10-30
 
 #### Fixed

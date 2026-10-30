@@ -55,7 +55,7 @@ public/                        copied as-is: robots.txt, sitemap.xml, _headers, 
                                Google Search Console's verification file (keep it)
 public/assets/site/            portrait and link-preview image
 public/assets/cases/<case>/    case-study screenshots and thumbnail (WebP)
-src/app/                       shell: App, routing, section hash, SEO, prerender entry, copy tests
+src/app/                       shell: App, routing, section hash, SEO, hydration, prerender entry, copy tests
 src/features/<name>/           one slice per page or capability (image viewer, privacy and the consent box):
                                view, components, copy (*.content.ts), types, tests
 src/shared/                    ui/, layout/, media/, hooks/, lib/ (routes, ui, analytics, motion, clipboard),

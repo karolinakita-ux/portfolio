@@ -5,7 +5,7 @@ A single-page React app, prerendered to static HTML per page at build time. No b
 ## Layers
 
 ```
-src/app        shell: App, routing/, seo/, analytics/, prerender entry
+src/app        shell: App, routing/, seo/, analytics/, hydration/, prerender entry
    │  imports features only through their index.ts
    ▼
 src/features   work · about · contact · cv · case-studies · image-viewer · privacy · accessibility
@@ -98,7 +98,11 @@ Every shared component (`shared/ui`, `shared/layout`, `shared/media`) and the co
 1. `yarn build` runs `vite build` for the browser bundle.
 2. `yarn prerender` builds `src/app/prerender.entry.tsx` for the server, then `scripts/prerender.ts` renders every page inside a jsdom window at that page's URL and writes `dist/<path>.html` and `dist/<path>/index.html`, `dist/404.html` (noindex) and `dist/llms.txt`. A page that lost one of the template's icon links (`<link rel="icon">`, `apple-touch-icon`) fails the build: search engines read each page's own head.
 3. Each page gets its own title, description, canonical URL, link-preview tags and JSON-LD from `src/app/seo/seo.utils.ts` (`headFor`). `src/app/seo/static-head.utils.ts` writes them into the template, with functions as replacements, so a `$` in the copy stays text. Site-wide data (WebSite, Person) stays in `index.html`, whose own tags say what the Work page says (for builds without the prerender).
-4. In the browser, `src/main.tsx` renders the app over the static HTML. On navigation, `useDocumentHead` updates the title, the page's JSON-LD and the same head tags: both read one list, `HEAD_TAGS` in `seo.constants.ts` (description, canonical, `og:url`, `og:title`, `og:description`, `twitter:title`, `twitter:description`). The robots tag stays as loaded: Google advises against changing it with JavaScript.
+4. In the browser, `src/main.tsx` adopts the static HTML (`hydrateRoot`): React keeps the elements the page brought and attaches to them, so nothing is rebuilt or repainted, no image loads twice and the largest paint is recorded once. `#root` names the view its HTML shows (`data-prerendered-view`); where the address opens another view (an old hash link: `/#about` is served the Work HTML) and where the root is empty (the dev server, a one-page build), `createRoot` renders the page anew (`adoptsPrerenderedHtml` in `src/app/hydration/`). On navigation, `useDocumentHead` updates the title, the page's JSON-LD and the same head tags: both read one list, `HEAD_TAGS` in `seo.constants.ts` (description, canonical, `og:url`, `og:title`, `og:description`, `twitter:title`, `twitter:description`). The robots tag stays as loaded: Google advises against changing it with JavaScript.
+
+The app's first render in the browser must match the prerendered HTML, or React warns and, on a text mismatch, renders the page again. The prerender and `src/main.tsx` render the same element (`<StrictMode><App /></StrictMode>`, images from `ASSET_BASE`). What only the browser knows comes through `useSyncExternalStore` with a server snapshot (the document theme, the statistics choice, an in-app browser, the scroll position) or waits for `useHydrating()` (`src/shared/hooks/hydration/`), which is true on the server and while hydrating: the consent box appears right after. The footer's year is the build's (`APP_BUILD_YEAR`, `vite.config.ts`). `src/app/hydration/hydration.test.tsx` hydrates every page in Light and Dark (running the theme script from `index.html`) and fails on any warning; `e2e/hydration.e2e.ts` checks in three browsers that the app keeps the page's `<main>`.
+
+Images in the first HTML show as they arrive, without JavaScript (`shown` in `useImageStatus`): the About portrait and the Work thumbnails no longer wait transparent for the app, and nothing fades on the first screen. An image the app adds or changes later (after a navigation, a theme switch) stays hidden until it has loaded and fades in, unless the browser already has it. The pages are prerendered light, so on a dark page a thumbnail's Light file waits hidden (`light-page-only`, `utilities.css`) until the app shows its Dark file.
 
 What the JSON-LD says, and what keeps it true to the page:
 
@@ -107,7 +111,7 @@ What the JSON-LD says, and what keeps it true to the page:
 - Each case study is a `CreativeWork` named as its Work card, with the card's Light thumbnail as `image` and its period (`CASE_PERIODS` in `seo.content.ts`, from its Timeline or Duration line) as `temporalCoverage`.
 - `llms.txt` and the sitemap list the case studies in the Work page order (`WORK_CASES`); `llms.txt` puts Privacy and Accessibility last, under `## Optional` (`LLMS_OPTIONAL`).
 
-The prerendered pages are written with no stored theme, so their theme switch says Light. Before the first paint, the inline script in `index.html` applies the visitor's theme to `<html>` and presses the matching switch button (`[data-theme-option]`, found by a MutationObserver as the parser adds them); the switch's look follows `aria-pressed` in CSS, so it is right from the first frame and React's takeover moves nothing. Keep `data-theme-option` on the buttons.
+The prerendered pages are written with no stored theme, so their theme switch says Light. Before the first paint, the inline script in `index.html` applies the visitor's theme to `<html>` and presses the matching switch button (`[data-theme-option]`, found by a MutationObserver as the parser adds them); the switch's look follows `aria-pressed` in CSS, so it is right from the first frame and React's takeover moves nothing. `useTheme` reads the same stored or system theme on its first render, so the switch React hydrates matches the pressed button. Keep `data-theme-option` on the buttons.
 
 Tests keep the pieces in step: every view needs a path, a description (at most 160 characters) and a sitemap entry.
 

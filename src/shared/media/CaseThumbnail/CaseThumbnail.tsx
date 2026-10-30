@@ -15,6 +15,9 @@ import type { CaseThumbnailProps } from "./CaseThumbnail.types.ts";
  * `darkSrc`: shown in Dark mode; a missing or broken dark version falls back to `src`.
  * `interactive`: hover feedback (slight zoom) when an ancestor with `group/thumb` is hovered.
  * The frame sets the size; the image still carries its file's width and height, as every image does.
+ * The first HTML shows the image as it arrives (`shown`); one the app adds later fades in once loaded. The
+ * prerendered page is the light page: on a dark page its Light file stays hidden (`lightFile`) until the app
+ * picks the Dark one.
  */
 export function CaseThumbnail({ src, darkSrc, alt, interactive = false }: CaseThumbnailProps) {
   const theme = useDocumentTheme();
@@ -23,7 +26,8 @@ export function CaseThumbnail({ src, darkSrc, alt, interactive = false }: CaseTh
   const currentSrc = sources.find((source) => !failed.includes(source)) ?? src;
   const size = assetSize(currentSrc);
   const hasNext = sources.indexOf(currentSrc) < sources.length - 1;
-  const { status, setStatus, ref } = useImageStatus(currentSrc);
+  const { status, setStatus, ref, shown } = useImageStatus(currentSrc);
+  const lightFile = darkSrc !== undefined && currentSrc === src && theme === "light";
 
   const handleError = () => {
     if (hasNext) setFailed((list) => [...list, currentSrc]);
@@ -44,7 +48,7 @@ export function CaseThumbnail({ src, darkSrc, alt, interactive = false }: CaseTh
           decoding="async"
           onLoad={() => setStatus("loaded")}
           onError={handleError}
-          className={styles.image(status, interactive)}
+          className={styles.image(shown, interactive, lightFile)}
         />
       )}
       {status === "error" && <VisuallyHidden>{alt}</VisuallyHidden>}

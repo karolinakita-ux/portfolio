@@ -64,10 +64,19 @@ function assetSizes(): Plugin {
 /** The site's version: shown in the footer, sent to Umami as the tag (src/main.tsx) and in the session data. */
 const { version } = JSON.parse(readFileSync(new URL("package.json", import.meta.url), "utf8")) as { version: string };
 
+/**
+ * The year of the build: the footer's copyright year. Fixed at build time, so the prerendered HTML and the app
+ * that adopts it (hydrateRoot, src/main.tsx) agree, also after New Year until the next release.
+ */
+const buildYear = new Date().getFullYear();
+
 // https://vite.dev/config/
 export default defineConfig(({ isSsrBuild }) => ({
   plugins: [react(), tailwindcss(), assetSizes()],
-  define: { "import.meta.env.APP_VERSION": JSON.stringify(version) },
+  define: {
+    "import.meta.env.APP_VERSION": JSON.stringify(version),
+    "import.meta.env.APP_BUILD_YEAR": JSON.stringify(buildYear),
+  },
   build: {
     // Hashed bundles go to /static/*, which public/_headers caches for a year.
     // Content images stay in /assets under their own names.

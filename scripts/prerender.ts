@@ -3,7 +3,9 @@
  *   dist/index.html, dist/about.html + dist/about/index.html, dist/work/automotive.html + …,
  *   dist/404.html (Work, noindex) and dist/llms.txt.
  * Search engines, link previews and AI agents read the full content without JavaScript;
- * in the browser, src/main.tsx renders the app over it.
+ * in the browser, src/main.tsx adopts it (hydrateRoot): React keeps these elements and attaches to them, so the
+ * app's first render must match this HTML. #root names the page's view (data-prerendered-view): an address
+ * that opens another view (an old hash link, /#about) gets the page rendered again instead.
  *
  * The app reads window.location, localStorage and matchMedia on its first render, so each
  * page renders inside a jsdom window at that page's URL.
@@ -30,7 +32,7 @@ interface PrerenderModule {
   renderPage: () => string;
   /** Head tags and structured data into the template (src/app/seo/static-head.utils.ts). */
   applyHead: (template: string, head: PageHead, options?: { noindex?: boolean }) => string;
-  withRootContent: (page: string, appHtml: string) => string;
+  withRootContent: (page: string, appHtml: string, view: string) => string;
 }
 
 const BROWSER_GLOBALS = [
@@ -95,7 +97,7 @@ for (const view of ssr.VIEWS) {
   if (!path) throw new Error(`prerender: no path for ${view}`);
   const head = ssr.headFor(view);
   installWindow(head.url, template);
-  const page = keepsIcons(ssr.withRootContent(ssr.applyHead(template, head), ssr.renderPage()), iconLinks, path);
+  const page = keepsIcons(ssr.withRootContent(ssr.applyHead(template, head), ssr.renderPage(), view), iconLinks, path);
   if (path === "/") {
     await write(join(DIST, "index.html"), page);
   } else {
@@ -112,6 +114,7 @@ installWindow("https://karolina.kita.company/", template);
 const notFound = ssr.withRootContent(
   ssr.applyHead(template, ssr.headFor(workView), { noindex: true }),
   ssr.renderPage(),
+  workView,
 );
 await write(join(DIST, "404.html"), keepsIcons(notFound, iconLinks, "404.html"));
 await write(join(DIST, "llms.txt"), ssr.llmsTxt());

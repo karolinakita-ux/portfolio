@@ -1,7 +1,10 @@
 import { PROFILE } from "#shared/content/profile.ts";
 
-/** Read once per page load (rendering stays pure). */
-export const CURRENT_YEAR = new Date().getFullYear();
+/**
+ * The copyright year: the year of the build (vite.config.ts), not of the visit, so the prerendered HTML and the
+ * app that adopts it show the same year (a different one would be a hydration mismatch).
+ */
+export const COPYRIGHT_YEAR = import.meta.env.APP_BUILD_YEAR;
 
 /**
  * The site's version (package.json, set at build time by vite.config.ts), so a returning visitor can tell

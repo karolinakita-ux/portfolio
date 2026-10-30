@@ -20,6 +20,12 @@ import type { View } from "#shared/lib/routes/routes.types.ts";
 
 import type { ViewContext } from "./App.types.ts";
 
+/**
+ * Where every image is served from: Vite's base + "assets", so "/assets" on the site and "./assets" in a one-page
+ * build (relative base, e.g. a claude.ai artifact). The prerender and the browser read the same value.
+ */
+export const ASSET_BASE = import.meta.env.BASE_URL + "assets";
+
 /** One entry per view: adding a view to VIEW without a renderer is a type error. */
 export const VIEW_RENDERERS: Record<View, (ctx: ViewContext) => ReactNode> = {
   [VIEW.work]: ({ navigate, resolveAsset }) => <WorkView resolveAsset={resolveAsset} onNavigate={navigate} />,

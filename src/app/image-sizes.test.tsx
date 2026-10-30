@@ -17,6 +17,7 @@ function prerenderedImages(view: View) {
   return Array.from(page.querySelectorAll("img"), (img) => ({
     src: img.getAttribute("src") ?? "",
     size: [Number(img.getAttribute("width")), Number(img.getAttribute("height"))],
+    classes: Array.from(img.classList),
   }));
 }
 
@@ -44,5 +45,22 @@ describe("image sizes in the prerendered pages", () => {
 
   it.each(WITH_IMAGES)("%s: has images to check", (view) => {
     expect(prerenderedImages(view).length).toBeGreaterThan(0);
+  });
+});
+
+/**
+ * The first HTML shows its images as they arrive, without JavaScript: none waits transparent for the app (the
+ * portrait used to, and the Work thumbnails, so the largest paint waited for the script). Only a Light file
+ * with a Dark one waits on a dark page (light-page-only), until the app shows the Dark file.
+ */
+describe("images in the prerendered pages", () => {
+  it.each(VIEWS)("%s: no image waits hidden for the app", (view) => {
+    for (const { src, classes } of prerenderedImages(view)) expect(classes, src).not.toContain("opacity-0");
+  });
+
+  it("hides only the Light files of themed images on a dark page", () => {
+    const lightOnly = VIEWS.flatMap(prerenderedImages).filter(({ classes }) => classes.includes("light-page-only"));
+    expect(lightOnly.length).toBeGreaterThan(0);
+    for (const { src } of lightOnly) expect(src).toMatch(/-light\.webp$/);
   });
 });

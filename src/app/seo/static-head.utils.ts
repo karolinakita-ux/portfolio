@@ -1,3 +1,6 @@
+import { PRERENDERED_VIEW_ATTRIBUTE } from "#app/hydration/hydration.constants.ts";
+import type { View } from "#shared/lib/routes/routes.types.ts";
+
 import { HEAD_TAGS } from "./seo.constants.ts";
 import type { HeadTag, PageHead } from "./seo.types.ts";
 import { headTagSelector } from "./seo.utils.ts";
@@ -48,6 +51,14 @@ export function applyHead(template: string, head: PageHead, { noindex = false } 
   return replaceOnce(html, /<\/head>/, () => script, "</head>");
 }
 
-/** The page with the app's HTML in its root element. */
-export const withRootContent = (page: string, appHtml: string): string =>
-  replaceOnce(page, /<div id="root"><\/div>/, () => `<div id="root">${appHtml}</div>`, '<div id="root">');
+/**
+ * The page with the app's HTML for `view` in its root element, which names the view (PRERENDERED_VIEW_ATTRIBUTE):
+ * src/main.tsx adopts the HTML only where the address opens the same view.
+ */
+export const withRootContent = (page: string, appHtml: string, view: View): string =>
+  replaceOnce(
+    page,
+    /<div id="root"><\/div>/,
+    () => `<div id="root" ${PRERENDERED_VIEW_ATTRIBUTE}="${view}">${appHtml}</div>`,
+    '<div id="root">',
+  );

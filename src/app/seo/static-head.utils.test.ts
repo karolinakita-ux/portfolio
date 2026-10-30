@@ -59,11 +59,11 @@ describe("applyHead", () => {
       url: "https://karolina.kita.company/about",
       jsonLd: { copy },
     };
-    const html = withRootContent(applyHead(TEMPLATE, head), `<p>${copy}</p>`);
+    const html = withRootContent(applyHead(TEMPLATE, head), `<p>${copy}</p>`, VIEW.about);
     const doc = parse(html);
     expect(shown(doc)).toEqual(expected(head));
     expect(pageData(doc)).toEqual({ copy });
-    expect(html).toContain(`<div id="root"><p>${copy}</p></div>`);
+    expect(html).toContain(`<div id="root" data-prerendered-view="about"><p>${copy}</p></div>`);
   });
 
   it("fails the build when the template has lost a tag", () => {
