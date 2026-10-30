@@ -79,7 +79,15 @@ describe("pageviews", () => {
     expect(window.location.search + window.location.hash).toBe("?ref=acme#faq");
     expect(pageviews()).toBe(1);
     expect(events()).toEqual([[EVENT.sectionLinkCopy, { section: "faq" }]]);
-    // Whoever opens the copied link arrives as a tagged link (link-ref "section-link"), without the copier's tag.
+    // Whoever opens the copied link still counts for acme (link-ref), and the UTM report counts it as a section link.
+    expect(await navigator.clipboard.readText()).toBe(
+      window.location.origin + "/about?ref=acme&utm_medium=section-link#faq",
+    );
+  });
+
+  it("tags a section link copied by a visitor who came without a tag as ?ref=section-link", async () => {
+    const { user } = renderApp("/about");
+    await user.click(screen.getByRole("link", { name: "Copy link to section: " + FAQ.title }));
     expect(await navigator.clipboard.readText()).toBe(window.location.origin + "/about?ref=section-link#faq");
   });
 });

@@ -168,20 +168,19 @@ describe("address-bar URLs", () => {
 });
 
 describe("shared section links", () => {
-  it("carry the page's own path, the link tag and the anchor, without the current query", () => {
+  it("carry the page's own path, the given query in place of the current one, and the anchor", () => {
     const here = (pathname: string, search = "") => ({ pathname, search, hash: "#faq" });
-    expect(sharedSectionUrl(here("/about", "?ref=acme&utm_source=linkedin"), "career", "section-link")).toBe(
-      "/about?ref=section-link#career",
+    expect(sharedSectionUrl(here("/about", "?ref=acme&fbclid=IwAR0abc"), "career", "?ref=acme&utm_medium=x")).toBe(
+      "/about?ref=acme&utm_medium=x#career",
     );
-    expect(sharedSectionUrl(here("/"), "behind-the-design", "section-link")).toBe(
+    expect(sharedSectionUrl(here("/"), "behind-the-design", "?ref=section-link")).toBe(
       "/?ref=section-link#behind-the-design",
     );
     // The file forms and a trailing slash share the page's own path.
-    expect(sharedSectionUrl(here("/work/automotive.html"), "impact", "section-link")).toBe(
+    expect(sharedSectionUrl(here("/work/automotive.html"), "impact", "?ref=section-link")).toBe(
       "/work/automotive?ref=section-link#impact",
     );
-    expect(sharedSectionUrl(here("/about/"), "faq", "section-link")).toBe("/about?ref=section-link#faq");
-    expect(sharedSectionUrl(here("/about"), "faq", "a b")).toBe("/about?ref=a%20b#faq");
+    expect(sharedSectionUrl(here("/about/", "?ref=acme"), "faq", "")).toBe("/about#faq");
   });
 });
 
@@ -219,7 +218,7 @@ describe("hash routing (one-page builds, e.g. the claude.ai artifact)", () => {
     expect(urlWithAnchor(here, "career")).toBe(page + "?ref=cv#/about#career");
     expect(urlWithAnchor(here, null)).toBe(page + "?ref=cv#/about");
     // The statistics never run in a one-page build: a shared section link keeps the page's own address.
-    expect(sharedSectionUrl(here, "career", "section-link")).toBe(page + "?ref=cv#/about#career");
+    expect(sharedSectionUrl(here, "career", "?ref=section-link")).toBe(page + "?ref=cv#/about#career");
   });
 });
 

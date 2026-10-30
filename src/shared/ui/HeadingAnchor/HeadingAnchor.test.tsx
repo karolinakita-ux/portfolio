@@ -31,19 +31,32 @@ describe("HeadingAnchor", () => {
   });
 
   it("copies the full URL with the section-link tag, puts the hash in the address bar and announces it", async () => {
-    window.history.replaceState(null, "", "/about?ref=cv&utm_medium=social");
+    window.history.replaceState(null, "", "/about?fbclid=IwAR0abc");
     const writeText = vi.fn((_text: string) => Promise.resolve());
     stubClipboard(writeText);
     renderAnchor();
 
     fireEvent.click(screen.getByRole("link", { name: /Copy link to section/ }));
 
-    // The copier's own tags stay with them: the link counts as a shared section link for whoever opens it.
+    // A click id is not a tag and stays out of the copy.
     expect(writeText).toHaveBeenCalledWith(window.location.origin + "/about?ref=section-link#career");
     expect(window.location.pathname + window.location.search + window.location.hash).toBe(
-      "/about?ref=cv&utm_medium=social#career",
+      "/about?fbclid=IwAR0abc#career",
     );
     expect(await screen.findByRole("status")).toHaveTextContent("Link copied");
+  });
+
+  it("passes the copier's tag on, marked as a section link", () => {
+    window.history.replaceState(null, "", "/about?ref=acme&utm_medium=social");
+    const writeText = vi.fn((_text: string) => Promise.resolve());
+    stubClipboard(writeText);
+    renderAnchor();
+
+    fireEvent.click(screen.getByRole("link", { name: /Copy link to section/ }));
+
+    // Whoever opens it still counts for acme; the UTM report counts it as a section link.
+    expect(writeText).toHaveBeenCalledWith(window.location.origin + "/about?ref=acme&utm_medium=section-link#career");
+    expect(window.location.search + window.location.hash).toBe("?ref=acme&utm_medium=social#career");
   });
 
   it("moves the hash past a tracker's wrapper on history.replaceState: a copied link is not a new page", () => {

@@ -75,7 +75,10 @@ export const KEPT_PARAMS: readonly string[] = [
 export const LINK_REF = {
   /** The portfolio link in the CV's PDF (cv.content.ts). */
   cvPdf: "cv",
-  /** A section's address copied with the link button beside its heading (HeadingAnchor, sharedSectionUrl). */
+  /**
+   * A section's address copied with the link button beside its heading (HeadingAnchor). A copier who came from a
+   * tagged link passes that tag on instead, with this as utm_medium (sectionLinkQuery in link-tags.utils.ts).
+   */
   sectionLink: "section-link",
 } as const;
 

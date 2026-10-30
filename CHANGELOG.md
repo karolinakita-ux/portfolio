@@ -6,6 +6,14 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.29 - 2026-10-31
+
+#### Changed
+
+- A section link copied by a visitor who came from a tagged link now passes that tag on, so the colleague they share it with still counts for the same company or channel. A recruiter on `/cv?ref=acme` who copies Experience shares `/cv?ref=acme&utm_medium=section-link#experience`: `link-ref` and the session's `ref` say `acme`, and the UTM report counts it as a section link (medium `section-link`). Since 5.14.24 the copy replaced the tag with `?ref=section-link`, and the company was lost. A visitor who came without a tag still copies `?ref=section-link`. Click ids and anything else in the address bar still stay out of the copy (`sectionLinkQuery`).
+- The privacy policy's Tagged links line says so (updated 31 October 2026). The tag and `utm_medium` are already listed there, so this is not a new kind of data: earlier yeses are not asked again (`STORED_CHOICE` unchanged).
+- The tracking plan (Tagged links, Using the dashboard), the architecture doc and CLAUDE.md describe it. Tests: `sectionLinkQuery`, `sharedSectionUrl`, `HeadingAnchor` and the app's copy on About, with and without a tag.
+
 ### 5.14.28 - 2026-10-31
 
 #### Changed
