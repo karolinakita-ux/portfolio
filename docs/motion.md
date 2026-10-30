@@ -75,6 +75,7 @@ Cards in a list fade up as they scroll into view. It is a CSS scroll-driven anim
 - **Never as a page-wide default.** No `scroll-behavior: smooth` on the page: it would also animate find-in-page, Page Down and Space, and links from other sites to a section.
 - **Reduced motion:** every scroll is instant (`prefersReducedMotion()` in the code, `scroll-behavior: auto` in `motion.css`).
 - After a jump, focus moves with `preventScroll`, so the browser adds no jump of its own.
+- **A link from another site to a section lands at once and stays.** The section-link script in `index.html` puts the heading in place as soon as the HTML is in and holds it there while the page settles, so the page does not jump seconds later when the app loads. It never moves the page once the visitor has touched, scrolled, typed or clicked ([architecture.md](architecture.md#routing), `e2e/section-links.e2e.ts`).
 
 ## Left out on purpose
 

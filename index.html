@@ -137,6 +137,97 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Links to a section (/about#career): the page opens on the section's heading below the sticky header as soon
+         as its HTML is in, not seconds later when the app's script has loaded, and keeps it there while the page
+         settles (an in-app browser's keyboard, toolbar or sheet resizing the window, fonts, the consent box). The
+         browser's own jump to the hash (to the section, not its heading) is put right, or undone when the visitor
+         has scrolled. It lets go at the visitor's first touch, wheel, key or click, a Back or Forward, or when the
+         page scrolls away by itself (a screen reader, find in page). data-kb-anchor-held tells the app to only move
+         focus (useRouteFocus). The section is the hash up to "?" or "&", as in readRoute: some apps write their
+         tracking tag after the hash. Pages without the section in their HTML (the dev server) leave it to the app. -->
+    <script>
+      (function () {
+        var hash = location.hash.slice(1);
+        var id = "";
+        var jumpTarget = null; // what the browser itself scrolls to: the element the whole hash names
+        try {
+          id = decodeURIComponent(hash.split(/[?&]/)[0]);
+          jumpTarget = document.getElementById(decodeURIComponent(hash));
+        } catch (e) {}
+        var find = function () {
+          return id ? document.getElementById(id + "-title") || document.getElementById(id) : null;
+        };
+        if (!find()) return;
+        var root = document.documentElement;
+        root.setAttribute("data-kb-anchor-held", "");
+        var holding = true;
+        var placedAt = 0; // the heading's top after the last alignment
+        var lastY = 0; // the scroll position at the latest scroll that was not the browser's jump
+        var watching = 0; // > 0 while the browser may jump to the hash
+        var inputs = ["touchstart", "wheel", "keydown", "pointerdown"];
+        var px = function (value) {
+          return parseFloat(value) || 0;
+        };
+        var observer = typeof ResizeObserver === "function" ? new ResizeObserver(align) : null;
+
+        function align() {
+          var target = find();
+          if (!holding || !target) return;
+          // As useHeaderHeight does: the app's own listener runs after this one.
+          var header = document.querySelector(".kb-site-header");
+          var covers = header && getComputedStyle(header).position === "sticky" ? header.offsetHeight : 0;
+          root.style.setProperty("--kb-header-h", covers + "px");
+          target.scrollIntoView({ block: "start" });
+          placedAt = target.getBoundingClientRect().top;
+        }
+        function release() {
+          holding = false;
+          if (observer) observer.disconnect();
+          removeEventListener("resize", align);
+          removeEventListener("popstate", release);
+          removeEventListener("hashchange", release);
+          for (var i = 0; i < inputs.length; i++) removeEventListener(inputs[i], release, true);
+        }
+        // The browser's jump puts the element the hash names at the top of the scroll area.
+        function jumped() {
+          if (!jumpTarget) return false;
+          var top = px(getComputedStyle(root).scrollPaddingTop) + px(getComputedStyle(jumpTarget).scrollMarginTop);
+          return Math.abs(jumpTarget.getBoundingClientRect().top - top) < 1;
+        }
+        // Browsers jump to the hash when the HTML is parsed (Firefox), when the page's scripts have run (Chromium:
+        // DOMContentLoaded) and may again at load, even after the visitor has scrolled: watch the next two frames.
+        function expectJump() {
+          watching++;
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+              watching--;
+            });
+          });
+        }
+        function onScroll() {
+          if (watching > 0 && jumped()) {
+            if (holding) align();
+            else scrollTo(scrollX, lastY);
+            return;
+          }
+          lastY = scrollY;
+          var target = holding ? find() : null;
+          if (holding && (!target || Math.abs(target.getBoundingClientRect().top - placedAt) > 2)) release();
+        }
+
+        align();
+        lastY = scrollY;
+        if (observer) observer.observe(document.body);
+        addEventListener("resize", align);
+        addEventListener("popstate", release);
+        addEventListener("hashchange", release);
+        for (var i = 0; i < inputs.length; i++) addEventListener(inputs[i], release, { capture: true, passive: true });
+        addEventListener("scroll", onScroll, { passive: true });
+        document.addEventListener("readystatechange", expectJump);
+        addEventListener("DOMContentLoaded", expectJump);
+        addEventListener("load", expectJump);
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

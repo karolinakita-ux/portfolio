@@ -4,6 +4,7 @@ import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
+import { ANCHOR_HELD_ATTRIBUTE } from "#app/routing/anchor.constants.ts";
 import { AUTOMOTIVE_CASE } from "#features/case-studies/content/automotive.content.ts";
 import { DATA_GOVERNANCE_CASE } from "#features/case-studies/content/data-governance.content.ts";
 import { PROJECT_PLANNING_CASE } from "#features/case-studies/content/project-planning.content.tsx";
@@ -134,6 +135,21 @@ describe("App", () => {
       "href",
       "#behind-the-design",
     );
+  });
+
+  it("only moves focus to the section when the page's own script has landed it (index.html): it never scrolls again", async () => {
+    document.documentElement.setAttribute(ANCHOR_HELD_ATTRIBUTE, "");
+    try {
+      const scrollIntoView = vi.spyOn(Element.prototype, "scrollIntoView");
+      const scrollTo = vi.spyOn(window, "scrollTo");
+      renderApp("/about#career");
+      const heading = screen.getByRole("heading", { level: 2, name: "Career Progression" });
+      await waitFor(() => expect(heading).toHaveFocus());
+      expect(scrollIntoView).not.toHaveBeenCalled();
+      expect(scrollTo).not.toHaveBeenCalled();
+    } finally {
+      document.documentElement.removeAttribute(ANCHOR_HELD_ATTRIBUTE);
+    }
   });
 
   it("navigates with the primary nav and updates URL, title and active pill", async () => {

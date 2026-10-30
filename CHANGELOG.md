@@ -6,6 +6,16 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.26 - 2026-10-30
+
+#### Fixed
+
+- A link to a section (`/about#career`) now opens on that section as soon as the page arrives. On a slow phone the page used to show its top until the site's script had loaded and only then jump, so on a first open from Messenger the link looked broken. In a test with a slow 4G connection and a slow phone, the heading now shows below the header at 2.3 s instead of 5.0 s.
+- The heading stays in place while the page settles. When an in-app browser's keyboard closed or its sheet was pulled up after the page had opened, the heading ended up under the header, or above the screen when the statistics box showed.
+- A visitor who starts scrolling while the page loads keeps their place: neither the browser's own jump to the section nor the site's script pulls them back. Nothing moves the page after the visitor's first touch, scroll, key or click.
+- How: a small script in `index.html`, after the prerendered page, lands and holds the heading; on the first load the app then only moves focus there (`useRouteFocus`, `data-kb-anchor-held`). The architecture doc (Routing), the motion doc (Smooth scrolling) and CLAUDE.md describe it.
+- Tests: `src/app/routing/section-link-script.test.ts` runs the script in jsdom, `App.test.tsx` checks that the app does not scroll again, and `e2e/section-links.e2e.ts` opens section links with the app's script held back in Chromium, Firefox and WebKit, and on an Android phone in Messenger's in-app browser (a touch scroll while the page loads, the window growing after the app has started, the first touch letting go).
+
 ### 5.14.25 - 2026-10-30
 
 #### Fixed
