@@ -4,6 +4,16 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Unreleased
+
+### 5.14.17 - 2026-10-30
+
+#### Fixed
+
+- Header: the current page in the menu is underlined as well as marked by the gold pill. The gold alone is 1.54:1 on the white header in Light mode, under the 3:1 a state needs (WCAG 1.4.11); the accessibility audit before the v5.14.16 release found it.
+- Project Planning: the notice no longer says logos were removed, because the app's wordmark is shown with Karolina's approval since 5.14.15.
+- Docs: CLAUDE.md no longer says llms.txt and the sitemap follow the case order; they do once the engineering branch lands.
+
 ## Release v5.14.16 - 2026-10-30
 
 - A new case study, Smart Ticket, shows a mobile ticketing app and its operations console, and every case study now has a clearer layout with Light and Dark screenshots.
