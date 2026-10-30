@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.15 - 2026-10-30
+
+#### Changed
+
+- Project Planning: the Work thumbnail and the calendar screenshot show the app's wordmark again, and the case links its Figma file again ("Explore the Figma File" at the top and in the closing banner). Karolina approved showing the wordmark in the screens and the file on 30 October; the name itself stays out of the site's text, alt text and file names, and the hidden-name test keeps it that way.
+
 ### 5.14.14 - 2026-10-30
 
 #### Changed

@@ -231,8 +231,14 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
       ),
     ],
   },
-  // No designFile yet: the Planning & Cost Management Platform Figma file still shows the product name, which
-  // has no approval. Link it again (title, body, "Explore the Figma File") once Karolina has painted it out there.
+  // The app's wordmark in this file and in the thumbnail and calendar screenshots may be shown (Karolina,
+  // 2026-10-30); the name itself stays out of the text.
+  designFile: {
+    url: "https://www.figma.com/design/9MsNHhhfzYQ7WKvtF9Tyfq/Planning---Cost-Management-Platform?node-id=74-349&t=TUiC9h9fuFMWG88F-1",
+    title: "Inspect the Design Files",
+    body: "The Figma file holds the design system and tokens, the core desktop screens checked in Light and Dark mode, and the components with their variants. Open it to look at spacing, states and specs up close.",
+    linkLabel: "Explore the Figma File",
+  },
   // Third case in the Work order (Smart Ticket → Automotive → Project Planning → Data Governance).
   prev: { view: VIEW.caseAutomotive },
   next: { view: VIEW.caseDataGovernance },
