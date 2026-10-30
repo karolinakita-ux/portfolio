@@ -98,18 +98,13 @@ describe("events on the Work page", () => {
     expect(events()).toEqual([[EVENT.caseOpen, { case: "case-automotive", from: "thumbnail" }]]);
   });
 
-  it("counts the Figma, GitHub and Storybook links in the hero and in the banner", () => {
+  it("counts the Figma, GitHub and Storybook links in the Behind the Design banner", () => {
     renderApp("/");
-    clickLink(screen.getByRole("link", { name: /^Inspect Figma Workspace/ }));
-    clickLink(screen.getByRole("link", { name: /^View Code on GitHub/ }));
-    clickLink(screen.getByRole("link", { name: /^View Components in Storybook/ }));
-    clickLink(screen.getByRole("link", { name: /^Explore the Figma Workspace/ }));
-    clickLink(screen.getByRole("link", { name: /^Explore the Code on GitHub/ }));
-    clickLink(screen.getByRole("link", { name: /^Explore the Storybook Library/ }));
+    const banner = within(screen.getByRole("complementary", { name: "How this portfolio was built" }));
+    clickLink(banner.getByRole("link", { name: /^Explore the Figma Workspace/ }));
+    clickLink(banner.getByRole("link", { name: /^Explore the Code on GitHub/ }));
+    clickLink(banner.getByRole("link", { name: /^Explore the Storybook Library/ }));
     expect(events()).toEqual([
-      [EVENT.figmaClick, { place: "hero" }],
-      [EVENT.githubClick, { place: "hero" }],
-      [EVENT.storybookClick, { place: "hero" }],
       [EVENT.figmaClick, { place: "banner" }],
       [EVENT.githubClick, { place: "banner" }],
       [EVENT.storybookClick, { place: "banner" }],

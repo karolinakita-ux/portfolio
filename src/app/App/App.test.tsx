@@ -35,13 +35,14 @@ describe("App", () => {
     expect(within(primaryNav()).getByRole("link", { name: "Work" })).toHaveAttribute("aria-current", "page");
   });
 
-  it("offers the case studies, the Figma workspace and the code from the hero, and credits the tools in the footer", async () => {
+  it("offers the case studies from the hero, the Figma workspace and the code from the banner, and credits the tools in the footer", async () => {
     const { user } = renderApp();
 
-    const figma = screen.getByRole("link", { name: /^Inspect Figma Workspace.*opens in a new tab/ });
+    const banner = within(screen.getByRole("complementary", { name: "How this portfolio was built" }));
+    const figma = banner.getByRole("link", { name: /^Explore the Figma Workspace.*opens in a new tab/ });
     expect(figma).toHaveAttribute("href", expect.stringContaining("figma.com"));
     expect(figma).toHaveAttribute("target", "_blank");
-    const code = screen.getByRole("link", { name: /^View Code on GitHub.*opens in a new tab/ });
+    const code = banner.getByRole("link", { name: /^Explore the Code on GitHub.*opens in a new tab/ });
     expect(code).toHaveAttribute("href", "https://github.com/karolinakita-ux/portfolio");
 
     const hero = screen.getByRole("heading", { level: 1 });

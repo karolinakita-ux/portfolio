@@ -2,13 +2,13 @@ import { VIEW } from "#shared/lib/routes/routes.constants.ts";
 
 import type { Testimonial, WorkCase } from "./work.types.ts";
 
-/** Hero buttons below the intro. The arrows are icons, not part of the label. */
+/**
+ * Hero buttons below the intro: one primary, one secondary. The arrow is an icon, not part of the label. The Figma
+ * workspace, the code and Storybook are linked from the Behind the Design banner (PROCESS_BANNER).
+ */
 export const HERO_ACTIONS = {
   cases: "Explore Case Studies",
   cv: "View CV",
-  figma: "Inspect Figma Workspace",
-  source: "View Code on GitHub",
-  components: "View Components in Storybook",
 };
 
 export const WORK_INTRO =

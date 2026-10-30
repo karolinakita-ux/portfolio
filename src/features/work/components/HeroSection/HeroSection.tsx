@@ -4,13 +4,11 @@ import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import { track } from "#shared/lib/analytics/analytics.utils.ts";
 import { SECTION, VIEW } from "#shared/lib/routes/routes.constants.ts";
 import { hrefForView } from "#shared/lib/routes/routes.utils.ts";
-import { EXTERNAL_LINK } from "#shared/lib/ui/ui.constants.ts";
 import { isPlainLeftClick } from "#shared/lib/ui/ui.utils.ts";
 import { Button } from "#shared/ui/Button/Button.tsx";
 import { Container } from "#shared/ui/Container/Container.tsx";
 import { Eyebrow } from "#shared/ui/Eyebrow/Eyebrow.tsx";
-import { ArrowDown, ArrowUpRight, Blocks, Figma, FileText, Github } from "#shared/ui/icons/icons.tsx";
-import { NewTabNote } from "#shared/ui/NewTabNote/NewTabNote.tsx";
+import { ArrowDown, FileText } from "#shared/ui/icons/icons.tsx";
 import { PageTitle } from "#shared/ui/PageTitle/PageTitle.tsx";
 
 import { styles } from "./HeroSection.styles.ts";
@@ -29,77 +27,36 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
             digital products. With a background in psychology, I focus on how people actually think and work - combining
             practical research with solid design systems that engineers can easily build.
           </p>
-          {/* Two rows from sm: the case studies and the CV, then the design files, the code and the library. */}
+          {/*
+            One primary and one secondary action. The Figma workspace, the code and the component library are in the
+            Behind the Design banner below the case studies (ProcessBanner): here they split attention.
+          */}
           <div className={styles.actions}>
-            <div className={styles.actionRow}>
-              <Button
-                as="a"
-                href={hrefForView(VIEW.work, SECTION.workCases)}
-                iconRight={ArrowDown}
-                onClick={(event) => {
-                  event.preventDefault();
-                  onNavigate(VIEW.work, SECTION.workCases, { smooth: true });
-                }}
-              >
-                {HERO_ACTIONS.cases}
-              </Button>{" "}
-              <Button
-                as="a"
-                href={hrefForView(VIEW.cv)}
-                variant="secondary"
-                iconLeft={FileText}
-                onClick={(event) => {
-                  track(EVENT.cvOpen, { place: "hero" });
-                  if (!isPlainLeftClick(event)) return; // a new tab or window: the browser opens it
-                  event.preventDefault();
-                  onNavigate(VIEW.cv);
-                }}
-              >
-                {HERO_ACTIONS.cv}
-              </Button>
-            </div>{" "}
-            <div className={styles.actionRow}>
-              <Button
-                as="a"
-                href={PROFILE.figmaWorkspaceUrl}
-                {...EXTERNAL_LINK}
-                variant="secondary"
-                iconLeft={Figma}
-                iconRight={ArrowUpRight}
-                onClick={() => track(EVENT.figmaClick, { place: "hero" })}
-              >
-                {HERO_ACTIONS.figma}
-                <NewTabNote />
-              </Button>{" "}
-              {PROFILE.repositoryUrl ? (
-                <Button
-                  as="a"
-                  href={PROFILE.repositoryUrl}
-                  {...EXTERNAL_LINK}
-                  variant="secondary"
-                  iconLeft={Github}
-                  iconRight={ArrowUpRight}
-                  onClick={() => track(EVENT.githubClick, { place: "hero" })}
-                >
-                  {HERO_ACTIONS.source}
-                  <NewTabNote />
-                </Button>
-              ) : null}{" "}
-              {PROFILE.storybookUrl ? (
-                <Button
-                  as="a"
-                  href={PROFILE.storybookUrl}
-                  {...EXTERNAL_LINK}
-                  variant="secondary"
-                  iconLeft={Blocks}
-                  iconRight={ArrowUpRight}
-                  onClick={() => track(EVENT.storybookClick, { place: "hero" })}
-                >
-                  {HERO_ACTIONS.components}
-                  <NewTabNote />
-                </Button>
-              ) : null}
-            </div>
+            <Button
+              as="a"
+              href={hrefForView(VIEW.work, SECTION.workCases)}
+              iconRight={ArrowDown}
+              onClick={(event) => {
+                event.preventDefault();
+                onNavigate(VIEW.work, SECTION.workCases, { smooth: true });
+              }}
+            >
+              {HERO_ACTIONS.cases}
+            </Button>{" "}
+            <Button
+              as="a"
+              href={hrefForView(VIEW.cv)}
+              variant="secondary"
+              iconLeft={FileText}
+              onClick={(event) => {
+                track(EVENT.cvOpen, { place: "hero" });
+                if (!isPlainLeftClick(event)) return; // a new tab or window: the browser opens it
+                event.preventDefault();
+                onNavigate(VIEW.cv);
+              }}
+            >
+              {HERO_ACTIONS.cv}
+            </Button>
           </div>
         </div>
       </Container>

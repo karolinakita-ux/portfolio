@@ -6,6 +6,15 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.4 - 2026-10-30
+
+#### Changed
+
+- Work hero: two buttons only, Explore Case Studies and View CV, in one row from 480px wide; phones stack them as before. The Inspect Figma Workspace, View Code on GitHub and View Components in Storybook buttons left the hero: the same three links are in the Behind the Design banner lower on the page, and in the hero they pulled attention from the two main actions. The banner and its links do not change.
+- Statistics: `figma-click`, `github-click` and `storybook-click` no longer come with `place: "hero"`, so that data stops from this version. The banner links still send `place: "banner"`, and `hero` stays for `cv-open`. No new data, so the privacy policy and the consent box do not change.
+- Tests: the Work page tests check that the hero has exactly these two links and that Figma, GitHub and Storybook are linked only from the banner; the CV e2e spec checks the buttons in one row at 480 and 1280px and stacked at 390px. The scroll-reveal spec no longer needs its exception for the taller two-row hero; the WebKit exception for the About page stays.
+- Docs: CLAUDE.md, the architecture doc and the tracking plan say the Work page links Storybook from the Behind the Design banner only.
+
 ### 5.14.3 - 2026-10-30
 
 #### Changed

@@ -92,12 +92,13 @@ export interface EventData {
   /** The next or previous screenshot in the image viewer (arrow, key or swipe); image: the one now shown. */
   [EVENT.imageNav]: { case: View; image: string; direction: "prev" | "next" };
   /**
-   * hero, banner: the Work page's links to the Figma workspace. case: the case study whose Figma file link was
-   * used, at its top (under the details panel) or in the design files banner at the end.
+   * banner: the Work page's link to the Figma workspace, in Behind the Design. case: the case study whose Figma file
+   * link was used, at its top (under the details panel) or in the design files banner at the end. The Work hero's
+   * Figma, GitHub and Storybook buttons were removed in 5.14.4: "hero" is earlier data only.
    */
-  [EVENT.figmaClick]: { place: "hero" | "banner" } | { place: "top" | "end"; case: View };
-  [EVENT.githubClick]: { place: "hero" | "banner" };
-  [EVENT.storybookClick]: { place: "hero" | "banner" };
+  [EVENT.figmaClick]: { place: "banner" } | { place: "top" | "end"; case: View };
+  [EVENT.githubClick]: { place: "banner" };
+  [EVENT.storybookClick]: { place: "banner" };
   /** cv: the links in the CV's header (the /cv page). */
   [EVENT.linkedinClick]: {
     target: "profile" | "recommendations" | "author" | "company";

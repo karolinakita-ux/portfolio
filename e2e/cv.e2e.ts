@@ -2,7 +2,7 @@
  * The CV page (/cv) in every browser: the sheet in both themes, light and alone in print (in two columns even on
  * a page narrower than md, as A4 is), the PDF download (its address and download attribute, and the server sends
  * a PDF), the hint for in-app browsers, the old /resume link, no sideways scrolling at 320px (WCAG 1.4.10), and
- * a section link that lands like other pages' sections. The ways to the CV: the Work hero's first row lines up,
+ * a section link that lands like other pages' sections. The ways to the CV: the Work hero's two buttons line up,
  * and on Contact the CV links sit as close to their label as LinkedIn's and keep "(2 pages)" on one line.
  */
 import { readFileSync } from "node:fs";
@@ -164,22 +164,37 @@ test("a link to a CV section leaves as much space under the header as a link to 
   expect(Math.abs(cv - about)).toBeLessThanOrEqual(1);
 });
 
+/** The Work hero's only two links: the case studies (primary), then the CV. */
+const workHeroLinks = async (page: Page) => {
+  const links = page.getByRole("region", { name: "Clarity for complex enterprise software" }).getByRole("link");
+  await expect(links).toHaveText(["Explore Case Studies", "View CV"]);
+  const [cases, cv] = await Promise.all([links.nth(0).boundingBox(), links.nth(1).boundingBox()]);
+  if (!cases || !cv) throw new Error("no hero buttons");
+  return { cases, cv };
+};
+
 for (const width of [480, 1280]) {
-  test(`${String(width)}px: the Work hero's case studies and CV buttons share one height and bottom edge`, async ({
+  test(`${String(width)}px: the Work hero's two buttons sit in one row, at one height and bottom edge`, async ({
     page,
   }) => {
     await page.setViewportSize({ width, height: 800 });
     await openView(page, "/");
-    const [cases, cv] = await Promise.all([
-      page.getByRole("link", { name: "Explore Case Studies" }).boundingBox(),
-      page.getByRole("main").getByRole("link", { name: "View CV" }).boundingBox(),
-    ]);
-    if (!cases || !cv) throw new Error("no hero buttons");
+    const { cases, cv } = await workHeroLinks(page);
     expect(Math.abs(cases.y - cv.y), "side by side").toBeLessThan(1);
+    expect(cv.x).toBeGreaterThan(cases.x + cases.width);
     expect(Math.abs(cases.height - cv.height)).toBeLessThan(0.5);
     expect(Math.abs(cases.y + cases.height - (cv.y + cv.height))).toBeLessThan(0.5);
   });
 }
+
+test("390px: the Work hero's two buttons stack, each as wide as its label", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 800 });
+  await openView(page, "/");
+  const { cases, cv } = await workHeroLinks(page);
+  expect(cv.y, "the CV under the case studies").toBeGreaterThan(cases.y + cases.height);
+  expect(Math.abs(cases.x - cv.x), "one left edge").toBeLessThan(0.5);
+  expect(cv.width).toBeLessThan(cases.width);
+});
 
 /** The tops of the lines that a link's "(2 pages)" sits on: one top when it does not break. */
 const pageCountLines = (link: Locator) =>

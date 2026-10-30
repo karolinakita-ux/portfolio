@@ -28,7 +28,7 @@ const sorted = (names: Iterable<string>) => [...names].sort();
 
 /**
  * Each event's properties as the events table lists them (the third column), sorted: the names in backticks,
- * leaving out the values in brackets (`place` (`hero`, `banner`)). "none" lists none.
+ * leaving out the values in brackets (`place` (`banner`, `top`, `end`)). "none" lists none.
  */
 const planProperties = (): Record<string, string[]> =>
   Object.fromEntries(

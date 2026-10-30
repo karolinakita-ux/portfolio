@@ -311,6 +311,10 @@ describe("events", () => {
     analytics.track("page-scroll", { depth: "50" });
     // @ts-expect-error - figma-click has no target
     analytics.track(EVENT.figmaClick, { target: "hero" });
+    // The Work hero has no Figma, GitHub or Storybook button since 5.14.4: only the banner and the case studies.
+    expectTypeOf<EventData[typeof EVENT.figmaClick]["place"]>().toEqualTypeOf<"banner" | "top" | "end">();
+    expectTypeOf<EventData[typeof EVENT.githubClick]["place"]>().toEqualTypeOf<"banner">();
+    expectTypeOf<EventData[typeof EVENT.storybookClick]["place"]>().toEqualTypeOf<"banner">();
     // @ts-expect-error - case takes a view id
     analytics.track(EVENT.caseOpen, { case: "project-planning", from: "thumbnail" });
   });
