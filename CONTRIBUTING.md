@@ -120,7 +120,7 @@ Netlify builds `main` (tests run first; a failing test stops the deploy). Check 
 
 ### 5. Refresh what other services cached
 
-Only when the release changed what they show: a page's title or description, the link-preview image (`public/assets/site/og-image.png`), the site icon, or a page's address. The pages are listed in `public/sitemap.xml`.
+Only when the release changed what they show: a page's title or description, the link-preview image (`public/assets/site/og-cover.png`), the site icon, or a page's address. The pages are listed in `public/sitemap.xml`.
 
 | Service                              | Tool                                         | What to do                                                                                                                                                               |
 | ------------------------------------ | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |

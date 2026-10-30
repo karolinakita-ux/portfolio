@@ -6,6 +6,15 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.5 - 2026-10-30
+
+#### Changed
+
+- Link previews: a shared link to the site shows Karolina's new Portfolio Cover from Figma (`og-cover.png`, 1200 x 630 PNG, 134 KB) instead of the old image: her name, role, focus areas, the years of selected work (2018 - 2026) and her experience. LinkedIn, Facebook, Messenger, Slack and X show the light cover to everyone, because a link preview cannot follow the viewer's light or dark theme. The image has a new file name (images are cached for a week), both alt texts describe it, and the old `og-image.png` is gone.
+- Figma: in the 1.91:1 cover the tagline now breaks after "and" instead of inside "token-driven".
+- Tests: a new check keeps the link-preview tags and the image together (one address for Open Graph and X, a 1200 x 630 PNG under 1 MB, alt texts, nothing that keeps search engines or link-preview services from fetching it).
+- Docs: the design doc says where the cover lives in Figma and how to change it; CLAUDE.md, the architecture doc, CONTRIBUTING.md and the docs-seo-reviewer agent name the new file. After the release, refresh the LinkedIn and Facebook previews (Post Inspector, Sharing Debugger), starting with the home page.
+
 ### 5.14.4 - 2026-10-30
 
 #### Changed

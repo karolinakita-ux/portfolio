@@ -26,6 +26,13 @@ The Figma Components page maps to `src/shared/ui` (the table is in [architecture
 
 The library is published in Storybook at [karolina.kita.company/storybook](https://karolina.kita.company/storybook/). Its Welcome page explains the design system; every story shows a component with real copy, in light and dark.
 
+## Link-preview image
+
+The picture LinkedIn, Facebook, Messenger, Slack and X show with a shared link is Karolina's "Portfolio Cover": the frame [Portfolio Cover · Open Graph 1200x630 · Light](https://www.figma.com/design/U5ke9Li7uZq06u8VM2VMCB/%F0%9F%A6%86-Karolina-Kita-Branding?node-id=2742-2910) on the Figma page Portfolio Thumbnails. The site serves it as `public/assets/site/og-cover.png`, named in `og:image` and `twitter:image` in `index.html`.
+
+- **Light only:** a link preview cannot follow the viewer's theme. `og:image` has no colour-scheme variant, and each service fetches one image for everyone. The Dark and Square frames beside it are not used by the site.
+- **Changing it:** edit the cover in Figma, export the Light frame as PNG at its export setting (2x, 1200 x 630), compress it without loss (`sharp`: no alpha channel, `compressionLevel: 9`), save it under a new file name (`/assets` is cached for a week), then update `og:image`, `twitter:image` and both alt texts. `src/app/seo/link-preview.test.ts` checks the file and the tags. After the release, refresh the previews ([CONTRIBUTING.md](../CONTRIBUTING.md#5-refresh-what-other-services-cached)).
+
 ## Design rules in code
 
 Karolina's rules that a reviewer could miss, kept by the code and its tests:
