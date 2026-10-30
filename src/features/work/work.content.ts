@@ -50,10 +50,10 @@ const CASES: readonly WorkCase[] = [
     asset: "cases/smart-ticket/thumbnail-light.webp",
     darkAsset: "cases/smart-ticket/thumbnail-dark.webp",
     alt: "The Smart Ticket operations console with fare revenue and an hourly boarding chart, beside a phone showing an active offline ticket with a QR code.",
-    eyebrow: ["Public Mobility", "Mobile App & Operations Console"],
+    eyebrow: ["Public Mobility", "B2C Mobile & B2B Operations"],
     title: "Smart Ticket: Mobile Ticketing & Transit Operations",
     summary:
-      "Rebuilt a 2022 transit ticketing concept into a token-based system: offline QR passes, buy-now-start-later boarding and a privacy-safe web console for transit operations, checked against WCAG 2.2 and European transit data standards.",
+      "Rebuilt a 2022 transit ticketing concept into a token-based system: offline QR passes, buy-now-start-later boarding and a privacy-safe operations console for transit staff, checked against WCAG 2.2 and European transit data standards.",
     cta: "View Case Study",
     view: VIEW.caseSmartTicket,
   },
@@ -62,10 +62,10 @@ const CASES: readonly WorkCase[] = [
     asset: "cases/data-governance/thumbnail-light.webp",
     darkAsset: "cases/data-governance/thumbnail-dark.webp",
     alt: "The same data table in a read-only base theme and in a custom tenant theme under a tritanopia simulation, beside contrast guardrails that pick readable text colours automatically.",
-    eyebrow: ["B2B Platform", "Feature Design"],
+    eyebrow: ["Enterprise Systems", "Multi-Tenant Architecture & Accessibility"],
     title: "Enterprise White-Label Theme Generator",
     summary:
-      "Replaced a raw CSS configuration panel with a visual theme generator for non-technical users. Automated text colour selection based on contrast so custom themes stayed readable, and provided developers with clear rules for calculating interactive states like hovers.",
+      "Gave non-technical admins a visual theme generator, so they brand their portal themselves instead of relying on custom CSS or engineering tickets. Automated text colour selection based on contrast so custom themes stayed readable, and provided developers with clear rules for calculating interactive states like hovers.",
     cta: "View Case Study",
     view: VIEW.caseDataGovernance,
   },
@@ -73,11 +73,14 @@ const CASES: readonly WorkCase[] = [
     id: "project-planning",
     asset: "cases/project-planning/thumbnail-light.webp",
     darkAsset: "cases/project-planning/thumbnail-dark.webp",
-    alt: "Sample project dashboards: a goals and milestones timeline, a budget burn table, and budget guardrails that flag projects at 80% and 100% of their budget.",
-    eyebrow: ["Enterprise SaaS", "Design System & Product Design"],
+    // The alt describes the image as it is, its largest card included. The case shows no budget thresholds, so the
+    // copy claims none (CLAUDE.md, Copy rules): drop the card's half of the alt once the thumbnail is re-exported
+    // without it.
+    alt: "Sample project dashboards: a goals and milestones timeline, a budget burn table that marks each project’s status with 1 project over budget, and a card that turns a project orange at 80% and red at 100% of its budget.",
+    eyebrow: ["B2B Enterprise SaaS", "Design System & PrimeNG"],
     title: "Project Planning & Cost Management Platform",
     summary:
-      "Designed a desktop platform for time tracking, meeting cost, project budgets and portfolio reporting, built on PrimeNG design tokens with Light and Dark modes. Mentored a UX intern and labelled every new piece of business logic as a proposal for client sign-off.",
+      "Designed a desktop platform for time tracking, meeting cost, project budgets and portfolio reporting, built on PrimeNG design tokens in Light and Dark mode. Mentored a UX intern and labelled every new piece of business logic as a proposal for client sign-off.",
     cta: "View Case Study",
     view: VIEW.caseProjectPlanning,
   },
@@ -86,11 +89,11 @@ const CASES: readonly WorkCase[] = [
     asset: "cases/automotive/thumbnail-light.webp",
     darkAsset: "cases/automotive/thumbnail-dark.webp",
     alt: "A contrast check of the marketplace status chips, a vehicle basket with mixed funding and a vehicle detail page with Great Deal and Bid & Buy Now tags.",
-    eyebrow: ["European Automotive B2B", "UX Research & Interface Design"],
+    eyebrow: ["European Automotive B2B", "Discovery, Research & Product Strategy"],
     title: "Automotive B2B Marketplace Redesign",
     summary:
-      "Researched how dealers in 7 European markets buy used cars, audited the live platform and a coded prototype, and designed the buyer flows from basket to checkout. In testing, six UK dealers completed 91.6% of tasks.",
-    cta: "View Discovery Case",
+      "Researched how dealers in 7 European markets buy used cars, audited the live platform and a coded prototype, and designed the buyer flows from basket to checkout. In testing, 6 UK dealers completed 91.6% of tasks.",
+    cta: "View Case Study",
     view: VIEW.caseAutomotive,
   },
 ];
@@ -105,7 +108,7 @@ export const WORK_CASES: readonly WorkCase[] = WORK_CASE_ORDER.map((id) => CASES
 /** Work page banner below the case-study grid. */
 export const PROCESS_BANNER = {
   title: "Behind the Design",
-  body: "I treat design handoff seriously. Components and flows are organised with clear states, responsive layouts, and practical documentation so developers don't have to guess how things should behave.",
+  body: "I treat design handoff seriously. Components and flows are organised with clear states, responsive layouts, and practical documentation so developers don’t have to guess how things should behave.",
   linkLabel: "Explore the Figma Workspace",
   /** Shown while PROFILE.repositoryUrl is set. */
   sourceLinkLabel: "Explore the Code on GitHub",

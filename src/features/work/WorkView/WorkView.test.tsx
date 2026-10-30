@@ -10,7 +10,7 @@ import { WorkView } from "./WorkView.tsx";
 
 const renderWork = () => render(<WorkView resolveAsset={(name) => "/assets/" + name} onNavigate={() => undefined} />);
 
-const hero = () => within(screen.getByRole("region", { name: "Clarity for complex enterprise software" }));
+const hero = () => within(screen.getByRole("region", { name: "Clarity for Complex Enterprise Software" }));
 const banner = () => within(screen.getByRole("complementary", { name: "How this portfolio was built" }));
 
 /** The Figma workspace, the source code and the component library (Storybook on the live site). */
@@ -58,7 +58,7 @@ describe("WorkView scroll reveal", () => {
     renderWork();
     const cases = WORK_CASES.map((item) => screen.getByRole("article", { name: item.title }));
     const testimonials = within(
-      screen.getByRole("region", { name: "Trusted by the leaders I worked for" }),
+      screen.getByRole("region", { name: "Trusted by the Leaders I Worked For" }),
     ).getAllByRole("figure");
     expect(testimonials).toHaveLength(TESTIMONIALS.length);
     for (const card of [...cases, ...testimonials]) expect(card).toHaveClass(REVEAL);
@@ -68,7 +68,7 @@ describe("WorkView scroll reveal", () => {
   it("keeps the hero, the headings and the callouts still", () => {
     renderWork();
     const still = [
-      screen.getByRole("region", { name: "Clarity for complex enterprise software" }),
+      screen.getByRole("region", { name: "Clarity for Complex Enterprise Software" }),
       screen.getByRole("heading", { level: 1 }),
       screen.getByRole("heading", { level: 2, name: "Selected Work & Case Studies" }),
       screen.getByRole("complementary", { name: "Confidentiality note" }),

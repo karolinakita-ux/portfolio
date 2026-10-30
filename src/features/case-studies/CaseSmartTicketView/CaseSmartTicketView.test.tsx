@@ -77,7 +77,7 @@ describe("CaseSmartTicketView", () => {
 
   it("links the Smart Ticket Figma file at the top and in the design files banner", () => {
     renderCase();
-    const links = screen.getAllByRole("link", { name: /^Open the Figma file/ });
+    const links = screen.getAllByRole("link", { name: /^Explore the Figma File/ });
     expect(links).toHaveLength(2);
     for (const link of links) {
       expect(link).toHaveAttribute("href", c.designFile?.url);
@@ -85,7 +85,7 @@ describe("CaseSmartTicketView", () => {
     }
     // The first one sits in the case intro, before the first section.
     expect(
-      within(screen.getByRole("region", { name: c.title })).getByRole("link", { name: /^Open the Figma file/ }),
+      within(screen.getByRole("region", { name: c.title })).getByRole("link", { name: /^Explore the Figma File/ }),
     ).toBe(links[0]);
   });
 });

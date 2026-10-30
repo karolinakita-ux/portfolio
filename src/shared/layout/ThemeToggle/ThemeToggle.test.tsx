@@ -10,7 +10,7 @@ import { mockMatchMedia } from "#test/match-media.ts";
 
 import { ThemeToggle } from "./ThemeToggle.tsx";
 
-const button = (theme: Theme) => screen.getByRole("button", { name: theme === "light" ? "Light theme" : "Dark theme" });
+const button = (theme: Theme) => screen.getByRole("button", { name: theme === "light" ? "Light mode" : "Dark mode" });
 const pressed = () => ({
   light: button("light").getAttribute("aria-pressed"),
   dark: button("dark").getAttribute("aria-pressed"),

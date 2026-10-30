@@ -8,7 +8,7 @@ import { BannerLink } from "./BannerLink.tsx";
 
 /**
  * An external text link with a brand icon, as tall as a bordered Button: the Work page's Behind the Design banner
- * and a case study's "Open the Figma file". It opens in a new tab and says so to screen readers.
+ * and a case study's "Explore the Figma File". It opens in a new tab and says so to screen readers.
  */
 const meta = {
   title: "UI/BannerLink",
@@ -31,7 +31,7 @@ export const Default: Story = {
 export const FigmaFile: Story = {
   args: {
     href: "https://www.figma.com/design/al8zX7vvgJvxNPUaeKp38Q/Smart-Ticket-App?node-id=200-85&t=rLEE9MGJA3JJXZxT-1",
-    children: "Open the Figma file",
+    children: "Explore the Figma File",
   },
 };
 

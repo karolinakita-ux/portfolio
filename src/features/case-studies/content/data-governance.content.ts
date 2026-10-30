@@ -15,14 +15,14 @@ export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
   eyebrow: ["Enterprise Systems", "Multi-Tenant Architecture & Accessibility"],
   title: "Enterprise White-Label Theme Generator: Balancing Custom Branding with Strict WCAG 2.1 AA Accessibility",
   meta: [
-    { label: "My role", value: "UX/UI Designer" },
+    { label: "My Role", value: "UX/UI Designer" },
     {
       label: "Team",
       value:
         "1 Lead Designer, 1 Senior UX Designer, 1 UX/UI Designer (myself), Product Owners, QA Engineers, Frontend & Backend Engineering Team",
     },
     { label: "Duration", value: "October 2020 - December 2022 (2 years 2 months)" },
-    { label: "Domain", value: "Multi-Tenant Enterprise / Healthcare / Federal Institutions" },
+    { label: "Domain", value: "Multi-Tenant Enterprise / Healthcare / Public Sector" },
     {
       label: "Key Outcome",
       wide: true,
@@ -38,12 +38,12 @@ export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
   summaryTitle: "Executive Summary",
   summary: [
     {
-      title: "The context",
+      title: "The Context",
       body: "The platform is an enterprise data governance tool deployed across multi-tenant environments, including healthcare organisations and public sector agencies.",
     },
     {
-      title: "The problem",
-      body: "To support institutional white-labelling, executive management initially proposed an open colour picker allowing administrators to freely rebrand the user interface. However, unrestricted customisation posed a severe usability risk: non-designer admins could unintentionally choose low-contrast colour combinations, making dense data views unreadable and violating mandatory accessibility requirements (WCAG 2.1 AA).",
+      title: "The Problem",
+      body: "Changing a tenant’s branding took custom CSS or an engineering ticket. To support institutional white-labelling, executive management proposed an open colour picker allowing administrators to freely rebrand the user interface. However, unrestricted customisation posed a severe usability risk: non-designer admins could unintentionally choose low-contrast colour combinations, making dense data views unreadable and violating mandatory accessibility requirements (WCAG 2.1 AA).",
     },
   ],
   assumption:
@@ -87,7 +87,7 @@ export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
     },
     {
       ...shot("derived-states-buttons-nav"),
-      alt: "State rules for four brand colours: each Create button in default, hover (+30% black), pressed (+30% white) and disabled (40% opacity) states with its label contrast ratio, and navigation tabs on dark and light backgrounds.",
+      alt: "State rules for 4 brand colours: each Create button in default, hover (+30% black), pressed (+30% white) and disabled (40% opacity) states with its label contrast ratio, and navigation tabs on dark and light backgrounds.",
       title: "Automated Component States from One Base Colour",
       intro:
         "A simple system rule for developers: administrators pick one base colour, and every interactive state is calculated from it.",
@@ -108,7 +108,7 @@ export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
     },
     {
       ...shot("derived-states-sidebar-table"),
-      alt: "Selection rules for the navigation sidebar and data tables in two brand colours: selected at full colour, hover at 35% opacity, pressed with 8% black, and the four lines of CSS that apply them to any palette.",
+      alt: "Selection rules for the navigation sidebar and data tables in 2 brand colours: selected at full colour, hover at 35% opacity, pressed with 8% black, and the 4 lines of CSS that apply them to any palette.",
       title: "Sidebar and Table Selection Rules",
       intro: "Extending the same logic to navigation drawers and dense data tables.",
       bullets: [
@@ -149,14 +149,14 @@ export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
     },
     {
       ...shot("color-vision-preview"),
-      alt: "Branding page with the Harbor Bank theme's Accessibility tab: typical vision and tritanopia previews side by side and four contrast checks that all pass.",
+      alt: "Branding page with the Harbor Bank theme’s Accessibility tab: typical vision and tritanopia previews side by side and 4 contrast checks that all pass.",
       title: "Colour-Vision Accessibility Preview (Phase 2)",
       intro:
-        "A designed preview in the theme's details panel to help administrators see the impact of their colour choices before publishing.",
+        "A designed preview in the theme’s details panel to help administrators see the impact of their colour choices before publishing.",
       bullets: [
         lead(
           "Accessibility Tab",
-          "An 'Accessibility' tab lets admins switch the theme preview between typical vision, Protanopia, Deuteranopia and Tritanopia, next to the theme's contrast checks.",
+          "An “Accessibility” tab lets admins switch the theme preview between typical vision, Protanopia, Deuteranopia and Tritanopia, next to the theme’s contrast checks.",
         ),
         lead(
           "Showing Real Usability Issues",
@@ -170,11 +170,11 @@ export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
     },
   ],
   safetyIntro:
-    "Changing visual themes in an enterprise multi-tenant tool directly affects active users across organisations. To prevent critical mistakes and broken layouts, I designed three clear safety mechanisms into the publishing workflow.",
+    "Changing visual themes in an enterprise multi-tenant tool directly affects active users across organisations. To prevent critical mistakes and broken layouts, I designed 3 clear safety mechanisms into the publishing workflow.",
   safety: [
     {
       ...shot("theme-library"),
-      alt: "Branding page listing three themes; the locked System Default theme's menu offers Duplicate to customize and Export as JSON while Edit and Delete are locked, beside a read-only system theme note.",
+      alt: "Branding page listing 3 themes; the locked System Default theme’s menu offers Duplicate to customize and Export as JSON while Edit and Delete are locked, beside a read-only system theme note.",
       title: "Protecting the Default System Theme",
       intro: "Preventing critical system errors by locking the baseline theme.",
       bullets: [
@@ -229,7 +229,7 @@ export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
       status: { label: "Shipped · MVP", tone: "shipped" },
       wide: true,
       body: "Launched the administrative customiser, allowing enterprise clients to rebrand key portal areas on their own without filing custom engineering tickets.",
-      visual: { kind: "tags", items: ["Enterprise", "Healthcare", "Public sector"] },
+      visual: { kind: "tags", items: ["Enterprise", "Healthcare", "Public Sector"] },
     },
     {
       title: "Automated Contrast & State Rules",

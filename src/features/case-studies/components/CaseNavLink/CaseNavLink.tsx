@@ -11,8 +11,8 @@ import type { CaseNavLinkProps } from "./CaseNavLink.types.ts";
 
 /**
  * Previous / next case study link; counted as case-nav with its place. At the top it shows only "Previous" or
- * "Next": the case name is part of its name for screen readers ("Next case study: …"), so the label they
- * hear starts with the one on screen (WCAG 2.5.3). A case study is named by its title (CASE_TITLES).
+ * "Next": the case name is part of its name for screen readers ("Next Case Study: …", as the end link says), so
+ * the label they hear starts with the one on screen (WCAG 2.5.3). A case study is named by its title (CASE_TITLES).
  */
 export function CaseNavLink({ from, target, direction, place, onNavigate }: CaseNavLinkProps) {
   const isNext = direction === "next";
@@ -37,7 +37,7 @@ export function CaseNavLink({ from, target, direction, place, onNavigate }: Case
         {isNext && arrow}
       </span>{" "}
       {label &&
-        (top ? <VisuallyHidden>case study: {label}</VisuallyHidden> : <span className={styles.label}>{label}</span>)}
+        (top ? <VisuallyHidden>Case Study: {label}</VisuallyHidden> : <span className={styles.label}>{label}</span>)}
     </a>
   );
 }

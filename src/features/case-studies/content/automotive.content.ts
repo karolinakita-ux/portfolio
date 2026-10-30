@@ -14,7 +14,7 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
   eyebrow: ["European Automotive B2B", "Discovery, Research & Product Strategy"],
   title: "Automotive B2B Marketplace: From Dealer Research Across Europe to a Validated Redesign",
   meta: [
-    { label: "My role", value: "Senior UX Designer" },
+    { label: "My Role", value: "Senior UX Designer" },
     {
       label: "Team",
       value:
@@ -55,7 +55,7 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
           alt: "Data-quality audit of 545 dealer survey responses: a quality metrics table, responses by country with Germany the largest group, what the audit means for the findings, and a reading guide by sample size.",
           title: "Multi-Market Data Synthesis",
           intro:
-            "Before trusting the survey, I checked its quality. 545 dealers answered from 7 of 8 target markets, but over 40% came from Germany, and Portugal and Poland had under 20 answers each. I treated those two as early signals, not facts, and followed up with 1:1 interviews in Poland. I also stated what the survey couldn’t measure, so the results weren’t over-read.",
+            "Before trusting the survey, I checked its quality. 545 dealers answered from 7 of 8 target markets, but over 40% came from Germany, and Portugal and Poland had under 20 answers each. I treated both as early signals, not facts, and followed up with 1:1 interviews in Poland. I also stated what the survey couldn’t measure, so the results weren’t over-read.",
         },
         {
           ...shot("qualitative-interviews"),
@@ -87,17 +87,17 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
         },
         {
           ...shot("journey-map"),
-          alt: "Dealer Principal journey map on a vehicle page, from “is this car worth my time?” to after the sale: five stages with thoughts, actions, pain points and design opportunities, and the three platforms audited.",
+          alt: "Dealer Principal journey map on a vehicle page, from “is this car worth my time?” to after the sale: 5 stages with thoughts, actions, pain points and design opportunities, and the 3 platforms audited.",
           title: "Dealer Principal Journey Map",
           intro:
-            "I mapped the Dealer Principal’s five steps on a vehicle page - what she thinks, does and struggles with - based on audits of three live platforms (UK, Australia, EU). Each pain point has a design opportunity; post-sale support is flagged for further research.",
+            "I mapped the Dealer Principal’s 5 steps on a vehicle page - what she thinks, does and struggles with - based on audits of 3 live platforms (UK, Australia, EU). Each pain point has a design opportunity; post-sale support is flagged for further research.",
         },
         {
           ...shot("heuristic-audit"),
           alt: "Where the 37 logged issues cluster: violations per Nielsen heuristic, led by visibility of system status (8) and aesthetic and minimalist design (7), with the audit method from evaluation to presentation.",
           title: "Usability Audit of the Live Platform",
           intro:
-            "I reviewed the live platform against Nielsen’s 10 heuristics and logged 37 issues. Most fell into two groups: unclear system status (8 issues, 21.6%) and cluttered screens (7, 18.9%). This matched what dealers told me in interviews - the platform felt “poor, unintuitive, overloaded”.",
+            "I reviewed the live platform against Nielsen’s 10 heuristics and logged 37 issues. Most fell into 2 groups: unclear system status (8 issues, 21.6%) and cluttered screens (7, 18.9%). This matched what dealers told me in interviews - the platform felt “poor, unintuitive, overloaded”.",
         },
         {
           ...shot("executive-buy-in"),
@@ -112,49 +112,49 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
       id: "auto-benchmarking",
       title: "Benchmarking, Flows & Specifications",
       intro:
-        "Before sketching layouts, I studied six leading automotive platforms to learn which patterns work on a vehicle page and which to avoid.",
+        "Before sketching layouts, I studied 6 leading automotive platforms to learn which patterns work on a vehicle page and which to avoid.",
       cards: [
         {
           ...shot("competitive-benchmark"),
-          alt: "Benchmark of six anonymised automotive platforms: five proven vehicle-page patterns, each traced to the platforms that use it, what the benchmark showed and how it applies to our page.",
+          alt: "Benchmark of 6 anonymised automotive platforms: 5 proven vehicle-page patterns, each traced to the platforms that use it, what the benchmark showed and how it applies to our page.",
           title: "Competitive Benchmarking",
           intro:
-            "I compared six anonymised platforms: wholesale remarketing, a manufacturer used-car site, retail classifieds and three types of auction. Five proven patterns made it into our vehicle page: clear navigation, sharing and export, grouped data, prominent buy buttons and in-context help.",
+            "I compared 6 anonymised platforms: wholesale remarketing, a manufacturer used-car site, retail classifieds and 3 types of auction. Five proven patterns made it into our vehicle page: clear navigation, sharing and export, grouped data, prominent buy buttons and in-context help.",
         },
         {
           ...shot("purchase-flow"),
-          alt: "Swimlane flow from basket to a funded order across five lanes - dealer, platform, payments provider, customer support and logistics - including basket changes, transport and payment assignment.",
+          alt: "Swimlane flow from basket to a funded order across 5 lanes - dealer, platform, payments provider, customer support and logistics - including basket changes, transport and payment assignment.",
           title: "Purchase Flow for Multi-Car Orders",
           intro:
-            "I mapped the full purchase flow across five roles: dealer, platform, payments, support and logistics. Dealers can build a basket of several cars and undo removals. Transport is a required step that fixes the invoice total, and each car can be paid differently - dealer finance, card or bank transfer. Checkout stays locked until every pound is assigned.",
+            "I mapped the full purchase flow across 5 roles: dealer, platform, payments, support and logistics. Dealers can build a basket of several cars and undo removals. Transport is a required step that fixes the invoice total, and each car can be paid differently - card or dealer finance. Checkout stays locked until every pound is assigned.",
         },
         {
           ...shot("wireframes-to-specs"),
           alt: "Level 4 specification of the price and action panel: an annotated panel for a 2021 hybrid SUV with net price, 20% VAT, damages and total, the page’s information levels and a field-by-field sign-off table.",
           title: "From Wireframes to Specifications",
           intro:
-            "I reviewed low-fidelity layouts with product managers and engineers, then turned them into detailed specs. The vehicle page has seven levels of information (L0 to L6). Level 4, the price panel, shows net price, 20% VAT, damages and VAT status separately, each with a short rationale for sign-off.",
+            "I reviewed low-fidelity layouts with product managers and engineers, then turned them into detailed specs. The vehicle page has 7 levels of information (L0 to L6). Level 4, the price panel, shows net price, 20% VAT, damages and VAT status separately, each with a short rationale for sign-off.",
         },
         {
           ...shot("badge-system"),
-          alt: "Vehicle status badge specification: four badge families (damage and risk, price and value, sales channel and offer type, demand and activity), display rules for cards and vehicle pages, and the priority order.",
+          alt: "Vehicle status badge specification: 4 badge families (damage and risk, price and value, sales channel and offer type, demand and activity), display rules for cards and vehicle pages, and the priority order.",
           title: "Vehicle Status Badges",
           intro:
-            "I defined four badge types in priority order: damage and risk, price and value, sales type, and demand. Cards show up to 3 badges and vehicle pages up to 5, so screens stay easy to scan. A badge seen on a card always appears on the vehicle page too.",
+            "I defined 4 badge types in priority order: damage and risk, price and value, sales type, and demand. Cards show up to 3 badges and vehicle pages up to 5, so screens stay easy to scan. A badge seen on a card always appears on the vehicle page too.",
         },
         {
           ...shot("edge-case-filters"),
-          alt: "The manufacturer filter in four states: a selected make never hides behind “Show more”, it moves into the short list, narrowing 123 vehicles to 25.",
+          alt: "The manufacturer filter in 4 states: a selected make never hides behind “Show more”, it moves into the short list, narrowing 123 vehicles to 25.",
           title: "Designing for Edge Cases",
           intro:
             "I also designed for situations that break the default layout. For example, if a dealer selects a car make hidden under “Show more”, it moves into the short list, so an active filter is never out of sight (123 → 25 results).",
         },
         {
           ...shot("contrast-audit"),
-          alt: "Colour contrast audit: brand teal at 1.92:1 fails as text, the darkest teal reaches 4.59:1, a rule for thin elements, and six status chip colour pairs that all pass AA and AAA.",
+          alt: "Colour contrast audit: brand teal at 1.92:1 fails as text, the darkest teal reaches 4.59:1, a rule for thin elements, and 6 status chip colour pairs that all pass AA and AAA.",
           title: "Accessibility & Colour Contrast",
           intro:
-            "I checked status labels, tables and buttons against WCAG 2.2 AA before handoff. The brand teal failed as text (1.92:1), so I set a rule: thin elements of 3 px or less use the darkest teal (4.59:1). All six status-label colour pairs pass AAA.",
+            "I checked status labels, tables and buttons against WCAG 2.2 AA before handoff. The brand teal failed as text (1.92:1), so I set a rule: thin elements of 3 px or less use the darkest teal (4.59:1). All 6 status-label colour pairs pass AAA.",
         },
       ],
     },
@@ -166,7 +166,7 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
       cards: [
         {
           ...shot("prototype-audit"),
-          alt: "Prototype audit of 29 findings across three severity tiers: scope, target persona, the severity scale and an issue tracker listing each finding by area with its severity.",
+          alt: "Prototype audit of 29 findings across 3 severity tiers: scope, target persona, the severity scale and an issue tracker listing each finding by area with its severity.",
           title: "29-Point Prototype Audit",
           intro:
             "I reviewed the coded prototype and logged 29 issues: 18 high severity (must be fixed before testing or release), 1 major and 10 medium. They ranged from cart logic errors to a button that failed colour contrast.",
@@ -217,16 +217,16 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
     layout: "numbered",
     points: [
       [
-        "Documentation that explains “why”",
+        "Documentation That Explains “Why”",
         "Every key flow, edge case and state was recorded with its evidence - heuristic, benchmark or user need - so the team could see why each decision was made.",
       ],
       [
-        "Working closely with engineering",
-        "Regular syncs with front-end developers resolved edge cases and kept the design system consistent, so handoff stayed clear and the build matched the design.",
+        "Working Closely with Engineering",
+        "Regular syncs with frontend developers resolved edge cases and kept the design system consistent, so handoff stayed clear and the build matched the design.",
       ],
       [
-        "Turning findings into refined designs",
-        "My prototype audit and the UX Researcher’s sessions with six UK dealers (91.6% task completion) pointed to the same fixes, such as a split-payment logic gap, which I resolved in Figma before release, not after.",
+        "Turning Findings into Refined Designs",
+        "My prototype audit and the UX Researcher’s sessions with 6 UK dealers (91.6% task completion) pointed to the same fixes, such as a split-payment logic gap, which I resolved in Figma before release, not after.",
       ],
     ],
   },

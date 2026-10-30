@@ -5,10 +5,13 @@ export const ABOUT_INTRO: readonly string[] = [
   "I specialise in data-heavy enterprise workflows, B2B SaaS platforms, and multi-brand design systems. Working closely with product managers and engineers, I bridge the gap between human behaviour, design consistency, and technical feasibility.",
 ];
 
-/** The hero's buttons, under the intro: the CV (secondary), then the case studies (primary). */
+/**
+ * The hero's buttons, under the intro: the CV (secondary), then the case studies (primary). The career section's
+ * button to the case studies says `work` too: one label for one destination, the Work hero's (content-rules.test.ts).
+ */
 export const ABOUT_ACTIONS = {
   cv: "View CV",
-  work: "Explore Selected Work",
+  work: "Explore Case Studies",
 };
 
 /**
@@ -55,7 +58,7 @@ export const MILESTONES: readonly Milestone[] = [
     title: "Design Systems & Product Design",
     org: "Programado - Senior Product Designer (Consulting / Contract), from 2023 to 2026 alongside my full-time role at GlobalLogic Poland",
     focus:
-      "Leading the design and evolution of scalable design systems tailored to enterprise front-end frameworks (such as PrimeNG and Angular). Defining design tokens, theming structures (light/dark modes), and accessibility standards to help product teams deliver consistent interfaces faster.",
+      "Leading the design and evolution of scalable design systems tailored to enterprise frontend frameworks (such as PrimeNG and Angular). Defining design tokens, theming structures (Light and Dark mode), and accessibility standards to help product teams deliver consistent interfaces faster.",
     tags: [
       "Design Systems",
       "Design Tokens",
@@ -72,19 +75,19 @@ export const FAQ: { title: string; intro: string; items: readonly FaqItem[] } = 
   items: [
     {
       id: "dribbble",
-      question: "Why do you focus on case studies rather than visual platforms like Dribbble?",
+      question: "Why Do You Focus on Case Studies Rather than Visual Platforms like Dribbble?",
       answer:
         "Enterprise software cannot be fully explained in a single static visual. Most of my work involves confidential B2B tools, detailed tables, permissions, and complex workflows covered by NDAs. I prefer sharing in-depth case studies that explain the problem, real constraints, and the reasoning behind each design decision.",
     },
     {
       id: "psychology",
-      question: "How does a background in psychology shape your design work?",
+      question: "How Does a Background in Psychology Shape Your Design Work?",
       answer:
         "Psychology helps me understand how people process information, make choices, and handle heavy workloads. In complex business tools, good design reduces mental fatigue by organising information clearly and preventing mistakes before they happen.",
     },
     {
       id: "engineers",
-      question: "How do you collaborate with cross-functional teams?",
+      question: "How Do You Collaborate with Cross-Functional Teams?",
       answer: "Great software is always a team effort:",
       points: [
         [
@@ -103,7 +106,7 @@ export const FAQ: { title: string; intro: string; items: readonly FaqItem[] } = 
     },
     {
       id: "problems",
-      question: "What kinds of problems do you enjoy working on most?",
+      question: "What Kinds of Problems Do You Enjoy Working On Most?",
       answer:
         "I enjoy projects with heavy data and complex logic, like automotive platforms, management portals, and financial tools. Turning messy, complicated workflows into simple, predictable tools that save people time is what I find most rewarding.",
     },
@@ -114,7 +117,7 @@ export const PRINCIPLES: readonly Principle[] = [
   {
     id: "utility",
     title: "Clarity First",
-    body: "Complex tools don't have to feel messy. I organise information so users can quickly find what they need without feeling lost in buttons and tables.",
+    body: "Complex tools don’t have to feel messy. I organise information so users can quickly find what they need without feeling lost in buttons and tables.",
   },
   {
     id: "edge-cases",

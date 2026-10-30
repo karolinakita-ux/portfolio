@@ -77,7 +77,7 @@ export function llmsTxt(): string {
     "",
     "Every page below is plain HTML: no login, no JavaScript needed to read it.",
     "",
-    "## Case studies",
+    "## Case Studies",
     "",
     ...cases.map(line),
     "",

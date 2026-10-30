@@ -36,7 +36,7 @@ describe("AccessibilityView", () => {
 
   it("names its known limits", () => {
     renderStatement();
-    const limits = within(screen.getByRole("region", { name: "Known limits" }));
+    const limits = within(screen.getByRole("region", { name: "Known Limits" }));
     expect(limits.getAllByRole("listitem").length).toBeGreaterThanOrEqual(2);
   });
 });

@@ -22,16 +22,16 @@ What this site sends to [Umami Cloud](https://umami.is), why, and the rules for 
 
 **Property names** are lowerCamelCase, one word where possible. The same meaning keeps the same name:
 
-| Property    | Meaning                                                                                                                                                                    |
-| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `place`     | where on the site a link or button sits (`hero`, `banner`, `footer`, `about`, `contact`, `cv`, `privacy`, `accessibility`, `testimonials`; `top` or `end` of a case study) |
-| `case`      | a case study's view id (`case-project-planning`); Data Governance keeps its old id `case-theming`                                                                          |
-| `image`     | a screenshot card's id: its image's base name (`multi-market-survey`, `admin-operations-dashboard`); ids changed in 5.13.2                                                 |
-| `area`      | the section id around an element, a hero's name, or the landmark                                                                                                           |
-| `element`   | the kind of element (`image`, `icon`, `heading`, `text`, `card`, `page`); the frame around a captioned screenshot is `image`                                               |
-| `label`     | site copy that names the element (alt text, heading, card title, image caption); for `text-copy`, never one the selection holds                                            |
-| `direction` | `prev` or `next`                                                                                                                                                           |
-| `input`     | `mouse`, `touch`, `pen` or `keyboard`; added by `track()`, never by hand                                                                                                   |
+| Property    | Meaning                                                                                                                                                                         |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `place`     | where on the site a link or button sits (`hero`, `banner`, `footer`, `about`, `contact`, `cv`, `privacy`, `accessibility`, `testimonials`; `top` or `end` of a case study)      |
+| `case`      | a case study's view id (`case-project-planning`); Data Governance keeps its old id `case-theming`                                                                               |
+| `image`     | a screenshot card's id: its image's base name (`multi-market-survey`, `admin-operations-dashboard`); ids changed in 5.13.2                                                      |
+| `area`      | the section id around an element, a hero's name, or the landmark                                                                                                                |
+| `element`   | the kind of element (`image`, `icon`, `heading`, `text`, `card`, `page`); the frame around a captioned screenshot is `image`                                                    |
+| `label`     | site copy that names the element (alt text, heading, card title, image caption); for `text-copy`, never one the selection holds; headings and titles in Title Case from 5.14.11 |
+| `direction` | `prev` or `next`                                                                                                                                                                |
+| `input`     | `mouse`, `touch`, `pen` or `keyboard`; added by `track()`, never by hand                                                                                                        |
 
 Never a property called `id`: `umami.identify()` takes it as a Distinct ID and links visits.
 
@@ -63,7 +63,7 @@ Addresses are cleaned before anything goes (`payload.utils.ts`, applied to the t
 | `faq-open`          | a FAQ question opens (not when it closes)                                         | `question`                                              | Which questions matter to visitors?                             |
 | `section-link-copy` | the copy-link button next to a section heading                                    | `section`                                               | Which sections do people share?                                 |
 | `text-copy`         | the visitor selects text and copies it                                            | `element`, `area`, `label`                              | Which content do people take with them?                         |
-| `theme-switch`      | the light / dark switch changes the theme                                         | `theme`                                                 | Is dark mode used on purpose?                                   |
+| `theme-switch`      | the Light and Dark mode switch changes the theme                                  | `theme`                                                 | Is Dark mode used on purpose?                                   |
 | `page-print`        | the page goes to the printer or to a PDF                                          | none                                                    | Which pages do people print or save?                            |
 | `time-on-page`      | the visitor leaves a page, switches tabs or apps, or closes it                    | `time`, `seconds`, `scroll`, `section`                  | Which pages are read, and how far?                              |
 | `dead-click`        | a click or tap on something that does nothing, once per burst                     | `element`, `area`, `label`                              | What do people expect to be a link or a bigger image?           |
@@ -84,8 +84,8 @@ Sent once per page load with `umami.identify()` (`session.utils.ts`), never with
 | `viewport`       | browser window width at the site's breakpoints: `under 480px` ... `1280px or wider`       | Which layouts are seen most, and so polished first?                                  |
 | `viewportHeight` | browser window height: `under 500px`, `500 - 699px`, `700 - 899px` ... `1100px or taller` | How much of a page fits on the first screen, and what must sit in it?                |
 | `pixelRatio`     | `1x`, `1.5x`, `2x`, `3x`                                                                  | Which image resolutions are worth producing?                                         |
-| `theme`          | `light`, `dark`: the theme when the page loaded                                           | How many visitors see dark mode?                                                     |
-| `themeSource`    | `system` (follows the device), `picked` (chosen with the switch)                          | Is dark mode a device default or a choice?                                           |
+| `theme`          | `light`, `dark`: the theme when the page loaded                                           | How many visitors see Dark mode?                                                     |
+| `themeSource`    | `system` (follows the device), `picked` (chosen with the switch)                          | Is Dark mode a device default or a choice?                                           |
 | `inApp`          | `linkedin`, `messenger`, `instagram`, `facebook`, ... or `none`                           | How many visits come through an app's own browser?                                   |
 | `version`        | the site's version the page was loaded with (`package.json`, `5.2.5`), as the tag         | Which release did visitors see?                                                      |
 | `ref`            | the tagged link's tag, as `link-ref` sends it; only when the page was opened from one     | What did the visitors from each application or channel read, and did they come back? |

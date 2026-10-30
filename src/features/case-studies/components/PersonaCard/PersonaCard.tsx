@@ -32,13 +32,13 @@ export function PersonaCard({ persona }: PersonaCardProps) {
         ))}
       </ul>
       <div className={styles.block}>
-        <h4 className={styles.label}>Role & context</h4> <p className={styles.text}>{persona.context}</p>
+        <h4 className={styles.label}>Role & Context</h4> <p className={styles.text}>{persona.context}</p>
       </div>
       <div className={styles.goal}>
-        <h4 className={styles.goalLabel}>Main goal</h4> <p className={styles.goalText}>{persona.goal}</p>
+        <h4 className={styles.goalLabel}>Main Goal</h4> <p className={styles.goalText}>{persona.goal}</p>
       </div>
       <div className={styles.block}>
-        <h4 className={styles.label}>Everyday problems</h4>
+        <h4 className={styles.label}>Everyday Problems</h4>
         <ul className={styles.list}>
           {persona.problems.map((problem, index) => (
             // eslint-disable-next-line @eslint-react/no-array-index-key -- static content in fixed order
@@ -47,7 +47,7 @@ export function PersonaCard({ persona }: PersonaCardProps) {
         </ul>
       </div>
       <div className={styles.block}>
-        <h4 className={styles.label}>How Smart Ticket helps</h4>
+        <h4 className={styles.label}>How Smart Ticket Helps</h4>
         <ul className={styles.list}>
           {persona.helps.map((help, index) => (
             // eslint-disable-next-line @eslint-react/no-array-index-key -- static content in fixed order

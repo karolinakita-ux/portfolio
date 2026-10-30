@@ -24,7 +24,7 @@ const CV = VIEW_PATHS[VIEW.cv];
 const PDF = "/karolina-kita-cv.pdf";
 const DOWNLOAD = "Download PDF (2 pages)";
 const PAGE_COUNT = /\(2\spages\)/;
-const IN_APP_HINT = /^The PDF opens best in your phone's browser/;
+const IN_APP_HINT = /^The PDF opens best in your phone’s browser/;
 
 const { kitaBranding } = JSON.parse(
   readFileSync(join(process.cwd(), "src", "styles", "kita-branding.tokens.json"), "utf8"),
@@ -166,7 +166,7 @@ test("a link to a CV section leaves as much space under the header as a link to 
 
 /** The Work hero's only two links: the case studies (primary), then the CV. */
 const workHeroLinks = async (page: Page) => {
-  const links = page.getByRole("region", { name: "Clarity for complex enterprise software" }).getByRole("link");
+  const links = page.getByRole("region", { name: "Clarity for Complex Enterprise Software" }).getByRole("link");
   await expect(links).toHaveText(["Explore Case Studies", "View CV"]);
   const [cases, cv] = await Promise.all([links.nth(0).boundingBox(), links.nth(1).boundingBox()]);
   if (!cases || !cv) throw new Error("no hero buttons");

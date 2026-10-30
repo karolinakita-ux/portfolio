@@ -81,7 +81,7 @@ async function focusEachHeaderControl(page: Page): Promise<Stop[]> {
 
 /** The controls Tab reaches after the logo. WebKit's Tab skips links (as Safari does by default). */
 const headerStops = (browserName: string): string[] =>
-  browserName === "webkit" ? ["Light theme", "Dark theme"] : ["Work", "About", "Contact", "Light theme", "Dark theme"];
+  browserName === "webkit" ? ["Light mode", "Dark mode"] : ["Work", "About", "Contact", "Light mode", "Dark mode"];
 
 test.describe("phone rows", () => {
   test.use({ viewport: VIEWPORTS.phone });

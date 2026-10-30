@@ -1,9 +1,11 @@
 import { createHash } from "node:crypto";
 import { readdirSync, readFileSync } from "node:fs";
 import { join, relative, sep } from "node:path";
-import { isValidElement, type ReactElement, type ReactNode } from "react";
-import { describe, expect, it } from "vitest";
+import { render } from "@testing-library/react";
+import { createElement, isValidElement, type ReactElement, type ReactNode } from "react";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
+import { App } from "#app/App/App.tsx";
 import { HOME_NAME, PAGE_DESCRIPTIONS, PAGE_NAMES } from "#app/seo/seo.content.ts";
 import { headFor, llmsTxt } from "#app/seo/seo.utils.ts";
 import { ABOUT_ACTIONS, ABOUT_INTRO, FAQ, MILESTONES, PRINCIPLES } from "#features/about/about.content.ts";
@@ -14,6 +16,7 @@ import { DATA_GOVERNANCE_CASE } from "#features/case-studies/content/data-govern
 import { PROJECT_PLANNING_CASE } from "#features/case-studies/content/project-planning.content.tsx";
 import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.ts";
 import { CONTACT } from "#features/contact/contact.content.ts";
+import { CV_SHEET_ID } from "#features/cv/cv.constants.ts";
 import { CV, CV_PAGE } from "#features/cv/cv.content.ts";
 import { formatMonthYear } from "#features/cv/dates/dates.utils.ts";
 import { PRIVACY } from "#features/privacy/privacy.content.tsx";
@@ -28,11 +31,22 @@ import {
 } from "#features/work/work.content.ts";
 import { PROFILE } from "#shared/content/profile.ts";
 import { linkRef } from "#shared/lib/analytics/payload.utils.ts";
-import { VIEW, VIEW_PATHS, VIEW_TITLES, VIEWS } from "#shared/lib/routes/routes.constants.ts";
+import { SECTION, VIEW, VIEW_PATHS, VIEW_TITLES, VIEWS } from "#shared/lib/routes/routes.constants.ts";
 import type { View } from "#shared/lib/routes/routes.types.ts";
-import { isCaseView, isView } from "#shared/lib/routes/routes.utils.ts";
+import { hrefForView, isCaseView, isView } from "#shared/lib/routes/routes.utils.ts";
 import { Lang } from "#shared/ui/Lang/Lang.tsx";
 import { Strong } from "#shared/ui/Strong/Strong.tsx";
+import {
+  currencyMisses,
+  frontEndSpellings,
+  spelledCounts,
+  straightQuotes,
+  themeWording,
+  titleCaseMisses,
+} from "#test/copy-rules.ts";
+
+// The rendered pages below: the real preloader's idle timer would outlive this file (see plain-text.test.tsx).
+vi.mock("#shared/media/image-preload/image-preload.utils.ts", () => ({ preloadImages: vi.fn() }));
 
 /** Image path under /assets: lowercase kebab-case folders and file name, web image formats. */
 const ASSET_PATH = /^(?:[a-z0-9-]+\/)*[a-z0-9-]+\.(png|jpe?g|webp)$/;
@@ -44,6 +58,9 @@ const ASSET_PATH = /^(?:[a-z0-9-]+\/)*[a-z0-9-]+\.(png|jpe?g|webp)$/;
  *   - H1 headings never end with a trailing period.
  *   - British spelling everywhere, like the CV; quotes from real people, names and screenshot labels stay as written.
  *   - Every case-study bullet opens with a bold lead-in term and a colon.
+ *   - Headings in Title Case; curly quotes outside the CV; "frontend"; "Light and Dark mode"; counts as digits;
+ *     prices as "PLN 4.40"; one label per destination; Work card tags from the case's own (src/test/copy-rules.ts).
+ *   - Each case tells one version of its facts (one name for a thing, claims only what the case shows).
  *   - Navigation targets and image file names are valid on Netlify (Linux: case-sensitive).
  *   - Client and product names that may not be published never appear: not in a case study, not in
  *     any file the site, Storybook or the public repo shows (screenshots are checked by eye).
@@ -111,6 +128,18 @@ const ALL_CONTENT = {
   WORK_CASES,
   WORK_INTRO,
   CASES,
+};
+
+/** All the site's copy as data: the pages' content, the buttons, the search copy and the page names. */
+const SITE_COPY = {
+  ...ALL_CONTENT,
+  ABOUT_ACTIONS,
+  HERO_ACTIONS,
+  RECOMMENDATIONS_LINK_LABEL,
+  HOME_NAME,
+  PAGE_DESCRIPTIONS,
+  PAGE_NAMES,
+  VIEW_TITLES,
 };
 
 describe("copy style", () => {
@@ -192,32 +221,38 @@ const SOURCE_WITHOUT_TEXT = /\.(?:test|content|styles|types|d)\.tsx?$|\/icons\//
 /** CSS media queries in code ("(prefers-color-scheme: dark)"). */
 const MEDIA_QUERY = /^\(prefers-[a-z-]+: [a-z-]+\)$/;
 
+/** The source files with visible text (see SOURCE_WITH_TEXT), Storybook's pages and toolbar included. */
+const textSources = (): string[] =>
+  [...publishedFiles("src"), ...publishedFiles(".storybook")].filter(
+    (path) => SOURCE_WITH_TEXT.test(path) && !SOURCE_WITHOUT_TEXT.test(path),
+  );
+
+/** A source file's string literals, template literals and JSX text, without comments; an MDX page is prose throughout. */
+function sourceStrings(path: string): string[] {
+  const code = readFileSync(join(process.cwd(), path), "utf8")
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/(^|\s)\/\/.*$/gm, "$1");
+  if (path.endsWith(".mdx")) return [code];
+  return [...code.matchAll(/"([^"\n]*)"|`([^`]*)`|[>}]([^<>{}]+)[<{]/g)].map(
+    (match) => match[1] ?? match[2] ?? match[3] ?? "",
+  );
+}
+
+const INDEX_HTML = readFileSync(join(process.cwd(), "index.html"), "utf8");
+/** index.html's own copy: the meta tags' content (description, link previews) and the title. */
+const INDEX_COPY = [
+  ...[...INDEX_HTML.matchAll(/<meta\s[^>]*content="([^"]*)"/g)].map((match) => match[1] ?? ""),
+  /<title>([^<]*)<\/title>/.exec(INDEX_HTML)?.[1] ?? "",
+];
+
 describe("British spelling", () => {
   it("in the copy, the search copy, the structured data, llms.txt and the link previews (quotes stay verbatim)", () => {
-    const html = readFileSync(join(process.cwd(), "index.html"), "utf8");
-    const meta = [...html.matchAll(/<meta\s[^>]*content="([^"]*)"/g)].map((match) => match[1] ?? "");
-    const title = /<title>([^<]*)<\/title>/.exec(html)?.[1] ?? "";
+    const html = INDEX_HTML;
     const siteJsonLd = JSON.parse(
       /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(html)?.[1] ?? "{}",
     ) as unknown;
     const pageJsonLd = VIEWS.map((view) => headFor(view).jsonLd);
-    const copy = [
-      ...collectCopy({
-        ...ALL_CONTENT,
-        ABOUT_ACTIONS,
-        HERO_ACTIONS,
-        RECOMMENDATIONS_LINK_LABEL,
-        HOME_NAME,
-        PAGE_DESCRIPTIONS,
-        PAGE_NAMES,
-        VIEW_TITLES,
-        siteJsonLd,
-        pageJsonLd,
-      }),
-      ...meta,
-      title,
-      ...llmsTxt().split("\n"),
-    ];
+    const copy = [...collectCopy({ ...SITE_COPY, siteJsonLd, pageJsonLd }), ...INDEX_COPY, ...llmsTxt().split("\n")];
     expect(copy.length).toBeGreaterThan(1000);
     expect(copy).toContain("UX case study");
     expect(copy).toContain(CONTACT.cv.view);
@@ -226,24 +261,235 @@ describe("British spelling", () => {
   });
 
   it("in the components' own text and labels, the label constants, the stories and Storybook's pages", () => {
-    const files = [...publishedFiles("src"), ...publishedFiles(".storybook")].filter(
-      (path) => SOURCE_WITH_TEXT.test(path) && !SOURCE_WITHOUT_TEXT.test(path),
-    );
+    const files = textSources();
     expect(files.length).toBeGreaterThan(200);
     expect(files).toContain(".storybook/Welcome.mdx");
-    const hits = files.flatMap((path) => {
-      const code = readFileSync(join(process.cwd(), path), "utf8")
-        .replace(/\/\*[\s\S]*?\*\//g, "")
-        .replace(/(^|\s)\/\/.*$/gm, "$1");
-      // String literals, template literals and JSX text; an MDX page is prose throughout.
-      const strings = path.endsWith(".mdx")
-        ? [code]
-        : [...code.matchAll(/"([^"\n]*)"|`([^`]*)`|[>}]([^<>{}]+)[<{]/g)].map(
-            (match) => match[1] ?? match[2] ?? match[3] ?? "",
-          );
-      return usSpellings(strings.filter((text) => !MEDIA_QUERY.test(text))).map((hit) => `${path}: ${hit}`);
-    });
+    const hits = files.flatMap((path) =>
+      usSpellings(sourceStrings(path).filter((text) => !MEDIA_QUERY.test(text))).map((hit) => `${path}: ${hit}`),
+    );
     expect(hits).toEqual([]);
+  });
+});
+
+/** The site's copy without the CV, which keeps straight quotes for applicant tracking systems. */
+const COPY_WITHOUT_CV = collectCopy(Object.fromEntries(Object.entries(SITE_COPY).filter(([key]) => key !== "CV")));
+
+/** Rows "rule hit: text" for a test's failure message. */
+const hitsIn = (texts: readonly string[], rule: (text: string) => string[]): string[] =>
+  texts.flatMap((text) => rule(text).map((hit) => `${hit}: ${text.slice(0, 100)}`));
+
+/** Keys whose values are eyebrows or titles that are not headings: Title Case like the headings. */
+const TITLE_KEYS: ReadonlySet<string> = new Set(["eyebrow", "summaryTitle", "decisionsTitle"]);
+
+/** The strings held under the given keys anywhere in content data. */
+function valuesUnder(value: unknown, keys: ReadonlySet<string>): string[] {
+  if (Array.isArray(value)) return value.flatMap((item) => valuesUnder(item, keys));
+  if (value === null || typeof value !== "object" || isValidElement(value)) return [];
+  return Object.entries(value).flatMap(([key, item]) => (keys.has(key) ? collectText(item) : valuesUnder(item, keys)));
+}
+
+/** Karolina's answers of 2026-10-30, one rule each (CLAUDE.md, Copy rules). */
+describe("one style across the site", () => {
+  const copy = collectCopy(SITE_COPY);
+
+  it("writes curly quotes and apostrophes (’ “ ”) in the copy, alt text, search copy and index.html; the CV keeps straight ones", () => {
+    expect(COPY_WITHOUT_CV.length).toBeGreaterThan(1000);
+    expect(COPY_WITHOUT_CV).toContain(CV_PAGE.inAppHint);
+    expect(COPY_WITHOUT_CV).not.toContain(CV.summary);
+    expect(hitsIn([...COPY_WITHOUT_CV, ...INDEX_COPY], straightQuotes)).toEqual([]);
+  });
+
+  it("writes curly apostrophes in the components' own text, the stories and Storybook's pages too", () => {
+    const hits = textSources().flatMap((path) =>
+      sourceStrings(path)
+        .filter((text) => /\p{L}'\p{L}|&(?:quot|apos|#39);/u.test(text))
+        .map((text) => `${path}: ${text.trim().slice(0, 100)}`),
+    );
+    expect(hits).toEqual([]);
+  });
+
+  it("writes frontend, never front-end", () => {
+    expect(hitsIn(copy, frontEndSpellings)).toEqual([]);
+  });
+
+  it("writes Light and Dark mode, capitalised as the theme switch names them, in one pattern", () => {
+    const welcome = readFileSync(join(process.cwd(), ".storybook", "Welcome.mdx"), "utf8");
+    expect(hitsIn([...copy, ...welcome.split("\n")], themeWording)).toEqual([]);
+  });
+
+  it("writes counts and measures as digits, except at the start of a sentence and in quotes", () => {
+    expect(hitsIn(copy, spelledCounts)).toEqual([]);
+  });
+
+  it("writes prices as the copy does (PLN 4.40), also where it quotes a Polish screen", () => {
+    expect(hitsIn(copy, currencyMisses)).toEqual([]);
+  });
+
+  it("writes eyebrows, detail labels and the titles of summaries, columns and lists in Title Case, like headings", () => {
+    const comparisons = SMART_TICKET_CASE.rebuild.comparisons;
+    const titles = [
+      ...valuesUnder(SITE_COPY, TITLE_KEYS),
+      ...CASES.flatMap((c) => [
+        ...c.meta.map((entry) => entry.label),
+        ...c.summary.flatMap((column) => column.title ?? []),
+      ]),
+      ...comparisons.flatMap((comparison) => [comparison.before.label, comparison.after.label]),
+      ...comparisons.flatMap((comparison) => [
+        ...(comparison.rationale ?? []).map((column) => column.title),
+        ...(comparison.shift ? [comparison.shift.title] : []),
+      ]),
+      SMART_TICKET_CASE.operations.scope.title,
+    ];
+    expect(titles).toContain("My Role");
+    expect(titles).toContain(SMART_TICKET_CASE.operations.decisionsTitle);
+    expect(titles.length).toBeGreaterThan(50);
+    expect(titles.flatMap((title) => titleCaseMisses(title).map((word) => `"${word}" in ${title}`))).toEqual([]);
+  });
+
+  it("takes each Work card's eyebrow tags from its case study's, in the same words", () => {
+    for (const card of WORK_CASES) {
+      const tags = CASES.find((c) => c.view === card.view)?.eyebrow ?? [];
+      for (const tag of card.eyebrow) expect(tags, `${card.id}: "${tag}"`).toContain(tag);
+    }
+  });
+
+  it("names each link destination one way: the case list's buttons, and Explore for Figma, GitHub and Storybook", () => {
+    expect(ABOUT_ACTIONS.work).toBe(HERO_ACTIONS.cases);
+    const explore = [PROCESS_BANNER.linkLabel, PROCESS_BANNER.sourceLinkLabel, PROCESS_BANNER.componentsLinkLabel];
+    const designFiles = CASES.flatMap((c) => (c.designFile ? [c.designFile.linkLabel] : []));
+    for (const label of [...explore, ...designFiles]) expect(label).toMatch(/^Explore /);
+    // Storybook's Welcome page links the Figma workspace and the code with the Work page's labels.
+    const welcome = readFileSync(join(process.cwd(), ".storybook", "Welcome.mdx"), "utf8");
+    expect(welcome).toContain(`{ label: "${PROCESS_BANNER.linkLabel}", href: PROFILE.figmaWorkspaceUrl }`);
+    expect(welcome).toContain(`{ label: "${PROCESS_BANNER.sourceLinkLabel}", href: PROFILE.repositoryUrl }`);
+  });
+});
+
+/** The texts of one case study: the case, its Work card and its search description. */
+const caseTexts = (c: AnyCase): string[] =>
+  collectCopy({ c, card: WORK_CASES.filter((card) => card.view === c.view), page: PAGE_DESCRIPTIONS[c.view] });
+
+describe("case facts, one version per case", () => {
+  it("Project Planning claims only what it shows: no budget guardrails, no work from discovery", () => {
+    expect(
+      hitsIn(caseTexts(PROJECT_PLANNING_CASE), (text) => text.match(/guardrails?|from discovery/gi) ?? []),
+    ).toEqual([]);
+  });
+
+  it("Smart Ticket calls its console the operations console, as its section heading does", () => {
+    const otherNames = /\b(?:web|admin|municipal)\s+console\b|\badmin (?:web app|product)\b|\bweb app\b/gi;
+    expect(hitsIn(caseTexts(SMART_TICKET_CASE), (text) => text.match(otherNames) ?? [])).toEqual([]);
+  });
+
+  it("Smart Ticket quotes one lowest text contrast: the text/muted floor its design system states", () => {
+    const floor = /the lowest, text\/muted, is (\d+(?:\.\d+)?:1)/.exec(caseTexts(SMART_TICKET_CASE).join("\n"))?.[1];
+    expect(floor).toBe("4.9:1");
+    const after = SMART_TICKET_CASE.rebuild.comparisons.flatMap((comparison) => comparison.after.metrics ?? []);
+    const lowest = after.filter((metric) => metric.startsWith("Lowest text"));
+    expect(lowest.length).toBeGreaterThan(0);
+    for (const metric of lowest) expect(metric).toBe(`Lowest text ${floor ?? ""}`);
+  });
+
+  it("Automotive lists the payment methods its screens show: card or dealer finance, no bank transfer", () => {
+    const texts = caseTexts(AUTOMOTIVE_CASE);
+    expect(hitsIn(texts, (text) => text.match(/\btransfers?\b/gi) ?? [])).toEqual([]);
+    const lists = texts.filter((text) => /dealer finance/i.test(text));
+    expect(lists.length).toBeGreaterThanOrEqual(2);
+    for (const text of lists) expect(text).toContain("card or dealer finance");
+  });
+
+  it("Theme Generator uses one term for the public bodies it serves", () => {
+    const text = caseTexts(DATA_GOVERNANCE_CASE).join("\n");
+    expect(/federal/i.test(text) && /public sector/i.test(text), "both federal institutions and public sector").toBe(
+      false,
+    );
+  });
+});
+
+/** One page as App renders it: headings, the text people see or hear (alt text, labels), and its links. */
+interface RenderedPage {
+  view: View;
+  headings: string[];
+  texts: string[];
+  links: Array<{ href: string; label: string }>;
+}
+
+/**
+ * Elements whose text is not the site's copy: code, the CV sheet (straight quotes for applicant tracking systems)
+ * and the recommendations (real people's words, verbatim).
+ */
+const NOT_COPY_ELEMENTS = [
+  "script, style, code, code *, pre, pre *",
+  `#${CV_SHEET_ID}, #${CV_SHEET_ID} *`,
+  "blockquote[cite], blockquote[cite] *",
+].join(", ");
+
+function renderPage(view: View): RenderedPage {
+  window.history.replaceState(null, "", VIEW_PATHS[view]);
+  const { baseElement, unmount } = render(createElement(App));
+  const headings = [...baseElement.querySelectorAll("h1, h2, h3, h4, h5, h6")].map((h) => h.textContent);
+  const elements = [...baseElement.querySelectorAll("*")].filter((element) => !element.matches(NOT_COPY_ELEMENTS));
+  const texts = elements.flatMap((element) => [
+    ...[...element.childNodes].flatMap((node) => (node.nodeType === Node.TEXT_NODE ? [node.textContent ?? ""] : [])),
+    ...["alt", "aria-label", "title", "placeholder"].flatMap((name) => element.getAttribute(name) ?? []),
+  ]);
+  const links = [...baseElement.querySelectorAll("a[href]")]
+    .filter((link) => !link.closest('nav[aria-label="Breadcrumb"]'))
+    .map((link) => ({
+      href: link.getAttribute("href") ?? "",
+      label: link.textContent.replace(/\s*\((?:opens in a new tab|opens your email app)\)/, "").trim(),
+    }));
+  unmount();
+  return { view, headings, texts, links };
+}
+
+describe("rendered pages", () => {
+  let pages: RenderedPage[] = [];
+  beforeAll(() => {
+    pages = VIEWS.map(renderPage);
+  });
+
+  it("writes every heading in Title Case, and the consent box's title (minor words stay lowercase inside)", () => {
+    expect(pages.flatMap((page) => page.headings).length).toBeGreaterThan(100);
+    const titles: Array<{ where: string; heading: string }> = pages.flatMap((page) =>
+      page.headings.map((heading) => ({ where: page.view, heading })),
+    );
+    titles.push({ where: "consent box", heading: PRIVACY.consent.title });
+    const misses = titles.flatMap(({ where, heading }) =>
+      titleCaseMisses(heading).map((word) => `${where}: "${word}" in ${heading}`),
+    );
+    expect(misses).toEqual([]);
+  });
+
+  it("writes curly quotes in every page's text, alt text and labels, the CV sheet aside", () => {
+    const hits = pages.flatMap((page) => hitsIn(page.texts, straightQuotes).map((hit) => `${page.view}: ${hit}`));
+    expect(hits).toEqual([]);
+  });
+
+  it("writes frontend, Light and Dark mode, digits and PLN in every page's text, alt text and labels too", () => {
+    const rules = [frontEndSpellings, themeWording, spelledCounts, currencyMisses];
+    const texts = pages.flatMap((page) => page.texts.map((text) => ({ view: page.view, text })));
+    expect(texts.length).toBeGreaterThan(1000);
+    expect(texts.map(({ text }) => text)).toContain("Dark mode"); // the theme switch's label
+    const hits = texts.flatMap(({ view, text }) =>
+      rules.flatMap((rule) => hitsIn([text], rule)).map((hit) => `${view}: ${hit}`),
+    );
+    expect(hits).toEqual([]);
+  });
+
+  it("gives one destination one label: the case list, and Explore links for Figma, GitHub and Storybook", () => {
+    const links = pages.flatMap((page) => page.links);
+    const caseList = links.filter((link) => link.href === hrefForView(VIEW.work, SECTION.workCases));
+    expect(caseList.length).toBeGreaterThanOrEqual(3); // Work hero, About hero, About career
+    expect(new Set(caseList.map((link) => link.label))).toEqual(new Set([HERO_ACTIONS.cases]));
+    const design = links.filter(
+      (link) =>
+        link.href.startsWith("https://www.figma.com/") ||
+        link.href === PROFILE.repositoryUrl ||
+        link.href === PROFILE.storybookUrl,
+    );
+    expect(design.length).toBeGreaterThanOrEqual(4);
+    for (const link of design) expect(link.label, link.href).toMatch(/^Explore /);
   });
 });
 

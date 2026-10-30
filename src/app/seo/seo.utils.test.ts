@@ -18,7 +18,8 @@ describe("page descriptions", () => {
     const text = PAGE_DESCRIPTIONS[view];
     expect(text.length).toBeGreaterThan(70);
     expect(text.length).toBeLessThanOrEqual(160);
-    expect(text).not.toMatch(/[–—‘’“”]/); // no long dashes or curly quotes
+    expect(text).not.toMatch(/[–—]/); // no long dashes
+    expect(text).not.toMatch(/['"]/); // curly quotes, as in all site copy but the CV (search results show them)
   });
 });
 

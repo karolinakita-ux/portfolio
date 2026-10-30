@@ -1,3 +1,4 @@
+import { ABOUT_ACTIONS } from "#features/about/about.content.ts";
 import { MilestoneCard } from "#features/about/components/MilestoneCard/MilestoneCard.tsx";
 import { SECTION, VIEW } from "#shared/lib/routes/routes.constants.ts";
 import { hrefForView } from "#shared/lib/routes/routes.utils.ts";
@@ -30,7 +31,7 @@ export function CareerSection({ onNavigate }: CareerSectionProps) {
             onNavigate(VIEW.work, SECTION.workCases);
           }}
         >
-          Explore Enterprise Case Studies
+          {ABOUT_ACTIONS.work}
         </Button>
       </div>
     </Section>

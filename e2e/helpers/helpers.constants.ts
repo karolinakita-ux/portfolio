@@ -13,7 +13,7 @@ export const VIEWPORTS = {
 /** bgCanvas in src/styles/tokens.css. */
 export const CANVAS: Readonly<Record<Theme, string>> = { light: "#ffffff", dark: "#1a1a1a" };
 
-export const THEME_LABEL: Readonly<Record<Theme, string>> = { light: "Light theme", dark: "Dark theme" };
+export const THEME_LABEL: Readonly<Record<Theme, string>> = { light: "Light mode", dark: "Dark mode" };
 
 export const SELECTOR = {
   primaryNav: 'nav[aria-label="Primary"]',

@@ -15,8 +15,8 @@ type Story = StoryObj<typeof meta>;
 
 export const Light: Story = {
   play: async ({ canvas, args }) => {
-    await expect(canvas.getByRole("button", { name: "Light theme" })).toHaveAttribute("aria-pressed", "true");
-    await userEvent.click(canvas.getByRole("button", { name: "Dark theme" }));
+    await expect(canvas.getByRole("button", { name: "Light mode" })).toHaveAttribute("aria-pressed", "true");
+    await userEvent.click(canvas.getByRole("button", { name: "Dark mode" }));
     await expect(args.onChange).toHaveBeenCalledWith("dark");
   },
 };

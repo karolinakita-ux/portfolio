@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import { ABOUT_ACTIONS, FAQ, MILESTONES, PRINCIPLES } from "#features/about/about.content.ts";
-import { VIEW } from "#shared/lib/routes/routes.constants.ts";
+import { SECTION, VIEW } from "#shared/lib/routes/routes.constants.ts";
 import { REVEAL } from "#test/reveal.ts";
 
 import { AboutView } from "./AboutView.tsx";
@@ -15,13 +15,26 @@ describe("AboutView hero", () => {
     const onNavigate = vi.fn();
     const user = userEvent.setup();
     render(<AboutView portraitSrc="/assets/site/portrait.webp" onNavigate={onNavigate} />);
-    const cv = screen.getByRole("link", { name: ABOUT_ACTIONS.cv });
-    const work = screen.getByRole("link", { name: ABOUT_ACTIONS.work });
+    const hero = within(screen.getByRole("region", { name: "Designing Clarity for Complex Software" }));
+    const cv = hero.getByRole("link", { name: ABOUT_ACTIONS.cv });
+    const work = hero.getByRole("link", { name: ABOUT_ACTIONS.work });
     expect(cv).toHaveAttribute("href", "/cv");
     expect(cv.parentElement).toBe(work.parentElement);
     expect(cv.compareDocumentPosition(work) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     await user.click(cv);
     expect(onNavigate).toHaveBeenCalledWith(VIEW.cv);
+  });
+
+  it("names both buttons to the case studies alike, the hero's and the career section's: one destination, one label", async () => {
+    const onNavigate = vi.fn();
+    const user = userEvent.setup();
+    render(<AboutView portraitSrc="/assets/site/portrait.webp" onNavigate={onNavigate} />);
+    const links = screen.getAllByRole("link", { name: ABOUT_ACTIONS.work });
+    expect(links).toHaveLength(2);
+    for (const link of links) expect(link).toHaveAttribute("href", "/#" + SECTION.workCases);
+    const career = within(screen.getByRole("region", { name: "Career Progression" }));
+    await user.click(career.getByRole("link", { name: ABOUT_ACTIONS.work }));
+    expect(onNavigate).toHaveBeenCalledWith(VIEW.work, SECTION.workCases);
   });
 });
 
@@ -43,7 +56,7 @@ describe("AboutView scroll reveal", () => {
   it("keeps the hero, the headings, the portrait and the FAQ still", () => {
     renderAbout();
     const still = [
-      screen.getByRole("region", { name: "Designing clarity for complex software" }),
+      screen.getByRole("region", { name: "Designing Clarity for Complex Software" }),
       screen.getByRole("heading", { level: 1 }),
       screen.getByRole("heading", { level: 2, name: "How I Like to Work" }),
       screen.getByRole("heading", { level: 2, name: "Career Progression" }),

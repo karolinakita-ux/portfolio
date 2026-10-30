@@ -30,7 +30,7 @@ const PAGE = `
       <ul><li id="principle" data-card=""><h3>Keep it simple</h3><p id="principle-body">Fewer steps.</p></li></ul>
       <article id="role" aria-labelledby="role-title"><h3 id="role-title">Designer</h3><p id="role-body">Work.</p></article>
     </section>
-    <section aria-labelledby="_r_1_"><p id="consent">Can I count your visit?</p></section>
+    <section aria-labelledby="_r_1_"><p id="consent">Can I Count Your Visit?</p></section>
     <section id="ticket-rebuild" data-anchor="">
       <article id="compare" data-card="" aria-labelledby="_r_2_">
         <h3 id="_r_2_">Sign-up, 2022 and today</h3>

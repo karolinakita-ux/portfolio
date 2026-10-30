@@ -13,7 +13,7 @@ const meta = {
   decorators: [
     (Story) => (
       <p>
-        Write to <Story />. I answer within one month.
+        Write to <Story />. I answer within 1 month.
       </p>
     ),
   ],

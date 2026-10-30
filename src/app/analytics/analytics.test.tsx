@@ -113,7 +113,7 @@ describe("events on the Work page", () => {
 
   it("counts each kind of LinkedIn link in the recommendations", () => {
     renderApp("/");
-    const section = within(screen.getByRole("region", { name: "Trusted by the leaders I worked for" }));
+    const section = within(screen.getByRole("region", { name: "Trusted by the Leaders I Worked For" }));
     clickLink(section.getByRole("link", { name: /^Stewart Wilson, LinkedIn profile/ }));
     clickLink(section.getByRole("link", { name: /^Precisely, company page on LinkedIn/ }));
     clickLink(section.getByRole("link", { name: /^Read the full recommendations on LinkedIn/ }));
@@ -126,9 +126,9 @@ describe("events on the Work page", () => {
 
   it("counts a theme switch, but not picking the theme already shown", async () => {
     const { user } = renderApp("/");
-    await user.click(screen.getByRole("button", { name: "Dark theme" }));
-    await user.click(screen.getByRole("button", { name: "Dark theme" }));
-    await user.click(screen.getByRole("button", { name: "Light theme" }));
+    await user.click(screen.getByRole("button", { name: "Dark mode" }));
+    await user.click(screen.getByRole("button", { name: "Dark mode" }));
+    await user.click(screen.getByRole("button", { name: "Light mode" }));
     expect(events()).toEqual([
       [EVENT.themeSwitch, { theme: "dark" }],
       [EVENT.themeSwitch, { theme: "light" }],
@@ -232,7 +232,8 @@ describe("events on case studies", () => {
 
   it("counts the Figma file link under the details panel as the top, the design files banner's as the end", () => {
     renderApp("/work/smart-ticket");
-    const [top, end] = screen.getAllByRole("link", { name: /^Open the Figma file/ });
+    const label = SMART_TICKET_CASE.designFile?.linkLabel ?? "";
+    const [top, end] = screen.getAllByRole("link", { name: new RegExp("^" + label) });
     if (!top || !end) throw new Error("Smart Ticket has two Figma file links");
     clickLink(top);
     clickLink(end);

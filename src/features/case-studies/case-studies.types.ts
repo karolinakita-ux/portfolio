@@ -79,7 +79,7 @@ export interface CaseNavTarget {
   action?: string;
 }
 
-/** One titled column of the executive summary ("The problem", "My part"). */
+/** One titled column of the executive summary ("The Problem", "My Part"). */
 export interface SummaryColumn {
   /** Column heading. Without titles, the summary is a single column of paragraphs. */
   title?: string;

@@ -29,7 +29,7 @@ export const LeadIn: Story = {
 export const OtherLanguage: Story = {
   render: () => (
     <p>
-      The button said &quot;<Lang lang="pl">Zapisz zmiany</Lang>&quot;.
+      The button said “<Lang lang="pl">Zapisz zmiany</Lang>”.
     </p>
   ),
 };

@@ -40,7 +40,7 @@ export interface RowsSection {
 
 /** One side of a before / after comparison, shown by ComparisonSide. */
 export interface ComparisonSideContent {
-  /** "2022 brief · initial assumption", "Modern rebuild (2026)". */
+  /** "2022 Brief · Initial Assumption", "Modern Rebuild (2026)". */
   label: string;
   text: string;
   /** Measured facts shown as chips (error tone before, success tone after). */
@@ -56,9 +56,9 @@ export interface Comparison {
   intro?: string;
   before: ComparisonSideContent;
   after: ComparisonSideContent;
-  /** Titled columns of bullets under the comparison ("Why - the standard", "Evidence on the canvas"). */
+  /** Titled columns of bullets under the comparison ("Why - The Standard", "Evidence on the Canvas"). */
   rationale?: ReadonlyArray<{ title: string; points: readonly ReactNode[] }>;
-  /** A titled list of changes ("Strategic shift"). */
+  /** A titled list of changes ("Strategic Shift"). */
   shift?: { title: string; points: readonly string[] };
 }
 
@@ -75,7 +75,7 @@ export interface ScreenGridSection {
   id: string;
   eyebrow: string;
   title: string;
-  /** Highlighted note next to the description ("Redesigned admin scope"). */
+  /** Highlighted note next to the description ("Redesigned Console Scope"). */
   scope: { title: string; body: string };
   lead: string;
   decisionsTitle: string;

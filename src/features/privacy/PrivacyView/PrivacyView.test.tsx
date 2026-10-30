@@ -29,14 +29,14 @@ describe("PrivacyView", () => {
 
   it("shows the right to object on its own, apart from the other rights (GDPR Art. 21(4))", () => {
     renderPrivacy();
-    const rights = within(screen.getByRole("region", { name: "Your rights" }));
+    const rights = within(screen.getByRole("region", { name: "Your Rights" }));
     expect(rights.getByRole("heading", { level: 3, name: PRIVACY.objection.title })).toBeInTheDocument();
     expect(rights.getByText(/Prezes Urzędu Ochrony Danych Osobowych/)).toHaveAttribute("lang", "pl");
   });
 
   it("lists every company that receives data, with its policy in a new tab", () => {
     renderPrivacy();
-    const recipients = within(screen.getByRole("region", { name: "Who receives data" }));
+    const recipients = within(screen.getByRole("region", { name: "Who Receives Data" }));
     for (const recipient of PRIVACY.recipients) {
       expect(recipients.getByText(recipient.name)).toBeInTheDocument();
       const policy = recipients.getByRole("link", { name: new RegExp(recipient.policy.label) });

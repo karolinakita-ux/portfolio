@@ -70,7 +70,7 @@ test.describe("nav pill at rest", () => {
     });
   }
 
-  test("first load with Dark stored: the Dark theme pill shown, nothing animates", async ({ page }) => {
+  test("first load with Dark stored: the Dark mode pill shown, nothing animates", async ({ page }) => {
     await openView(page, VIEW_PATHS[VIEW.about], { theme: "dark" });
     await page.waitForTimeout(500);
     expect(await pillLog(page), "pill animations since the document started").toEqual([]);
@@ -196,7 +196,8 @@ test.describe("nav pill follows every way to change page", () => {
       await openView(page, VIEW_PATHS[VIEW.about], { theme: "dark" });
       const motion = await motionTokens(page);
       await startSampling(page, SELECTOR.navPills);
-      await page.getByRole("link", { name: "Explore Selected Work" }).click();
+      // The hero's button; the career section ends with a second one, same label, same place.
+      await page.getByRole("link", { name: "Explore Case Studies" }).first().click();
       const frames = await finishSampling(page, SELECTOR.navPills, { active: WORK });
       expectTravel(frames, { from: ABOUT, to: WORK, motion });
     });

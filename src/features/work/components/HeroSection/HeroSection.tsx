@@ -21,7 +21,7 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
         <div className={styles.body}>
           <Eyebrow parts={[PROFILE.name, PROFILE.role]} />
           {/* No trailing period. Kept short (~40 characters) so it fits one line on desktop from 1024px. */}
-          <PageTitle id="hero-title">Clarity for complex enterprise software</PageTitle>
+          <PageTitle id="hero-title">Clarity for Complex Enterprise Software</PageTitle>
           <p className={styles.lead}>{HERO_LEAD}</p>
           {/*
             One primary and one secondary action. The Figma workspace, the code and the component library are in the

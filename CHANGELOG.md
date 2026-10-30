@@ -6,6 +6,23 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.11 - 2026-10-30
+
+#### Changed
+
+- Headings use one style across the site, Title Case: page titles, section headings, card and box titles, FAQ questions, eyebrows, the case details panel and the statistics box ("Clarity for Complex Enterprise Software", "Can I Count Your Visit?"). Screenshot captions keep their Figma frame names.
+- Apostrophes and quotation marks are curly in all copy, alt text, labels and page descriptions; the CV keeps plain ones for applicant tracking systems.
+- One form for repeated wording: "frontend", "Light and Dark mode" (the theme switch's buttons now say Light mode and Dark mode), counts as digits (6 UK dealers, 3 taps, 4 badge types, 2-step boarding, answers within 1 month) and prices as PLN 4.40.
+- One label per destination: every button to the case studies says Explore Case Studies, every Work card links with View Case Study, and the Figma, GitHub and Storybook links all start with Explore (Smart Ticket's reads Explore the Figma File). Screen readers hear the top previous / next links as "Next Case Study: ...", like the links at the end.
+- Each Work card shows its case study's own tags, and the cards and search texts tell what the cases tell.
+- Smart Ticket calls its admin product the operations console throughout and quotes one lowest text contrast, the 4.9:1 floor of text/muted.
+- Automotive lists the same payment methods everywhere: card or dealer finance, as its screens show.
+- Theme Generator tells one before story (branding took custom CSS or an engineering ticket, then management proposed an open colour picker), its Work card says admins now brand their portal themselves, and it says public sector instead of federal institutions.
+- Project Planning: the search description no longer claims work from discovery, and the impact stat says Light and Dark mode.
+- CV: "with Light and Dark mode" and the skill "Light and Dark Mode". The PDF is remade from the page (still 2 pages).
+- Storybook's Welcome page and toolbar, the README and the docs use the same wording.
+- Tests and docs: new checks in content-rules.test.ts (rules in src/test/copy-rules.ts) render every page and check Title Case headings and labels, curly quotes, frontend, Light and Dark mode, digits, PLN and one label per destination, and keep one version of each case fact (Smart Ticket's console name and contrast floor, Automotive's payment list, Theme Generator's public sector, no discovery or budget guardrails in Project Planning). CLAUDE.md and the copy reviewer record the rules; docs/analytics.md notes that headings sent as `label` changed case.
+
 ### 5.14.10 - 2026-10-30
 
 #### Changed

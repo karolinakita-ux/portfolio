@@ -14,7 +14,7 @@ const meta = {
   args: {
     section: {
       id: "in-short",
-      title: "In short",
+      title: "In Short",
       paragraphs: ["How this website works for people who use it in different ways."],
       points: [
         lead("Keyboard", "every link and button can be reached with Tab, and the focus is always visible."),
@@ -29,7 +29,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   play: async ({ canvas }) => {
-    await expect(canvas.getByRole("heading", { level: 2, name: "In short" })).toBeInTheDocument();
+    await expect(canvas.getByRole("heading", { level: 2, name: "In Short" })).toBeInTheDocument();
     await expect(canvas.getAllByRole("listitem")).toHaveLength(2);
   },
 };
@@ -39,17 +39,17 @@ export const WithExtra: Story = {
   args: {
     section: {
       id: "rights",
-      title: "Your rights",
-      intro: ["Write to karolina.kita.zg@gmail.com. I answer within one month."],
+      title: "Your Rights",
+      intro: ["Write to karolina.kita.zg@gmail.com. I answer within 1 month."],
       after: ["You do not have to give me any data: the website works the same with statistics switched off."],
     },
     extra: (
-      <Callout tone="info" label="Your right to object" title="Your right to object">
+      <Callout tone="info" label="Your Right to Object" title="Your Right to Object">
         <p>The statistics run only with your consent, which you can withdraw with the switch on this page.</p>
       </Callout>
     ),
   },
   play: async ({ canvas }) => {
-    await expect(canvas.getByRole("heading", { level: 3, name: "Your right to object" })).toBeInTheDocument();
+    await expect(canvas.getByRole("heading", { level: 3, name: "Your Right to Object" })).toBeInTheDocument();
   },
 };

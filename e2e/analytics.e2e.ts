@@ -25,7 +25,7 @@ import { themeButton, waitForApp } from "./helpers/page.utils.ts";
 
 const SITE = "https://" + UMAMI.host;
 const COLLECTOR = "https://gateway.umami.is/**";
-const CONSENT_BOX = "Can I count your visit?";
+const CONSENT_BOX = "Can I Count Your Visit?";
 
 /**
  * One call to Umami's collector, as the tracker posts it: an event or pageview, session data, a speed report,

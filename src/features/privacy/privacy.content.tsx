@@ -26,14 +26,14 @@ const umami = (
 );
 
 export const PRIVACY: PrivacyContent = {
-  eyebrow: "Privacy policy",
+  eyebrow: "Privacy Policy",
   title: "Privacy",
   intro: "How this website handles your data, in plain words.",
   updated: { iso: "2026-10-30", label: "30 October 2026" },
   sections: [
     {
       id: "in-short",
-      title: "In short",
+      title: "In Short",
       points: [
         "No cookies, no ads, and nothing that follows you to other websites.",
         "I count visits with Umami only if you allow it. It sets no cookies, and you can change your choice at any time.",
@@ -43,7 +43,7 @@ export const PRIVACY: PrivacyContent = {
     },
     {
       id: "controller",
-      title: "Who is responsible",
+      title: "Who Is Responsible",
       paragraphs: [
         <>
           I, Karolina Kita, run this website and decide how its data is used: I am the controller under the GDPR. You
@@ -54,23 +54,23 @@ export const PRIVACY: PrivacyContent = {
     },
     {
       id: "hosting",
-      title: "When you open a page",
+      title: "When You Open a Page",
       paragraphs: [
-        "Netlify, Inc. hosts this website. Like every web server, it receives your IP address, the page you ask for, the time and your browser's details, and keeps them in its logs.",
+        "Netlify, Inc. hosts this website. Like every web server, it receives your IP address, the page you ask for, the time and your browser’s details, and keeps them in its logs.",
         "This keeps the site running and protects it from attacks. The legal basis is my legitimate interest in a working and secure website (GDPR Art. 6(1)(f)).",
         "Netlify keeps these logs online for 90 days and offline for up to a year, as its data processing agreement says.",
       ],
     },
     {
       id: "statistics",
-      title: "Visitor statistics",
+      title: "Visitor Statistics",
       paragraphs: [
         "I use Umami Cloud to see which pages and links are useful, so I can improve this portfolio. It counts your visit only if you allow it. The legal basis is your consent (GDPR Art. 6(1)(a)). The statistics show counts and trends; I do not try to find out who you are.",
       ],
       points: [
         lead(
           "What I count",
-          "The pages you open, the site that sent you here, how long you spend on each page and how far down you scroll. I also count clicks on case studies, screenshots (and moving between them in the image viewer), FAQ questions, section links, the light / dark switch, links to my CV and to its PDF, and links to LinkedIn, Figma, GitHub, Storybook, email and other websites.",
+          "The pages you open, the site that sent you here, how long you spend on each page and how far down you scroll. I also count clicks on case studies, screenshots (and moving between them in the image viewer), FAQ questions, section links, the Light and Dark mode switch, links to my CV and to its PDF, and links to LinkedIn, Figma, GitHub, Storybook, email and other websites.",
         ),
         lead(
           "Clicks that do nothing",
@@ -86,11 +86,11 @@ export const PRIVACY: PrivacyContent = {
         ),
         lead(
           "Your screen and window",
-          "The width and height of your browser window and your screen's pixel density, in ranges (such as 768 - 1023px), whether you see the light or dark theme and whether you picked it, and the app if you opened the site inside one, such as LinkedIn or Messenger. This shows me which layouts to improve first.",
+          "The width and height of your browser window and your screen’s pixel density, in ranges (such as 768 - 1023px), whether you see Light or Dark mode and whether you picked it, and the app if you opened the site inside one, such as LinkedIn or Messenger. This shows me which layouts to improve first.",
         ),
         lead(
           "Speed and errors",
-          "How fast each page loads and reacts to taps and clicks on your device (Core Web Vitals), and errors in this website's own code, with the browser's short technical message. This shows me where the site is slow or broken.",
+          "How fast each page loads and reacts to taps and clicks on your device (Core Web Vitals), and errors in this website’s own code, with the browser’s short technical message. This shows me where the site is slow or broken.",
         ),
         lead(
           "Broken links",
@@ -98,7 +98,7 @@ export const PRIVACY: PrivacyContent = {
         ),
         lead(
           "What is recorded with each visit",
-          "Your browser, operating system, device type, screen size, language, approximate location (country, region and city) and the version of this website you saw. Umami uses your IP address to work out the location and, together with your browser's details, to group your page views into one session without a cookie; its data processing agreement does not list the IP address among the data it keeps.",
+          "Your browser, operating system, device type, screen size, language, approximate location (country, region and city) and the version of this website you saw. Umami uses your IP address to work out the location and, together with your browser’s details, to group your page views into one session without a cookie; its data processing agreement does not list the IP address among the data it keeps.",
         ),
         lead(
           "Why I ask first",
@@ -108,7 +108,7 @@ export const PRIVACY: PrivacyContent = {
         lead("How long", "Umami keeps the statistics for 6 months, then deletes them."),
         lead(
           "Tagged links",
-          "Links I share, for example in job applications, may end in ?ref= and a company or channel name, so I can see which link brought you here and which pages you read after it, on that visit or a later one. They never contain a person's name. Other parts of an address, such as the click IDs that ads and social apps add, are removed before anything is sent; only ?ref= and the campaign tags that start with utm_ stay.",
+          "Links I share, for example in job applications, may end in ?ref= and a company or channel name, so I can see which link brought you here and which pages you read after it, on that visit or a later one. They never contain a person’s name. Other parts of an address, such as the click IDs that ads and social apps add, are removed before anything is sent; only ?ref= and the campaign tags that start with utm_ stay.",
         ),
       ],
       intro: [
@@ -117,7 +117,7 @@ export const PRIVACY: PrivacyContent = {
     },
     {
       id: "email",
-      title: "When you email me",
+      title: "When You Email Me",
       paragraphs: [
         <>If you write to {email}, I use your address and your message to reply and to talk about work.</>,
         "The legal basis is taking the steps you ask for before a possible contract (GDPR Art. 6(1)(b)) or, for other messages, my legitimate interest in answering them (Art. 6(1)(f)).",
@@ -126,29 +126,29 @@ export const PRIVACY: PrivacyContent = {
     },
     {
       id: "device",
-      title: "Cookies and your device",
+      title: "Cookies and Your Device",
       paragraphs: ["This website sets no cookies. It saves something on your device only when you ask for it:"],
       points: [
-        lead("Your theme", "when you pick light or dark mode, your browser keeps that choice (kb-theme)."),
+        lead("Your theme", "when you pick Light or Dark mode, your browser keeps that choice (kb-theme)."),
         lead(
           "Your statistics choice",
           "when you allow or decline statistics, your browser keeps that choice (kb-statistics), so I do not ask again.",
         ),
       ],
       after: [
-        "Both stay in your browser and are never sent anywhere. Clearing this site's data in your browser removes them. Fonts and images come from this website itself, not from other services.",
+        "Both stay in your browser and are never sent anywhere. Clearing this site’s data in your browser removes them. Fonts and images come from this website itself, not from other services.",
       ],
     },
     {
       id: "recipients",
-      title: "Who receives data",
+      title: "Who Receives Data",
       paragraphs: [
         "These companies receive data when you visit this website or email me. I do not sell data, and I do not share it with anyone else.",
       ],
     },
     {
       id: "rights",
-      title: "Your rights",
+      title: "Your Rights",
       paragraphs: ["You can ask me to:"],
       points: [
         lead("Access", "show you the data I have about you (GDPR Art. 15)."),
@@ -161,7 +161,7 @@ export const PRIVACY: PrivacyContent = {
           "switch statistics off on this page at any time. It does not change what was counted before (Art. 7(3)).",
         ),
       ],
-      intro: [<>Write to {email}. I answer within one month.</>],
+      intro: [<>Write to {email}. I answer within 1 month.</>],
       after: [
         <>
           You can also complain to the President of the Personal Data Protection Office (
@@ -177,12 +177,12 @@ export const PRIVACY: PrivacyContent = {
     },
     {
       id: "links",
-      title: "Links to other websites",
+      title: "Links to Other Websites",
       paragraphs: ["Links to LinkedIn, Figma and GitHub open those websites. Their own privacy policies apply there."],
     },
     {
       id: "changes",
-      title: "Changes to this policy",
+      title: "Changes to This Policy",
       paragraphs: [
         "I update this page when the website changes how it uses data. The date at the top shows the latest version.",
       ],
@@ -207,7 +207,7 @@ export const PRIVACY: PrivacyContent = {
     },
   ],
   objection: {
-    title: "Your right to object",
+    title: "Your Right to Object",
     text: "You can object at any time to the use of your data based on my legitimate interest: the server logs, and emails that are not about work (GDPR Art. 21). The statistics run only with your consent, which you can withdraw with the switch on this page.",
   },
   statisticsSwitch: {
@@ -221,7 +221,7 @@ export const PRIVACY: PrivacyContent = {
     switchOn: "Allow statistics",
   },
   consent: {
-    title: "Can I count your visit?",
+    title: "Can I Count Your Visit?",
     // Valid consent names who asks, what for, which data and that it can be withdrawn (EDPB Guidelines 05/2020, para. 64).
     text: (
       <>

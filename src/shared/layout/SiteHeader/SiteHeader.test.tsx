@@ -80,8 +80,8 @@ describe("SiteHeader nav pill", () => {
 describe("SiteHeader theme switch pill", () => {
   it("gives each theme button a pill, visible on the pressed one", () => {
     render(<Header theme="dark" />);
-    const light = screen.getByRole("button", { name: "Light theme" });
-    const dark = screen.getByRole("button", { name: "Dark theme" });
+    const light = screen.getByRole("button", { name: "Light mode" });
+    const dark = screen.getByRole("button", { name: "Dark mode" });
     expect(pillOf(light)).toHaveAttribute("data-pill", "light");
     expect(pillOf(dark)).toHaveAttribute("data-pill", "dark");
     expect(pillOf(light)).toHaveAttribute("aria-hidden", "true");
@@ -107,6 +107,6 @@ describe("SiteHeader theme switch pill", () => {
     const { rerender } = render(<Header theme="light" />);
     rerender(<Header theme="dark" />);
     expect(animations).toHaveLength(1);
-    expect(animations[0]?.target).toBe(pillOf(screen.getByRole("button", { name: "Dark theme" })));
+    expect(animations[0]?.target).toBe(pillOf(screen.getByRole("button", { name: "Dark mode" })));
   });
 });

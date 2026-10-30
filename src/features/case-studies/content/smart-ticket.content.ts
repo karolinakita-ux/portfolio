@@ -21,42 +21,42 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
   eyebrow: ["Public Mobility", "B2C Mobile & B2B Operations", "Design System"],
   title: "Smart Ticket: Mobile Ticketing & Transit Operations",
   meta: [
-    { label: "My role", value: "2022 - 23: UX/UI Designer · 2026: Senior Product Designer" },
+    { label: "My Role", value: "2022 - 23: UX/UI Designer · 2026: Senior Product Designer" },
     {
       label: "Team",
       value:
         "2022 - 23: UX/UI Designer (me), 2 Product Owners, Business Analyst, mobile development team · 2026: solo redesign",
     },
     { label: "Timeline", value: "Q4 2022 - May 2023: original concept · 2026: full system rebuild" },
-    { label: "Platform", value: "iOS & Android passenger app · responsive web console for transit operations" },
+    { label: "Platform", value: "iOS & Android passenger app · responsive web operations console" },
     {
       label: "Key Outcome",
       wide: true,
       value:
-        "Redesigned the 2022 transit concept in Figma: created a tokenised WCAG 2.2 design system, designed offline ticketing flows, and framed a municipal web console.",
+        "Redesigned the 2022 transit concept in Figma: created a tokenised WCAG 2.2 design system, designed offline ticketing flows, and framed a municipal operations console.",
     },
   ],
   notice: {
     tone: "info",
     label: "About this case study",
-    text: "The original 2022 concept was handed over to developers after client approval. In 2026, I revisited the initial research to rebuild the product for my portfolio - creating a tokenised design system, privacy-safe admin flows, and aligning it with real European transit data standards (GTFS-RT, SIRI).",
+    text: "The original 2022 concept was handed over to developers after client approval. In 2026, I revisited the initial research to rebuild the product for my portfolio - creating a tokenised design system and a privacy-safe operations console, and aligning it with real European transit data standards (GTFS-RT, SIRI).",
   },
   summaryTitle: "Executive Summary",
   summaryLead: "Ticketing apps usually fail riders at the worst moment.",
   summary: [
     {
-      title: "The problem",
+      title: "The Problem",
       body: "Riders buy tickets while running for a tram, underground without signal, or unsure which zone they need. A slow checkout, a ticket that will not load during an inspection, or the wrong fare can each end in a missed ride or a fine. The 2022 concept followed the initial business brief: hard-coded styles, instant activation and a manual admin model.",
     },
     {
-      title: "My part",
-      body: "In 2022 - 23 I was the UX/UI designer next to two product owners, a business analyst and the mobile developers: I reviewed the requirements, removed dark patterns and delivered the personas, user flows, style guide and mockups. In 2026 I rebuilt the system alone in Figma: a token-based design system, 56 mobile screens and states and 8 operations screens. The original 2022 screens stay in the file for comparison.",
+      title: "My Part",
+      body: "In 2022 - 23 I was the UX/UI designer next to 2 product owners, a business analyst and the mobile developers: I reviewed the requirements, removed dark patterns and delivered the personas, user flows, style guide and mockups. In 2026 I rebuilt the system alone in Figma: a token-based design system, 56 mobile screens and states and 8 operations console screens. The original 2022 screens stay in the file for comparison.",
     },
   ],
   personas: {
     id: "ticket-users",
     eyebrow: "Users",
-    title: "Three riders, three moments of stress",
+    title: "Three Riders, Each with a Moment of Stress",
     lead: "Each persona is based on the 2022 research and points to one design decision. Every rider signs in or creates an account first - the app has no guest mode.",
     personas: [
       {
@@ -138,8 +138,8 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
   },
   flow: {
     id: "ticket-flow",
-    eyebrow: "User flow",
-    title: "From trip search to an offline inspection",
+    eyebrow: "User Flow",
+    title: "From Trip Search to an Offline Inspection",
     lead: "The main path has one rule: buying and activating are separate steps. A rider can buy at home, keep the pass inactive, and start the countdown only when the vehicle arrives.",
     media: {
       ...shot("user-flow"),
@@ -151,23 +151,23 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
   },
   system: {
     id: "ticket-design-system",
-    eyebrow: "Design system",
-    title: "Tokens that make accessibility testable",
+    eyebrow: "Design System",
+    title: "Tokens That Make Accessibility Testable",
     cards: [
       {
         ...shot("token-handoff"),
-        alt: "Token handoff and code mapping: a DTCG JSON export with Light and Dark values, a list of export targets and a table mapping each semantic token to its CSS variable.",
-        title: "Three tiers, one source of truth",
+        alt: "Token handoff and code mapping: a DTCG JSON export with values for Light and Dark mode, a list of export targets and a table mapping each semantic token to its CSS variable.",
+        title: "Three Tiers, One Source of Truth",
         intro:
-          "Primitives (hidden from publishing) feed semantic tokens with Light and Dark modes, plus dimension and effect collections. Components reference semantic tokens only, so a theme change happens in one place.",
+          "Primitives (hidden from publishing) feed semantic tokens with Light and Dark mode, plus dimension and effect collections. Components reference semantic tokens only, so a theme change happens in one place.",
         paragraphs: [
           "All 175 variables carry CSS code syntax. The handoff page specifies a W3C DTCG JSON export (one file per mode) and maps each token to CSS, Tailwind and React Native.",
         ],
       },
       {
         ...shot("accessibility-contrast"),
-        alt: "Accessibility and contrast standards: a table of text and surface token pairs with Light and Dark samples, contrast ratios and AA or AAA results, and cards on touch targets, focus and motion, and the European Accessibility Act.",
-        title: "Contrast you can check",
+        alt: "Accessibility and contrast standards: a table of text and surface token pairs with samples in Light and Dark mode, contrast ratios and AA or AAA results, and cards on touch targets, focus and motion, and the European Accessibility Act.",
+        title: "Contrast You Can Check",
         intro:
           "Brand indigo #4338CA reaches 7.9:1 on white - WCAG 2.2 AAA. Twelve token pairs are checked in both modes, with ratios computed from the live variables: all text pairs pass AA and both border pairs pass 3:1. In Dark mode the brand role steps to brand/400 (5.8:1).",
         paragraphs: [
@@ -176,8 +176,8 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
       },
       {
         ...shot("semantic-inversion"),
-        alt: "Dark mode semantic inversion: each semantic token with its Light and Dark value, next to an active ticket card shown in both modes.",
-        title: "Tonal surfaces, multi-tenant ready",
+        alt: "Dark mode semantic inversion: each semantic token with its value in Light and Dark mode, next to an active ticket card shown in both modes.",
+        title: "Tonal Surfaces, Multi-Tenant Ready",
         intro:
           "Cool slate neutrals (slate/0 to slate/950) group content by background instead of heavy borders, and every text tier stays at 4.5:1 or more (the lowest, text/muted, is 4.9:1).",
         paragraphs: [
@@ -188,15 +188,15 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
   },
   rebuild: {
     id: "ticket-rebuild",
-    eyebrow: "2022 brief vs 2026 rebuild",
-    title: "From an exploratory prototype to a production-ready system",
+    eyebrow: "2022 Brief vs 2026 Rebuild",
+    title: "From an Exploratory Prototype to a Production-Ready System",
     lead: "The 2022 concept followed the initial business brief: manual operational inputs, instant activation on purchase and decorative brand styling. That was the right scope for a prototype meant to win client approval. In 2026 I tested the same ideas against current standards - WCAG 2.2, W3C Design Tokens (DTCG), GDPR privacy by design and European transit data protocols (GTFS-RT, SIRI-SX, NeTEx) - and changed what did not hold up.",
     comparisons: [
       {
         id: "visual-foundation",
-        title: "Visual foundation: from decorative styling to tokens",
+        title: "Visual Foundation: From Decorative Styling to Tokens",
         before: {
-          label: "2022 brief · initial assumption",
+          label: "2022 Brief · Initial Assumption",
           text: "The brief asked for a decorative brand look. Colours were hard-coded hex values. The brand blue #204796 passed (8.7:1), but placeholder grey #A3A3A3 reached 2.5:1, and the disabled button (#CCCCCC with a white label) 1.6:1.",
           media: [
             {
@@ -212,8 +212,8 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
           ],
         },
         after: {
-          label: "2026 decision",
-          text: "Every colour is a token with Light and Dark modes. Primary #4338CA reaches 7.9:1 on white. Cool slate neutrals and soft elevation replace one-off greys, so dense lists stay easy to scan.",
+          label: "2026 Decision",
+          text: "Every colour is a token with values for Light and Dark mode. Primary #4338CA reaches 7.9:1 on white. Cool slate neutrals and soft elevation replace one-off greys, so dense lists stay easy to scan.",
           media: [
             // Both modes side by side, as in the Figma frame: this pair shows the token modes, so it does not
             // switch with the site's theme. Each file has one version; its suffix names the mode it shows.
@@ -231,7 +231,7 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
         },
         rationale: [
           {
-            title: "Why - the standard",
+            title: "Why - The Standard",
             points: [
               lead("WCAG 2.2 SC 1.4.3", "At least 4.5:1 for body text and tags."),
               lead(
@@ -245,13 +245,13 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
             ],
           },
           {
-            title: "Evidence on the canvas",
+            title: "Evidence on the Canvas",
             points: [
               lead(
                 "Contrast",
                 "brand/primary #4338CA reaches 7.9:1 on white; text/muted 4.9:1; status text on status backgrounds 6.8 to 7.6:1.",
               ),
-              lead("Variables", "175 variables in 5 collections, with Light and Dark modes."),
+              lead("Variables", "175 variables in 5 collections, with Light and Dark mode."),
               lead("Handoff", "The Token Handoff page documents the DTCG JSON export: one file per mode."),
             ],
           },
@@ -259,10 +259,10 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
       },
       {
         id: "profile-security",
-        title: "Profile and security",
+        title: "Profile and Security",
         intro: "Mostly readable in 2022, but every colour was a one-off value that could not support Dark mode.",
         before: {
-          label: "Legacy concept (2022)",
+          label: "Legacy Concept (2022)",
           text: "Most text passed, but grey helper text on the security screen reached only 2.5:1. None of the colours were linked to a system, so one change meant editing every screen.",
           metrics: ["0% of colours from tokens", "3 text contrast failures", "Lowest text 2.5:1"],
           media: [
@@ -279,9 +279,9 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
           ],
         },
         after: {
-          label: "Modern rebuild (2026)",
+          label: "Modern Rebuild (2026)",
           text: "Same content, rebuilt from tokens and components (List / Menu Row, Avatar). Biometrics, password and sign-out sit in one predictable list.",
-          metrics: ["100% of colours from tokens", "0 text contrast failures", "Lowest text 7.1:1"],
+          metrics: ["100% of colours from tokens", "0 text contrast failures", "Lowest text 4.9:1"],
           media: [
             {
               ...shot("profile-main-hub"),
@@ -296,10 +296,10 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
           ],
         },
         shift: {
-          title: "Strategic shift",
+          title: "Strategic Shift",
           points: [
             "Grey helper text #A3A3A3 (2.5:1) → text/secondary (7.7:1 on white) or text/muted (4.9:1).",
-            "Primitive → semantic → component tokens make Light and Dark modes one switch, not a redesign.",
+            "Primitive → semantic → component tokens make Light and Dark mode one switch, not a redesign.",
             "Destructive actions are separated: Delete account sits in its own panel with error tokens, while Log out is a neutral list row.",
           ],
         },
@@ -308,15 +308,15 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
   },
   passenger: {
     id: "ticket-passenger-app",
-    eyebrow: "Passenger app",
-    title: "Designed for the moments that usually go wrong",
+    eyebrow: "Passenger App",
+    title: "Designed for the Moments That Usually Go Wrong",
     lead: "Each feature answers a real edge case of riding public transport: no signal underground, a ticket that starts too early, unclear fares and a payment that must be quick.",
     cards: [
       {
         ...shot("offline-pass-inspection"),
         device: "phone",
         alt: "Active pass, offline: a no-connection notice, an Active (offline verified) badge, 14:22 time left, a large QR code and the ticket type, fare, zones and validity.",
-        title: "Offline QR pass",
+        title: "Offline QR Pass",
         intro:
           "The pass is stored on the phone and says so: “No internet connection • Your ticket is safely stored offline”. It shows a live countdown and a QR code an inspector can scan without a network - the main fear riders have in the metro. The design specifies a signed token for offline checks; signing itself is an engineering requirement, outside the design scope.",
       },
@@ -324,31 +324,31 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
         ...shot("vehicle-activation"),
         device: "phone",
         alt: "Activate your ticket sheet over My Tickets: tap to scan the vehicle QR code, or enter the vehicle side number, then Validate and start trip.",
-        title: "Buy now, start later",
+        title: "Buy Now, Start Later",
         intro:
-          "Buying and activating are two separate steps. Riders buy ahead, and the timer starts only when they scan the QR code opposite the vehicle door, or at the station before the metro gates. If the code can’t be scanned, they type the vehicle side number.",
+          "Buying and activating are separate steps. Riders buy ahead, and the timer starts only when they scan the QR code opposite the vehicle door, or at the station before the metro gates. If the code can’t be scanned, they type the vehicle side number.",
       },
       {
         ...shot("ticket-selection-sheet"),
         device: "phone",
         alt: "Select Ticket sheet over route results: a Standard or Reduced -50% fare toggle, the 20-minute transfer ticket selected as covering the trip, a 90-minute option, quantity and Continue to payment.",
-        title: "From route to ticket in three taps",
+        title: "From Route to Ticket in 3 Taps",
         intro:
-          "Every route result already shows the ticket that covers the trip, for example a 20-min ticket for PLN 4.40. “Select & Buy” opens one sheet with a Standard / Reduced -50% toggle that marks the ticket covering the trip, and riders can still pick another. “Continue to payment” and “Pay” finish the purchase.",
+          "Every route result already shows the ticket that covers the trip, for example a 20-minute ticket for PLN 4.40. “Select & Buy” opens one sheet with a Standard / Reduced -50% toggle that marks the ticket covering the trip, and riders can still pick another. “Continue to payment” and “Pay” finish the purchase.",
       },
       {
         ...shot("blik-confirmation"),
         device: "phone",
-        alt: "Pay with BLIK sheet: six boxes for the code from the banking app, a code expiry timer at 01:42 and a Confirm and pay button for PLN 4.40.",
-        title: "Fast payment, one sheet",
+        alt: "Pay with BLIK sheet: 6 boxes for the code from the banking app, a code expiry timer at 01:42 and a Confirm and pay button for PLN 4.40.",
+        title: "Fast Payment, One Sheet",
         intro:
-          "Checkout is one “Review & Pay” sheet with the Smart Wallet, Apple Pay and BLIK. BLIK opens a six-digit code entry with a visible expiry timer, so riders always know the code is still valid.",
+          "Checkout is one “Review & Pay” sheet with the Smart Wallet, Apple Pay and BLIK. BLIK opens a 6-digit code entry with a visible expiry timer, so riders always know the code is still valid.",
       },
       {
         ...singleShot("lock-screen-live-activity"),
         device: "phone",
         alt: "iPhone Lock Screen with a Live Activity: metro M1 en route to Centrum, arriving in 3 minutes, a progress bar between stops and a Tap to show inspection QR shortcut.",
-        title: "The journey on the Lock Screen",
+        title: "The Journey on the Lock Screen",
         intro:
           "During the trip, an iOS Live Activity shows progress between stops and the minutes to arrival, with a shortcut straight to the inspection QR code.",
       },
@@ -356,14 +356,14 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
   },
   operations: {
     id: "ticket-operations",
-    eyebrow: "Admin web app",
-    title: "Run the network (operations console)",
+    eyebrow: "B2B Operations",
+    title: "Run the Network (Operations Console)",
     scope: {
-      title: "Redesigned admin scope",
+      title: "Redesigned Console Scope",
       body: "The original 2022 concept lacked operational depth. This expanded operations console is my 2026 redesign - introducing automated GTFS-RT feeds, multi-operator fleet tracking, and privacy-first governance.",
     },
-    lead: "The web console serves transit operations staff. Real-time feeds replace manual entry, fleet and validators are monitored live, tariffs are published to the app and validators, and every sensitive action is logged.",
-    decisionsTitle: "Design decisions",
+    lead: "The operations console serves the transit staff who run the network. Real-time feeds replace manual entry, fleet and validators are monitored live, tariffs are published to the app and validators, and every sensitive action is logged.",
+    decisionsTitle: "Design Decisions",
     decisions: [
       lead("Feeds", "GTFS-RT and SIRI-SX for live data, NeTEx / GTFS for static timetables."),
       lead("Fleet", "1,248 vehicles across 4 operators on one ZTM network; validators sync every 60\u00a0s."),
@@ -419,16 +419,16 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
   impact: {
     id: "ticket-outcomes",
     eyebrow: "Outcomes",
-    title: "What the redesign delivers",
+    title: "What the Redesign Delivers",
     stats: [
       {
         value: "2 products, 1 system",
-        label: "56 mobile screens and states and 8 console screens share 175 variables in 5 collections.",
+        label: "56 mobile screens and states and 8 operations console screens share 175 variables in 5 collections.",
       },
       {
         value: "WCAG 2.2 AA",
         label:
-          "12 token pairs checked in Light and Dark all pass AA, or 3:1 for non-text; primary indigo reaches AAA (7.9:1) in Light.",
+          "12 token pairs checked in Light and Dark mode all pass AA, or 3:1 for non-text; primary indigo reaches AAA (7.9:1) in Light mode.",
       },
       {
         value: "3 taps",
@@ -452,28 +452,28 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
   },
   lessons: {
     id: "ticket-lessons",
-    eyebrow: "Lessons learned",
-    title: "What I would tell my 2022 self",
+    eyebrow: "Lessons Learned",
+    title: "What I Would Tell My 2022 Self",
     points: [
       {
-        title: "UX belongs in the requirements",
+        title: "UX Belongs in the Requirements",
         body: "Most 2022 problems were written into the specification before any design work. Reviewing requirements early is still the cheapest fix.",
       },
       {
-        title: "Tokens make quality measurable",
+        title: "Tokens Make Quality Measurable",
         body: "With semantic tokens, contrast and Dark mode become checks you can run, not opinions to defend.",
       },
       {
-        title: "Use the data the city already has",
-        body: "Designing around GTFS, SIRI and operator contracts made the admin product simpler and more honest than inventing manual workflows.",
+        title: "Use the Data the City Already Has",
+        body: "Designing around GTFS, SIRI and operator contracts made the operations console simpler and more honest than inventing manual workflows.",
       },
     ],
   },
   designFile: {
     url: "https://www.figma.com/design/al8zX7vvgJvxNPUaeKp38Q/Smart-Ticket-App?node-id=200-85&t=rLEE9MGJA3JJXZxT-1",
-    title: "Inspect the design files",
+    title: "Inspect the Design Files",
     body: "The Figma file holds the token collections and their DTCG export, the mobile screens and states in Light and Dark mode, the operations console, the components with their variants and the original 2022 screens for comparison.",
-    linkLabel: "Open the Figma file",
+    linkLabel: "Explore the Figma File",
   },
   // First case in the Work order (Smart Ticket → Automotive → Project Planning → Data Governance):
   // the left link returns to the list, the right one continues to Automotive.

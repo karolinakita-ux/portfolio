@@ -48,7 +48,7 @@ export interface AnimationPoints {
 
 /** One sampled element (a pill) in one frame. */
 export interface ItemSample extends Box {
-  /** Accessible label of the link or button that holds the element ("About", "Dark theme"). */
+  /** Accessible label of the link or button that holds the element ("About", "Dark mode"). */
   key: string;
   /** That control has aria-current (not "false") or aria-pressed="true". */
   active: boolean;

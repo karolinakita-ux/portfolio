@@ -20,7 +20,7 @@ export function AboutHero({ onNavigate }: AboutHeroProps) {
       <Container>
         <Breadcrumb onNavigate={onNavigate} items={[HOME_CRUMB, { label: "About" }]} />
         <div className={styles.body}>
-          <PageTitle id="about-title">Designing clarity for complex software</PageTitle>
+          <PageTitle id="about-title">Designing Clarity for Complex Software</PageTitle>
           {ABOUT_INTRO.map((paragraph) => (
             <p key={paragraph.slice(0, 24)} className={styles.paragraph}>
               {paragraph}

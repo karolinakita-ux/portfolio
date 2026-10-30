@@ -7,7 +7,7 @@ import { styles } from "./ScreenGrid.styles.ts";
 import type { ScreenGridProps } from "./ScreenGrid.types.ts";
 
 /**
- * Figma: Run the network. The operations console: a scope note beside the description and design decisions
+ * Figma: Run the Network (Operations Console). The operations console: a scope note beside the description and design decisions
  * (side by side from lg), then the screens two to a row from md, each named in a caption.
  */
 export function ScreenGrid({ section, rows }: ScreenGridProps) {

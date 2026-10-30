@@ -2,7 +2,7 @@
 
 The site's look comes from Karolina's KitaBranding design system in Figma.
 
-- Figma file: [Karolina Kita Branding](https://www.figma.com/design/U5ke9Li7uZq06u8VM2VMCB/%F0%9F%A6%86-Karolina-Kita-Branding?node-id=0-1) - colour, typography, spacing, radius, shadow and motion variables in light and dark mode. The Work page links to it as "Figma workspace".
+- Figma file: [Karolina Kita Branding](https://www.figma.com/design/U5ke9Li7uZq06u8VM2VMCB/%F0%9F%A6%86-Karolina-Kita-Branding?node-id=0-1) - colour, typography, spacing, radius, shadow and motion variables in Light and Dark mode. The Work page links to it as "Explore the Figma Workspace".
 
 ## From Figma to code
 
@@ -24,7 +24,7 @@ The site's look comes from Karolina's KitaBranding design system in Figma.
 
 The Figma Components page maps to `src/shared/ui` (the table is in [architecture.md](architecture.md#component-library-srcsharedui)). Components and variants keep their Figma names: `Button` has the Primary, Secondary, Subtle and Link types, `Callout` the Info and Warning tones of the Figma Banner.
 
-The library is published in Storybook at [karolina.kita.company/storybook](https://karolina.kita.company/storybook/). Its Welcome page explains the design system; every story shows a component with real copy, in light and dark.
+The library is published in Storybook at [karolina.kita.company/storybook](https://karolina.kita.company/storybook/). Its Welcome page explains the design system; every story shows a component with real copy, in Light and Dark mode.
 
 ## Link-preview image
 

@@ -13,7 +13,7 @@ const meta = {
   args: {
     src: "/assets/cases/project-planning/calendar-week-view-light.webp",
     darkSrc: "/assets/cases/project-planning/calendar-week-view-dark.webp",
-    alt: "Month overview in week view: a Participant and Organizer switch, a project filter, a mini calendar with meeting counts, the selected day's meetings and a weekly grid of meetings with a current-time line.",
+    alt: "Month overview in week view: a Participant and Organizer switch, a project filter, a mini calendar with meeting counts, the selected day’s meetings and a weekly grid of meetings with a current-time line.",
   },
 } satisfies Meta<typeof Screenshot>;
 

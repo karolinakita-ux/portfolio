@@ -17,15 +17,15 @@ export const PAGE_DESCRIPTIONS: Readonly<Record<View, string>> = {
   [VIEW.cv]:
     "CV of Karolina Kita, Senior Product Designer with 8+ years, mostly on B2B and enterprise platforms: design systems and UX research. Also as a PDF.",
   [VIEW.privacy]:
-    "How Karolina Kita's portfolio handles your data: no cookies, visitor statistics with Umami only if you allow them, hosting on Netlify, and your GDPR rights.",
+    "How Karolina Kita’s portfolio handles your data: no cookies, visitor statistics with Umami only if you allow them, hosting on Netlify, and your GDPR rights.",
   [VIEW.accessibility]:
-    "How Karolina Kita's portfolio works with a keyboard, screen readers, zoom, larger text and contrast settings. Known limits and how to report a problem.",
+    "How Karolina Kita’s portfolio works with a keyboard, screen readers, zoom, larger text and contrast settings. Known limits and how to report a problem.",
   [VIEW.caseDataGovernance]:
     "Case study: a visual theme generator for a B2B data governance platform that picks readable text colours automatically, so custom tenant themes stay accessible.",
   [VIEW.caseProjectPlanning]:
-    "Case study: an enterprise project planning and cost management platform, designed from discovery to release with a Figma library for PrimeNG.",
+    "Case study: an enterprise platform for time tracking, meeting cost, project budgets and portfolio reporting, built on PrimeNG design tokens.",
   [VIEW.caseSmartTicket]:
-    "Case study: a mobile ticketing app with offline QR passes and two-step boarding, plus a web console for transit operations, rebuilt on WCAG 2.2 design tokens.",
+    "Case study: a mobile ticketing app with offline QR passes and 2-step boarding, plus a transit operations console, rebuilt on WCAG 2.2 design tokens.",
   [VIEW.caseAutomotive]:
     "Case study: research-backed redesign of a B2B vehicle marketplace across 7 European markets, from interviews and benchmarking to the checkout flow.",
 };

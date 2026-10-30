@@ -13,7 +13,7 @@ import type { AccessibilityContent } from "./accessibility.types.ts";
 const email = <EmailLink email={PROFILE.email} place="accessibility" />;
 
 export const ACCESSIBILITY: AccessibilityContent = {
-  eyebrow: "Accessibility statement",
+  eyebrow: "Accessibility Statement",
   title: "Accessibility",
   intro:
     "How this website works for people who use it in different ways, and what to do if something does not work for you.",
@@ -21,17 +21,17 @@ export const ACCESSIBILITY: AccessibilityContent = {
   sections: [
     {
       id: "in-short",
-      title: "In short",
+      title: "In Short",
       points: [
         "This website aims to meet the Web Content Accessibility Guidelines (WCAG) 2.2 at level AA.",
         "You can use it with a keyboard or a screen reader, with zoom up to 400% and with a larger text size.",
-        "It follows your device's settings for dark mode, reduced motion and more contrast.",
+        "It follows your device’s settings for Dark mode, reduced motion and more contrast.",
         <>If something does not work for you, write to me at {email}.</>,
       ],
     },
     {
       id: "what-you-can-do",
-      title: "What you can do",
+      title: "What You Can Do",
       points: [
         lead(
           "Keyboard",
@@ -66,7 +66,7 @@ export const ACCESSIBILITY: AccessibilityContent = {
     },
     {
       id: "known-limits",
-      title: "Known limits",
+      title: "Known Limits",
       points: [
         lead(
           "Screenshots",
@@ -78,13 +78,13 @@ export const ACCESSIBILITY: AccessibilityContent = {
         ),
         lead(
           "Other websites",
-          "links to LinkedIn, Figma, GitHub and other websites open those websites, and I do not control their accessibility. The Storybook library uses Storybook's own interface; its component examples are checked with the same automated rules as the site, except colour contrast.",
+          "links to LinkedIn, Figma, GitHub and other websites open those websites, and I do not control their accessibility. The Storybook library uses Storybook’s own interface; its component examples are checked with the same automated rules as the site, except colour contrast.",
         ),
       ],
     },
     {
       id: "how-i-check-it",
-      title: "How I check it",
+      title: "How I Check It",
       paragraphs: [
         "I check every page with automated tests in a real browser: the WCAG rules that tools can test (axe), the keyboard order and whether anything hides the focus, an emulated screen reader, 320px width and 400% zoom, a 200% text size and Windows contrast themes. Other tests check that animations stop with reduced motion and that colours get stronger with more contrast. Each component in the Storybook library is also checked with axe in its examples every time the code changes.",
         "Automated tests cannot find every problem, so feedback from people who use the web in different ways matters most to me.",

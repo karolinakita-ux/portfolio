@@ -23,7 +23,7 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
   title: "Enterprise Project Planning & Cost Management Platform",
   meta: [
     {
-      label: "My role",
+      label: "My Role",
       value: "Senior UX / Product Designer - end-to-end UX, design system architecture and engineering alignment",
     },
     {
@@ -36,7 +36,7 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
       label: "Key Outcome",
       wide: true,
       value:
-        "Designed one workspace for time tracking, meeting cost, project budgets and portfolio reporting on a three-tier PrimeNG token system with Light and Dark modes. Logged time and meeting costs roll up into project budgets and PMO dashboards, and every new piece of business logic is labelled as a proposal for sign-off.",
+        "Designed one workspace for time tracking, meeting cost, project budgets and portfolio reporting on a 3-tier PrimeNG token system with Light and Dark mode. Logged time and meeting costs roll up into project budgets and PMO dashboards, and every new piece of business logic is labelled as a proposal for sign-off.",
     },
   ],
   notice: {
@@ -48,19 +48,19 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
   summaryLead: "Budgets rarely break in one big mistake. They erode in everyday work.",
   summary: [
     {
-      title: "The problem",
+      title: "The Problem",
       body: "Teams planned hours in static spreadsheets. Long meetings, unclear task dependencies and unlogged calls slowly used up project margins and nobody saw it until the monthly report, when it was too late to change course.",
     },
     {
-      title: "My part",
+      title: "My Part",
       body: "I led product design from problem definition to delivery. With the product owners, the business analyst and the developers, I turned complex resource workflows into one desktop app: a time tracker that stays visible, a calendar with day-level time entries, a meetings page that shows what each meeting costs, budget burn on every project and a portfolio view for the PMO - all on one PrimeNG token system. Screens that need new business logic are marked as proposals for the client to sign off.",
     },
   ],
   features: [
     {
       id: "planning-foundations",
-      eyebrow: "Brand foundation & PrimeNG tokens",
-      title: "A calm interface for people who read numbers all day",
+      eyebrow: "Brand Foundation & PrimeNG Tokens",
+      title: "A Calm Interface for People Who Read Numbers All Day",
       lead: "One palette, one type family and one token system, verified for contrast.",
       bullets: [
         lead(
@@ -82,7 +82,7 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
         ),
         lead(
           "Three-tier tokens",
-          "Primitive → semantic → component tokens map 1:1 to PrimeNG’s Aura preset. Screens use only semantic and component tokens, so components need no custom CSS overrides and Light / Dark modes switch in one place.",
+          "Primitive → semantic → component tokens map 1:1 to PrimeNG’s Aura preset. Screens use only semantic and component tokens, so components need no custom CSS overrides and the switch between Light and Dark mode happens in one place.",
         ),
       ],
       media: [
@@ -102,8 +102,8 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
     },
     {
       id: "planning-calendar",
-      eyebrow: "Calendar architecture",
-      title: "Scheduling and time logging in one calendar",
+      eyebrow: "Calendar Architecture",
+      title: "Scheduling and Time Logging in One Calendar",
       lead: "People plan, attend and log time without switching context.",
       bullets: [
         lead(
@@ -130,15 +130,15 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
       media: [
         {
           ...shot("calendar-week-view"),
-          alt: "Month overview in week view: a Participant and Organizer switch, a project filter, a mini calendar with meeting counts, the selected day's meetings and a weekly grid of meetings with a current-time line.",
+          alt: "Month overview in week view: a Participant and Organizer switch, a project filter, a mini calendar with meeting counts, the selected day’s meetings and a weekly grid of meetings with a current-time line.",
           title: "Month overview - week view",
         },
       ],
     },
     {
       id: "planning-roadmap",
-      eyebrow: "Project roadmap & goal hierarchy",
-      title: "Goals & milestones timeline (proposal)",
+      eyebrow: "Project Roadmap & Goal Hierarchy",
+      title: "Goals & Milestones Timeline (Proposal)",
       lead: "A proposed view that answers “are we on track?” for every goal in a project. Its goal-tracking logic is new, so it waits for the client’s sign-off.",
       bullets: [
         lead(
@@ -172,8 +172,8 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
     },
     {
       id: "planning-cockpits",
-      eyebrow: "Dashboards, budget tracking & team policies",
-      title: "From one project’s budget to the whole portfolio",
+      eyebrow: "Dashboards, Budget Tracking & Team Policies",
+      title: "From One Project’s Budget to the Whole Portfolio",
       lead: "Finance, delivery and the PMO look at the same numbers, at the level of detail they need.",
       bullets: [
         lead(
@@ -210,17 +210,17 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
   sections: [],
   impact: {
     id: "planning-outcomes",
-    eyebrow: "Design outcomes",
-    title: "What the design system delivers",
+    eyebrow: "Design Outcomes",
+    title: "What the Design System Delivers",
     stats: [
       {
-        value: "Light & Dark",
+        value: "Light and Dark mode",
         label:
-          "One token collection with a Light and a Dark mode: the same screens and components switch mode through token values instead of being redrawn.",
+          "One token collection for both modes: the same screens and components switch mode through token values instead of being redrawn.",
       },
       {
         value: "AA+",
-        label: "Every status tag pair passes WCAG AA in Light and Dark; primary actions reach AAA (7.09:1).",
+        label: "Every status tag pair passes WCAG AA in Light and Dark mode; primary actions reach AAA (7.09:1).",
       },
     ],
     bullets: [
@@ -232,7 +232,7 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
     ],
   },
   // No designFile yet: the Planning & Cost Management Platform Figma file still shows the product name, which
-  // has no approval. Link it again (title, body, "Open the Figma file") once Karolina has painted it out there.
+  // has no approval. Link it again (title, body, "Explore the Figma File") once Karolina has painted it out there.
   // Third case in the Work order (Smart Ticket → Automotive → Project Planning → Data Governance).
   prev: { view: VIEW.caseAutomotive },
   next: { view: VIEW.caseDataGovernance },

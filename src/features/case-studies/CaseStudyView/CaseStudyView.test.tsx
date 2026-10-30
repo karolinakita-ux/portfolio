@@ -96,9 +96,9 @@ describe("CaseStudyView feature sections (Project Planning)", () => {
       ...PROJECT_PLANNING_CASE,
       designFile: {
         url: "https://www.figma.com/design/example/Planning",
-        title: "Inspect the design files",
+        title: "Inspect the Design Files",
         body: "The Figma file holds the design system and tokens.",
-        linkLabel: "Open the Figma file",
+        linkLabel: "Explore the Figma File",
       },
     };
     render(<CaseStudyView c={withFile} resolveAsset={resolveAsset} onNavigate={() => undefined} />);
@@ -117,7 +117,7 @@ describe("CaseStudyView feature sections (Project Planning)", () => {
 
   it("shows no Figma link when the case has no design file", () => {
     render(<CaseStudyView c={AUTOMOTIVE_CASE} resolveAsset={resolveAsset} onNavigate={() => undefined} />);
-    expect(screen.queryByRole("link", { name: /Figma file/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /Figma file/i })).not.toBeInTheDocument();
   });
 });
 

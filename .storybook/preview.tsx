@@ -20,8 +20,16 @@ const preview: Preview = {
   decorators: [withTheme],
   globalTypes: {
     theme: {
-      description: "Colour theme (KitaBranding light / dark tokens)",
-      toolbar: { title: "Theme", icon: "mirror", items: ["light", "dark"], dynamicTitle: true },
+      description: "Colour theme (KitaBranding Light and Dark mode tokens)",
+      toolbar: {
+        title: "Theme",
+        icon: "mirror",
+        items: [
+          { value: "light", title: "Light mode" },
+          { value: "dark", title: "Dark mode" },
+        ],
+        dynamicTitle: true,
+      },
     },
   },
   initialGlobals: { theme: "light" },

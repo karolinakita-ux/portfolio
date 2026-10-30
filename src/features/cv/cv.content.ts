@@ -39,7 +39,7 @@ export const CV: Cv = {
       bullets: [
         {
           lead: "Design Systems",
-          text: "Built and maintain a token-based design system in Figma (design tokens, variables, components) aligned with the frontend component library, with Light and Dark themes and WCAG 2.1 AA contrast rules.",
+          text: "Built and maintain a token-based design system in Figma (design tokens, variables, components) aligned with the frontend component library, with Light and Dark mode and WCAG 2.1 AA contrast rules.",
         },
         {
           lead: "End-to-End Product Design",
@@ -168,7 +168,7 @@ export const CV: Cv = {
         "Variables",
         "Component Libraries",
         "Multi-Brand Theming",
-        "Light and Dark Modes",
+        "Light and Dark Mode",
         "Accessibility (WCAG 2.1 AA)",
       ],
     },
@@ -222,5 +222,5 @@ export const CV_PAGE: CvPage = {
   contactsLabel: "Contact details",
   note: "Read my CV here, or download it as a PDF: the same content on A4 pages, ready to print or to send with an application.",
   download: "Download PDF",
-  inAppHint: "The PDF opens best in your phone's browser: open this page there to download it.",
+  inAppHint: "The PDF opens best in your phone’s browser: open this page there to download it.",
 };

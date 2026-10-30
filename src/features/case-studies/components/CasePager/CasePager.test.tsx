@@ -23,8 +23,8 @@ describe("CasePager", () => {
     const previous = pager("Previous and next case studies").getByRole("link", { name: /^Previous/ });
     const next = pager("Previous and next case studies").getByRole("link", { name: /^Next/ });
     // The text says "Previous" / "Next"; the case name follows for screen readers only.
-    expect(previous).toHaveTextContent("Previous case study: " + AUTOMOTIVE_CASE.title);
-    expect(next).toHaveTextContent("Next case study: " + DATA_GOVERNANCE_CASE.title);
+    expect(previous).toHaveTextContent("Previous Case Study: " + AUTOMOTIVE_CASE.title);
+    expect(next).toHaveTextContent("Next Case Study: " + DATA_GOVERNANCE_CASE.title);
     expect(previous).toHaveAttribute("href", "/work/automotive");
     expect(next).toHaveAttribute("href", "/work/data-governance");
 
@@ -43,7 +43,7 @@ describe("CasePager", () => {
         const to = cases.find((other) => other.view === target?.view);
         if (!to) continue;
         const link = screen.getByRole("link", { name: new RegExp("^" + direction) });
-        expect(link, c.view).toHaveTextContent(direction + " case study: " + to.title);
+        expect(link, c.view).toHaveTextContent(direction + " Case Study: " + to.title);
       }
       unmount();
     }

@@ -35,7 +35,7 @@ export async function showConsentBox(page: Page): Promise<void> {
   });
 }
 
-export const consentBox = (page: Page): Locator => page.getByRole("region", { name: "Can I count your visit?" });
+export const consentBox = (page: Page): Locator => page.getByRole("region", { name: "Can I Count Your Visit?" });
 
 export async function openView(page: Page, base: string, view: View): Promise<void> {
   await page.goto(urlFor(base, view));

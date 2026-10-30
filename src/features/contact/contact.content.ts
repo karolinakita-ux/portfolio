@@ -1,8 +1,8 @@
 import type { Engagement } from "./contact.types.ts";
 
 export const CONTACT = {
-  eyebrow: "Get in touch",
-  title: "Let’s connect",
+  eyebrow: "Get in Touch",
+  title: "Let’s Connect",
   intro:
     "I am open to new opportunities as a Senior Product Designer and Design Systems Specialist. Whether you have a complex enterprise project, need a design system consultation, or just want to chat about product design, feel free to reach out.",
   engagements: [
