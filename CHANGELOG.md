@@ -6,6 +6,17 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.16 - 2026-10-30
+
+#### Fixed
+
+- Work: hovering a case thumbnail no longer shows a 1 px line of the frame's background at its bottom edge while the zoom runs (seen on the Automotive card). The browser draws the zooming image on its own layer, rounded to whole pixels, and a 16:10 frame is rarely a whole number of pixels tall; the image now overlaps its frame by 1 px on every side, and the frame's rounded clip hides the overlap.
+
+#### Changed
+
+- Work: "Read the full recommendations on LinkedIn" sits at the right end of its row under the testimonials, like the buttons that close the About page's sections. On a phone, where its label wraps onto two lines, the lines are centred between the icons instead of left-aligned against the arrow; every button does this when its label wraps.
+- Docs: docs/design.md records where section-closing buttons sit.
+
 ### 5.14.15 - 2026-10-30
 
 #### Changed

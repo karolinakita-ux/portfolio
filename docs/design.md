@@ -39,6 +39,7 @@ The picture LinkedIn, Facebook, Messenger, Slack and X show with a shared link i
 
 Karolina's rules that a reviewer could miss, kept by the code and its tests:
 
+- **Section-closing actions at the end of the row:** a button that closes a section (the About hero and career section, "Read the full recommendations on LinkedIn" under the Work testimonials) sits at the right end of its row; a button label that wraps on a narrow screen is centred between its icons.
 - **One primary action per screen:** other buttons are secondary, so the page keeps one clear next step.
 - **Equal choices look equal:** allow and decline in the consent box are the same secondary button (a story checks it).
 - **Link buttons are as big as bordered buttons:** the Button Link type ("View Case Study") has a transparent border and the button padding, so its click area is a Secondary button's box, not only the text.
