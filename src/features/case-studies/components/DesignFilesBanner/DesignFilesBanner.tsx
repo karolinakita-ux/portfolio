@@ -15,7 +15,7 @@ export function DesignFilesBanner({ file, caseView }: DesignFilesBannerProps) {
       <Container>
         <Callout tone="info" label="Design files" title={file.title}>
           <div className={styles.body}>
-            <p>{file.body}</p> <DesignFileLink file={file} caseView={caseView} />
+            <p>{file.body}</p> <DesignFileLink file={file} caseView={caseView} place="end" />
           </div>
         </Callout>
       </Container>

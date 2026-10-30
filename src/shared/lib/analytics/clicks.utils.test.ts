@@ -4,7 +4,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { PageSpot } from "./analytics.types.ts";
 import { describeClick, isInteractive, watchCopies, watchDeadClicks } from "./clicks.utils.ts";
 
-/** A page like the site's: a hero, an anchored section with a card, an unlabelled region, header, footer, viewer. */
+/**
+ * A page like the site's: a hero, an anchored section with a card, an unlabelled region, a case study's comparison,
+ * captioned screens and stat card, a testimonial, header, footer, viewer.
+ */
 const PAGE = `
   <header><a href="/">Home</a><p id="tagline">Senior Product Designer</p></header>
   <main>
@@ -28,9 +31,30 @@ const PAGE = `
       <article id="role" aria-labelledby="role-title"><h3 id="role-title">Designer</h3><p id="role-body">Work.</p></article>
     </section>
     <section aria-labelledby="_r_1_"><p id="consent">Can I count your visit?</p></section>
+    <section id="ticket-rebuild" data-anchor="">
+      <article id="compare" data-card="" aria-labelledby="_r_2_">
+        <h3 id="_r_2_">Sign-up, 2022 and today</h3>
+        <p id="compare-text">Hard-coded greys.</p>
+        <figure id="compare-figure">
+          <button type="button"><img alt="2022 sign-up screen" src="/c.webp"></button>
+          <figcaption id="compare-caption">Sign-up, 2022</figcaption>
+        </figure>
+      </article>
+      <figure id="screen-figure">
+        <img id="screen" alt="" src="/d.webp"><figcaption>Live <em id="screen-caption">fleet</em> map</figcaption>
+      </figure>
+      <ul>
+        <li><div id="stat" data-card=""><p id="stat-title" data-card-title="">AA+</p><p id="stat-label">Contrast.</p></div></li>
+      </ul>
+    </section>
+    <section id="testimonials" data-anchor="">
+      <figure data-card="">
+        <blockquote><p id="quote">A quote.</p></blockquote><figcaption id="author">A person</figcaption>
+      </figure>
+    </section>
   </main>
   <footer><p id="copyright">2026 Karolina Kita</p></footer>
-  <dialog id="viewer" open><figure><img id="full" alt="Full size" src="/b.webp"></figure></dialog>
+  <dialog id="viewer" open><figure id="full-figure"><img id="full" alt="Full size" src="/b.webp"></figure></dialog>
 `;
 
 const $ = (id: string) => {
@@ -89,6 +113,46 @@ describe("describeClick", () => {
     expect(describeClick($("principle-body"))).toEqual({ element: "text", ...card });
     // Any other article is not a card.
     expect(describeClick($("role-body"))).toEqual({ element: "text", area: "philosophy" });
+  });
+
+  it("names a block marked as a card by its title, also when React made the title's id", () => {
+    const comparison = { area: "ticket-rebuild", label: "Sign-up, 2022 and today" };
+    expect(describeClick($("compare"))).toEqual({ element: "card", ...comparison });
+    expect(describeClick($("compare-text"))).toEqual({ element: "text", ...comparison });
+  });
+
+  it("names a screenshot by its caption, inside a card or not: people expect it to open the image", () => {
+    const caption = { area: "ticket-rebuild", label: "Sign-up, 2022" };
+    expect(describeClick($("compare-caption"))).toEqual({ element: "text", ...caption });
+    const screen = { area: "ticket-rebuild", label: "Live fleet map" };
+    expect(describeClick($("screen-caption"))).toEqual({ element: "text", ...screen });
+    // An image without alt text goes by its caption.
+    expect(describeClick($("screen"))).toEqual({ element: "image", ...screen });
+  });
+
+  it("counts the frame around a captioned screenshot as the image, a figure without a caption as the page", () => {
+    expect(describeClick($("compare-figure"))).toEqual({
+      element: "image",
+      area: "ticket-rebuild",
+      label: "Sign-up, 2022",
+    });
+    expect(describeClick($("screen-figure"))).toEqual({
+      element: "image",
+      area: "ticket-rebuild",
+      label: "Live fleet map",
+    });
+    expect(describeClick($("full-figure"))).toEqual({ element: "page", area: "dialog" });
+  });
+
+  it("names a card without a heading by its marked title (a stat card's figure)", () => {
+    const stat = { area: "ticket-rebuild", label: "AA+" };
+    expect(describeClick($("stat"))).toEqual({ element: "card", ...stat });
+    expect(describeClick($("stat-label"))).toEqual({ element: "text", ...stat });
+  });
+
+  it("never names a card by its caption: a testimonial's caption names a person", () => {
+    expect(describeClick($("quote"))).toEqual({ element: "text", area: "testimonials" });
+    expect(describeClick($("author"))).toEqual({ element: "text", area: "testimonials" });
   });
 
   it("falls back to the landmark when a region's id is React's own (not stable between builds)", () => {
@@ -185,6 +249,30 @@ describe("watchCopies", () => {
     stop();
     document.dispatchEvent(new Event("copy"));
     expect(report).toHaveBeenCalledOnce();
+  });
+
+  it("never sends the copied text as the label: a heading, caption or stat the selection reaches is skipped", () => {
+    const report = vi.fn<(spot: PageSpot) => void>();
+    const stop = watchCopies(report);
+    /** Selects from the start of `anchor` to the end of `focus`, or backwards when `focus` comes first. */
+    const copy = (anchor: Element, focus = anchor, backwards = false) => {
+      const [start, end] = backwards ? [anchor.childNodes.length, 0] : [0, focus.childNodes.length];
+      window.getSelection()?.setBaseAndExtent(anchor, start, focus, end);
+      document.dispatchEvent(new Event("copy"));
+    };
+    copy($("compare-caption")); // the card's title names it instead
+    copy($("screen-caption"));
+    copy($("stat-title"));
+    copy($("case-a"));
+    copy($("summary"), $("case-a"), true); // from the text up into the card's heading
+    expect(report.mock.calls.map(([spot]) => spot)).toEqual([
+      { element: "text", area: "ticket-rebuild", label: "Sign-up, 2022 and today" },
+      { element: "text", area: "ticket-rebuild" },
+      { element: "text", area: "ticket-rebuild" },
+      { element: "heading", area: "enterprise-cases" },
+      { element: "text", area: "enterprise-cases" },
+    ]);
+    stop();
   });
 
   it("reports nothing when nothing is selected", () => {

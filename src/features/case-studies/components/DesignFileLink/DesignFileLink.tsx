@@ -9,14 +9,14 @@ import type { DesignFileLinkProps } from "./DesignFileLink.types.ts";
 
 /**
  * "Open the Figma file" link (new tab) to a case study's design file: in the case intro under the details panel
- * and in the design files banner at the end. Counted as figma-click.
+ * and in the design files banner at the end. Counted as figma-click with its place.
  */
-export function DesignFileLink({ file, caseView }: DesignFileLinkProps) {
+export function DesignFileLink({ file, caseView, place }: DesignFileLinkProps) {
   return (
     <a
       href={file.url}
       {...EXTERNAL_LINK}
-      onClick={() => track(EVENT.figmaClick, { place: "case", case: caseView })}
+      onClick={() => track(EVENT.figmaClick, { place, case: caseView })}
       className={styles.link}
     >
       <Figma aria-hidden="true" size={16} className={styles.icon} />

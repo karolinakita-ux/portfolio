@@ -6,6 +6,20 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.13.3 - 2026-10-30
+
+#### Changed
+
+- The two Figma file links on a case study are counted apart: `figma-click` sends `place: "top"` for the link under the details panel and `place: "end"` for the design files banner, each with `case` (both sent `place: "case"` in 5.7.0 - 5.13.2, never live). Not a new kind of data: the privacy policy already lists Figma links.
+- Clicks that do nothing and text copies on the new case-study blocks get a label: the before / after comparisons and the numbered cards count as cards (named by their title), a stat card is named by its figure (`data-card-title`), and a screenshot by its caption. A click on the empty space around a captioned screenshot counts as a click on the image.
+- The tracking plan test also checks each event's Properties column in `docs/analytics.md` against `EventData` (`EVENT_PROPERTIES`); the add-tracking skill says so.
+
+#### Fixed
+
+- Umami's own error reports can never send stack traces: the script tag sets `data-errors="false"`, and `beforeSend` cancels every request of type `error`. `js-error` with its short message stays the only error data, as the privacy policy says.
+- `text-copy` never sends the copied text as its label: when the selection holds part of a heading, caption or stat figure, that label is skipped for the card's name, or left out. Copying a heading used to send the heading itself.
+- `docs/analytics.md` says that the speed report covers only the first 10 s of each view, so INP and CLS miss later interactions, and lists `testimonials` among the `place` values and image captions under `label`.
+
 ### 5.13.2 - 2026-10-30
 
 #### Fixed

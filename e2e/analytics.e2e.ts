@@ -5,8 +5,8 @@
  * from the local preview server. The real Umami script loads from cloud.umami.is (this spec needs the
  * internet), and every call to Umami's collector is caught here, so nothing reaches the Umami account.
  * Checks: nothing loads before consent (the consent box), what is sent and when after it, no hash in
- * addresses, no cookies, only the choice and the theme stored, and no box and no script on any other
- * host or for a visitor with Global Privacy Control.
+ * addresses, no cookies, no error reports of the tracker's own, only the choice and the theme stored, and
+ * no box and no script on any other host or for a visitor with Global Privacy Control.
  */
 import { AxeBuilder } from "@axe-core/playwright";
 import { expect, test, type Page, type Request } from "@playwright/test";
@@ -18,6 +18,7 @@ import {
   VIEWPORT_HEIGHT_BUCKET_LAST,
   VIEWPORT_HEIGHT_BUCKETS,
 } from "#shared/lib/analytics/analytics.constants.ts";
+import type { UmamiSendType } from "#shared/lib/analytics/analytics.types.ts";
 
 import { THEME_STORAGE_KEY } from "./helpers/helpers.constants.ts";
 import { themeButton, waitForApp } from "./helpers/page.utils.ts";
@@ -26,9 +27,12 @@ const SITE = "https://" + UMAMI.host;
 const COLLECTOR = "https://gateway.umami.is/**";
 const CONSENT_BOX = "Can I count your visit?";
 
-/** One call to Umami's collector, as the tracker posts it: an event or pageview, session data, a speed report. */
+/**
+ * One call to Umami's collector, as the tracker posts it: an event or pageview, session data, a speed report,
+ * or one of its own error reports (never expected).
+ */
 interface Sent {
-  type: "event" | "identify" | "performance";
+  type: UmamiSendType;
   payload: {
     website: string;
     hostname: string;
@@ -180,6 +184,17 @@ test("counts pages and clicks after consent, without the hash, and stores only t
   await themeButton(page, "dark").click();
   await expect.poll(() => named(sent).at(-1)).toMatchObject({ name: EVENT.themeSwitch, data: { theme: "dark" } });
   expect(await storage(page)).toEqual({ local: [STATISTICS_CHOICE_KEY, THEME_STORAGE_KEY].sort(), session: [] });
+
+  // An error nobody handled goes out as js-error with its short message; the tracker's own error reports
+  // (stack traces, data-errors) never do.
+  await page.evaluate(() => {
+    void Promise.reject(new Error("e2e-test rejection"));
+  });
+  await expect
+    .poll(() => named(sent).at(-1))
+    .toMatchObject({ name: EVENT.jsError, data: { kind: "rejection", message: "e2e-test rejection" } });
+  await page.waitForTimeout(500);
+  expect(ofType(sent, "error")).toEqual([]);
 });
 
 test("stops at once when switched off on the privacy page, and does not load after a reload", async ({
@@ -317,7 +332,8 @@ test("sends the session data once, and one speed report per page, none while rea
   });
   expect(session?.payload.data, "no link tag in the address, so none in the session data").not.toHaveProperty("ref");
 
-  // Reading moves the hash (useSectionHash): not a new page, so the tracker's speed report waits.
+  // Reading moves the hash (useSectionHash): not a new page, so the tracker's speed report waits. It goes by
+  // itself 10 s after the script started, so these steps must end before that (a slow run could fail here).
   await page.mouse.wheel(0, 1500);
   await page.mouse.wheel(0, 1500);
   await expect.poll(() => new URL(page.url()).hash).not.toBe("");

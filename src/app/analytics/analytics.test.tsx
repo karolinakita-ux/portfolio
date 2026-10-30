@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { App } from "#app/App/App.tsx";
 import { FAQ } from "#features/about/about.content.ts";
 import { AUTOMOTIVE_CASE } from "#features/case-studies/content/automotive.content.ts";
+import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.tsx";
 import { caseCards } from "#features/case-studies/gallery/gallery.utils.ts";
 import { WORK_CASES } from "#features/work/work.content.ts";
 import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
@@ -200,6 +201,18 @@ describe("events on case studies", () => {
     ]);
   });
 
+  it("counts the Figma file link under the details panel as the top, the design files banner's as the end", () => {
+    renderApp("/work/smart-ticket");
+    const [top, end] = screen.getAllByRole("link", { name: /^Open the Figma file/ });
+    if (!top || !end) throw new Error("Smart Ticket has two Figma file links");
+    clickLink(top);
+    clickLink(end);
+    expect(events()).toEqual([
+      [EVENT.figmaClick, { place: "top", case: "case-smart-ticket" }],
+      [EVENT.figmaClick, { place: "end", case: "case-smart-ticket" }],
+    ]);
+  });
+
   it("counts the previous / next links beside the breadcrumb as the top of the case study", async () => {
     const { user } = renderApp("/work/project-planning");
     const top = within(screen.getByRole("navigation", { name: "Previous and next case studies" }));
@@ -241,6 +254,47 @@ describe("dead clicks", () => {
       element: "heading",
       area: SECTION.workCases,
       label: first.title,
+    });
+  });
+
+  it("name a case study's comparison and stat cards by their titles, and a screen by its caption", () => {
+    renderApp("/work/smart-ticket");
+    const { rebuild, impact } = SMART_TICKET_CASE;
+    const [comparison] = rebuild.comparisons;
+    const [screenCard] = comparison?.before.media ?? [];
+    const [stat] = impact.stats;
+    if (!comparison || !screenCard || !stat) throw new Error("no comparison, screen or stat");
+    const block = within(screen.getByRole("article", { name: comparison.title }));
+    expect(describeClick(block.getByText(comparison.before.text))).toEqual({
+      element: "text",
+      area: rebuild.id,
+      label: comparison.title,
+    });
+    expect(describeClick(block.getByText(screenCard.title))).toEqual({
+      element: "text",
+      area: rebuild.id,
+      label: screenCard.title,
+    });
+    // The empty space around the screen belongs to the image.
+    const figure = block.getByText(screenCard.title).closest("figure");
+    if (!figure) throw new Error("no figure around the screen");
+    expect(describeClick(figure)).toEqual({ element: "image", area: rebuild.id, label: screenCard.title });
+    expect(describeClick(screen.getByText(stat.label))).toEqual({
+      element: "text",
+      area: impact.id,
+      label: stat.value,
+    });
+  });
+
+  it("name a numbered takeaway card by its title", () => {
+    renderApp("/work/automotive");
+    const [point] = AUTOMOTIVE_CASE.reflections?.points ?? [];
+    if (!point) throw new Error("no reflections");
+    const [title, body] = point;
+    expect(describeClick(screen.getByText(body))).toEqual({
+      element: "text",
+      area: AUTOMOTIVE_CASE.id + "-reflections",
+      label: title,
     });
   });
 });

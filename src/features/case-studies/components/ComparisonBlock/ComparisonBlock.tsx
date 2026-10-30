@@ -10,11 +10,12 @@ import type { ComparisonBlockProps } from "./ComparisonBlock.types.ts";
 /**
  * Figma: Compare. A before / after comparison: H3 and intro, the two columns side by side from md (stacked
  * below), then the reasoning - titled columns of points, or a "Strategic shift" list in an info banner.
+ * `data-card`: visitor statistics name a click on it that does nothing by its title (shared/lib/analytics).
  */
 export function ComparisonBlock({ comparison, beforeRows, afterRows }: ComparisonBlockProps) {
   const titleId = useId();
   return (
-    <article aria-labelledby={titleId} className={styles.root}>
+    <article data-card="" aria-labelledby={titleId} className={styles.root}>
       <div className={styles.header}>
         <h3 id={titleId} className={styles.title}>
           {comparison.title}

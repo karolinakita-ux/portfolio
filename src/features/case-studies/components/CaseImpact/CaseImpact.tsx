@@ -8,7 +8,8 @@ import type { CaseImpactProps } from "./CaseImpact.types.ts";
 /**
  * Figma: Outcomes & impact. Eyebrow and H2, a row of stat cards (the figure in Zilla Slab, the sentence that
  * explains it below), an optional note on what the figures are, then optional bullets. Cards stack below md;
- * from md two or four cards sit two in a row, any other count three in a row.
+ * from md two or four cards sit two in a row, any other count three in a row. A stat card has no heading, so the
+ * figure is its title for visitor statistics (`data-card-title`, shared/lib/analytics).
  */
 export function CaseImpact({ impact }: CaseImpactProps) {
   return (
@@ -17,7 +18,10 @@ export function CaseImpact({ impact }: CaseImpactProps) {
         {impact.stats.map((stat) => (
           <li key={stat.value} className={styles.statItem}>
             <Card as="div" gap="md" className={styles.card}>
-              <p className={styles.value}>{stat.value}</p> <p className={styles.label}>{stat.label}</p>
+              <p data-card-title="" className={styles.value}>
+                {stat.value}
+              </p>{" "}
+              <p className={styles.label}>{stat.label}</p>
             </Card>
           </li>
         ))}

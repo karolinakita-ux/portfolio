@@ -30,7 +30,7 @@ export function CaseIntro({ c, onNavigate }: CaseIntroProps) {
         <MetaMatrix entries={c.meta} />
         {c.designFile && (
           <div className={styles.designFile}>
-            <DesignFileLink file={c.designFile} caseView={c.view} />
+            <DesignFileLink file={c.designFile} caseView={c.view} place="top" />
           </div>
         )}
         {c.notice && (

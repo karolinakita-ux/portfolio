@@ -4,13 +4,14 @@ import type { NumberedCardsProps } from "./NumberedCards.types.ts";
 /**
  * Numbered takeaway cards ("01", "02", "03") closing a case study: an ordered list of info-tinted cards,
  * one column on phones, two or three side by side from md. The opt-in alternative to DetailList's flat layout
- * (`reflections.layout: "numbered"`).
+ * (`reflections.layout: "numbered"`). `data-card`: visitor statistics name a click on a card that does nothing
+ * by its title (shared/lib/analytics).
  */
 export function NumberedCards({ items }: NumberedCardsProps) {
   return (
     <ol className={styles.list(items.length)}>
       {items.map((item, index) => (
-        <li key={item.title} className={styles.item}>
+        <li key={item.title} data-card="" className={styles.item}>
           <span aria-hidden="true" className={styles.number}>
             {String(index + 1).padStart(2, "0")}
           </span>{" "}

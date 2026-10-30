@@ -149,7 +149,7 @@ export const BURST_GAP_MS = 700;
 export const BURST_RADIUS_PX = 30;
 export const RAGE_CLICKS = 3;
 
-/** Longest label (alt text, heading, card title) sent with a dead click. */
+/** Longest label (alt text, image caption, heading, card title) sent with a dead click. */
 export const MAX_LABEL_LENGTH = 100;
 
 /** Elements that react to a click: a click on or inside them is not a dead click (clicks.utils.ts). */

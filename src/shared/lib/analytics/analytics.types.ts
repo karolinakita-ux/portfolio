@@ -21,7 +21,10 @@ export interface TimeOnPage {
   section?: string;
 }
 
-/** What a click or a copied selection was on: an image, an icon, a heading, text, the empty part of a card, or the page. */
+/**
+ * What a click or a copied selection was on: an image (or the frame around a captioned screenshot), an icon, a
+ * heading, text, the empty part of a card, or the page.
+ */
 export type ClickedElement = "image" | "icon" | "heading" | "text" | "card" | "page";
 
 /** A spot on the page, described from the site's own markup (clicks.utils.ts): dead clicks and text copies. */
@@ -29,8 +32,14 @@ export interface PageSpot {
   element: ClickedElement;
   /** The section id around it, a hero's name (hero, about, case...), or the landmark (header, footer, dialog, main). */
   area: string;
-  /** The image's alt text, the heading, or the card's title: site copy, never anything the visitor typed. */
+  /** The image's alt text or caption, the heading, or the card's title: site copy, never anything the visitor typed. */
   label?: string;
+}
+
+/** A PageSpot's label and the element whose text it is: none for alt text or aria-label, which no selection holds. */
+export interface SpotLabel {
+  text: string;
+  from?: Element;
 }
 
 /** An error in the site's own code (errors.utils.ts). */
@@ -82,8 +91,11 @@ export interface EventData {
   [EVENT.imageOpen]: { case: View; image: string };
   /** The next or previous screenshot in the image viewer (arrow, key or swipe); image: the one now shown. */
   [EVENT.imageNav]: { case: View; image: string; direction: "prev" | "next" };
-  /** case: the case study whose design files banner was used (place "case"). */
-  [EVENT.figmaClick]: { place: "hero" | "banner" } | { place: "case"; case: View };
+  /**
+   * hero, banner: the Work page's links to the Figma workspace. case: the case study whose Figma file link was
+   * used, at its top (under the details panel) or in the design files banner at the end.
+   */
+  [EVENT.figmaClick]: { place: "hero" | "banner" } | { place: "top" | "end"; case: View };
   [EVENT.githubClick]: { place: "hero" | "banner" };
   [EVENT.storybookClick]: { place: "hero" | "banner" };
   [EVENT.linkedinClick]: {
@@ -118,6 +130,9 @@ export type SentData<E extends AnalyticsEvent> = EventData[E] & { input?: InputK
 
 export type EmailPlace = EventData[typeof EVENT.emailClick]["place"];
 
+/** Where a case study's Figma file link sits (figma-click): under the details panel or in the design files banner. */
+export type DesignFilePlace = Extract<EventData[typeof EVENT.figmaClick], { case: View }>["place"];
+
 /** What Umami's tracker sends with each call; the tracker fills it in, analytics.utils.ts overrides the page. */
 export interface UmamiPayload {
   website: string;
@@ -138,8 +153,11 @@ export interface UmamiPayload {
 export type PerformancePayload = UmamiPayload &
   Partial<Record<(typeof LOAD_METRICS)[number] | "cls" | "inp" | "duration", number>>;
 
-/** The kinds of request the tracker makes: pageviews and events, session data, speed reports. */
-export type UmamiSendType = "event" | "identify" | "performance";
+/**
+ * The kinds of request the tracker makes: pageviews and events, session data, speed reports, and its own error
+ * reports (data-errors, off on this site; beforeSend cancels them).
+ */
+export type UmamiSendType = "event" | "identify" | "performance" | "error";
 
 /** data-before-send: gets every request before it goes; null cancels it. */
 export type BeforeSend = (type: UmamiSendType, payload: PerformancePayload) => PerformancePayload | null;
