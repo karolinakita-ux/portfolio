@@ -136,6 +136,10 @@ Google shows a new site icon only after it recrawls the home page, which can tak
 
 Fix on `develop` as usual (patch version), then make a release with just that fix. Do not patch `main` directly.
 
+## Editor
+
+VS Code with the extensions in `.vscode/extensions.json`. Its ESLint keeps the types of the files it has already read, so after Claude, a workflow or a script changes many files outside the editor it can report errors such as "Unsafe assignment of an error typed value" on imports that are fine. Run **ESLint: Restart ESLint Server** (and **TypeScript: Restart TS Server**) from the Command Palette. `yarn lint` is the check that counts: it reads every file fresh, and `yarn verify` runs it with zero warnings allowed. Do not switch the rule off for such errors; it is what stops untyped values from slipping into the code. The editor does not watch or search Claude's temporary worktrees (`.claude/worktrees/`).
+
 ## Claude Code helpers
 
 Claude Code loads these from `.claude/` ([docs/claude-code.md](docs/claude-code.md) explains the setup). A skill is a routine Claude follows in the conversation; an agent reviews in its own context and only reports. Ask for one by name ("run the ui-reviewer"), or Claude picks it when the task matches.

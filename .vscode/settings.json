@@ -6,5 +6,11 @@
   },
   "typescript.tsdk": "node_modules/typescript/lib",
   "files.eol": "\n",
-  "tailwindCSS.classFunctions": ["clsx", "cva"]
+  "tailwindCSS.classFunctions": ["clsx", "cva"],
+  "files.watcherExclude": {
+    "**/.claude/worktrees/**": true
+  },
+  "search.exclude": {
+    "**/.claude/worktrees": true
+  }
 }

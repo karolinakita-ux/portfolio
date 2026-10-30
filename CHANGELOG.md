@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.14 - 2026-10-30
+
+#### Changed
+
+- Docs and editor: CONTRIBUTING.md has an Editor section. VS Code's ESLint can show "error typed value" errors on correct imports after many files change outside the editor; restarting the ESLint server clears them, and `yarn lint` stays the check that counts (the rule stays on). The shared VS Code settings no longer watch or search Claude's temporary worktrees.
+
 ### 5.14.13 - 2026-10-30
 
 #### Changed
