@@ -20,7 +20,7 @@ export const CV: Cv = {
     location: "Poland · Remote (CET)",
     email: PROFILE.email,
     linkedin: { label: "linkedin.com/in/karolinakita", href: PROFILE.linkedinUrl },
-    site: { label: "karolina.kita.company", pdfHref: "https://karolina.kita.company/?ref=cv" },
+    site: { label: "karolina.kita.company", pdfHref: "https://karolina.kita.company/?utm_medium=cv-pdf" },
   },
 
   summary:
@@ -195,7 +195,7 @@ export const CV: Cv = {
   // (Art. 6(1)(a) and 7(3): withdrawal as easy as giving it), art. 22¹a of the Kodeks pracy and UODO's guide for
   // employers (future recruitment needs its own consent, for a set period). Not legal advice.
   consent: {
-    en: "I consent to the processing of my personal data in this CV by the employer or recruitment agency that receives it, in Poland or abroad, for the current recruitment process, in line with the GDPR (Regulation (EU) 2016/679). I also consent to its processing for future recruitment processes by the same employer or agency for 12 months after receiving it. A recruitment agency may send my CV to an employer only for a role I have agreed to. I can withdraw my consent at any time by email to {email}.",
+    en: "I consent to the processing of my personal data in this CV by the employer or recruitment agency that receives it, in Poland or abroad, for the current recruitment process, in line with the GDPR (Regulation (EU) 2016/679). I also consent to its processing for future recruitment processes by the same employer or agency for 12 months after they receive it. A recruitment agency may send my CV to an employer only for a role I agree to. I can withdraw my consent at any time by email to {email}.",
     pl: "Wyrażam zgodę na przetwarzanie moich danych osobowych zawartych w tym CV przez pracodawcę lub agencję zatrudnienia, do których trafi to CV, w Polsce lub za granicą, na potrzeby obecnego procesu rekrutacji, zgodnie z RODO (rozporządzenie (UE) 2016/679). Wyrażam również zgodę na przetwarzanie tych danych przez tego samego pracodawcę lub tę samą agencję na potrzeby przyszłych procesów rekrutacji przez 12 miesięcy od otrzymania CV. Agencja zatrudnienia może przekazać moje CV pracodawcy tylko w związku z ofertą, na którą się zgodzę. Zgodę mogę wycofać w każdej chwili, pisząc na adres {email}.",
   },
 

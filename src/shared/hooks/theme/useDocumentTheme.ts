@@ -1,14 +1,13 @@
 import { useSyncExternalStore } from "react";
 
 import type { Theme } from "./theme.types.ts";
+import { readDocumentTheme } from "./theme.utils.ts";
 
 const subscribe = (onChange: () => void) => {
   const observer = new MutationObserver(onChange);
   observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
   return () => observer.disconnect();
 };
-
-const readTheme = (): Theme => (document.documentElement.classList.contains("dark") ? "dark" : "light");
 
 /**
  * Prerendered HTML is built as the light page (themed images carry their light source); the inline script
@@ -22,5 +21,5 @@ const readServerTheme = (): Theme => "light";
  * image swaps in the same frame as the colours.
  */
 export function useDocumentTheme(): Theme {
-  return useSyncExternalStore(subscribe, readTheme, readServerTheme);
+  return useSyncExternalStore(subscribe, readDocumentTheme, readServerTheme);
 }

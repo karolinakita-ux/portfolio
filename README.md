@@ -16,7 +16,7 @@ Designed by Karolina in Figma and built with [Claude Code](docs/claude-code.md):
 - **A CV for people and machines.** `/cv` is the CV as a page (Light and Dark, following the browser's text size), and `yarn cv-pdf` prints that page to a tagged A4 PDF with real text, an outline and clickable links, so its text copies out as clean words. A test fails when the page's text or classes change and the PDF does not.
 - **Image viewer.** Screenshots open full size with zoom, swipe and arrow keys; WebP images and loading a case's screenshots as soon as a visitor points at it keep it fast.
 - **Statistics only with consent.** Visits, time on page, clicks (including taps on things that do nothing, told apart from mouse clicks), page speed and errors are counted with [Umami](https://umami.is) only after the visitor allows it in the consent box. No cookies; with Do Not Track or Global Privacy Control on, nobody is asked and nothing loads. The [privacy page](https://karolina.kita.company/privacy) explains it and has the switch. [Visitor statistics](docs/architecture.md#visitor-statistics), [tracking plan](docs/analytics.md)
-- **Quality gate.** `yarn verify` runs the typecheck, ESLint with zero warnings, a Prettier check, 580+ tests and the full build before every commit.
+- **Quality gate.** `yarn verify` runs the typecheck, ESLint with zero warnings, a Prettier check, 860+ tests and the full build before every commit.
 
 ## Getting started
 

@@ -18,6 +18,7 @@ import { formatMonthYear } from "#features/cv/dates/dates.utils.ts";
 import { PRIVACY } from "#features/privacy/privacy.content.tsx";
 import { PROCESS_BANNER, TESTIMONIALS, WORK_CASES, WORK_INTRO } from "#features/work/work.content.ts";
 import { PROFILE } from "#shared/content/profile.ts";
+import { linkRef } from "#shared/lib/analytics/payload.utils.ts";
 import { VIEW, VIEW_PATHS, VIEW_TITLES, VIEWS } from "#shared/lib/routes/routes.constants.ts";
 import type { View } from "#shared/lib/routes/routes.types.ts";
 import { isCaseView, isView } from "#shared/lib/routes/routes.utils.ts";
@@ -231,11 +232,13 @@ describe("CV", () => {
     expect(new Set(entries.map((entry) => entry.id)).size).toBe(entries.length);
   });
 
-  it("shares the contact details with the profile, and tags the portfolio link for the PDF", () => {
+  it("shares the contact details with the profile, and marks the PDF's portfolio link for the UTM report only", () => {
     expect(CV.header.name).toBe(PROFILE.name);
     expect(CV.header.email).toBe(PROFILE.email);
     expect(CV.header.linkedin.href).toBe(PROFILE.linkedinUrl);
-    expect(CV.header.site.pdfHref).toBe("https://" + CV.header.site.label + "/?ref=cv");
+    expect(CV.header.site.pdfHref).toBe("https://" + CV.header.site.label + "/?utm_medium=cv-pdf");
+    // Not a link tag: it would replace the session's ref (the company a /cv?ref=acme link brought) with its own.
+    expect(linkRef(new URL(CV.header.site.pdfHref).search)).toBeNull();
     expect(CV.footer).toBe(PROFILE.name + " · " + PROFILE.role);
   });
 

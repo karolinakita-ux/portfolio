@@ -13,7 +13,8 @@ import type { CvHeaderProps } from "./CvHeader.types.ts";
 
 /**
  * Name, headline and contact line. The links show their address as the label, so a printed CV still says where
- * they go. The portfolio link opens the Work page here; in the PDF it is the absolute address with ?ref=cv.
+ * they go. The portfolio link opens the Work page here; in the PDF it is the absolute address with
+ * ?utm_medium=cv-pdf (CvHeaderContent).
  */
 export function CvHeader({ header, onNavigate }: CvHeaderProps) {
   const pdfHref = { [CV_PDF_ATTRIBUTE.href]: header.site.pdfHref };

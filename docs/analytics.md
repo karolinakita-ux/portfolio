@@ -22,16 +22,16 @@ What this site sends to [Umami Cloud](https://umami.is), why, and the rules for 
 
 **Property names** are lowerCamelCase, one word where possible. The same meaning keeps the same name:
 
-| Property    | Meaning                                                                                                                                        |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `place`     | where on the site a link or button sits (`hero`, `banner`, `footer`, `about`, `contact`, `cv`, `testimonials`; `top` or `end` of a case study) |
-| `case`      | a case study's view id (`case-project-planning`); Data Governance keeps its old id `case-theming`                                              |
-| `image`     | a screenshot card's id: its image's base name (`multi-market-survey`, `admin-operations-dashboard`); ids changed in 5.13.2                     |
-| `area`      | the section id around an element, a hero's name, or the landmark                                                                               |
-| `element`   | the kind of element (`image`, `icon`, `heading`, `text`, `card`, `page`); the frame around a captioned screenshot is `image`                   |
-| `label`     | site copy that names the element (alt text, heading, card title, image caption); for `text-copy`, never one the selection holds                |
-| `direction` | `prev` or `next`                                                                                                                               |
-| `input`     | `mouse`, `touch`, `pen` or `keyboard`; added by `track()`, never by hand                                                                       |
+| Property    | Meaning                                                                                                                                                                    |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `place`     | where on the site a link or button sits (`hero`, `banner`, `footer`, `about`, `contact`, `cv`, `privacy`, `accessibility`, `testimonials`; `top` or `end` of a case study) |
+| `case`      | a case study's view id (`case-project-planning`); Data Governance keeps its old id `case-theming`                                                                          |
+| `image`     | a screenshot card's id: its image's base name (`multi-market-survey`, `admin-operations-dashboard`); ids changed in 5.13.2                                                 |
+| `area`      | the section id around an element, a hero's name, or the landmark                                                                                                           |
+| `element`   | the kind of element (`image`, `icon`, `heading`, `text`, `card`, `page`); the frame around a captioned screenshot is `image`                                               |
+| `label`     | site copy that names the element (alt text, heading, card title, image caption); for `text-copy`, never one the selection holds                                            |
+| `direction` | `prev` or `next`                                                                                                                                                           |
+| `input`     | `mouse`, `touch`, `pen` or `keyboard`; added by `track()`, never by hand                                                                                                   |
 
 Never a property called `id`: `umami.identify()` takes it as a Distinct ID and links visits.
 
@@ -56,7 +56,7 @@ Addresses are cleaned before anything goes (`payload.utils.ts`, applied to the t
 | `github-click`      | a link to the source code                                                         | `place`                                                         | Do visitors check the code?                                     |
 | `storybook-click`   | a link to the Storybook component library                                         | `place`                                                         | Do visitors check the component library?                        |
 | `linkedin-click`    | a link to LinkedIn (`place: "cv"`: the CV's header)                               | `target`, `place`                                               | Which LinkedIn links lead somewhere (profile, recommendations)? |
-| `email-click`       | the email link or its Copy button (`place: "cv"`: the CV's header and consent)    | `action` (`mailto`, `copy`), `place`                            | How many visitors try to get in touch, and how?                 |
+| `email-click`       | an email link or its Copy button, also on `/cv`, `/privacy` and `/accessibility`  | `action` (`mailto`, `copy`), `place`                            | How many visitors try to get in touch, and how?                 |
 | `outbound-click`    | a link to any other website (`TextLink external`)                                 | `host`                                                          | Which other links are used?                                     |
 | `cv-open`           | a link to the CV page (`/cv`): the Work or About hero, or the Contact page        | `place` (`hero`, `about`, `contact`)                            | Which way to the CV do visitors take?                           |
 | `cv-download`       | a link to the CV's PDF: the Download button on `/cv`, or the Contact page         | `place` (`cv`, `contact`)                                       | Do visitors take the CV with them as a PDF, and from where?     |
@@ -128,7 +128,7 @@ The Hobby plan allows 100,000 events a month and keeps data for 6 months, which 
 
 - **Goals**: `email-click` and `linkedin-click` (a visitor tries to get in touch), `case-open`, `cv-download`.
 - **Funnel**: `/` → `case-open` (or a `/work/...` page) → `email-click` or `linkedin-click`; and `/` → `/cv` → `cv-download` (how many CV readers take the PDF).
-- **The PDF itself**: opening `/karolina-kita-cv.pdf` directly runs no script, so Umami never sees it; share `/cv?ref=<company>` rather than the PDF's address when the visit should count. `cv-download` by `inApp` (a Segment) shows how often visitors in in-app browsers tap Download (not whether the file arrived).
+- **The PDF itself**: opening `/karolina-kita-cv.pdf` directly runs no script, so Umami never sees it; share `/cv?ref=<company>` rather than the PDF's address when the visit should count. The PDF's portfolio link opens `https://karolina.kita.company/?utm_medium=cv-pdf`: such visits show in the UTM report (medium `cv-pdf`) and send no `link-ref`, so a session keeps the `ref` that an earlier `/cv?ref=<company>` visit brought (a `ref` in the PDF would replace it). The PDF's LinkedIn and email links go straight to LinkedIn and the mail app and are never counted. `cv-download` by `inApp` (a Segment) shows how often visitors in in-app browsers tap Download (not whether the file arrived).
 - **Journey**: which pages lead to Contact, and where visits end.
 - **Compare releases**: filter any report by tag (the version from `package.json`). Sessions → Properties → `version` lists the versions with their counts; so does Other → Tag behind "More" under any Overview table.
 - **Filter by session data** (a Segment with Session data filters): `inApp` is `linkedin` for visits from LinkedIn's app; `viewport` and `viewportHeight` for one screen size; `ref` for the visits one application or channel brought, later visits in the same session included.

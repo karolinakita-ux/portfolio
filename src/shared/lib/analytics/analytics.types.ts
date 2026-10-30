@@ -103,8 +103,14 @@ export interface EventData {
     target: "profile" | "recommendations" | "author" | "company";
     place: "footer" | "contact" | "testimonials" | "cv";
   };
-  /** cv: the links in the CV's header and consent (the /cv page). */
-  [EVENT.emailClick]: { action: "copy" | "mailto"; place: "footer" | "contact" | "cv" };
+  /**
+   * cv: the links in the CV's header and consent (the /cv page); privacy, accessibility: the links in the
+   * privacy policy and the accessibility statement (EmailLink).
+   */
+  [EVENT.emailClick]: {
+    action: "copy" | "mailto";
+    place: "footer" | "contact" | "cv" | "privacy" | "accessibility";
+  };
   /** A link to another website that has no event of its own (TextLink external); host: that website. */
   [EVENT.outboundClick]: { host: string };
   /** A link to the CV page: the Work page hero, the About page hero or the Contact page. */

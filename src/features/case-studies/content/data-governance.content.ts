@@ -27,7 +27,7 @@ export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
       label: "Key Outcome",
       wide: true,
       value:
-        "Automated accessible theme generation for multi-tenant deployments, ensuring WCAG 2.1 AA compliance across white-label customer themes and cutting theme setup time from days to minutes.",
+        "Automated label and state colours for white-label tenant themes, so custom themes keep WCAG 2.1 AA contrast and admins can brand the portal themselves instead of filing engineering tickets.",
     },
   ],
   notice: {
@@ -81,7 +81,7 @@ export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
         ),
         lead(
           "Structured Theme Editor",
-          "Grouped the settings into clear sections - General, Header bar, Navigation sidebar, Content & tables and Custom CSS - with drafts and autosave, reducing setup errors for non-technical administrators.",
+          "Grouped the settings into clear sections - General, Header bar, Navigation sidebar, Content & tables and Custom CSS - with drafts and autosave, to reduce setup errors for non-technical administrators.",
         ),
       ],
     },
@@ -299,10 +299,10 @@ export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
     },
     {
       title: "Designing for High-Impact Mistakes",
-      body: "When an administrative change affects hundreds of daily users, UX safety is essential. Adding confirmation warnings and locking the default system theme prevented critical mistakes while keeping the configuration workflow straightforward.",
+      body: "When an administrative change affects hundreds of daily users, UX safety is essential. Adding confirmation warnings and locking the default system theme guards against critical mistakes while keeping the configuration workflow straightforward.",
     },
   ],
   // Last case in the Work order (Automotive → Project Planning → Data Governance).
-  prev: { view: VIEW.caseProjectPlanning, label: "Enterprise Project Planning & Cost Management Platform" },
+  prev: { view: VIEW.caseProjectPlanning },
   next: { view: VIEW.work, action: "Back to All Work" },
 };

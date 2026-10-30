@@ -85,7 +85,7 @@ const CASES: readonly WorkCase[] = [
     eyebrow: ["European Automotive B2B", "UX Research & Interface Design"],
     title: "Automotive B2B Marketplace Redesign",
     summary:
-      "Redesigned the core vehicle purchasing flow across 7 European markets. Synthesized qualitative interviews and competitor data into a streamlined transaction architecture, eliminating checkout friction and reducing cognitive overload for commercial buyers.",
+      "Researched how dealers in 7 European markets buy used cars, audited the live platform and a coded prototype, and designed the buyer flows from basket to checkout. In testing, six UK dealers completed 91.6% of tasks.",
     cta: "View Discovery Case",
     view: VIEW.caseAutomotive,
   },

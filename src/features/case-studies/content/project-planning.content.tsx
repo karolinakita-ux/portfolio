@@ -234,9 +234,6 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
   // No designFile yet: the Planning & Cost Management Platform Figma file still shows the product name, which
   // has no approval. Link it again (title, body, "Open the Figma file") once Karolina has painted it out there.
   // Third case in the Work order (Smart Ticket → Automotive → Project Planning → Data Governance).
-  prev: {
-    view: VIEW.caseAutomotive,
-    label: "Automotive B2B Ecosystem: From Dealer Research Across Europe to a Validated Redesign",
-  },
-  next: { view: VIEW.caseDataGovernance, label: "Enterprise White-Label Theme Generator" },
+  prev: { view: VIEW.caseAutomotive },
+  next: { view: VIEW.caseDataGovernance },
 };

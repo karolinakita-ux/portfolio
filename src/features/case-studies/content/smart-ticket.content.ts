@@ -21,7 +21,7 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
   eyebrow: ["Public Mobility", "B2C Mobile & B2B Operations", "Design System"],
   title: "Smart Ticket: Mobile Ticketing & Transit Operations",
   meta: [
-    { label: "My role", value: "2022 - 23: Product Designer · 2026: Senior Product Designer" },
+    { label: "My role", value: "2022 - 23: UX/UI Designer · 2026: Senior Product Designer" },
     {
       label: "Team",
       value:
@@ -478,8 +478,5 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
   // First case in the Work order (Smart Ticket → Automotive → Project Planning → Data Governance):
   // the left link returns to the list, the right one continues to Automotive.
   prev: { view: VIEW.work, action: "Back to All Work" },
-  next: {
-    view: VIEW.caseAutomotive,
-    label: "Automotive B2B Ecosystem: From Dealer Research Across Europe to a Validated Redesign",
-  },
+  next: { view: VIEW.caseAutomotive },
 };

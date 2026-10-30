@@ -57,6 +57,9 @@ export const analyticsAllowed = ({ production, base, hostname, privacy }: Analyt
 
 const state: AnalyticsState = { on: false, queue: [], page: null, referrer: null, unwatch: null, notFound: null };
 
+/** True while statistics run on this page. */
+export const analyticsOn = (): boolean => state.on;
+
 /** Sends nothing more on this page (the script is blocked, or the visitor switched statistics off). */
 export const stopAnalytics = (): void => {
   state.on = false;

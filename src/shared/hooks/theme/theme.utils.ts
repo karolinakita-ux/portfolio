@@ -8,6 +8,9 @@ import type { Theme } from "./theme.types.ts";
 
 export const isTheme = (value: unknown): value is Theme => value === "light" || value === "dark";
 
+/** The theme the page shows now: the `dark` class on <html>, set by useTheme and the inline script in index.html. */
+export const readDocumentTheme = (): Theme => (document.documentElement.classList.contains("dark") ? "dark" : "light");
+
 export const readStoredTheme = (): Theme | null => {
   try {
     const value = window.localStorage.getItem(THEME_STORAGE_KEY);

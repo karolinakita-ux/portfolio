@@ -79,7 +79,7 @@ describe("the CV as a PDF", () => {
     expect(count(/\/S \/LI\b/g)).toBeGreaterThan(20);
   });
 
-  it("links the email, LinkedIn and the portfolio (tagged ?ref=cv), all clickable", () => {
+  it("links the email, LinkedIn and the portfolio (with ?utm_medium=cv-pdf), all clickable", () => {
     const uris = new Set([...pdf.matchAll(/\/URI\s*\(([^)]*)\)/g)].map(([, uri]) => uri));
     expect(uris).toEqual(new Set(["mailto:" + PROFILE.email, PROFILE.linkedinUrl, CV.header.site.pdfHref]));
   });

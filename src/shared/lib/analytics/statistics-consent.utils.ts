@@ -1,6 +1,13 @@
 import { STATISTICS_CHANGE_EVENT, STATISTICS_CHOICE_KEY, STORED_CHOICE } from "./analytics.constants.ts";
 import type { AnalyticsSite, PrivacySignals, StatisticsChoice, StatisticsState } from "./analytics.types.ts";
-import { analyticsAllowed, optedOut, startAnalytics, stopAnalytics, trackPageview } from "./analytics.utils.ts";
+import {
+  analyticsAllowed,
+  analyticsOn,
+  optedOut,
+  startAnalytics,
+  stopAnalytics,
+  trackPageview,
+} from "./analytics.utils.ts";
 
 /**
  * Consent for visitor statistics. Umami's script reads device information (screen size, language)
@@ -42,10 +49,28 @@ export const consentNeeded = (): boolean => site !== null && analyticsAllowed(si
  */
 export const consentPreview = (): boolean => site?.preview === true;
 
-/** Called once from src/main.tsx: remembers the site, and loads the script if the visitor already allowed it. */
-export function initStatistics(current: AnalyticsSite): void {
+/**
+ * The choice changed in another tab, or the site's data was cleared (key null): it applies to this page at once.
+ * Anything but a yes stops the statistics here too; a yes starts them and counts the page this tab shows, as
+ * setStatisticsChoice does in the tab where it was given.
+ */
+const onStoredChoice = (event: StorageEvent): void => {
+  if (event.key !== null && event.key !== STATISTICS_CHOICE_KEY) return;
+  if (storedChoice() !== "on") stopAnalytics();
+  else if (site !== null && !analyticsOn() && startAnalytics(site)) trackPageview();
+};
+
+/**
+ * Called once from src/main.tsx: remembers the site, loads the script if the visitor already allowed it, and
+ * follows a choice made in another tab. Returns a function that stops following it (tests).
+ */
+export function initStatistics(current: AnalyticsSite): () => void {
   site = current;
   if (storedChoice() === "on") startAnalytics(current);
+  window.addEventListener("storage", onStoredChoice);
+  return () => {
+    window.removeEventListener("storage", onStoredChoice);
+  };
 }
 
 /**

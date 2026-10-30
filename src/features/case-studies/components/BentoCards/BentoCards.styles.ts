@@ -6,7 +6,7 @@ export const styles = {
   /** The Card primitive (raised surface, hairline border), stretched to its row. */
   item: (wide: boolean) => clsx("h-full min-w-0", { "md:col-span-2": wide }),
   header: clsx("flex items-center justify-between gap-sm"),
-  /** Decorative: the ordered list already gives the position. */
+  /** The card's number: hidden from screen readers in a list from 01, read out in a continued one (BentoCards). */
   number: clsx("text-label-md text-text-secondary tabular-nums"),
   title: clsx("text-title-md font-semibold text-text-primary"),
   body: clsx("text-body-md text-text-secondary"),

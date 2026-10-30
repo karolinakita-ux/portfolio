@@ -1,10 +1,8 @@
 import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import { track } from "#shared/lib/analytics/analytics.utils.ts";
-import { EXTERNAL_LINK } from "#shared/lib/ui/ui.constants.ts";
-import { ArrowUpRight, Figma } from "#shared/ui/icons/icons.tsx";
-import { NewTabNote } from "#shared/ui/NewTabNote/NewTabNote.tsx";
+import { BannerLink } from "#shared/ui/BannerLink/BannerLink.tsx";
+import { Figma } from "#shared/ui/icons/icons.tsx";
 
-import { styles } from "./DesignFileLink.styles.ts";
 import type { DesignFileLinkProps } from "./DesignFileLink.types.ts";
 
 /**
@@ -13,16 +11,8 @@ import type { DesignFileLinkProps } from "./DesignFileLink.types.ts";
  */
 export function DesignFileLink({ file, caseView, place }: DesignFileLinkProps) {
   return (
-    <a
-      href={file.url}
-      {...EXTERNAL_LINK}
-      onClick={() => track(EVENT.figmaClick, { place, case: caseView })}
-      className={styles.link}
-    >
-      <Figma aria-hidden="true" size={16} className={styles.icon} />
+    <BannerLink href={file.url} icon={Figma} onClick={() => track(EVENT.figmaClick, { place, case: caseView })}>
       {file.linkLabel}
-      <ArrowUpRight aria-hidden="true" size={16} className={styles.arrow} />
-      <NewTabNote />
-    </a>
+    </BannerLink>
   );
 }

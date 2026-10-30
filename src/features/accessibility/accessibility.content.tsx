@@ -1,6 +1,6 @@
 import { PROFILE } from "#shared/content/profile.ts";
+import { EmailLink } from "#shared/ui/EmailLink/EmailLink.tsx";
 import { lead } from "#shared/ui/lead/lead.tsx";
-import { TextLink } from "#shared/ui/TextLink/TextLink.tsx";
 
 import type { AccessibilityContent } from "./accessibility.types.ts";
 
@@ -10,7 +10,7 @@ import type { AccessibilityContent } from "./accessibility.types.ts";
  * `updated` with every edit.
  */
 
-const email = <TextLink href={"mailto:" + PROFILE.email}>{PROFILE.email}</TextLink>;
+const email = <EmailLink email={PROFILE.email} place="accessibility" />;
 
 export const ACCESSIBILITY: AccessibilityContent = {
   eyebrow: "Accessibility statement",

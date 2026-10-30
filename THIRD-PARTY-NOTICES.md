@@ -26,7 +26,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ## Feather icons
 
-Lucide icons derived from [Feather](https://feathericons.com) that this project uses: arrow-down, arrow-left, arrow-right, arrow-up, arrow-up-right, check, chevron-down, chevron-left, chevron-right, download, external-link, file-text, link, moon, x, zoom-in, zoom-out.
+Lucide icons derived from [Feather](https://feathericons.com) that this project uses: arrow-down, arrow-left, arrow-right, arrow-up, arrow-up-right, check, chevron-down, chevron-left, chevron-right, copy, download, external-link, file-text, link, mail, maximize-2, moon, sun, x, zoom-in, zoom-out.
 
 ```text
 The MIT License (MIT)

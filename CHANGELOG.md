@@ -6,6 +6,38 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.2 - 2026-10-30
+
+#### Fixed
+
+- Data Governance: the continued handoff cards (05, 06) now give their numbers to screen readers too. Before, screen readers counted them as 1 and 2 (WCAG 1.3.1). The list carries `start`, and only a list that does not start at 01 shows its numbers to assistive tech.
+- The previous and next case links now name each case by its page title, so a case has one name in its links and on its page. The link to Data Governance used a shorter name. The names come from the cases themselves (`CASE_TITLES`), so they can no longer drift.
+- In Dark mode, pointing at a case study preloads its Dark screenshots, not the Light ones (about 2 MB per case that Dark visitors never saw).
+- Statistics switched off in one tab, or cleared site data, now stop at once in the other open tabs. Before, those tabs kept sending events and pageviews. A yes given in one tab now starts the statistics in the others.
+- The email links on the privacy policy and the accessibility statement are now counted as `email-click`, with the new places `privacy` and `accessibility`. The policy already lists email links, so earlier yeses are not asked again (`STORED_CHOICE` unchanged).
+- The CV PDF's portfolio link now uses `?utm_medium=cv-pdf` instead of `?ref=cv`. A click on it no longer replaces the company tag of a visitor who came from `/cv?ref=<company>`. The PDF was made again.
+- The CV's English consent now matches the Polish one ("after they receive it", "a role I agree to").
+- The case pages' sitemap dates are now 2026-10-30.
+- Copy now says only what the cases show:
+  - Automotive: the Work card, the Key Outcome and the reflections heading are plainer. The confidentiality note now says some research figures are hidden. The 1:1 interviews are now said to be with Polish dealers only.
+  - Data Governance: the Key Outcome now claims AA contrast, not full compliance, and no longer says "days to minutes". Two other lines no longer state unmeasured results as fact.
+  - Smart Ticket: the 2022 - 23 role is UX/UI Designer.
+  - About: the GlobalLogic milestone no longer uses buzzwords.
+
+- Smart Ticket: the 2022 profile screen no longer shows an email address on a real domain (painted out).
+
+#### Changed
+
+- `BannerLink` is now a shared component with a story. The Behind the Design banner and the case Figma file links both use it, instead of two copies of the same styles.
+- New shared `EmailLink`: the email address as a link that is counted.
+- A test now clicks every email, download and external link on every page and expects one statistics event for each.
+- The release steps (CONTRIBUTING.md and the release skill) now set each changed page's sitemap date to the release date and commit `public/sitemap.xml` with the release.
+- Docs:
+  - README: the test count is now 860+.
+  - Architecture doc: the preload size is now about 6 MB per theme, the consent section covers choices made in other tabs, and the new shared links are listed.
+  - Tracking plan: new email `place` values, and what the PDF's links send.
+  - Third-party notices: copy, mail, maximize-2 and sun added to the Feather list.
+
 ### 5.14.1 - 2026-10-30
 
 #### Changed

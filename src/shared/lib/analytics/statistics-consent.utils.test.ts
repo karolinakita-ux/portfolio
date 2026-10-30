@@ -10,6 +10,11 @@ const LIVE: AnalyticsSite = { production: true, base: "/", hostname: UMAMI.host,
 /** Both modules keep page-lifetime state: fresh copies per test. */
 let analytics: typeof Analytics;
 let consent: typeof Consent;
+/** initStatistics() listens for choices made in other tabs: each test stops the listeners it started. */
+const unlisten: Array<() => void> = [];
+const init = (site: AnalyticsSite) => {
+  unlisten.push(consent.initStatistics(site));
+};
 
 beforeEach(async () => {
   vi.resetModules();
@@ -18,6 +23,7 @@ beforeEach(async () => {
 });
 
 afterEach(() => {
+  for (const stop of unlisten.splice(0)) stop();
   analytics.stopAnalytics(); // its listeners stay on the document otherwise
   for (const script of document.querySelectorAll("script")) script.remove();
   Reflect.deleteProperty(window, "umami");
@@ -51,7 +57,7 @@ describe("statisticsState", () => {
   it("asks again after a yes to the older statistics (a plain on), but keeps a no", () => {
     window.localStorage.setItem(STATISTICS_CHOICE_KEY, "on");
     expect(consent.statisticsState()).toBe("unset");
-    consent.initStatistics(LIVE);
+    init(LIVE);
     expect(umamiScript()).toBeNull();
     expect(consent.consentNeeded()).toBe(true);
 
@@ -64,9 +70,9 @@ describe("statisticsState", () => {
 describe("consentNeeded", () => {
   it("asks only on the live site, before a choice, and not with Global Privacy Control", () => {
     expect(consent.consentNeeded()).toBe(false); // initStatistics has not run
-    consent.initStatistics({ ...LIVE, hostname: "localhost" });
+    init({ ...LIVE, hostname: "localhost" });
     expect(consent.consentNeeded()).toBe(false);
-    consent.initStatistics(LIVE);
+    init(LIVE);
     expect(consent.consentNeeded()).toBe(true);
     setSignal("globalPrivacyControl", true);
     expect(consent.consentNeeded()).toBe(false);
@@ -78,20 +84,20 @@ describe("consentNeeded", () => {
 
 describe("initStatistics", () => {
   it("loads nothing before consent", () => {
-    consent.initStatistics(LIVE);
+    init(LIVE);
     expect(umamiScript()).toBeNull();
   });
 
   it("loads the script at once for a visitor who allowed statistics earlier", () => {
     window.localStorage.setItem(STATISTICS_CHOICE_KEY, STORED_CHOICE.on);
-    consent.initStatistics(LIVE);
+    init(LIVE);
     expect(umamiScript()).not.toBeNull();
   });
 });
 
 describe("setStatisticsChoice", () => {
   it("on: keeps the choice, loads the script and counts the page the visitor is on", () => {
-    consent.initStatistics(LIVE);
+    init(LIVE);
     const track = vi.fn();
     window.umami = { track, identify: vi.fn() };
     consent.setStatisticsChoice("on");
@@ -101,7 +107,7 @@ describe("setStatisticsChoice", () => {
   });
 
   it("off: keeps the choice and stops counting on this page at once", () => {
-    consent.initStatistics(LIVE);
+    init(LIVE);
     const track = vi.fn();
     window.umami = { track, identify: vi.fn() };
     consent.setStatisticsChoice("on");
@@ -120,5 +126,44 @@ describe("setStatisticsChoice", () => {
     unsubscribe();
     consent.setStatisticsChoice("off");
     expect(onChange).toHaveBeenCalledOnce();
+  });
+});
+
+describe("a choice made in another tab", () => {
+  /** What the browser does in this tab when another tab of the site writes to (or clears) its storage. */
+  const fromOtherTab = (key: string | null, value: string | null) => {
+    if (key === null) window.localStorage.clear();
+    else if (value === null) window.localStorage.removeItem(key);
+    else window.localStorage.setItem(key, value);
+    window.dispatchEvent(new StorageEvent("storage", { key, newValue: value }));
+  };
+
+  it.each([
+    ["switched off there", STATISTICS_CHOICE_KEY, "off"],
+    ["the site's data cleared", null, null],
+  ] as const)("stops counting here at once: %s", (_case, key, value) => {
+    init(LIVE);
+    const track = vi.fn();
+    window.umami = { track, identify: vi.fn() };
+    consent.setStatisticsChoice("on");
+    expect(track).toHaveBeenCalledOnce();
+
+    fromOtherTab(key, value);
+    analytics.trackPageview();
+    analytics.track("theme-switch", { theme: "dark" });
+    expect(track).toHaveBeenCalledOnce(); // only the pageview sent before
+  });
+
+  it("allowed there: starts here and counts the page this tab shows, once", () => {
+    init(LIVE);
+    const track = vi.fn();
+    window.umami = { track, identify: vi.fn() };
+    expect(umamiScript()).toBeNull();
+
+    fromOtherTab(STATISTICS_CHOICE_KEY, STORED_CHOICE.on);
+    expect(umamiScript()).not.toBeNull();
+    expect(track).toHaveBeenCalledOnce();
+    fromOtherTab(STATISTICS_CHOICE_KEY, STORED_CHOICE.on);
+    expect(track).toHaveBeenCalledOnce();
   });
 });

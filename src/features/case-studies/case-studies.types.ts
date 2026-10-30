@@ -69,12 +69,14 @@ export interface DetailItem {
   badge?: string;
 }
 
+/**
+ * A previous / next link's target. A case study is named by its title (CASE_TITLES in content/cases.constants.ts),
+ * never by a copy typed here, so the link and the page it opens use one name.
+ */
 export interface CaseNavTarget {
   view: View;
-  /** Overrides "Next Case Study" / "Previous Case Study". */
+  /** Overrides "Next Case Study" / "Previous Case Study" (Back to All Work). */
   action?: string;
-  /** Optional project-name line under the action. */
-  label?: string;
 }
 
 /** One titled column of the executive summary ("The problem", "My part"). */

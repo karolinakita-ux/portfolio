@@ -43,7 +43,7 @@ export const MILESTONES: readonly Milestone[] = [
     title: "Enterprise Platforms & B2B Solutions",
     org: "GlobalLogic Poland - Senior UX/UI Designer",
     focus:
-      "Designing core workflows for large-scale European automotive platforms, fleet telematics, and data governance portals. Owned complex data tables, multi-variable filtering systems, and role-based access models (RBAC). Documented edge cases, interaction states, and system behaviors to ensure seamless delivery alongside engineering and product teams.",
+      "Designed core workflows for large-scale European automotive platforms, fleet telematics and data governance portals. Owned complex data tables, multi-variable filtering and role-based access models (RBAC). Documented edge cases, interaction states and system behaviour so engineering and product teams could build without guessing.",
     tags: ["Enterprise UX", "Data Tables & Filters", "Permissions (RBAC)", "Developer Handoff", "WCAG 2.1 AA"],
   },
   {

@@ -230,6 +230,36 @@ test("stops at once when switched off on the privacy page, and does not load aft
   await expect(consentBox(page)).toHaveCount(0);
 });
 
+test("a choice made in another tab applies to the open ones: switched off there, nothing more goes from here", async ({
+  page,
+  baseURL,
+}) => {
+  const first = await openAsLiveSite(page, baseURL, "/about");
+  await allowStatistics(page);
+  await expect.poll(() => pageviews(first.sent).length).toBe(1);
+
+  // A second tab of the site starts at once (the yes is stored) and switches the statistics off on /privacy.
+  const other = await page.context().newPage();
+  const second = await openAsLiveSite(other, baseURL, "/privacy");
+  await expect.poll(() => pageviews(second.sent).length).toBe(1);
+  await other.getByRole("button", { name: "Switch statistics off" }).click();
+  await expect(other.getByRole("status").filter({ hasText: "Statistics are off" })).toBeVisible();
+
+  // Back in the first tab: a theme switch, a new view and a hidden tab send nothing, and /privacy says so.
+  await page.bringToFront();
+  const before = first.sent.length;
+  await themeButton(page, "dark").click();
+  await page.getByRole("contentinfo").getByRole("link", { name: "Privacy", exact: true }).click();
+  await expect(page.getByRole("status").filter({ hasText: "Statistics are off" })).toBeVisible();
+  await page.evaluate(() => {
+    Object.defineProperty(document, "visibilityState", { value: "hidden", configurable: true });
+    document.dispatchEvent(new Event("visibilitychange"));
+  });
+  await page.waitForTimeout(800);
+  expect(first.sent).toHaveLength(before);
+  await other.close();
+});
+
 test("neither asks nor loads on any other host (local preview, Netlify's own addresses)", async ({ page }) => {
   const requests = umamiRequests(page);
   await page.goto("/about?ref=e2e-test");

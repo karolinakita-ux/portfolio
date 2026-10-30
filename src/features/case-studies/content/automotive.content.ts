@@ -26,13 +26,13 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
       label: "Key Outcome",
       wide: true,
       value:
-        "Redesigned core B2B transactional workflows across bidding, margin estimation, and checkout, resolving critical legacy usability blockers with comprehensive specifications for engineering.",
+        "Redesigned the buyer flows for bidding, margin estimation and checkout, fixed in Figma the problems that research and testing found, and specified them in detail for engineering.",
     },
   ],
   notice: {
     tone: "warning",
     label: "Confidentiality note",
-    text: "Client and competitor names, logos and vehicle identifiers have been anonymised (“Tradelane” is a fictional brand). Data, findings and workflows are shown as delivered.",
+    text: "Client and competitor names, logos and vehicle identifiers have been anonymised (“Tradelane” is a fictional brand), and some figures on the research boards are hidden. Findings and workflows are shown as delivered.",
   },
   summaryTitle: "Overview & Problem",
   summary: [
@@ -40,7 +40,7 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
       body: "Dealers across Europe buy used cars on this trade platform every day, but it was hard to use. Navigation was outdated, the buying experience felt different in each market, and the product had no research or design standards behind it. Everyday tasks, such as buying several cars in one order, were slow and confusing.",
     },
     {
-      body: "I worked on the problem from research to final design. I analysed 545 survey responses from dealers in 7 European markets, interviewed dealers 1:1 in their own language, and reviewed the live platform, finding 37 usability issues. Our Team Leader built a working prototype with Claude, and I audited it (29 findings). Our UX Researcher then tested it with UK dealers, who completed 91.6% of tasks. I translated the findings from both the research and my audit into refined designs in Figma, and every decision was documented in Figma specs and Confluence, ready for engineering.",
+      body: "I worked on the problem from research to final design. I analysed 545 survey responses from dealers in 7 European markets, interviewed Polish dealers 1:1 in Polish, and reviewed the live platform, finding 37 usability issues. Our Team Leader built a working prototype with Claude, and I audited it (29 findings). Our UX Researcher then tested it with UK dealers, who completed 91.6% of tasks. I translated the findings from both the research and my audit into refined designs in Figma, and every decision was documented in Figma specs and Confluence, ready for engineering.",
     },
   ],
   sections: [
@@ -211,7 +211,7 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
     },
   ],
   reflections: {
-    title: "Reflections - Driving the Product Process Beyond Visual Deliverables",
+    title: "Reflections - Product Work Beyond the Screens",
     intro:
       "This project showed me that good product design goes well beyond screens. The most valuable work happened between the steps: checking whether data could be trusted, auditing the prototype, and turning research and audit findings into design decisions before they reached engineering.",
     layout: "numbered",
@@ -231,6 +231,6 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
     ],
   },
   // Second case in the Work order (Smart Ticket → Automotive → Project Planning → Data Governance).
-  prev: { view: VIEW.caseSmartTicket, label: "Smart Ticket: Mobile Ticketing & Transit Operations" },
-  next: { view: VIEW.caseProjectPlanning, label: "Enterprise Project Planning & Cost Management Platform" },
+  prev: { view: VIEW.caseSmartTicket },
+  next: { view: VIEW.caseProjectPlanning },
 };

@@ -35,8 +35,9 @@ export interface CvHeaderContent {
   email: string;
   linkedin: { label: string; href: string };
   /**
-   * The portfolio: on the page a link to the Work page; in the PDF the absolute address with ?ref=cv
-   * (scripts/cv-pdf.ts swaps it in), so visits from the PDF show as a tagged link in the statistics.
+   * The portfolio: on the page a link to the Work page; in the PDF the absolute address with ?utm_medium=cv-pdf
+   * (scripts/cv-pdf.ts swaps it in), so visits from the PDF show in Umami's UTM report. Not a link tag (?ref=,
+   * utm_source): that would replace the session's `ref`, the company a CV link shared as /cv?ref=acme brought.
    */
   site: { label: string; pdfHref: string };
 }

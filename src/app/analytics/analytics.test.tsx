@@ -8,11 +8,12 @@ import { AUTOMOTIVE_CASE } from "#features/case-studies/content/automotive.conte
 import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.ts";
 import { caseCards } from "#features/case-studies/gallery/gallery.utils.ts";
 import { WORK_CASES } from "#features/work/work.content.ts";
+import { PROFILE } from "#shared/content/profile.ts";
 import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import type * as Analytics from "#shared/lib/analytics/analytics.utils.ts";
 import { track, trackPageview } from "#shared/lib/analytics/analytics.utils.ts";
 import { describeClick } from "#shared/lib/analytics/clicks.utils.ts";
-import { SECTION } from "#shared/lib/routes/routes.constants.ts";
+import { SECTION, VIEW_PATHS, VIEWS } from "#shared/lib/routes/routes.constants.ts";
 
 /**
  * Which visits and clicks the app counts (src/shared/lib/analytics/analytics.utils.ts): the helpers are mocked,
@@ -182,6 +183,39 @@ describe("events in the footer and on the Contact page", () => {
   });
 });
 
+describe("events on the privacy and accessibility pages", () => {
+  it.each([
+    ["/privacy", "privacy", 3],
+    ["/accessibility", "accessibility", 2],
+  ] as const)("counts the email links in the text of %s", (url, place, count) => {
+    renderApp(url);
+    const links = within(screen.getByRole("main")).getAllByRole("link", { name: PROFILE.email });
+    expect(links).toHaveLength(count);
+    for (const link of links) clickLink(link);
+    expect(events()).toEqual(links.map(() => [EVENT.emailClick, { action: "mailto", place }]));
+  });
+});
+
+/** A link that leaves the page for another website, the mail app or a file: a click on it is all Umami sees. */
+const leavesThePage = (link: HTMLAnchorElement) =>
+  new URL(link.href).origin !== window.location.origin ||
+  link.hasAttribute("download") ||
+  link.pathname.endsWith(".pdf");
+
+describe("every way off the site", () => {
+  it.each(VIEWS)("is counted on %s: one event per email, download and external link", (view) => {
+    renderApp(VIEW_PATHS[view]);
+    const links = [...document.querySelectorAll<HTMLAnchorElement>("a[href]")].filter(leavesThePage);
+    expect(links.length).toBeGreaterThan(0);
+    const uncounted = links.filter((link) => {
+      vi.mocked(track).mockClear();
+      clickLink(link);
+      return events().length !== 1;
+    });
+    expect(uncounted.map((link) => link.href)).toEqual([]);
+  });
+});
+
 describe("events on case studies", () => {
   it("counts opening a screenshot and moving to the next case study", async () => {
     const { user } = renderApp("/work/automotive");
@@ -292,6 +326,7 @@ describe("events for the CV", () => {
       [EVENT.emailClick, { action: "mailto", place: "cv" }],
     ]);
     // On the site the link has no tag, so a visit from the CV page does not count as a tagged link (link-ref).
+    // The PDF's copy has ?utm_medium=cv-pdf, which keeps the session's ref (content-rules.test.ts).
     expect(contacts.getByRole("link", { name: "karolina.kita.company" })).toHaveAttribute("href", "/");
   });
 });

@@ -1,4 +1,5 @@
 import { PROFILE } from "#shared/content/profile.ts";
+import { EmailLink } from "#shared/ui/EmailLink/EmailLink.tsx";
 import { Lang } from "#shared/ui/Lang/Lang.tsx";
 import { lead } from "#shared/ui/lead/lead.tsx";
 import { TextLink } from "#shared/ui/TextLink/TextLink.tsx";
@@ -16,7 +17,7 @@ import type { PrivacyContent } from "./privacy.types.ts";
  * Art. 5(3), cookies or not) and Art. 399 PKE (no exception for analytics). Change `updated` with every edit.
  */
 
-const email = <TextLink href={"mailto:" + PROFILE.email}>{PROFILE.email}</TextLink>;
+const email = <EmailLink email={PROFILE.email} place="privacy" />;
 // Umami's own homepage: what the tool is, in its words. The DPA is linked in the recipients table.
 const umami = (
   <TextLink href="https://umami.is" external>
