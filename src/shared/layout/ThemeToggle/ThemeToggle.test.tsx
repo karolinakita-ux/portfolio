@@ -6,7 +6,7 @@ import { describe, expect, it, onTestFinished, vi } from "vitest";
 
 import { THEME_STORAGE_KEY } from "#shared/hooks/theme/theme.constants.ts";
 import type { Theme } from "#shared/hooks/theme/theme.types.ts";
-import { mockMatchMedia } from "#test/matchMedia.ts";
+import { mockMatchMedia } from "#test/match-media.ts";
 
 import { ThemeToggle } from "./ThemeToggle.tsx";
 

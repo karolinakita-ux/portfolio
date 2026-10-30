@@ -110,11 +110,11 @@ describe("useHistoryRoute", () => {
     act(() => result.current[1](VIEW.about));
 
     act(() => {
-      window.history.replaceState({ kbView: VIEW.caseTheming, scrollY: 640 }, "", "/work/data-governance");
-      window.dispatchEvent(new PopStateEvent("popstate", { state: { kbView: VIEW.caseTheming, scrollY: 640 } }));
+      window.history.replaceState({ kbView: VIEW.caseDataGovernance, scrollY: 640 }, "", "/work/data-governance");
+      window.dispatchEvent(new PopStateEvent("popstate", { state: { kbView: VIEW.caseDataGovernance, scrollY: 640 } }));
     });
 
-    expect(result.current[0]).toMatchObject({ view: VIEW.caseTheming, restoreY: 640, key: 2, viewKey: 2 });
+    expect(result.current[0]).toMatchObject({ view: VIEW.caseDataGovernance, restoreY: 640, key: 2, viewKey: 2 });
   });
 
   it("never writes to the history while scrolling (in-app browsers show a loading bar on each write)", async () => {

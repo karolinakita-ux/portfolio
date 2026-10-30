@@ -39,7 +39,7 @@ src/features/about/
   components/FaqItem/ ...     the slice's own components
 ```
 
-- Components: `PascalCase/PascalCase.tsx`, one component per file. Hooks: `useX.ts` next to what uses them, or in the slice's `hooks/`. Other modules: kebab-case with a role suffix: `*.types.ts`, `*.styles.ts`, `*.constants.ts`, `*.utils.ts`, `*.content.ts`, `*.context.ts`.
+- Components: `PascalCase/PascalCase.tsx`, one component per file. Hooks: `useX.ts` next to what uses them, or in the slice's `hooks/`. Other modules: kebab-case with a role suffix: `*.types.ts`, `*.styles.ts`, `*.constants.ts`, `*.utils.ts`, `*.content.ts`, `*.context.ts`. Inside a component folder they take the component's name (`CaseNavLink.constants.ts`, `Dialog.utils.ts`).
 - Classes: a `*.styles.ts` exports `styles`, one key per styled element; state-dependent classes are functions (`styles.pill(active)`). Values are composed with [`clsx`](https://github.com/lukeed/clsx); variant sets use [`cva`](https://cva.style) (`button({ variant })`) with the variant names from Figma. Prettier sorts classes inside both. ESLint rejects class strings written into `className` in a component. There is no `tailwind-merge`: it reads the token type styles as colours and drops them.
 - Shared class lists (`FOCUS_RING`, `TEXT_LINK`, `BUTTON_HEIGHT`, `BULLET_LIST`) live in `src/shared/lib/ui/ui.styles.ts`; `EXTERNAL_LINK` (target and rel of a new-tab link) in `ui.constants.ts`.
 - A row of text links that can wrap (the Behind the Design banner) is spaced like a row of buttons: each link gets `BUTTON_HEIGHT` (a bordered Button's height) and the row `gap-y-sm`, the gap between buttons.

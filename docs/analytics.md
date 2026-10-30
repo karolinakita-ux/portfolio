@@ -25,7 +25,7 @@ What this site sends to [Umami Cloud](https://umami.is), why, and the rules for 
 | Property    | Meaning                                                                                                                                        |
 | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
 | `place`     | where on the site a link or button sits (`hero`, `banner`, `footer`, `about`, `contact`, `cv`, `testimonials`; `top` or `end` of a case study) |
-| `case`      | a case study's view id (`case-project-planning`)                                                                                               |
+| `case`      | a case study's view id (`case-project-planning`); Data Governance keeps its old id `case-theming`                                              |
 | `image`     | a screenshot card's id: its image's base name (`multi-market-survey`, `admin-operations-dashboard`); ids changed in 5.13.2                     |
 | `area`      | the section id around an element, a hero's name, or the landmark                                                                               |
 | `element`   | the kind of element (`image`, `icon`, `heading`, `text`, `card`, `page`); the frame around a captioned screenshot is `image`                   |

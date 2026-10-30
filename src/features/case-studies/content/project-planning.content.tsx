@@ -238,5 +238,5 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
     view: VIEW.caseAutomotive,
     label: "Automotive B2B Ecosystem: From Dealer Research Across Europe to a Validated Redesign",
   },
-  next: { view: VIEW.caseTheming, label: "Enterprise White-Label Theme Generator" },
+  next: { view: VIEW.caseDataGovernance, label: "Enterprise White-Label Theme Generator" },
 };

@@ -1,4 +1,4 @@
-import { SCROLL_LOCKED_CLASS } from "./dialog.constants.ts";
+import { SCROLL_LOCKED_CLASS } from "./Dialog.constants.ts";
 
 export const lockScroll = (): void => document.documentElement.classList.add(SCROLL_LOCKED_CLASS);
 

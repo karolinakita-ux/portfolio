@@ -1,7 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it, onTestFinished, vi } from "vitest";
 
-import { mockMatchMedia } from "#test/matchMedia.ts";
+import { mockMatchMedia } from "#test/match-media.ts";
 import { UA } from "#test/user-agents.ts";
 
 import { THEME_STORAGE_KEY, THEME_SWITCHING_CLASS } from "./theme.constants.ts";

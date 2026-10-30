@@ -159,9 +159,6 @@ export interface CaseStudy extends CaseBase {
   features?: readonly Feature[];
   sections: readonly CaseSection[];
   impact?: ImpactSection;
-  outcomesTitle?: string;
-  outcomesIntro?: string;
-  outcomes?: readonly DetailItem[];
   reflections?: {
     title: string;
     intro?: string;
@@ -171,8 +168,8 @@ export interface CaseStudy extends CaseBase {
   };
 }
 
-/** Data Governance theming case: its own section structure. */
-export interface ThemingCaseStudy extends CaseBase {
+/** Data Governance (Enterprise White-Label Theme Generator): its own section structure. */
+export interface DataGovernanceCaseStudy extends CaseBase {
   assumption: string;
   reality: readonly ReactNode[];
   solutionIntro: string;
@@ -200,9 +197,9 @@ export interface SmartTicketCaseStudy extends CaseBase {
   lessons: LessonsSection;
 }
 
-export type AnyCase = CaseStudy | ThemingCaseStudy | SmartTicketCaseStudy;
+export type AnyCase = CaseStudy | DataGovernanceCaseStudy | SmartTicketCaseStudy;
 
-/** Props of a case-study view (CaseStudyView, CaseThemingView, CaseSmartTicketView). */
+/** Props of a case-study view (CaseStudyView, CaseDataGovernanceView, CaseSmartTicketView). */
 export interface CaseViewProps<C extends AnyCase> {
   c: C;
   resolveAsset: (name: string) => string;

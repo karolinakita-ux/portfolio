@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
 import { mockAnimate, MOTION_TOKENS, setMotionTokens } from "#test/animations.ts";
-import { mockMatchMedia } from "#test/matchMedia.ts";
+import { mockMatchMedia } from "#test/match-media.ts";
 
 import { animationTiming, parseCssTime } from "./motion.utils.ts";
 

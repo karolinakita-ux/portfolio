@@ -1,4 +1,4 @@
-import type { ThemingCaseStudy } from "#features/case-studies/case-studies.types.ts";
+import type { DataGovernanceCaseStudy } from "#features/case-studies/case-studies.types.ts";
 import { VIEW } from "#shared/lib/routes/routes.constants.ts";
 import { lead } from "#shared/ui/lead/lead.tsx";
 
@@ -8,8 +8,8 @@ import { caseShots } from "./content.utils.ts";
 const { shot } = caseShots("data-governance");
 
 /* Case study - Enterprise White-Label Theme Generator (Data Governance). One product name everywhere: Work card, H1, SEO name, next links. Screenshot fields: see ShowcaseCard in case-studies.types.ts. */
-export const THEMING_CASE: ThemingCaseStudy = {
-  view: VIEW.caseTheming,
+export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
+  view: VIEW.caseDataGovernance,
   id: "case",
   shortTitle: "Data Governance",
   eyebrow: ["Enterprise Systems", "Multi-Tenant Architecture & Accessibility"],

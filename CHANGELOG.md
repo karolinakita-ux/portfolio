@@ -6,6 +6,15 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.1 - 2026-10-30
+
+#### Changed
+
+- In the code, the Data Governance case is named after its page instead of "theming": `content/data-governance.content.ts`, `DATA_GOVERNANCE_CASE`, `DataGovernanceCaseStudy`, `CaseDataGovernanceView/` and `VIEW.caseDataGovernance`. The view id stays `case-theming`, so old `/#case-theming` links and the `case` value in the statistics do not change (a comment in `routes.constants.ts` and the tracking plan say so); the Work card id stays `theming-system`.
+- File names follow one rule: content files without JSX end in `.ts` (`smart-ticket.content.ts`, `data-governance.content.ts`), the test helper is `src/test/match-media.ts`, and other modules in a component folder take the component's name (`Dialog.constants.ts`, `Dialog.utils.ts`), as CLAUDE.md and `docs/architecture.md` now say. `SmartTicketBlocks` moved to `CaseSmartTicketView.types.ts`.
+- Removed the unused outcomes section from the shared case layout (`outcomes`, `outcomesTitle`, `outcomesIntro`); `DetailList` stays for the reflections, lessons and takeaways. The case order test keys the cases by `VIEW` constants.
+- No visible change: every prerendered page is the same apart from the script bundle's file name, and the CSS, `llms.txt` and the CV PDF are byte for byte the same.
+
 ### 5.14.0 - 2026-10-30
 
 #### Added

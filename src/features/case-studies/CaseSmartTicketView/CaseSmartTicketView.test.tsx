@@ -1,7 +1,7 @@
 import { render, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.tsx";
+import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.ts";
 import { caseCards } from "#features/case-studies/gallery/gallery.utils.ts";
 import { styles as screenshot } from "#shared/media/Screenshot/Screenshot.styles.ts";
 

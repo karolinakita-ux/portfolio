@@ -18,7 +18,7 @@ import { styles } from "./CaseStudyView.styles.ts";
 
 /**
  * Shared case-study layout (Project Planning, Automotive):
- * intro → summary → feature sections → screenshot sections → optional impact, outcomes and reflections →
+ * intro → summary → feature sections → screenshot sections → optional impact and reflections →
  * optional design files banner → prev/next.
  */
 export function CaseStudyView({ c, resolveAsset, onNavigate }: CaseViewProps<CaseStudy>) {
@@ -59,16 +59,6 @@ export function CaseStudyView({ c, resolveAsset, onNavigate }: CaseViewProps<Cas
       })}
 
       {c.impact && <CaseImpact impact={c.impact} />}
-
-      {c.outcomes && (
-        <Section
-          id={c.id + "-outcomes"}
-          title={c.outcomesTitle ?? "Outcomes & Business Impact"}
-          description={c.outcomesIntro}
-        >
-          <DetailList items={c.outcomes} />
-        </Section>
-      )}
 
       {c.reflections && (
         <Section id={c.id + "-reflections"} title={c.reflections.title} description={c.reflections.intro}>

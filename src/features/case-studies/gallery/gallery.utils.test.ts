@@ -2,9 +2,9 @@ import ASSET_SIZES from "virtual:asset-sizes";
 import { describe, expect, it } from "vitest";
 
 import { AUTOMOTIVE_CASE } from "#features/case-studies/content/automotive.content.ts";
+import { DATA_GOVERNANCE_CASE } from "#features/case-studies/content/data-governance.content.ts";
 import { PROJECT_PLANNING_CASE } from "#features/case-studies/content/project-planning.content.tsx";
-import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.tsx";
-import { THEMING_CASE } from "#features/case-studies/content/theming.content.tsx";
+import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.ts";
 
 import { cardAssets, caseCards, featureStarts, sectionStarts } from "./gallery.utils.ts";
 
@@ -41,13 +41,13 @@ describe("caseCards", () => {
     );
   });
 
-  it("lists the theming case's solution screenshots, then its safety ones", () => {
-    expect(caseCards(THEMING_CASE).map((card) => card.id)).toEqual(
-      [...THEMING_CASE.solution, ...THEMING_CASE.safety].map((card) => card.id),
+  it("lists the Data Governance case's solution screenshots, then its safety ones", () => {
+    expect(caseCards(DATA_GOVERNANCE_CASE).map((card) => card.id)).toEqual(
+      [...DATA_GOVERNANCE_CASE.solution, ...DATA_GOVERNANCE_CASE.safety].map((card) => card.id),
     );
   });
 
-  it.each([SMART_TICKET_CASE, AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE, THEMING_CASE])(
+  it.each([SMART_TICKET_CASE, AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE, DATA_GOVERNANCE_CASE])(
     "names every $id screenshot card after its image, so the statistics' image value names the file",
     (c) => {
       for (const card of caseCards(c)) {
@@ -72,7 +72,7 @@ describe("virtual:asset-sizes", () => {
     expect(ASSET_SIZES["site/portrait.webp"]).toEqual([376, 566]);
   });
 
-  it.each([SMART_TICKET_CASE, AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE, THEMING_CASE])(
+  it.each([SMART_TICKET_CASE, AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE, DATA_GOVERNANCE_CASE])(
     "knows the size of every $id screenshot, so the image viewer can draw its loading skeleton",
     (c) => {
       const cards = caseCards(c);

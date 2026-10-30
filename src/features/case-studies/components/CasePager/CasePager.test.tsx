@@ -2,9 +2,9 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
+import { DATA_GOVERNANCE_CASE } from "#features/case-studies/content/data-governance.content.ts";
 import { PROJECT_PLANNING_CASE } from "#features/case-studies/content/project-planning.content.tsx";
-import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.tsx";
-import { THEMING_CASE } from "#features/case-studies/content/theming.content.tsx";
+import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.ts";
 import { VIEW } from "#shared/lib/routes/routes.constants.ts";
 
 import { CasePager } from "./CasePager.tsx";
@@ -30,7 +30,7 @@ describe("CasePager", () => {
     expect(next).toHaveAttribute("href", "/work/data-governance");
 
     await user.click(next);
-    expect(onNavigate).toHaveBeenCalledWith(VIEW.caseTheming);
+    expect(onNavigate).toHaveBeenCalledWith(VIEW.caseDataGovernance);
   });
 
   it("leaves out Back to All Work at the first and the last case: the breadcrumb leads there", () => {
@@ -50,7 +50,12 @@ describe("CasePager", () => {
     unmount();
 
     render(
-      <CasePager from={THEMING_CASE.view} prev={THEMING_CASE.prev} next={THEMING_CASE.next} onNavigate={vi.fn()} />,
+      <CasePager
+        from={DATA_GOVERNANCE_CASE.view}
+        prev={DATA_GOVERNANCE_CASE.prev}
+        next={DATA_GOVERNANCE_CASE.next}
+        onNavigate={vi.fn()}
+      />,
     );
     expect(
       pager("Previous case study")

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { GalleryRow } from "#features/case-studies/case-studies.types.ts";
-import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.tsx";
+import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.ts";
 import { caseCards } from "#features/case-studies/gallery/gallery.utils.ts";
 
 import { galleryBlocks } from "./CaseSmartTicketView.utils.ts";

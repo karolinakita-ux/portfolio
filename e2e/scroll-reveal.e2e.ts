@@ -48,7 +48,7 @@ const PAGES = [
   VIEW.work,
   VIEW.about,
   VIEW.caseSmartTicket,
-  VIEW.caseTheming,
+  VIEW.caseDataGovernance,
   VIEW.caseProjectPlanning,
   VIEW.caseAutomotive,
 ].map((view) => VIEW_PATHS[view]);

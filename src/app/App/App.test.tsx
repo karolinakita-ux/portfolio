@@ -5,8 +5,8 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import { AUTOMOTIVE_CASE } from "#features/case-studies/content/automotive.content.ts";
+import { DATA_GOVERNANCE_CASE } from "#features/case-studies/content/data-governance.content.ts";
 import { PROJECT_PLANNING_CASE } from "#features/case-studies/content/project-planning.content.tsx";
-import { THEMING_CASE } from "#features/case-studies/content/theming.content.tsx";
 import { caseCards } from "#features/case-studies/gallery/gallery.utils.ts";
 import { PRIVACY } from "#features/privacy/privacy.content.tsx";
 import { UMAMI } from "#shared/lib/analytics/analytics.constants.ts";
@@ -149,14 +149,14 @@ describe("App", () => {
     // The image stays readable: the overlay sits beside it, not around it.
     const thumbnail = screen.getByRole("img", { name: /^The same data table in a read-only base theme/ });
     expect(thumbnail.closest("a")).toBeNull();
-    // Only the CTA reaches the theming case from the keyboard / accessibility tree.
-    const themingPath = "/work/data-governance";
-    expect(screen.getAllByRole("link").filter((link) => link.getAttribute("href") === themingPath)).toHaveLength(1);
+    // Only the CTA reaches the Data Governance case from the keyboard / accessibility tree.
+    const casePath = "/work/data-governance";
+    expect(screen.getAllByRole("link").filter((link) => link.getAttribute("href") === casePath)).toHaveLength(1);
 
-    const themingLink = [...thumbnailLinks].find((link) => link.getAttribute("href") === themingPath);
-    await user.click(themingLink!);
+    const caseLink = [...thumbnailLinks].find((link) => link.getAttribute("href") === casePath);
+    await user.click(caseLink!);
     expect(h1()).toHaveTextContent("White-Label Theme Generator");
-    expect(window.location.pathname).toBe(themingPath);
+    expect(window.location.pathname).toBe(casePath);
   });
 
   it("walks the case studies from the Work page", async () => {
@@ -239,7 +239,7 @@ describe("App", () => {
     // Keyboard focus counts as interest too.
     cardLink("Automotive B2B Marketplace Redesign").focus();
     expect(preloadImages).toHaveBeenLastCalledWith(shots(AUTOMOTIVE_CASE));
-    expect(preloadImages).not.toHaveBeenCalledWith(shots(THEMING_CASE));
+    expect(preloadImages).not.toHaveBeenCalledWith(shots(DATA_GOVERNANCE_CASE));
   });
 
   it("expands FAQ answers on the About page", async () => {

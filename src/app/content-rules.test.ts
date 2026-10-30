@@ -9,16 +9,17 @@ import { ABOUT_INTRO, FAQ, MILESTONES, PRINCIPLES } from "#features/about/about.
 import { ACCESSIBILITY } from "#features/accessibility/accessibility.content.tsx";
 import type { AnyCase, ShowcaseCard } from "#features/case-studies/case-studies.types.ts";
 import { AUTOMOTIVE_CASE } from "#features/case-studies/content/automotive.content.ts";
+import { DATA_GOVERNANCE_CASE } from "#features/case-studies/content/data-governance.content.ts";
 import { PROJECT_PLANNING_CASE } from "#features/case-studies/content/project-planning.content.tsx";
-import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.tsx";
-import { THEMING_CASE } from "#features/case-studies/content/theming.content.tsx";
+import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.ts";
 import { CONTACT } from "#features/contact/contact.content.ts";
 import { CV, CV_PAGE } from "#features/cv/cv.content.ts";
 import { formatMonthYear } from "#features/cv/dates/dates.utils.ts";
 import { PRIVACY } from "#features/privacy/privacy.content.tsx";
 import { PROCESS_BANNER, TESTIMONIALS, WORK_CASES, WORK_INTRO } from "#features/work/work.content.ts";
 import { PROFILE } from "#shared/content/profile.ts";
-import { VIEW_PATHS, VIEW_TITLES, VIEWS } from "#shared/lib/routes/routes.constants.ts";
+import { VIEW, VIEW_PATHS, VIEW_TITLES, VIEWS } from "#shared/lib/routes/routes.constants.ts";
+import type { View } from "#shared/lib/routes/routes.types.ts";
 import { isCaseView, isView } from "#shared/lib/routes/routes.utils.ts";
 import { Lang } from "#shared/ui/Lang/Lang.tsx";
 import { Strong } from "#shared/ui/Strong/Strong.tsx";
@@ -47,7 +48,7 @@ function collectText(value: unknown): string[] {
   return [];
 }
 
-const CASES: readonly AnyCase[] = [SMART_TICKET_CASE, AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE, THEMING_CASE];
+const CASES: readonly AnyCase[] = [SMART_TICKET_CASE, AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE, DATA_GOVERNANCE_CASE];
 
 /** Every screenshot card of a case, as the case gallery lists them (an independent copy of gallery.utils.ts). */
 const caseCards = (c: AnyCase): ShowcaseCard[] => {
@@ -65,8 +66,8 @@ const caseCards = (c: AnyCase): ShowcaseCard[] => {
 };
 
 /**
- * Bullets outside the screenshot cards: feature sections, the impact section, the theming case's reality list,
- * Smart Ticket's personas, comparison reasoning and console decisions.
+ * Bullets outside the screenshot cards: feature sections, the impact section, the Data Governance case's reality
+ * list, Smart Ticket's personas, comparison reasoning and console decisions.
  */
 const caseBullets = (c: AnyCase): ReactNode[] => {
   if ("sections" in c)
@@ -199,16 +200,15 @@ describe("work page", () => {
 
   it("chains case studies in the same order as the Work page", () => {
     const order = WORK_CASES.map((item) => item.view);
-    const byView = {
-      "case-smart-ticket": SMART_TICKET_CASE,
-      "case-automotive": AUTOMOTIVE_CASE,
-      "case-project-planning": PROJECT_PLANNING_CASE,
-      "case-theming": THEMING_CASE,
+    const byView: Partial<Record<View, AnyCase>> = {
+      [VIEW.caseSmartTicket]: SMART_TICKET_CASE,
+      [VIEW.caseAutomotive]: AUTOMOTIVE_CASE,
+      [VIEW.caseProjectPlanning]: PROJECT_PLANNING_CASE,
+      [VIEW.caseDataGovernance]: DATA_GOVERNANCE_CASE,
     };
     order.forEach((view, index) => {
-      const c = byView[view as keyof typeof byView];
       const next = order[index + 1];
-      if (next) expect(c.next?.view).toBe(next);
+      if (next) expect(byView[view]?.next?.view, view).toBe(next);
     });
   });
 });

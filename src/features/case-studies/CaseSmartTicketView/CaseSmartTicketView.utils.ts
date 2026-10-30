@@ -1,12 +1,6 @@
 import type { GalleryRow, SmartTicketCaseStudy } from "#features/case-studies/case-studies.types.ts";
 
-export interface SmartTicketBlocks {
-  flow?: GalleryRow;
-  system: GalleryRow[];
-  comparisons: Array<{ before: GalleryRow[]; after: GalleryRow[] }>;
-  passenger: GalleryRow[];
-  operations: GalleryRow[];
-}
+import type { SmartTicketBlocks } from "./CaseSmartTicketView.types.ts";
 
 /** Splits the case gallery (smartTicketCards order) into the rows each section shows. */
 export function galleryBlocks(c: SmartTicketCaseStudy, rows: readonly GalleryRow[]): SmartTicketBlocks {

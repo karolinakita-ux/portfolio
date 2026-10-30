@@ -1,6 +1,6 @@
 import { useEffect, type RefObject } from "react";
 
-import { lockScroll, unlockScroll } from "./dialog.utils.ts";
+import { lockScroll, unlockScroll } from "./Dialog.utils.ts";
 
 /**
  * Opens the native <dialog> as a modal (showModal: the page behind becomes inert, focus stays inside)

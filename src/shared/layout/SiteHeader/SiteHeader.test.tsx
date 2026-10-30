@@ -68,7 +68,7 @@ describe("SiteHeader nav pill", () => {
     expect(animations).toHaveLength(1);
     expect(animations[0]?.target).toBe(pillOf(screen.getByRole("link", { name: "Contact" })));
 
-    rerender(<Header view={VIEW.caseTheming} />); // a case study: Work
+    rerender(<Header view={VIEW.caseDataGovernance} />); // a case study: Work
     expect(animations[1]?.target).toBe(pillOf(screen.getByRole("link", { name: "Work" })));
 
     rerender(<Header view={VIEW.privacy} />); // out of the nav: the Work pill fades out

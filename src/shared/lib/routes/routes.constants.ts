@@ -3,7 +3,7 @@ import type { NavItem, View } from "./routes.types.ts";
 /**
  * Information architecture
  *   Work            /  ─┬─ /work/smart-ticket  (Smart Ticket: mobile ticketing and transit operations)
- *                       ├─ /work/data-governance  (Data Governance theming case)
+ *                       ├─ /work/data-governance  (Data Governance: Enterprise White-Label Theme Generator)
  *                       ├─ /work/project-planning
  *                       └─ /work/automotive
  *   About /about · Contact /contact
@@ -21,7 +21,8 @@ import type { NavItem, View } from "./routes.types.ts";
 export const VIEW = {
   work: "work",
   about: "about",
-  caseTheming: "case-theming",
+  /** Keeps its old value: old /#case-theming links and the statistics' `case` value use it. */
+  caseDataGovernance: "case-theming",
   caseProjectPlanning: "case-project-planning",
   caseAutomotive: "case-automotive",
   caseSmartTicket: "case-smart-ticket",
@@ -46,7 +47,7 @@ export const VIEW_PATHS = {
   [VIEW.cv]: "/cv",
   [VIEW.privacy]: "/privacy",
   [VIEW.accessibility]: "/accessibility",
-  [VIEW.caseTheming]: "/work/data-governance",
+  [VIEW.caseDataGovernance]: "/work/data-governance",
   [VIEW.caseProjectPlanning]: "/work/project-planning",
   [VIEW.caseAutomotive]: "/work/automotive",
   [VIEW.caseSmartTicket]: "/work/smart-ticket",
@@ -90,7 +91,7 @@ export const VIEW_TITLES: Readonly<Record<View, string>> = {
   [VIEW.cv]: SITE_NAME + " - CV",
   [VIEW.privacy]: "Privacy - " + SITE_NAME,
   [VIEW.accessibility]: "Accessibility - " + SITE_NAME,
-  [VIEW.caseTheming]: "Data Governance Case Study - " + SITE_NAME,
+  [VIEW.caseDataGovernance]: "Data Governance Case Study - " + SITE_NAME,
   [VIEW.caseProjectPlanning]: "Project Planning Case Study - " + SITE_NAME,
   [VIEW.caseAutomotive]: "Automotive Ecosystem Case Study - " + SITE_NAME,
   [VIEW.caseSmartTicket]: "Smart Ticket Case Study - " + SITE_NAME,

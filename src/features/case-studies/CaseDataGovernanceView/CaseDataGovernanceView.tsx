@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import type { CaseViewProps, ThemingCaseStudy } from "#features/case-studies/case-studies.types.ts";
+import type { CaseViewProps, DataGovernanceCaseStudy } from "#features/case-studies/case-studies.types.ts";
 import { BentoCards } from "#features/case-studies/components/BentoCards/BentoCards.tsx";
 import { CaseIntro } from "#features/case-studies/components/CaseIntro/CaseIntro.tsx";
 import { CaseNav } from "#features/case-studies/components/CaseNav/CaseNav.tsx";
@@ -13,10 +13,10 @@ import { useCaseGallery } from "#features/case-studies/gallery/useCaseGallery.ts
 import { Card } from "#shared/ui/Card/Card.tsx";
 import { Section } from "#shared/ui/Section/Section.tsx";
 
-import { styles } from "./CaseThemingView.styles.ts";
+import { styles } from "./CaseDataGovernanceView.styles.ts";
 
 /** Enterprise White-Label Theme Generator: problem cards, solution and safety rows, delivery, handoff, takeaways. */
-export function CaseThemingView({ c, resolveAsset, onNavigate }: CaseViewProps<ThemingCaseStudy>) {
+export function CaseDataGovernanceView({ c, resolveAsset, onNavigate }: CaseViewProps<DataGovernanceCaseStudy>) {
   const cards = useMemo(() => caseCards(c), [c]);
   const rows = useCaseGallery(cards, resolveAsset, c.view);
   const solutionRows = rows.slice(0, c.solution.length);

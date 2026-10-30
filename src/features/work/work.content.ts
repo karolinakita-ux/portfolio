@@ -63,7 +63,7 @@ const CASES: readonly WorkCase[] = [
     summary:
       "Replaced a raw CSS configuration panel with a visual theme generator for non-technical users. Automated text color selection based on contrast so custom themes stayed readable, and provided developers with clear rules for calculating interactive states like hovers.",
     cta: "View Case Study",
-    view: VIEW.caseTheming,
+    view: VIEW.caseDataGovernance,
   },
   {
     id: "project-planning",

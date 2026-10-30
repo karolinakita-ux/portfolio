@@ -2,7 +2,7 @@ import { act, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi, type MockInstance } from "vitest";
 
 import { mockAnimate, MOTION_TOKENS, setMotionTokens, type FakeAnimation } from "#test/animations.ts";
-import { mockMatchMedia } from "#test/matchMedia.ts";
+import { mockMatchMedia } from "#test/match-media.ts";
 
 import { useSlidingPill } from "./useSlidingPill.ts";
 

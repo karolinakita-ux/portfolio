@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { App } from "#app/App/App.tsx";
 import { FAQ } from "#features/about/about.content.ts";
 import { AUTOMOTIVE_CASE } from "#features/case-studies/content/automotive.content.ts";
-import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.tsx";
+import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.ts";
 import { caseCards } from "#features/case-studies/gallery/gallery.utils.ts";
 import { WORK_CASES } from "#features/work/work.content.ts";
 import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";

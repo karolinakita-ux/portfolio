@@ -92,7 +92,7 @@ describe("readRoute", () => {
     ["/#about", VIEW.about],
     ["/#resume", VIEW.cv],
     ["/#cv", VIEW.cv],
-    ["/#case-theming", VIEW.caseTheming],
+    ["/#case-theming", VIEW.caseDataGovernance],
   ])("redirects the old hash link %s to its view", (url, view) => {
     expect(at(url)).toEqual({ view, anchor: null });
   });
@@ -114,7 +114,7 @@ describe("readRoute", () => {
 describe("hrefForView", () => {
   it("links to the path, with an optional section anchor", () => {
     expect(hrefForView(VIEW.work)).toBe("/");
-    expect(hrefForView(VIEW.caseTheming)).toBe("/work/data-governance");
+    expect(hrefForView(VIEW.caseDataGovernance)).toBe("/work/data-governance");
     expect(hrefForView(VIEW.work, "enterprise-cases")).toBe("/#enterprise-cases");
   });
 });
