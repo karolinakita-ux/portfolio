@@ -19,8 +19,10 @@ export const CV: Cv = {
     headline: "Senior Product Designer · Design Systems",
     location: "Poland · Remote (CET)",
     email: PROFILE.email,
-    linkedin: { label: "linkedin.com/in/karolinakita", href: PROFILE.linkedinUrl },
-    site: { label: "karolina.kita.company", pdfHref: "https://karolina.kita.company/?utm_medium=cv-pdf" },
+    // Full addresses as the visible text: applicant tracking systems and readers of a printout find a link by its
+    // https://, and a bare .company address can pass for a sentence.
+    linkedin: { label: PROFILE.linkedinUrl, href: PROFILE.linkedinUrl },
+    site: { label: "https://karolina.kita.company", pdfHref: "https://karolina.kita.company/?utm_medium=cv-pdf" },
   },
 
   summary:

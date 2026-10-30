@@ -617,7 +617,10 @@ describe("CV", () => {
     expect(CV.header.name).toBe(PROFILE.name);
     expect(CV.header.email).toBe(PROFILE.email);
     expect(CV.header.linkedin.href).toBe(PROFILE.linkedinUrl);
-    expect(CV.header.site.pdfHref).toBe("https://" + CV.header.site.label + "/?utm_medium=cv-pdf");
+    // The visible text is the full address (https:// included), so parsers and printouts read it as a link.
+    expect(CV.header.linkedin.label).toBe(PROFILE.linkedinUrl);
+    expect(CV.header.site.label).toMatch(/^https:\/\/[^/]+$/);
+    expect(CV.header.site.pdfHref).toBe(CV.header.site.label + "/?utm_medium=cv-pdf");
     // Not a link tag: it would replace the session's ref (the company a /cv?ref=acme link brought) with its own.
     expect(linkRef(new URL(CV.header.site.pdfHref).search)).toBeNull();
     expect(CV.footer).toBe(PROFILE.name + " · " + PROFILE.role);

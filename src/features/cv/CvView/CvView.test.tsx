@@ -89,10 +89,12 @@ describe("CvView", () => {
     const contacts = within(sheet().getByRole("list", { name: CV_PAGE.contactsLabel }));
     expect(contacts.getByText(CV.header.location)).toBeInTheDocument();
     expect(contacts.getByRole("link", { name: PROFILE.email })).toHaveAttribute("href", "mailto:" + PROFILE.email);
-    const linkedin = contacts.getByRole("link", { name: /^linkedin\.com\/in\/karolinakita.*opens in a new tab/ });
+    const linkedin = contacts.getByRole("link", {
+      name: /^https:\/\/www\.linkedin\.com\/in\/karolinakita.*opens in a new tab/,
+    });
     expect(linkedin).toHaveAttribute("href", PROFILE.linkedinUrl);
     expect(linkedin).toHaveAttribute("target", "_blank");
-    const site = contacts.getByRole("link", { name: "karolina.kita.company" });
+    const site = contacts.getByRole("link", { name: "https://karolina.kita.company" });
     expect(site).toHaveAttribute("href", "/");
     expect(site).toHaveAttribute("data-pdf-href", "https://karolina.kita.company/?utm_medium=cv-pdf");
     await user.click(site);

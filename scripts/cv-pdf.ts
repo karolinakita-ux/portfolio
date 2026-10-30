@@ -47,6 +47,18 @@ const pageCss = (footer: string, font: string): string => `@page {
   @bottom-right { content: counter(page) " / " counter(pages) " "; white-space: pre; ${font} }
 }`;
 
+/**
+ * The recruitment consent sits at the foot of the CV's last page, where a CV's consent clause is expected, instead of
+ * right under Education: the sheet gets the tallest min-height that keeps the page count, and the consent's auto
+ * margin takes the space. Page breaks add space a height sum cannot see, so it is searched, not computed: 12 halvings
+ * of one page's 1000px land within 1px of the foot.
+ */
+const CONSENT_STYLE_ID = "cv-pdf-consent-at-foot";
+const SEARCH_STEPS = 12;
+const PAGE_PX = 1000; // more than one A4 page's printable height at 96 dpi (about 1010px), less than two
+const consentAtFootCss = (minHeight: number): string =>
+  `${SHEET} { min-height: ${String(minHeight)}px; } ${SHEET} > footer:last-child { margin-top: auto; }`;
+
 /** Hashed the same way as src/app/seo/cv-pdf.test.tsx does. */
 const hash = (text: string): string => "sha256-" + createHash("sha256").update(text).digest("hex");
 
@@ -145,14 +157,30 @@ async function main(): Promise<void> {
     });
     await preparePdfLinks(page);
 
-    const pdf = await page.pdf({
-      format: "A4",
-      printBackground: true,
-      tagged: true,
-      outline: true,
-      margin: MARGIN,
-    });
+    const print = () => page.pdf({ format: "A4", printBackground: true, tagged: true, outline: true, margin: MARGIN });
+    const natural = pageCount(await print());
+    const setMinHeight = (minHeight: number) =>
+      page.evaluate(
+        ({ id, css }) => {
+          const style = document.getElementById(id) ?? document.head.appendChild(document.createElement("style"));
+          style.id = id;
+          style.textContent = css;
+        },
+        { id: CONSENT_STYLE_ID, css: consentAtFootCss(minHeight) },
+      );
+    let fits = 0;
+    let tooTall = natural * PAGE_PX + PAGE_PX;
+    for (let step = 0; step < SEARCH_STEPS; step++) {
+      const middle = Math.floor((fits + tooTall) / 2);
+      await setMinHeight(middle);
+      if (pageCount(await print()) === natural) fits = middle;
+      else tooTall = middle;
+    }
+    await setMinHeight(fits);
+    const pdf = await print();
     const pages = pageCount(pdf);
+    if (pages !== natural)
+      throw new Error(`cv-pdf: the consent at the foot changed the pages (${String(natural)} to ${String(pages)})`);
     if (pages < 1 || pages > MAX_PAGES)
       throw new Error(`cv-pdf: the CV takes ${String(pages)} pages, at most ${String(MAX_PAGES)} fit: shorten it`);
     if (!pdf.includes("/StructTreeRoot")) throw new Error("cv-pdf: the PDF is not tagged");

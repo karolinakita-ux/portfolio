@@ -312,7 +312,7 @@ describe("events for the CV", () => {
     renderApp("/cv");
     const sheet = within(screen.getByRole("article", { name: "Karolina Kita" }));
     const contacts = within(sheet.getByRole("list", { name: "Contact details" }));
-    clickLink(contacts.getByRole("link", { name: /^linkedin\.com\/in\/karolinakita/ }));
+    clickLink(contacts.getByRole("link", { name: /^https:\/\/www\.linkedin\.com\/in\/karolinakita/ }));
     clickLink(contacts.getByRole("link", { name: "karolina.kita.zg@gmail.com" }));
     const [, consentEmail] = sheet.getAllByRole("link", { name: "karolina.kita.zg@gmail.com" });
     clickLink(consentEmail!);
@@ -323,7 +323,7 @@ describe("events for the CV", () => {
     ]);
     // On the site the link has no tag, so a visit from the CV page does not count as a tagged link (link-ref).
     // The PDF's copy has ?utm_medium=cv-pdf, which keeps the session's ref (content-rules.test.ts).
-    expect(contacts.getByRole("link", { name: "karolina.kita.company" })).toHaveAttribute("href", "/");
+    expect(contacts.getByRole("link", { name: "https://karolina.kita.company" })).toHaveAttribute("href", "/");
   });
 });
 

@@ -6,6 +6,14 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.13 - 2026-10-30
+
+#### Changed
+
+- CV: the LinkedIn and portfolio links show their full address with https:// (https://www.linkedin.com/in/karolinakita, https://karolina.kita.company). A bare .company address can pass for plain text in the software recruiters use and on paper. The PDF still links the portfolio with its own tag for the UTM report.
+- CV PDF: the recruitment consent sits at the foot of the last page, where a CV's consent clause is expected, instead of right under Education. The script that makes the PDF looks for the tallest sheet that keeps the page count (still 2 pages), so the consent never starts a new page. No photo and no italics: parsers cannot read a photo, and the consent is already set apart by its smaller, secondary text.
+- Tests and docs: the CV tests look for the new link texts, a check keeps both links showing their full address, and CLAUDE.md records the CV's format.
+
 ### 5.14.12 - 2026-10-30
 
 #### Changed
