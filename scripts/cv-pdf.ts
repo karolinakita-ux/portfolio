@@ -1,8 +1,8 @@
 /**
  * The CV as a PDF, made from the /cv page: `yarn cv-pdf`. Run it after changing the CV's content
  * (src/features/cv/cv.content.ts) or its styles, and commit both files it writes:
- *   public/karolina-kita-cv.pdf   A4, always light; tagged (headings, lists, links, the Polish consent marked as
- *                                 Polish), with a document outline from the headings and clickable links
+ *   public/karolina-kita-cv.pdf   A4, always light, in English (/Lang (en)); tagged (headings, lists, links), with
+ *                                 a document outline from the headings and clickable links
  *   scripts/cv-pdf.lock.json      hashes of the sheet's text and of its elements and classes, and the page count
  * src/app/seo/cv-pdf.test.tsx compares the lock with the page, so `yarn verify` fails when the CV's text, markup or
  * classes changed and the PDF did not. It cannot see a change in tokens.css or print.css: after one of those, run

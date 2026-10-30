@@ -66,13 +66,13 @@ describe("the CV as a PDF", () => {
     }
   });
 
-  it("is tagged for screen readers, with an outline, its title, and the Polish consent marked as Polish", () => {
+  it("is tagged for screen readers, with an outline, its title, and English as its only language", () => {
     expect(pdf).toContain("/StructTreeRoot");
     expect(pdf).toMatch(/\/MarkInfo\s*<<\/Type \/MarkInfo\s*\/Marked true>>/);
     expect(pdf).toContain("/Outlines");
     expect(pdf, "the page title changed: run `yarn cv-pdf`").toContain(`/Title (${titleForView(VIEW.cv)})`);
     expect(pdf).toContain("/Lang (en)");
-    expect(pdf).toContain("/Lang (pl)");
+    expect(pdf).not.toContain("/Lang (pl)");
     expect(count(/\/S \/H1\b/g)).toBe(1);
     expect(count(/\/S \/H2\b/g)).toBe(4);
     expect(count(/\/S \/H3\b/g)).toBe(CV.experience.length + CV.education.length);

@@ -242,20 +242,17 @@ describe("CV", () => {
     expect(CV.footer).toBe(PROFILE.name + " · " + PROFILE.role);
   });
 
-  it("gives the recruitment consent in English and in Polish, each with the email address once", () => {
-    const { en, pl } = CV.consent;
-    for (const text of [en, pl]) expect(text.split("{email}")).toHaveLength(2);
-    expect(en).toMatch(/^I consent to the processing of my personal data/);
-    expect(en).toContain("GDPR (Regulation (EU) 2016/679)");
-    expect(en).toContain("future recruitment processes");
-    expect(en).toMatch(/withdraw my consent at any time/);
-    expect(pl).toMatch(/^Wyrażam zgodę na przetwarzanie moich danych osobowych/);
-    expect(pl).toContain("RODO (rozporządzenie (UE) 2016/679)");
-    expect(pl).toContain("przyszłych procesów rekrutacji");
-    expect(pl).toMatch(/wycofać w każdej chwili/);
-    // The same retention period in both languages.
-    expect(/\d+ months/.exec(en)?.[0]).toBe("12 months");
-    expect(/\d+ miesięcy/.exec(pl)?.[0]).toBe("12 miesięcy");
+  it("gives the recruitment consent in English only, for recruiters in Poland or abroad, with the email address once", () => {
+    const consent = CV.consent;
+    expect(consent.split("{email}")).toHaveLength(2);
+    expect(consent).toMatch(/^I consent to the processing of my personal data/);
+    expect(consent).toContain("in Poland or abroad");
+    expect(consent).toContain("GDPR (Regulation (EU) 2016/679)");
+    expect(consent).toContain("future recruitment processes");
+    expect(/\d+ months/.exec(consent)?.[0]).toBe("12 months");
+    expect(consent).toMatch(/withdraw my consent at any time/);
+    // One language: the CV's (no Polish paragraph beside it).
+    expect(consent).not.toMatch(/[ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/);
   });
 });
 

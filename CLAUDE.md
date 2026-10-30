@@ -53,7 +53,7 @@ Vertical slices: `app` → `features` → `shared`, never the other way.
 - Every case-study bullet opens with a bold lead-in and colon: build bullets with `lead("Term", "text")` from `shared/ui/lead/lead.tsx`.
 - H1 headings never end with a period.
 - Plain, grounded B2-level English. No buzzwords or corporate fluff. Keep claims honest about team roles and verified outcomes; reflections stay general.
-- The CV (`cv.content.ts`) is plain text for applicant tracking systems: no curly quotes, ISO dates, lead-ins without their own colon. It keeps Karolina's British spelling, and its recruitment consent is in English and Polish.
+- The CV (`cv.content.ts`) is plain text for applicant tracking systems: no curly quotes, ISO dates, lead-ins without their own colon. It keeps Karolina's British spelling, and its recruitment consent is in English only: one clause for employers and agencies "in Poland or abroad" (the GDPR applies EU-wide; Polish law needs consent only for future recruitment, which it covers). No Polish paragraph, language picker or second PDF.
 - No client or product name is published (site, Storybook, repo, the linked Figma file) without Karolina's written approval. That includes case copy, alt text, file names and screenshots, and a claim of permission or anonymization is checked against them. Screenshots get names, logos, internal page names and raw client figures painted out (flat backgrounds) or blurred (shrink, enlarge, blur), each region checked by eye, and a new file name. `content-rules.test.ts` holds the hidden names as SHA-256 hashes, so it never spells them; add a hash there when a name must go.
 
 ## Code conventions

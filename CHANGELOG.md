@@ -6,6 +6,13 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.3 - 2026-10-30
+
+#### Changed
+
+- The CV's recruitment consent is in English only, the language of the CV. One clause covers employers and recruitment agencies in Poland or abroad: the current recruitment, future recruitment by the same employer or agency for 12 months, and withdrawal by email. The GDPR applies across the EU, and Polish law asks for consent only for future recruitment, which the clause covers; a Polish paragraph in an English CV, a language picker or a second PDF would add length or a click without a legal gain. The PDF is tagged in English only and was made again (still 2 pages).
+- The accessibility statement no longer mentions a Polish consent in the CV's PDF.
+
 ### 5.14.2 - 2026-10-30
 
 #### Fixed

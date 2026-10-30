@@ -13,7 +13,7 @@ Karolina's rules (the mechanical ones are also tested in `src/app/content-rules.
 - Short hyphen with spaces (`word - word`, `2019 - 2026`); never en or em dashes.
 - Every case-study bullet opens with a bold lead-in and a colon, built with `lead("Term", "text")`.
 - H1 headings never end with a period.
-- The CV (`src/features/cv/cv.content.ts`) is ATS plain text: no curly quotes, no long dashes, ISO dates. It keeps Karolina's British spelling and her titles and dates as she wrote them; flag a disagreement with another page, do not "fix" the CV alone. Its consent is in English and Polish and must say the same in both.
+- The CV (`src/features/cv/cv.content.ts`) is ATS plain text: no curly quotes, no long dashes, ISO dates. It keeps Karolina's British spelling and her titles and dates as she wrote them; flag a disagreement with another page, do not "fix" the CV alone. Its recruitment consent is one English paragraph for employers and agencies "in Poland or abroad" (current recruitment, future recruitment for 12 months, withdrawal by email); do not suggest adding a Polish version.
 - Client names and business data stay anonymised where the case study says so (NDA).
 - Facts must agree across pages: dates, years of experience, employers, job titles, degree and markets on Work, About, Contact, the CV and the page descriptions.
 

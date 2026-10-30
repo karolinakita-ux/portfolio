@@ -6,8 +6,8 @@
  *
  * Rules (src/app/content-rules.test.ts): plain text for applicant tracking systems, so short hyphens and no
  * curly quotes; ISO dates ("2023-11"; end null = Present); lead-ins without their own colon (lead() adds it);
- * the email and LinkedIn from PROFILE; no phone number or street address; the consent in English and Polish,
- * with {email} where the address goes.
+ * the email and LinkedIn from PROFILE; no phone number or street address; the consent in English, with {email}
+ * where the address goes.
  */
 import { PROFILE } from "#shared/content/profile.ts";
 
@@ -193,11 +193,12 @@ export const CV: Cv = {
 
   // Recruitment consent for employers and agencies in Poland and abroad, drafted 2026-10-30 from the GDPR
   // (Art. 6(1)(a) and 7(3): withdrawal as easy as giving it), art. 22¹a of the Kodeks pracy and UODO's guide for
-  // employers (future recruitment needs its own consent, for a set period). Not legal advice.
-  consent: {
-    en: "I consent to the processing of my personal data in this CV by the employer or recruitment agency that receives it, in Poland or abroad, for the current recruitment process, in line with the GDPR (Regulation (EU) 2016/679). I also consent to its processing for future recruitment processes by the same employer or agency for 12 months after they receive it. A recruitment agency may send my CV to an employer only for a role I agree to. I can withdraw my consent at any time by email to {email}.",
-    pl: "Wyrażam zgodę na przetwarzanie moich danych osobowych zawartych w tym CV przez pracodawcę lub agencję zatrudnienia, do których trafi to CV, w Polsce lub za granicą, na potrzeby obecnego procesu rekrutacji, zgodnie z RODO (rozporządzenie (UE) 2016/679). Wyrażam również zgodę na przetwarzanie tych danych przez tego samego pracodawcę lub tę samą agencję na potrzeby przyszłych procesów rekrutacji przez 12 miesięcy od otrzymania CV. Agencja zatrudnienia może przekazać moje CV pracodawcy tylko w związku z ofertą, na którą się zgodzę. Zgodę mogę wycofać w każdej chwili, pisząc na adres {email}.",
-  },
+  // employers (future recruitment needs its own consent, for a set period). Not legal advice. English only
+  // (decided 2026-10-30): the CV is in English and the consent is Karolina's own statement, so one clause that
+  // names employers and agencies in Poland or abroad serves Polish and foreign recruiters; the GDPR applies
+  // EU-wide, and Polish law needs consent only for future recruitment, which the clause covers.
+  consent:
+    "I consent to the processing of my personal data in this CV by the employer or recruitment agency that receives it, in Poland or abroad, for the current recruitment process, in line with the GDPR (Regulation (EU) 2016/679). I also consent to its processing for future recruitment processes by the same employer or agency for 12 months after they receive it. A recruitment agency may send my CV to an employer only for a role I agree to. I can withdraw my consent at any time by email to {email}.",
 
   footer: PROFILE.name + " · " + PROFILE.role,
 };

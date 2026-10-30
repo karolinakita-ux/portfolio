@@ -97,21 +97,19 @@ describe("CvView", () => {
     expect(text).not.toMatch(/\+\d{2}|\d{3}[\s-]\d{3}[\s-]\d{3}|\bul\.|\bstreet\b/i);
   });
 
-  it("ends with the consent in English, then in Polish marked as Polish, each with the email as a link", () => {
+  it("ends with the consent in English only, with the email as a link", () => {
     renderCv();
-    const english = screen.getByText(/^I consent to the processing of my personal data/);
-    const polish = screen.getByText(/^Wyrażam zgodę na przetwarzanie moich danych osobowych/);
-    expect(english.closest("[lang]")).toBeNull();
-    expect(polish).toHaveAttribute("lang", "pl");
-    expect(polish.tagName).toBe("P");
-    expect(english.compareDocumentPosition(polish) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    for (const paragraph of [english, polish]) {
-      expect(within(paragraph).getByRole("link", { name: PROFILE.email })).toHaveAttribute(
-        "href",
-        "mailto:" + PROFILE.email,
-      );
-      expect(paragraph).not.toHaveTextContent("{email}");
-    }
+    const consent = screen.getByText(/^I consent to the processing of my personal data/);
+    expect(consent.tagName).toBe("P");
+    expect(consent.closest("[lang]")).toBeNull();
+    expect(consent.parentElement?.children).toHaveLength(1);
+    expect(within(consent).getByRole("link", { name: PROFILE.email })).toHaveAttribute(
+      "href",
+      "mailto:" + PROFILE.email,
+    );
+    expect(consent).not.toHaveTextContent("{email}");
+    const article = screen.getByRole("article", { name: CV.header.name });
+    expect(article.querySelector('[lang="pl"]')).toBeNull();
   });
 
   it("offers the PDF as a download, without the in-app hint in an ordinary browser", () => {

@@ -1,6 +1,5 @@
-import type { CvConsentText } from "#features/cv/cv.types.ts";
-
 export interface CvConsentProps {
-  consent: CvConsentText;
+  /** The consent text; {email} marks where the email address goes, as a link. */
+  consent: string;
   email: string;
 }

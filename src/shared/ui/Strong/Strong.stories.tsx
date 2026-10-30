@@ -34,7 +34,7 @@ export const OtherLanguage: Story = {
   ),
 };
 
-/** A whole paragraph in another language (as="p"), like the CV's Polish consent: PDFs tag its language too. */
+/** A whole paragraph in another language (as="p"): Chromium's tagged PDFs carry its language too. */
 export const OtherLanguageParagraph: Story = {
   render: () => (
     <Lang lang="pl" as="p">

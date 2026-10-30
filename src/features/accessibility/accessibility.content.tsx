@@ -60,7 +60,7 @@ export const ACCESSIBILITY: AccessibilityContent = {
         ),
         lead(
           "CV",
-          "read it as a web page like the others, or download the PDF. The PDF has real text with tagged headings, lists and links, bookmarks for its sections, and the Polish consent marked as Polish.",
+          "read it as a web page like the others, or download the PDF. The PDF has real text with tagged headings, lists and links, and bookmarks for its sections.",
         ),
       ],
     },

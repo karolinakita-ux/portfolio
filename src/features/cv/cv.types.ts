@@ -42,19 +42,14 @@ export interface CvHeaderContent {
   site: { label: string; pdfHref: string };
 }
 
-/** The recruitment consent in English and Polish; {email} marks where the email address goes, as a link. */
-export interface CvConsentText {
-  en: string;
-  pl: string;
-}
-
 export interface Cv {
   header: CvHeaderContent;
   summary: string;
   experience: readonly CvEntryContent[];
   skills: readonly SkillGroup[];
   education: readonly CvEntryContent[];
-  consent: CvConsentText;
+  /** The recruitment consent, in English; {email} marks where the email address goes, as a link. */
+  consent: string;
   /** The PDF's page footer, left side (the page numbers sit on the right). */
   footer: string;
 }

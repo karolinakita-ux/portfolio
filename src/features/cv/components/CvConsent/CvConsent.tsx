@@ -1,7 +1,6 @@
 import { Fragment } from "react";
 
 import { CvEmailLink } from "#features/cv/components/CvEmailLink/CvEmailLink.tsx";
-import { Lang } from "#shared/ui/Lang/Lang.tsx";
 
 import { styles } from "./CvConsent.styles.ts";
 import type { CvConsentProps } from "./CvConsent.types.ts";
@@ -17,16 +16,13 @@ const withEmail = (text: string, email: string) =>
   ));
 
 /**
- * The recruitment consent at the end of the CV, in English, then in Polish: a paragraph marked as Polish (WCAG
- * 3.1.2), which the PDF tags /Lang (pl). Secondary text, not Figma's muted grey, which fails 4.5:1 for text people must read.
+ * The recruitment consent at the end of the CV: one paragraph in English, the CV's language, for employers and
+ * agencies in Poland or abroad. Secondary text, not Figma's muted grey, which fails 4.5:1 for text people must read.
  */
 export function CvConsent({ consent, email }: CvConsentProps) {
   return (
     <footer className={styles.root}>
-      <p>{withEmail(consent.en, email)}</p>
-      <Lang lang="pl" as="p">
-        {withEmail(consent.pl, email)}
-      </Lang>
+      <p>{withEmail(consent, email)}</p>
     </footer>
   );
 }
