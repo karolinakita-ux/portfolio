@@ -6,6 +6,19 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.6 - 2026-10-30
+
+#### Fixed
+
+- Smart Ticket: the user flow under "From trip search to an offline inspection" keeps the top of its legend and its card border when the pointer is over it. The slight zoom on hover hides about 1% of each edge, and the diagram had no space there. Both versions now have 48 px of transparent space on every side in the file (2096 x 1350, was 2000 x 1254); the drawing itself is not scaled.
+- Project Planning: the Brand primary and Semantic status token cards keep their top edge, corners and sides on hover (32 px more transparent space on every side, both themes).
+- Smart Ticket: the lock screen keeps its home indicator on hover (12 px larger on every side, its own background continued, the same rounded corners).
+
+#### Changed
+
+- A new test (`src/app/zoom-margins.test.ts`) reads the zoom from the components and checks every case image and Work thumbnail: content stays out of the band the zoom hides, and out of twice that band on frameless images and thumbnails. Three light phone screens whose bottom sheet runs to the screen edge are listed exceptions.
+- Docs: CLAUDE.md, the README and the architecture doc say that case images need room at their edges.
+
 ### 5.14.5 - 2026-10-30
 
 #### Changed

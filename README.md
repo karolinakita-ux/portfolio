@@ -83,6 +83,8 @@ const { shot, singleShot } = caseShots("automotive");
 
 The card id is the image's base name, which is also the `image` value in the statistics.
 
+Leave room at the edges: the hover zoom hides about 1% of each side, so content (a legend, a card's border) needs padding in the file itself. `src/app/zoom-margins.test.ts` checks every case image.
+
 Images are cached for a week, so a changed image gets a new file name.
 
 ## Deploy and releases
