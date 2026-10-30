@@ -75,6 +75,8 @@ export const KEPT_PARAMS: readonly string[] = [
 export const LINK_REF = {
   /** The portfolio link in the CV's PDF (cv.content.ts). */
   cvPdf: "cv",
+  /** A section's address copied with the link button beside its heading (HeadingAnchor, sharedSectionUrl). */
+  sectionLink: "section-link",
 } as const;
 
 /** Load metrics in the tracker's speed report: they belong to the page the browser loaded (payload.utils.ts). */

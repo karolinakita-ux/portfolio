@@ -8,6 +8,7 @@ import {
   readRoute,
   resolveView,
   setHashRouting,
+  sharedSectionUrl,
   titleForView,
   urlForView,
   urlWithAnchor,
@@ -152,6 +153,24 @@ describe("address-bar URLs", () => {
   });
 });
 
+describe("shared section links", () => {
+  it("carry the page's own path, the link tag and the anchor, without the current query", () => {
+    const here = (pathname: string, search = "") => ({ pathname, search, hash: "#faq" });
+    expect(sharedSectionUrl(here("/about", "?ref=acme&utm_source=linkedin"), "career", "section-link")).toBe(
+      "/about?ref=section-link#career",
+    );
+    expect(sharedSectionUrl(here("/"), "behind-the-design", "section-link")).toBe(
+      "/?ref=section-link#behind-the-design",
+    );
+    // The file forms and a trailing slash share the page's own path.
+    expect(sharedSectionUrl(here("/work/automotive.html"), "impact", "section-link")).toBe(
+      "/work/automotive?ref=section-link#impact",
+    );
+    expect(sharedSectionUrl(here("/about/"), "faq", "section-link")).toBe("/about?ref=section-link#faq");
+    expect(sharedSectionUrl(here("/about"), "faq", "a b")).toBe("/about?ref=a%20b#faq");
+  });
+});
+
 describe("hash routing (one-page builds, e.g. the claude.ai artifact)", () => {
   const page = "/artifact-page.html";
   beforeEach(() => {
@@ -181,6 +200,8 @@ describe("hash routing (one-page builds, e.g. the claude.ai artifact)", () => {
     expect(urlForView(VIEW.contact, null, here)).toBe(page + "?ref=cv#/contact");
     expect(urlWithAnchor(here, "career")).toBe(page + "?ref=cv#/about#career");
     expect(urlWithAnchor(here, null)).toBe(page + "?ref=cv#/about");
+    // The statistics never run in a one-page build: a shared section link keeps the page's own address.
+    expect(sharedSectionUrl(here, "career", "section-link")).toBe(page + "?ref=cv#/about#career");
   });
 });
 

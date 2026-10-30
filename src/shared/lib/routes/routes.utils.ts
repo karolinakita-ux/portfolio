@@ -98,6 +98,21 @@ export const urlWithAnchor = (
   return pathname + search + "#" + routedLocation(location).pathname + (anchor ? "#" + anchor : "");
 };
 
+/**
+ * The address a section link is shared with: the page's own path, the link tag `ref` and the anchor
+ * (/about?ref=section-link#career). The current query (the copier's own ref or utm tags) stays out, so it never
+ * travels to someone else. A one-page build (hash routing: the statistics never run there) keeps its address.
+ */
+export const sharedSectionUrl = (
+  location: Pick<Location, "pathname" | "search" | "hash">,
+  anchor: string,
+  ref: string,
+): string => {
+  if (hashRouting) return urlWithAnchor(location, anchor);
+  const view = viewForPath(location.pathname);
+  return (view ? VIEW_PATHS[view] : location.pathname) + "?ref=" + encodeURIComponent(ref) + "#" + anchor;
+};
+
 /** True for a case-study view (case-automotive, ...). */
 export const isCaseView = (view: View): boolean => view.startsWith("case-");
 

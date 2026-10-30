@@ -74,11 +74,13 @@ describe("pageviews", () => {
   });
 
   it("does not count copying a section link (the hash changes, the page does not)", async () => {
-    const { user } = renderApp("/about");
+    const { user } = renderApp("/about?ref=acme");
     await user.click(screen.getByRole("link", { name: "Copy link to section: " + FAQ.title }));
-    expect(window.location.hash).toBe("#faq");
+    expect(window.location.search + window.location.hash).toBe("?ref=acme#faq");
     expect(pageviews()).toBe(1);
     expect(events()).toEqual([[EVENT.sectionLinkCopy, { section: "faq" }]]);
+    // Whoever opens the copied link arrives as a tagged link (link-ref "section-link"), without the copier's tag.
+    expect(await navigator.clipboard.readText()).toBe(window.location.origin + "/about?ref=section-link#faq");
   });
 });
 

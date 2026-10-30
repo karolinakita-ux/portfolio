@@ -30,16 +30,19 @@ describe("HeadingAnchor", () => {
     expect(screen.getByRole("heading", { level: 2 })).toHaveAccessibleName("Career Progression");
   });
 
-  it("copies the full URL, puts the hash in the address bar and announces it", async () => {
-    window.history.replaceState(null, "", "/about?ref=cv");
+  it("copies the full URL with the section-link tag, puts the hash in the address bar and announces it", async () => {
+    window.history.replaceState(null, "", "/about?ref=cv&utm_medium=social");
     const writeText = vi.fn((_text: string) => Promise.resolve());
     stubClipboard(writeText);
     renderAnchor();
 
     fireEvent.click(screen.getByRole("link", { name: /Copy link to section/ }));
 
-    expect(writeText).toHaveBeenCalledWith(window.location.origin + "/about?ref=cv#career");
-    expect(window.location.pathname + window.location.search + window.location.hash).toBe("/about?ref=cv#career");
+    // The copier's own tags stay with them: the link counts as a shared section link for whoever opens it.
+    expect(writeText).toHaveBeenCalledWith(window.location.origin + "/about?ref=section-link#career");
+    expect(window.location.pathname + window.location.search + window.location.hash).toBe(
+      "/about?ref=cv&utm_medium=social#career",
+    );
     expect(await screen.findByRole("status")).toHaveTextContent("Link copied");
   });
 

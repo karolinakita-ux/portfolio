@@ -108,7 +108,7 @@ export const PRIVACY: PrivacyContent = {
         lead("How long", "Umami keeps the statistics for 6 months, then deletes them."),
         lead(
           "Tagged links",
-          "Links I share, for example in job applications, may end in ?ref= and a company or channel name, so I can see which link brought you here and which pages you read after it, on that visit or a later one. They never contain a person’s name. Other parts of an address, such as the click IDs that ads and social apps add, are removed before anything is sent; only ?ref= and the campaign tags that start with utm_ stay.",
+          "Links I share, for example in job applications, may end in ?ref= and a company or channel name, so I can see which link brought you here and which pages you read after it, on that visit or a later one. A section link copied with the link button next to a heading ends in ?ref=section-link for the same reason. They never contain a person’s name. Other parts of an address, such as the click IDs that ads and social apps add, are removed before anything is sent; only ?ref= and the campaign tags that start with utm_ stay.",
         ),
       ],
       intro: [

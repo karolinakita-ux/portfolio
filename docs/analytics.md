@@ -96,9 +96,10 @@ What is left out on purpose, such as accessibility settings, the browser's exact
 
 A tagged link ends in `?ref=<tag>` (or carries `utm_source`). The first page it opens sends `link-ref` with the tag, and the session data gets it as `ref`. Karolina adds tags by hand to the links she shares: a company in a job application (`/cv?ref=acme`), a channel for a post (`?ref=linkedin-post`). A tag never names a person. The site writes these into its own links (`LINK_REF` in `analytics.constants.ts`; `tracking-plan.test.ts` checks the table):
 
-| Tag  | Link                                                                        | Question it answers                             |
-| ---- | --------------------------------------------------------------------------- | ----------------------------------------------- |
-| `cv` | the portfolio link in the CV's PDF: `https://karolina.kita.company/?ref=cv` | How many readers of the PDF open the portfolio? |
+| Tag            | Link                                                                                                                                                                                                    | Question it answers                                                   |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `cv`           | the portfolio link in the CV's PDF: `https://karolina.kita.company/?ref=cv`                                                                                                                             | How many readers of the PDF open the portfolio?                       |
+| `section-link` | a section's address copied with the link button beside its heading: the page's own path, the tag and the anchor (`/about?ref=section-link#career`), without the copier's own query (`sharedSectionUrl`) | Do the section links people share bring visitors, and to which pages? |
 
 Umami keeps one `ref` per session ([Session data](#session-data)), so a later tagged visit replaces it. A recruiter who came from `/cv?ref=acme` and later opens the PDF's portfolio link gets `ref` `cv` for that later visit, and the session data shows `cv` from then on: a Segment on `ref` = `acme` no longer finds that session. The `link-ref` events of both visits stay, so Events → Properties → `link-ref` by `ref` still counts the `acme` visit. Before 5.14.23 the PDF's link ended in `?utm_medium=cv-pdf` instead: copies downloaded then keep it, and their visits show in the UTM report (medium `cv-pdf`) without a `link-ref`.
 
@@ -147,6 +148,7 @@ The Hobby plan allows 100,000 events a month and keeps data for 6 months, which 
 - **Performance tab**: p75 of LCP, INP and CLS per page and device. Google's limits: LCP 2.5 s, INP 200 ms, CLS 0.1. INP and CLS cover only the first 10 s of each view ([Speed reports](#speed-reports)), so check a slow interaction later on a page by hand.
 - **UTM report** for `utm_*` links; `link-ref` for `?ref=` tags.
 - **Events → Properties**: `dead-click` by `area` and `label`, `time-on-page` by `time` and `scroll`, `cv-open` and `cv-download` by `place`, `page-not-found` by `path`, `js-error` by `message`, `figma-click` by `place` and `case` (the link at the top of a case study or the design files banner at its end).
+- **Shared section links**: `section-link-copy` by `section` counts the copies; `link-ref` by `ref` (`section-link`) counts the visits they bring, and a Segment on `ref` = `section-link` shows what those visitors read.
 
 ## Your own visits
 

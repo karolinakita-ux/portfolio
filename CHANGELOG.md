@@ -6,6 +6,14 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.24 - 2026-10-30
+
+#### Changed
+
+- A link copied with the button next to a section heading now ends in `?ref=section-link` (`/about?ref=section-link#career`), so the statistics can tell visits from shared section links (`link-ref` with `ref` `section-link`). It takes the page's own address and drops any other tag in the copier's address bar, so a copier's own `?ref=` or `utm_` tags never travel to someone else. The address bar itself, the `section-link-copy` event and the "Link copied" message stay as they were.
+- The privacy policy's Tagged links line says that copied section links carry `?ref=section-link`. Tagged links are already listed there, so this is not a new kind of data: earlier yeses are not asked again and the consent box stays as it is (`STORED_CHOICE` unchanged).
+- The tracking plan lists `section-link` in its Tagged links table and how to read shared section links on the dashboard; CLAUDE.md, the architecture doc and the README describe the tagged copy. Tests: `sharedSectionUrl` (the page's path, file forms, the copier's query left out, one-page builds), `HeadingAnchor` and the app's copy on About.
+
 ### 5.14.23 - 2026-10-30
 
 #### Changed
