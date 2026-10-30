@@ -162,7 +162,7 @@ describe("copy style", () => {
 
 /**
  * Common US spellings, as whole words in any case with their inflections: the site writes British English
- * everywhere, like the CV (Karolina, 2026-10-30). -ize and -yze (size, seize, prize and their kin keep the z), -or
+ * everywhere, like the CV (Karolina, 2026-10-30). -ize and -yze (size, seize, prize and their kin keep the z, also inside a word: oversize, assetSize), -or
  * for -our, -er for -re, one l where British doubles it (with their common prefixes: multicolor, dishonor,
  * relabeled), and single words. Not listed, because British English uses them too: "dialog" (a software dialog),
  * "program" (software; a plan is a programme), "license" (the verb; the noun is licence) and "practice" (the noun;
@@ -170,7 +170,7 @@ describe("copy style", () => {
  */
 const US_SPELLING = new RegExp(
   [
-    String.raw`\b(?!(?:re|down|up|over|under|out|cap)?siz|seiz|priz|maiz|baiz)[a-z]+[iy]z(?:e|es|ed|ing|ation|ations|er|ers|able)\b`,
+    String.raw`\b(?![a-z]*(?:siz|seiz|priz|maiz|baiz))[a-z]+[iy]z(?:e|es|ed|ing|ation|ations|er|ers|able)\b`,
     String.raw`\b(?:multi|water|tri|dis|re|un|mis)?(?:col|behavi|fav|hon|hum|lab|neighb|flav|harb|rum|vap|endeav|arm|od|cand|vig|val|sav|parl|clam|rig|tum|splend|ard|ferv|demean)or(?:s|ed|ing|ful|fully|less|al|ally|ite|ites|able|ably|y|blind|hood|hoods)?\b`,
     String.raw`\b(?:cent|theat|fib|lit|somb|calib|spect|lust|sab|(?:kilo|centi|milli)met)ers?\b|\bcenter(?:ed|ing|piece|pieces)\b`,
     String.raw`\b(?:re|un|mis)?(?:label|model|travel|cancel|level|signal|fuel|total|channel|funnel|tunnel|counsel|marvel|jewel|dial|duel|quarrel|rival|shovel|unravel|panel|pedal|equal|initial|spiral)(?:ed|ing)\b`,

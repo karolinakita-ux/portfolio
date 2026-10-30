@@ -6,6 +6,17 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.19 - 2026-10-30
+
+#### Fixed
+
+- Case-study screenshots, Work thumbnails and the portrait keep their space while they load: the first HTML gives each image its width and height, so text below a screenshot no longer jumps down and links to a section further down land in place.
+
+#### Changed
+
+- `assetSize()` (`shared/media/asset-size`) reads an image's size from `virtual:asset-sizes` by its URL. The asset-sizes plugin now works in Storybook too, which turns `publicDir` off.
+- New test `src/app/image-sizes.test.tsx`: every `<img>` on every prerendered page must carry its file's width and height. Plus unit tests for `assetSize` and `Screenshot`. docs/architecture.md updated.
+
 ### 5.14.18 - 2026-10-30
 
 #### Fixed
