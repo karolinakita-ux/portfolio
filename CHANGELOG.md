@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.28 - 2026-10-31
+
+#### Changed
+
+- Tests: `e2e/touch-scroll.e2e.ts`, on an Android phone in Messenger's in-app browser, checks that a case study's images hold their height before they load, so the page is as tall before the screenshots arrive as after, and that images arriving after a fling has stopped do not move the page. Up to 5.14.16 the screenshots were 0px tall until they loaded, and on a phone the Smart Ticket page grew from 16,213 to 23,014px while it was read, which moved it after a fling had stopped. Both tests fail on 5.14.16 and pass since 5.14.19.
+
 ### 5.14.27 - 2026-10-31
 
 #### Fixed
