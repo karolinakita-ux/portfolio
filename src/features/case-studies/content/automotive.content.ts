@@ -32,7 +32,7 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
   notice: {
     tone: "warning",
     label: "Confidentiality note",
-    text: "Client and competitor names, logos and vehicle identifiers have been anonymised (“Tradelane” is a fictional brand), and some figures on the research boards are hidden. Findings and workflows are shown as delivered.",
+    text: "Client and competitor names, logos and vehicle identifiers have been anonymised (“Tradelane” is a fictional brand). Findings and workflows are shown as delivered.",
   },
   summaryTitle: "Overview & Problem",
   summary: [

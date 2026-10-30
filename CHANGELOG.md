@@ -6,6 +6,14 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.7 - 2026-10-30
+
+#### Changed
+
+- Automotive: the research boards show Karolina's originals again (persona, multi-market survey and interview synthesis, both themes). She approved the figures in writing and confirmed that her screenshots hold no confidential data, so nothing on them is blurred or painted over any more. The confidentiality note no longer says that some figures are hidden.
+- Smart Ticket: the legacy My Profile screen shows its sample email address again, as Karolina approved.
+- Search data: the Person block no longer lists the Google UX Design certificate, which no page mentions.
+
 ### 5.14.6 - 2026-10-30
 
 #### Fixed
