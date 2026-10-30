@@ -96,7 +96,7 @@ describe("CvView", () => {
     expect(linkedin).toHaveAttribute("target", "_blank");
     const site = contacts.getByRole("link", { name: "https://karolina.kita.company" });
     expect(site).toHaveAttribute("href", "/");
-    expect(site).toHaveAttribute("data-pdf-href", "https://karolina.kita.company/?utm_medium=cv-pdf");
+    expect(site).toHaveAttribute("data-pdf-href", "https://karolina.kita.company/?ref=cv");
     await user.click(site);
     expect(onNavigate).toHaveBeenCalledWith(VIEW.work, undefined);
   });

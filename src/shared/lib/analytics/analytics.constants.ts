@@ -67,6 +67,16 @@ export const KEPT_PARAMS: readonly string[] = [
   "utm_content",
 ];
 
+/**
+ * Link tags (?ref=) the site writes into its own links; link-ref and the session's `ref` show them. The tags
+ * Karolina adds by hand (/cv?ref=acme, ?ref=linkedin-post) are not here. docs/analytics.md (Tagged links) lists
+ * each one (tracking-plan.test.ts).
+ */
+export const LINK_REF = {
+  /** The portfolio link in the CV's PDF (cv.content.ts). */
+  cvPdf: "cv",
+} as const;
+
 /** Load metrics in the tracker's speed report: they belong to the page the browser loaded (payload.utils.ts). */
 export const LOAD_METRICS = ["ttfb", "fcp", "lcp"] as const;
 

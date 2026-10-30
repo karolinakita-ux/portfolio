@@ -92,6 +92,16 @@ Sent once per page load with `umami.identify()` (`session.utils.ts`), never with
 
 What is left out on purpose, such as accessibility settings, the browser's exact version or the time zone: [Not collected, on purpose](#not-collected-on-purpose).
 
+## Tagged links
+
+A tagged link ends in `?ref=<tag>` (or carries `utm_source`). The first page it opens sends `link-ref` with the tag, and the session data gets it as `ref`. Karolina adds tags by hand to the links she shares: a company in a job application (`/cv?ref=acme`), a channel for a post (`?ref=linkedin-post`). A tag never names a person. The site writes these into its own links (`LINK_REF` in `analytics.constants.ts`; `tracking-plan.test.ts` checks the table):
+
+| Tag  | Link                                                                        | Question it answers                             |
+| ---- | --------------------------------------------------------------------------- | ----------------------------------------------- |
+| `cv` | the portfolio link in the CV's PDF: `https://karolina.kita.company/?ref=cv` | How many readers of the PDF open the portfolio? |
+
+Umami keeps one `ref` per session ([Session data](#session-data)), so a later tagged visit replaces it. A recruiter who came from `/cv?ref=acme` and later opens the PDF's portfolio link gets `ref` `cv` for that later visit, and the session data shows `cv` from then on: a Segment on `ref` = `acme` no longer finds that session. The `link-ref` events of both visits stay, so Events → Properties → `link-ref` by `ref` still counts the `acme` visit. Before 5.14.23 the PDF's link ended in `?utm_medium=cv-pdf` instead: copies downloaded then keep it, and their visits show in the UTM report (medium `cv-pdf`) without a `link-ref`.
+
 ## Speed reports
 
 `data-performance` turns on the tracker's own Core Web Vitals: LCP, INP, CLS, FCP and TTFB, shown in Umami's Performance tab as p50, p75 and p95 by page and by device or browser.
@@ -130,7 +140,7 @@ The Hobby plan allows 100,000 events a month and keeps data for 6 months, which 
 
 - **Goals**: `email-click` and `linkedin-click` (a visitor tries to get in touch), `case-open`, `cv-download`.
 - **Funnel**: `/` → `case-open` (or a `/work/...` page) → `email-click` or `linkedin-click`; and `/` → `/cv` → `cv-download` (how many CV readers take the PDF).
-- **The PDF itself**: opening `/karolina-kita-cv.pdf` directly runs no script, so Umami never sees it; share `/cv?ref=<company>` rather than the PDF's address when the visit should count. The PDF's portfolio link opens `https://karolina.kita.company/?utm_medium=cv-pdf`: such visits show in the UTM report (medium `cv-pdf`) and send no `link-ref`, so a session keeps the `ref` that an earlier `/cv?ref=<company>` visit brought (a `ref` in the PDF would replace it). The PDF's LinkedIn and email links go straight to LinkedIn and the mail app and are never counted. `cv-download` by `inApp` (a Segment) shows how often visitors in in-app browsers tap Download (not whether the file arrived).
+- **The PDF itself**: opening `/karolina-kita-cv.pdf` directly runs no script, so Umami never sees it; share `/cv?ref=<company>` rather than the PDF's address when the visit should count. The PDF's portfolio link opens `https://karolina.kita.company/?ref=cv`: such visits send `link-ref` with `ref` `cv`, and a session that an earlier `/cv?ref=<company>` visit brought shows `cv` from then on ([Tagged links](#tagged-links)). The PDF's LinkedIn and email links go straight to LinkedIn and the mail app and are never counted. `cv-download` by `inApp` (a Segment) shows how often visitors in in-app browsers tap Download (not whether the file arrived).
 - **Journey**: which pages lead to Contact, and where visits end.
 - **Compare releases**: filter any report by tag (the version from `package.json`). Sessions → Properties → `version` lists the versions with their counts; so does Other → Tag behind "More" under any Overview table.
 - **Filter by session data** (a Segment with Session data filters): `inApp` is `linkedin` for visits from LinkedIn's app; `viewport` and `viewportHeight` for one screen size; `ref` for the visits one application or channel brought, later visits in the same session included.

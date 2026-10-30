@@ -10,6 +10,7 @@
  * where the address goes.
  */
 import { PROFILE } from "#shared/content/profile.ts";
+import { LINK_REF } from "#shared/lib/analytics/analytics.constants.ts";
 
 import type { Cv, CvPage } from "./cv.types.ts";
 
@@ -22,7 +23,7 @@ export const CV: Cv = {
     // Full addresses as the visible text: applicant tracking systems and readers of a printout find a link by its
     // https://, and a bare .company address can pass for a sentence.
     linkedin: { label: PROFILE.linkedinUrl, href: PROFILE.linkedinUrl },
-    site: { label: "https://karolina.kita.company", pdfHref: "https://karolina.kita.company/?utm_medium=cv-pdf" },
+    site: { label: "https://karolina.kita.company", pdfHref: "https://karolina.kita.company/?ref=" + LINK_REF.cvPdf },
   },
 
   summary:

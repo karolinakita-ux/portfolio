@@ -11,7 +11,7 @@
  *
  * How: a production build in node_modules/.tmp/cv-pdf (never dist/), served by Vite's preview server, opened in
  * Playwright's Chromium in the light theme with reduced motion and printed by Chromium's own PDF writer. Links that
- * carry data-pdf-href (the portfolio link, with ?utm_medium=cv-pdf) get that address first. When the CV no longer fits
+ * carry data-pdf-href (the portfolio link, with the link tag ?ref=cv) get that address first. When the CV no longer fits
  * MAX_PAGES pages, or a link would not work from a PDF, it stops and writes nothing.
  */
 import { createHash } from "node:crypto";

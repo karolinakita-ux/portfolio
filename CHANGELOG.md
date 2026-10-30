@@ -6,6 +6,14 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.23 - 2026-10-30
+
+#### Changed
+
+- The portfolio link in the CV's PDF now ends in `?ref=cv`, like the site's other tagged links (`?ref=linkedin-post`), so visits from the PDF count as the tagged link `cv` (`link-ref`). It used `?utm_medium=cv-pdf` since 5.14.2. The PDF was made again (still 2 pages).
+- Umami keeps one `ref` per session, so a visitor who came from `/cv?ref=<company>` and later opens the PDF's link shows `cv` in the session data from then on; the `link-ref` events of both visits stay. The tracking plan says so in a new Tagged links section, and a test keeps that section's table in step with `LINK_REF`, the tags the site writes into its own links.
+- The privacy policy already covers tags like this one ("a company or channel name"), so it is unchanged and earlier yeses are not asked again (`STORED_CHOICE` unchanged).
+
 ### 5.14.22 - 2026-10-30
 
 #### Changed
