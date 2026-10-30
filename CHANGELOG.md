@@ -4,7 +4,15 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v5.14.16 - 2026-10-30
+
+- A new case study, Smart Ticket, shows a mobile ticketing app and its operations console, and every case study now has a clearer layout with Light and Dark screenshots.
+- Recruiters can read Karolina's CV on its own page and download it as a 2-page PDF with a recruitment consent for employers and agencies in Poland or abroad.
+- The site follows your browser's text size, uses stronger colours when your device asks for more contrast, and has a new accessibility statement.
+- Job titles, dates and case names now read the same on every page and in the CV, in British English throughout.
+- Shared links show a new preview image, search results can show the site's icon, and small fixes keep the header steady and images whole when you hover over them.
+
+Versions: 5.3.4 - 5.14.16.
 
 ### 5.14.16 - 2026-10-30
 
