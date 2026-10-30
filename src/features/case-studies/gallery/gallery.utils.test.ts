@@ -46,6 +46,23 @@ describe("caseCards", () => {
       [...THEMING_CASE.solution, ...THEMING_CASE.safety].map((card) => card.id),
     );
   });
+
+  it.each([SMART_TICKET_CASE, AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE, THEMING_CASE])(
+    "names every $id screenshot card after its image, so the statistics' image value names the file",
+    (c) => {
+      for (const card of caseCards(c)) {
+        const file = card.asset.split("/").pop() ?? "";
+        expect(card.id, card.asset).toBe(file.replace(card.darkAsset ? /-light\.webp$/ : /\.webp$/, ""));
+        const darkPair = card.darkAsset === undefined ? undefined : card.asset.replace(/-light\.webp$/, "-dark.webp");
+        expect(card.darkAsset, card.id).toBe(darkPair);
+      }
+    },
+  );
+
+  it("keeps Smart Ticket's comparison ids apart from its screenshot card ids", () => {
+    const cardIds = new Set(caseCards(SMART_TICKET_CASE).map((card) => card.id));
+    for (const comparison of SMART_TICKET_CASE.rebuild.comparisons) expect(cardIds).not.toContain(comparison.id);
+  });
 });
 
 describe("virtual:asset-sizes", () => {

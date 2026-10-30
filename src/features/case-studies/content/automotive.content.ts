@@ -1,11 +1,10 @@
-import type { CaseStudy, ShowcaseCard } from "#features/case-studies/case-studies.types.ts";
+import type { CaseStudy } from "#features/case-studies/case-studies.types.ts";
 import { VIEW } from "#shared/lib/routes/routes.constants.ts";
 
-/** Every Automotive screenshot has a Light and a Dark version: `<name>-light.webp` / `<name>-dark.webp`. */
-const shot = (name: string): Pick<ShowcaseCard, "asset" | "darkAsset"> => ({
-  asset: `cases/automotive/${name}-light.webp`,
-  darkAsset: `cases/automotive/${name}-dark.webp`,
-});
+import { caseShots } from "./content.utils.ts";
+
+/** Every Automotive screenshot has a Light and a Dark version. */
+const { shot } = caseShots("automotive");
 
 /* Case study - Automotive B2B Ecosystem. Screenshot fields: see ShowcaseCard in case-studies.types.ts. */
 export const AUTOMOTIVE_CASE: CaseStudy = {
@@ -52,7 +51,6 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
         "Before designing anything, I needed to understand how dealers buy across Europe. I started with the dealer survey and checked its data quality before drawing any conclusions.",
       cards: [
         {
-          id: "survey",
           ...shot("multi-market-survey"),
           alt: "Data-quality audit of 545 dealer survey responses: a quality metrics table, responses by country with Germany the largest group, what the audit means for the findings, and a reading guide by sample size.",
           title: "Multi-Market Data Synthesis",
@@ -60,7 +58,6 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
             "Before trusting the survey, I checked its quality. 545 dealers answered from 7 of 8 target markets, but over 40% came from Germany, and Portugal and Poland had under 20 answers each. I treated those two as early signals, not facts, and followed up with 1:1 interviews in Poland. I also stated what the survey couldn’t measure, so the results weren’t over-read.",
         },
         {
-          id: "interviews",
           ...shot("qualitative-interviews"),
           alt: "What Polish dealers need from a trade platform: grouped interview quotes, a table linking each finding to a platform change and a priority, preferred contact channels and a synthesis note.",
           title: "1:1 Interviews in Polish",
@@ -82,7 +79,6 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
         "With survey data and interview recordings in hand, I built personas, mapped the dealer journey and audited the live platform against Nielsen’s 10 usability heuristics.",
       cards: [
         {
-          id: "persona",
           ...shot("b2b-persona"),
           alt: "Persona of Erica Martinez, Dealer Principal: profile, charts of roles and business locations, vehicles bought per month, preferred communication, behaviour traits, priorities and engagement channels.",
           title: "Personas Built from Survey Data",
@@ -90,7 +86,6 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
             "I grouped survey answers into dealer segments and turned each into a persona. Shown here is Erica, a Dealer Principal. Most dealers like her buy 1 - 10 cars a month (63%), half work from rural sites, and their top priorities are reliable logistics, better support and transparent costs. Those priorities carry through the later design work, such as the required transport step at checkout.",
         },
         {
-          id: "journey",
           ...shot("journey-map"),
           alt: "Dealer Principal journey map on a vehicle page, from “is this car worth my time?” to after the sale: five stages with thoughts, actions, pain points and design opportunities, and the three platforms audited.",
           title: "Dealer Principal Journey Map",
@@ -98,7 +93,6 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
             "I mapped the Dealer Principal’s five steps on a vehicle page - what she thinks, does and struggles with - based on audits of three live platforms (UK, Australia, EU). Each pain point has a design opportunity; post-sale support is flagged for further research.",
         },
         {
-          id: "heuristics",
           ...shot("heuristic-audit"),
           alt: "Where the 37 logged issues cluster: violations per Nielsen heuristic, led by visibility of system status (8) and aesthetic and minimalist design (7), with the audit method from evaluation to presentation.",
           title: "Usability Audit of the Live Platform",
@@ -106,7 +100,6 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
             "I reviewed the live platform against Nielsen’s 10 heuristics and logged 37 issues. Most fell into two groups: unclear system status (8 issues, 21.6%) and cluttered screens (7, 18.9%). This matched what dealers told me in interviews - the platform felt “poor, unintuitive, overloaded”.",
         },
         {
-          id: "buy-in",
           ...shot("executive-buy-in"),
           alt: "Executive readout for visibility of system status: definition, problem summary, a severity profile of 1 catastrophic and 7 major problems, failure themes and the outcome, buy-in for a complete platform redesign.",
           title: "Making the Case to Leadership",
@@ -122,7 +115,6 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
         "Before sketching layouts, I studied six leading automotive platforms to learn which patterns work on a vehicle page and which to avoid.",
       cards: [
         {
-          id: "benchmark",
           ...shot("competitive-benchmark"),
           alt: "Benchmark of six anonymised automotive platforms: five proven vehicle-page patterns, each traced to the platforms that use it, what the benchmark showed and how it applies to our page.",
           title: "Competitive Benchmarking",
@@ -130,7 +122,6 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
             "I compared six anonymised platforms: wholesale remarketing, a manufacturer used-car site, retail classifieds and three types of auction. Five proven patterns made it into our vehicle page: clear navigation, sharing and export, grouped data, prominent buy buttons and in-context help.",
         },
         {
-          id: "workflows",
           ...shot("purchase-flow"),
           alt: "Swimlane flow from basket to a funded order across five lanes - dealer, platform, payments provider, customer support and logistics - including basket changes, transport and payment assignment.",
           title: "Purchase Flow for Multi-Car Orders",
@@ -138,7 +129,6 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
             "I mapped the full purchase flow across five roles: dealer, platform, payments, support and logistics. Dealers can build a basket of several cars and undo removals. Transport is a required step that fixes the invoice total, and each car can be paid differently - dealer finance, card or bank transfer. Checkout stays locked until every pound is assigned.",
         },
         {
-          id: "specs",
           ...shot("wireframes-to-specs"),
           alt: "Level 4 specification of the price and action panel: an annotated panel for a 2021 hybrid SUV with net price, 20% VAT, damages and total, the page’s information levels and a field-by-field sign-off table.",
           title: "From Wireframes to Specifications",
@@ -146,7 +136,6 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
             "I reviewed low-fidelity layouts with product managers and engineers, then turned them into detailed specs. The vehicle page has seven levels of information (L0 to L6). Level 4, the price panel, shows net price, 20% VAT, damages and VAT status separately, each with a short rationale for sign-off.",
         },
         {
-          id: "badges",
           ...shot("badge-system"),
           alt: "Vehicle status badge specification: four badge families (damage and risk, price and value, sales channel and offer type, demand and activity), display rules for cards and vehicle pages, and the priority order.",
           title: "Vehicle Status Badges",
@@ -154,7 +143,6 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
             "I defined four badge types in priority order: damage and risk, price and value, sales type, and demand. Cards show up to 3 badges and vehicle pages up to 5, so screens stay easy to scan. A badge seen on a card always appears on the vehicle page too.",
         },
         {
-          id: "edge-cases",
           ...shot("edge-case-filters"),
           alt: "The manufacturer filter in four states: a selected make never hides behind “Show more”, it moves into the short list, narrowing 123 vehicles to 25.",
           title: "Designing for Edge Cases",
@@ -162,7 +150,6 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
             "I also designed for situations that break the default layout. For example, if a dealer selects a car make hidden under “Show more”, it moves into the short list, so an active filter is never out of sight (123 → 25 results).",
         },
         {
-          id: "badges-contrast",
           ...shot("contrast-audit"),
           alt: "Colour contrast audit: brand teal at 1.92:1 fails as text, the darkest teal reaches 4.59:1, a rule for thin elements, and six status chip colour pairs that all pass AA and AAA.",
           title: "Accessibility & Colour Contrast",
@@ -178,7 +165,6 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
         "Our Team Leader built the prototype in code, which let us test interactions early. Before it went in front of dealers, I audited it against our design tokens, usability heuristics and WCAG.",
       cards: [
         {
-          id: "prototype-qa",
           ...shot("prototype-audit"),
           alt: "Prototype audit of 29 findings across three severity tiers: scope, target persona, the severity scale and an issue tracker listing each finding by area with its severity.",
           title: "29-Point Prototype Audit",
@@ -186,7 +172,6 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
             "I reviewed the coded prototype and logged 29 issues: 18 high severity (must be fixed before testing or release), 1 major and 10 medium. They ranged from cart logic errors to a button that failed colour contrast.",
         },
         {
-          id: "states",
           ...shot("state-management"),
           alt: "Cart and checkout states: switching an offer back to Buy Now, a split-payment balance that blocks the order until every vehicle is funded, reserved vehicles that offer a notification instead, and checkout edge cases.",
           title: "Making Every Action Reversible",
@@ -202,7 +187,6 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
         "Our UX Researcher tested the coded prototype with UK dealers on real buying tasks. I then turned the research and audit findings into the final high-fidelity screens in Figma.",
       cards: [
         {
-          id: "usability",
           ...shot("usability-validation"),
           alt: "Usability testing with UK dealers: 91.6% task completion, ease scores for the multi-vehicle cart, profit estimator and payment setup, a validation matrix of the tested flows and task highlights.",
           title: "Testing with UK Dealers",
@@ -210,7 +194,6 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
             "Six UK dealers completed 91.6% of tasks on the prototype, compared with about 48% on the old platform. Ease scores out of 7: multi-car basket 6.1, profit estimator 5.8, payment setup 5.4. Testing also exposed a split-payment logic gap, which I resolved in the Figma designs before release.",
         },
         {
-          id: "basket",
           ...shot("final-basket-checkout"),
           alt: "Final UI for buying several vehicles: a basket that excludes a sold car and applies a bundle price, and a checkout that assigns one payment method per vehicle until nothing is left unassigned.",
           title: "Final Design: Basket & Checkout",
@@ -218,7 +201,6 @@ export const AUTOMOTIVE_CASE: CaseStudy = {
             "If a car in the basket sells, it is flagged and removed from the total. Adding a third car unlocks a 5% bundle price. At checkout, each car can use its own payment method - card or dealer finance - and the order can’t be placed until the full amount is covered.",
         },
         {
-          id: "pricing",
           ...shot("final-pricing-profit"),
           alt: "Final UI for pricing and VAT: a vehicle page with net price, 20% VAT and total beside the bid panel, and a profit estimator that applies VAT only to the margin under the UK margin scheme.",
           title: "Final Design: Clear Pricing & Profit",

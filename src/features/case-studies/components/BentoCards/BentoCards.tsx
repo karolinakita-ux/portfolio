@@ -1,9 +1,9 @@
+import { BentoVisual } from "#features/case-studies/components/BentoVisual/BentoVisual.tsx";
 import { Badge } from "#shared/ui/Badge/Badge.tsx";
 import { Card } from "#shared/ui/Card/Card.tsx";
 
 import { styles } from "./BentoCards.styles.ts";
 import type { BentoCardsProps } from "./BentoCards.types.ts";
-import { BentoVisual } from "./BentoVisual.tsx";
 
 /**
  * Numbered bento cards (01, 02 ...): Card surfaces in a grid, each with a status badge (Shipped · MVP: success,

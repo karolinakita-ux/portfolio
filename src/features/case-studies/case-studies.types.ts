@@ -33,6 +33,8 @@ export interface MetaEntry {
 
 /**
  * Screenshot card in a case study.
+ *   id      the image's base name (caseShots in content/content.utils.ts); React key and the `image` value of
+ *           the image-open and image-nav statistics events
  *   asset   file name in /assets, shown full size in the image viewer
  *   detail  optional close-up of the same screen; the card shows it and the
  *           viewer still opens `asset`. A missing file falls back to `asset`.
@@ -57,7 +59,7 @@ export interface ShowcaseCard {
   /** More paragraphs after the intro, same style. */
   paragraphs?: readonly string[];
   blocks?: ReadonlyArray<{ title: string; body: string }>;
-  /** Every bullet opens with a bold lead-in term (see shared/ui/lead.tsx). */
+  /** Every bullet opens with a bold lead-in term (see shared/ui/lead/lead.tsx). */
   bullets?: readonly ReactNode[];
 }
 
@@ -91,10 +93,10 @@ export interface DesignFile {
 }
 
 /**
- * Feature section: eyebrow, H2, lead and bullets in a text column beside one or more screenshots.
- * Sections alternate sides on wide screens and stack (text first) on narrow ones.
+ * A feature, shown as a feature section (FeatureSection): eyebrow, H2, lead and bullets in a text column beside one
+ * or more screenshots. Sections alternate sides on wide screens and stack (text first) on narrow ones.
  */
-export interface FeatureSection {
+export interface Feature {
   /** Section id, the URL hash: keep it stable. */
   id: string;
   eyebrow: string;
@@ -111,8 +113,8 @@ export interface StatItem {
   label: string;
 }
 
-/** Closing impact section: stat cards, then optional bullets. */
-export interface CaseImpact {
+/** Closing impact section (CaseImpact): stat cards, then optional bullets. */
+export interface ImpactSection {
   /** Section id: keep it stable. */
   id: string;
   eyebrow: string;
@@ -150,14 +152,13 @@ export interface CaseSection {
   title: string;
   intro?: string | readonly string[];
   cards: readonly ShowcaseCard[];
-  highlights?: readonly DetailItem[];
 }
 
 /** Shared layout: Project Planning, Automotive. Feature sections (if any) come before the screenshot sections. */
 export interface CaseStudy extends CaseBase {
-  features?: readonly FeatureSection[];
+  features?: readonly Feature[];
   sections: readonly CaseSection[];
-  impact?: CaseImpact;
+  impact?: ImpactSection;
   outcomesTitle?: string;
   outcomesIntro?: string;
   outcomes?: readonly DetailItem[];
@@ -195,13 +196,13 @@ export interface SmartTicketCaseStudy extends CaseBase {
   rebuild: ComparisonSection;
   passenger: RowsSection;
   operations: ScreenGridSection;
-  impact: CaseImpact;
+  impact: ImpactSection;
   lessons: LessonsSection;
 }
 
 export type AnyCase = CaseStudy | ThemingCaseStudy | SmartTicketCaseStudy;
 
-/** Props of a case-study view (CaseStudyView, CaseThemingView). */
+/** Props of a case-study view (CaseStudyView, CaseThemingView, CaseSmartTicketView). */
 export interface CaseViewProps<C extends AnyCase> {
   c: C;
   resolveAsset: (name: string) => string;

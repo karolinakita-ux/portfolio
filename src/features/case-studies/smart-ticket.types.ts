@@ -38,8 +38,8 @@ export interface RowsSection {
   cards: readonly ShowcaseCard[];
 }
 
-/** One side of a before / after comparison. */
-export interface ComparisonSide {
+/** One side of a before / after comparison, shown by ComparisonSide. */
+export interface ComparisonSideContent {
   /** "2022 brief · initial assumption", "Modern rebuild (2026)". */
   label: string;
   text: string;
@@ -54,8 +54,8 @@ export interface Comparison {
   id: string;
   title: string;
   intro?: string;
-  before: ComparisonSide;
-  after: ComparisonSide;
+  before: ComparisonSideContent;
+  after: ComparisonSideContent;
   /** Titled columns of bullets under the comparison ("Why - the standard", "Evidence on the canvas"). */
   rationale?: ReadonlyArray<{ title: string; points: readonly ReactNode[] }>;
   /** A titled list of changes ("Strategic shift"). */
@@ -92,7 +92,7 @@ export interface LessonsSection {
   points: readonly DetailItem[];
 }
 
-/** A section with an eyebrow, an H2, a lead and one full-width image (personas, a user flow). */
+/** A section with an eyebrow, an H2, a lead and one full-width image (the user flow). */
 export interface MediaSection {
   /** Section id: keep it stable. */
   id: string;

@@ -8,7 +8,6 @@ import { CaseSummary } from "#features/case-studies/components/CaseSummary/CaseS
 import { DesignFilesBanner } from "#features/case-studies/components/DesignFilesBanner/DesignFilesBanner.tsx";
 import { DetailList } from "#features/case-studies/components/DetailList/DetailList.tsx";
 import { FeatureSection } from "#features/case-studies/components/FeatureSection/FeatureSection.tsx";
-import { KeyOutcomes } from "#features/case-studies/components/KeyOutcomes/KeyOutcomes.tsx";
 import { NumberedCards } from "#features/case-studies/components/NumberedCards/NumberedCards.tsx";
 import { ShowcaseRows } from "#features/case-studies/components/ShowcaseRows/ShowcaseRows.tsx";
 import { caseCards, featureStarts, sectionStarts } from "#features/case-studies/gallery/gallery.utils.ts";
@@ -19,8 +18,8 @@ import { styles } from "./CaseStudyView.styles.ts";
 
 /**
  * Shared case-study layout (Project Planning, Automotive):
- * intro → summary → feature sections → screenshot sections (optional key-outcomes grid) → optional impact,
- * outcomes and reflections → optional design files banner → prev/next.
+ * intro → summary → feature sections → screenshot sections → optional impact, outcomes and reflections →
+ * optional design files banner → prev/next.
  */
 export function CaseStudyView({ c, resolveAsset, onNavigate }: CaseViewProps<CaseStudy>) {
   const cards = useMemo(() => caseCards(c), [c]);
@@ -55,7 +54,6 @@ export function CaseStudyView({ c, resolveAsset, onNavigate }: CaseViewProps<Cas
             <ul className={styles.rows}>
               <ShowcaseRows rows={rows.slice(start, start + section.cards.length)} />
             </ul>
-            {section.highlights && <KeyOutcomes items={section.highlights} labelId={section.id + "-outcomes"} />}
           </Section>
         );
       })}

@@ -1,20 +1,18 @@
-import type { ShowcaseCard, SmartTicketCaseStudy } from "#features/case-studies/case-studies.types.ts";
+import type { SmartTicketCaseStudy } from "#features/case-studies/case-studies.types.ts";
 import { VIEW } from "#shared/lib/routes/routes.constants.ts";
 import { lead } from "#shared/ui/lead/lead.tsx";
 
+import { caseShots } from "./content.utils.ts";
+
 /*
  * Case study - Smart Ticket: mobile ticketing and transit operations. A 2022 client concept, rebuilt in 2026 as a
- * portfolio redesign. Layout and copy follow the Figma frame "Case Study / Smart Ticket (2026)" (Kita Branding file,
- * Portfolio page). Every 2026 screen has a Light and a Dark version; the 2022 screens exist in one mode only.
- * Screenshot fields: see ShowcaseCard in case-studies.types.ts.
+ * portfolio redesign. Section order and blocks follow Figma node 2716:4133 (Kita Branding file, page "Case · Smart
+ * Ticket"); card tints, title sizes and spacing still differ from it, pending Karolina's decision. The copy is
+ * checked against the Smart Ticket Figma file (designFile below), so it differs from that frame on purpose: the
+ * frame keeps claims the file does not show. Every 2026 screen has a Light and a Dark version; the 2022 screens
+ * and the Lock Screen exist in one version only. Screenshot fields: see ShowcaseCard in case-studies.types.ts.
  */
-const IMAGES = "cases/smart-ticket/";
-
-/** A screen with a Light and a Dark file: `<name>-light.webp` and `<name>-dark.webp`. */
-const themed = (name: string): Pick<ShowcaseCard, "asset" | "darkAsset"> => ({
-  asset: IMAGES + name + "-light.webp",
-  darkAsset: IMAGES + name + "-dark.webp",
-});
+const { shot, singleShot } = caseShots("smart-ticket");
 
 export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
   view: VIEW.caseSmartTicket,
@@ -144,8 +142,9 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
     title: "From trip search to an offline inspection",
     lead: "The main path has one rule: buying and activating are separate steps. A rider can buy at home, keep the pass inactive, and start the countdown only when the vehicle arrives.",
     media: {
-      id: "user-flow",
-      ...themed("user-flow"),
+      ...shot("user-flow"),
+      // The diagram draws its own border; its legend sits on the page, as in Figma.
+      frameless: true,
       alt: "User flow. Entry, then Signed in? If no, log in or create an account. Home and quick trip search, then Active pass? If yes, open the active pass, show the offline QR code with a countdown, inspection successful. If no, pick a route with a suggested ticket, choose a payment method (Apple Pay, BLIK code with bank approval, or wallet balance), and the pass is saved on the phone, inactive. The rider boards, scans the door QR code or enters the side number, and the pass becomes active with a Live Activity on the lock screen; an inspection during the ride opens the active pass.",
       title: "User flow - buy, then activate on board",
     },
@@ -156,8 +155,7 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
     title: "Tokens that make accessibility testable",
     cards: [
       {
-        id: "token-handoff",
-        ...themed("token-handoff"),
+        ...shot("token-handoff"),
         alt: "Token handoff and code mapping: a DTCG JSON export with Light and Dark values, a list of export targets and a table mapping each semantic token to its CSS variable.",
         title: "Three tiers, one source of truth",
         intro:
@@ -167,8 +165,7 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
         ],
       },
       {
-        id: "accessibility-contrast",
-        ...themed("accessibility-contrast"),
+        ...shot("accessibility-contrast"),
         alt: "Accessibility and contrast standards: a table of text and surface token pairs with Light and Dark samples, contrast ratios and AA or AAA results, and cards on touch targets, focus and motion, and the European Accessibility Act.",
         title: "Contrast you can check",
         intro:
@@ -178,8 +175,7 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
         ],
       },
       {
-        id: "dark-mode-inversion",
-        ...themed("dark-mode-inversion"),
+        ...shot("semantic-inversion"),
         alt: "Dark mode semantic inversion: each semantic token with its Light and Dark value, next to an active ticket card shown in both modes.",
         title: "Tonal surfaces, multi-tenant ready",
         intro:
@@ -204,14 +200,12 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
           text: "The brief asked for a decorative brand look. Colours were hard-coded hex values. The brand blue #204796 passed (8.7:1), but placeholder grey #A3A3A3 reached 2.5:1, and the disabled button (#CCCCCC with a white label) 1.6:1.",
           media: [
             {
-              id: "legacy-sign-up-phone",
-              asset: IMAGES + "legacy-create-account-phone.webp",
+              ...singleShot("legacy-sign-up-phone-number"),
               alt: "2022 sign-up screen, phone number tab: a country code picker, a password field with light grey placeholder text and a pale grey disabled button.",
               title: "2022 - Sign up by phone number",
             },
             {
-              id: "legacy-sign-up-email",
-              asset: IMAGES + "legacy-create-account.webp",
+              ...singleShot("legacy-sign-up-email"),
               alt: "2022 sign-up screen, email tab: email and password fields with light grey placeholder text, a terms checkbox and a pale grey disabled button.",
               title: "2022 - Sign up by email",
             },
@@ -222,16 +216,14 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
           text: "Every colour is a token with Light and Dark modes. Primary #4338CA reaches 7.9:1 on white. Cool slate neutrals and soft elevation replace one-off greys, so dense lists stay easy to scan.",
           media: [
             // Both modes side by side, as in the Figma frame: this pair shows the token modes, so it does not
-            // switch with the site's theme.
+            // switch with the site's theme. Each file has one version; its suffix names the mode it shows.
             {
-              id: "create-account-light",
-              asset: IMAGES + "create-account-incomplete-light.webp",
+              ...singleShot("create-account-details-light"),
               alt: "2026 create account screen in Light mode, step 1 of 3: full name and email fields, a Continue button, and Continue with Apple and Continue with Google.",
               title: "Create account / Details - Light mode",
             },
             {
-              id: "create-account-dark",
-              asset: IMAGES + "create-account-incomplete-dark.webp",
+              ...singleShot("create-account-details-dark"),
               alt: "The same create account screen in Dark mode: the same layout on dark slate surfaces.",
               title: "Create account / Details - Dark mode",
             },
@@ -275,14 +267,12 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
           metrics: ["0% of colours from tokens", "3 text contrast failures", "Lowest text 2.5:1"],
           media: [
             {
-              id: "legacy-security",
-              asset: IMAGES + "legacy-security.webp",
+              ...singleShot("legacy-security"),
               alt: "2022 security screen: password, PIN and fingerprint options with light grey helper text under each option.",
               title: "2022 - Security",
             },
             {
-              id: "legacy-profile",
-              asset: IMAGES + "legacy-my-profile.webp",
+              ...singleShot("legacy-my-profile"),
               alt: "2022 My Profile screen: a list of payment methods, transactions, security, contact and legal, and a log out link.",
               title: "2022 - My Profile",
             },
@@ -294,14 +284,12 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
           metrics: ["100% of colours from tokens", "0 text contrast failures", "Lowest text 7.1:1"],
           media: [
             {
-              id: "profile-hub",
-              ...themed("profile-main-hub"),
+              ...shot("profile-main-hub"),
               alt: "2026 My Account screen: profile with a student fare tag, a wallet balance of PLN 34.50 with Top up, and grouped lists for payments, travel and city, security and app, and log out.",
               title: "Profile / Main Hub",
             },
             {
-              id: "profile-security",
-              ...themed("profile-security-biometrics"),
+              ...shot("profile-security-biometrics"),
               alt: "2026 Security and Privacy screen: Face ID sign-in switch, change password, two-factor authentication enabled, active devices and a delete account panel.",
               title: "Profile / Security & Biometrics",
             },
@@ -325,8 +313,7 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
     lead: "Each feature answers a real edge case of riding public transport: no signal underground, a ticket that starts too early, unclear fares and a payment that must be quick.",
     cards: [
       {
-        id: "offline-pass",
-        ...themed("offline-pass-inspection"),
+        ...shot("offline-pass-inspection"),
         device: "phone",
         alt: "Active pass, offline: a no-connection notice, an Active (offline verified) badge, 14:22 time left, a large QR code and the ticket type, fare, zones and validity.",
         title: "Offline QR pass",
@@ -334,8 +321,7 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
           "The pass is stored on the phone and says so: “No internet connection • Your ticket is safely stored offline”. It shows a live countdown and a QR code an inspector can scan without a network - the main fear riders have in the metro. The design specifies a signed token for offline checks; signing itself is an engineering requirement, outside the design scope.",
       },
       {
-        id: "vehicle-activation",
-        ...themed("vehicle-activation"),
+        ...shot("vehicle-activation"),
         device: "phone",
         alt: "Activate your ticket sheet over My Tickets: tap to scan the vehicle QR code, or enter the vehicle side number, then Validate and start trip.",
         title: "Buy now, start later",
@@ -343,8 +329,7 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
           "Buying and activating are two separate steps. Riders buy ahead, and the timer starts only when they scan the QR code opposite the vehicle door, or at the station before the metro gates. If the code can’t be scanned, they type the vehicle side number.",
       },
       {
-        id: "ticket-selection",
-        ...themed("ticket-selection-sheet"),
+        ...shot("ticket-selection-sheet"),
         device: "phone",
         alt: "Select Ticket sheet over route results: a Standard or Reduced -50% fare toggle, the 20-minute transfer ticket selected as covering the trip, a 90-minute option, quantity and Continue to payment.",
         title: "From route to ticket in three taps",
@@ -352,8 +337,7 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
           "Every route result already shows the ticket that covers the trip, for example a 20-min ticket for PLN 4.40. “Select & Buy” opens one sheet with a Standard / Reduced -50% toggle that marks the ticket covering the trip, and riders can still pick another. “Continue to payment” and “Pay” finish the purchase.",
       },
       {
-        id: "blik-payment",
-        ...themed("blik-confirmation"),
+        ...shot("blik-confirmation"),
         device: "phone",
         alt: "Pay with BLIK sheet: six boxes for the code from the banking app, a code expiry timer at 01:42 and a Confirm and pay button for PLN 4.40.",
         title: "Fast payment, one sheet",
@@ -361,8 +345,7 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
           "Checkout is one “Review & Pay” sheet with the Smart Wallet, Apple Pay and BLIK. BLIK opens a six-digit code entry with a visible expiry timer, so riders always know the code is still valid.",
       },
       {
-        id: "live-activity",
-        asset: IMAGES + "lock-screen-live-activity.webp",
+        ...singleShot("lock-screen-live-activity"),
         device: "phone",
         alt: "iPhone Lock Screen with a Live Activity: metro M1 en route to Centrum, arriving in 3 minutes, a progress bar between stops and a Tap to show inspection QR shortcut.",
         title: "The journey on the Lock Screen",
@@ -383,7 +366,7 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
     decisionsTitle: "Design decisions",
     decisions: [
       lead("Feeds", "GTFS-RT and SIRI-SX for live data, NeTEx / GTFS for static timetables."),
-      lead("Fleet", "1,248 vehicles across 4 operators on one ZTM network; validators sync every 60 s."),
+      lead("Fleet", "1,248 vehicles across 4 operators on one ZTM network; validators sync every 60\u00a0s."),
       lead(
         "Privacy by design",
         "Browsing passenger accounts is disabled; staff open one masked record by exact reference, and access expires after 15 minutes.",
@@ -392,50 +375,42 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
     ],
     screens: [
       {
-        id: "admin-dashboard",
-        ...themed("admin-operations-dashboard"),
+        ...shot("admin-operations-dashboard"),
         alt: "Operations dashboard: KPI cards for boardings, revenue, active vehicles and validator health, an hourly boarding chart and live disruption alerts.",
         title: "Admin / Operations Dashboard",
       },
       {
-        id: "admin-feeds",
-        ...themed("admin-transit-feeds"),
+        ...shot("admin-transit-feeds"),
         alt: "Automated transit feeds and alerts engine: feed health KPIs, a table of upstream transit authorities and operator endpoints with protocol and sync status, and automated disruption rules.",
         title: "Admin / Automated Transit Feeds & Alerts Engine",
       },
       {
-        id: "admin-fleet",
-        ...themed("admin-fleet-vehicles"),
+        ...shot("admin-fleet-vehicles"),
         alt: "Fleet and vehicle management: a table of vehicles with fleet number, model, depot, validator status and passenger load, filtered by vehicle type.",
         title: "Admin / Fleet & Vehicle Management",
       },
       {
-        id: "admin-operators",
-        ...themed("admin-operator-registry"),
+        ...shot("admin-operator-registry"),
         alt: "Multi-operator fleet and clearing registry: vehicle-kilometre totals per operator for settlement and a table of vehicles with operator, validator key sync and status.",
         title: "Admin / Multi-Operator Fleet & Clearing Registry",
       },
       {
-        id: "admin-fares",
-        ...themed("admin-fare-tariffs"),
+        ...shot("admin-fare-tariffs"),
         alt: "Fare and tariff configuration: a standard ticket catalogue with prices and publishing switches, and concession and discount rules.",
         title: "Admin / Fare & Tariff Configuration",
       },
       {
-        id: "admin-access",
-        ...themed("admin-access-control"),
+        ...shot("admin-access-control"),
         alt: "Access control and team permissions: a team member table with roles and operators, a field permission matrix and a passenger support lookup with masked data.",
         title: "Admin / Access Control & Team Permissions",
       },
       {
-        id: "admin-audit",
-        ...themed("admin-audit-trail"),
+        ...shot("admin-audit-trail"),
         alt: "Security audit trail and logs: filters and a table of timestamped events with actor, action, target and severity, and a note that the log is append-only.",
         title: "Admin / Security Audit Trail & Logs",
       },
       {
-        id: "admin-security",
-        ...themed("admin-app-security"),
+        ...shot("admin-app-security"),
         alt: "Application security and session policies: session timeout, concurrent device limits, login rate limiting and password and multi-factor authentication rules.",
         title: "Admin / Application Security & Policies",
       },
@@ -504,7 +479,7 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
   // the left link returns to the list, the right one continues to Automotive.
   prev: { view: VIEW.work, action: "Back to All Work" },
   next: {
-    view: "case-automotive",
+    view: VIEW.caseAutomotive,
     label: "Automotive B2B Ecosystem: From Dealer Research Across Europe to a Validated Redesign",
   },
 };

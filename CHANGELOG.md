@@ -6,6 +6,25 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.13.2 - 2026-10-30
+
+#### Fixed
+
+- Smart Ticket: the user flow diagram no longer sits inside a second frame; its legend sits on the page as in Figma (Light and Dark).
+- Smart Ticket: "60 s" no longer breaks between the number and the unit on phones.
+- Code comments that said the wrong thing are fixed (the Smart Ticket and Project Planning content headers, the Smart Ticket row spacing, the `MediaSection` type, the persona goal tint). Project Planning cites only the Figma node id.
+
+#### Changed
+
+- One naming convention for case screenshots. A card's id is its image's base name in all four case studies (for example `multi-market-survey`, `admin-operations-dashboard`), so the statistics' `image` value names the file it shows; many old ids, such as `survey` or `contrast`, belonged to screenshots that have since been replaced. Smart Ticket's Security & Biometrics screen no longer shares an id with its comparison.
+- Six Smart Ticket screenshots have names that say what they show: `legacy-sign-up-email.webp`, `legacy-sign-up-phone-number.webp`, `semantic-inversion-light.webp` / `-dark.webp`, `create-account-details-light.webp` / `-dark.webp` (never published under the old names).
+- The case content builds its screenshot cards with one helper, `caseShots(folder)`: `shot()` for a Light and Dark pair, `singleShot()` for a screen in one version; a test checks that each card's id, Light file and Dark file name the same screen. README shows it.
+- The case content names the previous and next cases with `VIEW` constants. `BentoVisual` has its own component folder, and content types no longer share a component's name (`Feature`, `ImpactSection`, `ComparisonSideContent`, `BentoVisualContent`).
+
+#### Removed
+
+- `KeyOutcomes` and the `highlights` field of a case section: no case study has used them since 5.11.0.
+
 ### 5.13.1 - 2026-10-30
 
 #### Changed

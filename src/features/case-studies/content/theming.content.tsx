@@ -1,12 +1,11 @@
-import type { ShowcaseCard, ThemingCaseStudy } from "#features/case-studies/case-studies.types.ts";
+import type { ThemingCaseStudy } from "#features/case-studies/case-studies.types.ts";
 import { VIEW } from "#shared/lib/routes/routes.constants.ts";
 import { lead } from "#shared/ui/lead/lead.tsx";
 
-/** Every Data Governance screenshot has a Light and a Dark version: `<name>-light.webp` / `<name>-dark.webp`. */
-const shot = (name: string): Pick<ShowcaseCard, "asset" | "darkAsset"> => ({
-  asset: `cases/data-governance/${name}-light.webp`,
-  darkAsset: `cases/data-governance/${name}-dark.webp`,
-});
+import { caseShots } from "./content.utils.ts";
+
+/** Every Data Governance screenshot has a Light and a Dark version. */
+const { shot } = caseShots("data-governance");
 
 /* Case study - Enterprise White-Label Theme Generator (Data Governance). One product name everywhere: Work card, H1, SEO name, next links. Screenshot fields: see ShowcaseCard in case-studies.types.ts. */
 export const THEMING_CASE: ThemingCaseStudy = {
@@ -67,7 +66,6 @@ export const THEMING_CASE: ThemingCaseStudy = {
     "To prevent unrestricted branding from breaking usability, I designed a governed theming workflow. We gave client administrators control over key brand touchpoints, while embedding clear WCAG 2.1 AA guardrails, luminance rules, and validation checks to protect readability across enterprise workflows.",
   solution: [
     {
-      id: "surfaces",
       ...shot("theme-editor-header"),
       alt: "Theme editor for Harbor Bank on its Header bar section: logo and browser icon uploads, background, breadcrumb link and button colours with contrast ratings (AAA 12.3:1, AA 6.8:1, AAA 10.1:1), notes that text and labels are set automatically, and a live preview.",
       title: "Configurable Surfaces & Inline Guidance",
@@ -88,7 +86,6 @@ export const THEMING_CASE: ThemingCaseStudy = {
       ],
     },
     {
-      id: "contrast",
       ...shot("derived-states-buttons-nav"),
       alt: "State rules for four brand colours: each Create button in default, hover (+30% black), pressed (+30% white) and disabled (40% opacity) states with its label contrast ratio, and navigation tabs on dark and light backgrounds.",
       title: "Automated Component States from One Base Color",
@@ -110,7 +107,6 @@ export const THEMING_CASE: ThemingCaseStudy = {
       ],
     },
     {
-      id: "states",
       ...shot("derived-states-sidebar-table"),
       alt: "Selection rules for the navigation sidebar and data tables in two brand colours: selected at full colour, hover at 35% opacity, pressed with 8% black, and the four lines of CSS that apply them to any palette.",
       title: "Sidebar and Table Selection Rules",
@@ -131,7 +127,6 @@ export const THEMING_CASE: ThemingCaseStudy = {
       ],
     },
     {
-      id: "cvd-matrix",
       ...shot("color-vision-matrix"),
       alt: "Three themes - System Default, Northwind Health and Harbor Bank - each shown under typical vision, protanopia, deuteranopia and tritanopia, with a note that status colours always come with an icon and a text label.",
       title: "Advocating for Accessibility in Team Reviews",
@@ -153,7 +148,6 @@ export const THEMING_CASE: ThemingCaseStudy = {
       ],
     },
     {
-      id: "global-views",
       ...shot("color-vision-preview"),
       alt: "Branding page with the Harbor Bank theme's Accessibility tab: typical vision and tritanopia previews side by side and four contrast checks that all pass.",
       title: "Color-Vision Accessibility Preview (Phase 2)",
@@ -179,7 +173,6 @@ export const THEMING_CASE: ThemingCaseStudy = {
     "Changing visual themes in an enterprise multi-tenant tool directly affects active users across organizations. To prevent critical mistakes and broken layouts, I designed three clear safety mechanisms into the publishing workflow.",
   safety: [
     {
-      id: "immutability",
       ...shot("theme-library"),
       alt: "Branding page listing three themes; the locked System Default theme's menu offers Duplicate to customize and Export as JSON while Edit and Delete are locked, beside a read-only system theme note.",
       title: "Protecting the Default System Theme",
@@ -196,7 +189,6 @@ export const THEMING_CASE: ThemingCaseStudy = {
       ],
     },
     {
-      id: "session-warning",
       ...shot("publish-confirmation"),
       alt: "Publish confirmation for the Harbor Bank theme: a before and after preview, notes that signed-in people see it on their next refresh and everyone else at their next sign-in, and that System Default can be republished at any time.",
       title: "Clear Warnings Before Applying Changes",
@@ -213,7 +205,6 @@ export const THEMING_CASE: ThemingCaseStudy = {
       ],
     },
     {
-      id: "css-sandbox",
       ...shot("theme-editor-custom-css"),
       alt: "Custom CSS section of the theme editor, marked Advanced: a warning that monthly releases can break overrides, a short overrides file with no syntax errors, and a checkbox confirming overrides will be re-tested after each release.",
       title: "Optional CSS Field with Maintenance Warnings",

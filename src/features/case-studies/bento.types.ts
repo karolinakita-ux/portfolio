@@ -7,7 +7,8 @@
 /** A colour sample: any CSS colour, including color-mix() for derived states. */
 export type ColorValue = string;
 
-export type BentoVisual =
+/** The small visual at the foot of a card, shown by BentoVisual. */
+export type BentoVisualContent =
   /** Small neutral tags (who it was for). */
   | { kind: "tags"; items: readonly string[] }
   /** Checked items (what shipped). */
@@ -29,5 +30,5 @@ export interface BentoCard {
   status?: { label: string; tone: BentoStatusTone };
   /** Spans two columns of the three-column grid (from md). */
   wide?: boolean;
-  visual?: BentoVisual;
+  visual?: BentoVisualContent;
 }

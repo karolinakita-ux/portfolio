@@ -1,8 +1,8 @@
 import { Badge } from "#shared/ui/Badge/Badge.tsx";
 import { Check } from "#shared/ui/icons/icons.tsx";
 
-import { styles } from "./BentoCards.styles.ts";
-import type { BentoVisualProps } from "./BentoCards.types.ts";
+import { styles } from "./BentoVisual.styles.ts";
+import type { BentoVisualProps } from "./BentoVisual.types.ts";
 
 /** The small visual at the foot of a bento card: tags, checks, label samples, swatches, code or two phases. */
 export function BentoVisual({ visual }: BentoVisualProps) {

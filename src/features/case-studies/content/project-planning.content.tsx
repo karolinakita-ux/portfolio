@@ -3,15 +3,17 @@ import { VIEW } from "#shared/lib/routes/routes.constants.ts";
 import { lead } from "#shared/ui/lead/lead.tsx";
 import { Swatch } from "#shared/ui/Swatch/Swatch.tsx";
 
+import { caseShots } from "./content.utils.ts";
+
 /*
  * Case study - Project Planning & Cost Management. The client is not named anywhere (copy, alt text, file names,
- * screenshots); the screens are a sanitised rebuild with sample data. Layout and copy follow the Figma frame
- * "case-project-planning - light" (Kita Branding file, Portfolio page). Claims are checked against the Planning & Cost
+ * screenshots, comments); the screens are a sanitised rebuild with sample data. The layout follows Figma node
+ * 2716:3801 (Kita Branding file, now on the Archive page). Claims are checked against the Planning & Cost
  * Management Platform Figma file (notes, status pills and variables); screens marked "Proposal - needs sign-off"
  * there are called proposals here. Screenshot fields: see ShowcaseCard in case-studies.types.ts; every screenshot
  * has a Light and a Dark version.
  */
-const IMAGES = "cases/project-planning/";
+const { shot } = caseShots("project-planning");
 
 export const PROJECT_PLANNING_CASE: CaseStudy = {
   view: VIEW.caseProjectPlanning,
@@ -85,17 +87,13 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
       ],
       media: [
         {
-          id: "brand-primary",
-          asset: IMAGES + "brand-primary-actions-light.webp",
-          darkAsset: IMAGES + "brand-primary-actions-dark.webp",
+          ...shot("brand-primary-actions"),
           frameless: true,
           alt: "Brand primary tokens for interactive actions: primary #005D8F, hover, active, contrast and subtle, each with its token name, hex value, contrast ratio and AAA badge.",
           title: "Brand primary - interactive actions",
         },
         {
-          id: "semantic-status",
-          asset: IMAGES + "semantic-status-tags-light.webp",
-          darkAsset: IMAGES + "semantic-status-tags-dark.webp",
+          ...shot("semantic-status-tags"),
           frameless: true,
           alt: "Semantic status tokens: Approved, At risk, Rejected, Sent and Not started tags with their contrast ratios, and decorative green, orange, red and neutral accents for bars and markers.",
           title: "Semantic status - tags and indicators",
@@ -131,9 +129,7 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
       ],
       media: [
         {
-          id: "week-view",
-          asset: IMAGES + "calendar-week-view-light.webp",
-          darkAsset: IMAGES + "calendar-week-view-dark.webp",
+          ...shot("calendar-week-view"),
           alt: "Month overview in week view: a Participant and Organizer switch, a project filter, a mini calendar with meeting counts, the selected day's meetings and a weekly grid of meetings with a current-time line.",
           title: "Month overview - week view",
         },
@@ -168,9 +164,7 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
       ],
       media: [
         {
-          id: "goals-timeline",
-          asset: IMAGES + "goals-milestones-timeline-light.webp",
-          darkAsset: IMAGES + "goals-milestones-timeline-dark.webp",
+          ...shot("goals-milestones-timeline"),
           alt: "Goals and milestones timeline: a tree of goals, key results and milestones with owners and status tags beside a Gantt chart with progress bars, milestone diamonds, dependencies, a Today marker and an at-risk popover.",
           title: "Goals & milestones timeline",
         },
@@ -201,16 +195,12 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
       ],
       media: [
         {
-          id: "cost-distribution",
-          asset: IMAGES + "cost-distribution-light.webp",
-          darkAsset: IMAGES + "cost-distribution-dark.webp",
+          ...shot("cost-distribution"),
           alt: "Cost distribution: a drill-down sunburst chart beside a table of programmes with cost in PLN, share and difference against plan.",
           title: "PMO - cost distribution",
         },
         {
-          id: "budget-table",
-          asset: IMAGES + "projects-budget-table-light.webp",
-          darkAsset: IMAGES + "projects-budget-table-dark.webp",
+          ...shot("projects-budget-table"),
           alt: "Projects table with search and filters: main projects and sub-projects with type and status tags, budget used bars in blue, orange and red, logged time, meeting cost and end dates.",
           title: "Projects - budget burn table",
         },
@@ -245,8 +235,8 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
   // has no approval. Link it again (title, body, "Open the Figma file") once Karolina has painted it out there.
   // Third case in the Work order (Smart Ticket → Automotive → Project Planning → Data Governance).
   prev: {
-    view: "case-automotive",
+    view: VIEW.caseAutomotive,
     label: "Automotive B2B Ecosystem: From Dealer Research Across Europe to a Validated Redesign",
   },
-  next: { view: "case-theming", label: "Enterprise White-Label Theme Generator" },
+  next: { view: VIEW.caseTheming, label: "Enterprise White-Label Theme Generator" },
 };

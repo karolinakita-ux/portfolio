@@ -11,7 +11,7 @@ export const styles = {
   block: clsx("flex flex-col gap-xs"),
   label: clsx("text-label-md text-text-secondary uppercase"),
   text: clsx("text-body-md text-text-primary"),
-  /** The goal stands out on the brand tint, as in Figma. */
+  /** The goal stands out on the Kita brand tint (Figma's persona image tints it in the product's indigo). */
   goal: clsx("flex flex-col gap-xs rounded-md bg-bg-accent-brand-subtle p-md"),
   goalLabel: clsx("text-label-md text-text-primary uppercase"),
   goalText: clsx("text-body-md font-medium text-text-primary"),

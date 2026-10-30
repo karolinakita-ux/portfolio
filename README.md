@@ -71,15 +71,15 @@ docs/                          architecture, design source, tracking plan (analy
 
 Most edits are copy changes in `src/features/*/*.content.ts` (case studies in `src/features/case-studies/`). The writing rules (plain English, short hyphens, bold lead-ins on case-study bullets) are checked by `src/app/content-rules.test.ts`.
 
-To add a screenshot to a case study, put a WebP file in `public/assets/cases/<case>/` and reference it by its path under `/assets`:
+To add a screenshot to a case study, put `<name>-light.webp` and `<name>-dark.webp` (WebP, quality 90) in `public/assets/cases/<case>/` and build the card with the case's `caseShots("<case>")` helper (`src/features/case-studies/content/content.utils.ts`):
 
 ```ts
-{
-  id: "roadmap",
-  asset: "cases/project-planning/08-roadmap-gantt-goals-decomposition.webp",          // full screen, opens in the viewer
-  detail: "cases/project-planning/08-roadmap-gantt-goals-decomposition--detail.webp", // optional close-up shown on the card
-}
+const { shot, singleShot } = caseShots("automotive");
+{ ...shot("purchase-flow"), title: "...", alt: "..." }        // Light and Dark pair; the card id is "purchase-flow"
+{ ...singleShot("lock-screen-live-activity"), title: "...", alt: "..." } // one version for both themes
 ```
+
+The card id is the image's base name, which is also the `image` value in the statistics.
 
 Images are cached for a week, so a changed image gets a new file name.
 

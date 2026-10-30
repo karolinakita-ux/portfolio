@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.tsx";
 import { caseCards } from "#features/case-studies/gallery/gallery.utils.ts";
+import { styles as screenshot } from "#shared/media/Screenshot/Screenshot.styles.ts";
 
 import { CaseSmartTicketView } from "./CaseSmartTicketView.tsx";
 
@@ -35,6 +36,19 @@ describe("CaseSmartTicketView", () => {
     const cards = caseCards(c);
     for (const card of cards) expect(screen.getByAltText(card.alt)).toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: /^View full size/ })).toHaveLength(cards.length);
+  });
+
+  it("shows the user flow without the screenshot frame: the image draws its own border", () => {
+    renderCase();
+    const flow = screen.getByAltText(c.flow.media.alt).closest("button");
+    expect(flow).toHaveAttribute("class", screenshot.button(true));
+  });
+
+  it("keeps a figure and its unit on one line (no-break space: 60 s)", () => {
+    renderCase();
+    const text = screen.getByRole("region", { name: c.operations.title }).textContent;
+    expect(text).toContain("60\u00a0s");
+    expect(text).not.toMatch(/\d s\b/);
   });
 
   it("names the before and after measurements of each comparison", () => {
