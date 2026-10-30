@@ -24,7 +24,12 @@ export function CaseCard({ item, resolveAsset, onNavigate }: CaseCardProps) {
           the image itself, and its alt text, stay readable. The hidden title names the link for readers that
           ignore ARIA (search engines, link and text extractors), which would otherwise see an empty link. */}
       <div className={styles.thumbnail}>
-        <CaseThumbnail src={resolveAsset(item.asset)} alt={item.alt} interactive />
+        <CaseThumbnail
+          src={resolveAsset(item.asset)}
+          darkSrc={item.darkAsset ? resolveAsset(item.darkAsset) : undefined}
+          alt={item.alt}
+          interactive
+        />
         <ViewLink
           view={item.view}
           onNavigate={onNavigate}

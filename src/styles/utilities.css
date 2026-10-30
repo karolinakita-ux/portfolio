@@ -1,20 +1,57 @@
 /* Named utilities and variants: layout grids, layers, glows, accordion rows, the scroll reveal. */
 
-/* Named layout utilities */
+/* Named layout utilities (column widths in rem, like the tokens: they grow with the browser's text size) */
 @utility grid-cols-case-md {
-  grid-template-columns: 224px minmax(0, 1fr);
+  grid-template-columns: 14rem minmax(0, 1fr);
 }
 @utility grid-cols-case-lg {
-  grid-template-columns: 300px minmax(0, 1fr);
+  grid-template-columns: 18.75rem minmax(0, 1fr);
 }
 @utility grid-cols-about-lg {
-  grid-template-columns: minmax(0, 1fr) 376px;
+  grid-template-columns: minmax(0, 1fr) 23.5rem;
 }
-@utility grid-cols-showcase {
-  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+/* Case-study feature row (Figma: 440px text column beside a fluid visual column), and its mirror */
+@utility grid-cols-feature {
+  grid-template-columns: minmax(0, 27.5rem) minmax(0, 1fr);
+}
+@utility grid-cols-feature-reverse {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 27.5rem);
+}
+/* Case-study phone row (Figma: wide text column beside a 376px phone card), and its mirror */
+@utility grid-cols-phone {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 23.5rem);
+}
+@utility grid-cols-phone-reverse {
+  grid-template-columns: minmax(0, 23.5rem) minmax(0, 1fr);
 }
 @utility grid-cols-term {
   grid-template-columns: auto minmax(0, 1fr);
+}
+/* CV sheet rows (Figma CV frame): a 132px section label beside the content, and a 112px skill area beside
+   its skills. Used with the sheet variant below. */
+@utility grid-cols-cv {
+  grid-template-columns: 8.25rem minmax(0, 1fr);
+}
+@utility grid-cols-cv-skills {
+  grid-template-columns: 7rem minmax(0, 1fr);
+}
+/* The CV sheet's two-column layout: from md on screen, and always on paper. A4 inside the print margins is
+   about 666px wide, narrower than md (48rem), so md: alone would print the phone layout. 48rem is
+   --breakpoint-md in theme.css (relative-units.test.ts checks that it stays a breakpoint). */
+@custom-variant sheet {
+  @media print {
+    @slot;
+  }
+  @media (width >= 48rem) {
+    @slot;
+  }
+}
+/* The short gold bar under a CV section label (Figma: 24 x 3px, bgAccentBrand). Decorative: the heading above
+   it carries the meaning, so it may vanish in Windows contrast themes. */
+@utility accent-rule {
+  width: var(--spacing-lg);
+  height: 0.1875rem;
+  background-color: var(--bg-accent-brand);
 }
 /* Site header from md: logo | nav (centred on the page) | theme switch */
 @utility grid-cols-header {

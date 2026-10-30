@@ -10,7 +10,8 @@
 .kb-theme-switching *::after {
   transition: none !important;
 }
-/* Where the browser has view transitions, the old page cross-fades into the new one. */
+/* Where the browser has view transitions (not in in-app browsers or with reduced motion: changeTheme in
+   shared/hooks/theme/theme.utils.ts), the old page cross-fades into the new one. */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: var(--motion-duration-medium);

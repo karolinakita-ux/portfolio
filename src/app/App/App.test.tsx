@@ -5,8 +5,8 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import { AUTOMOTIVE_CASE } from "#features/case-studies/content/automotive.content.ts";
+import { DATA_GOVERNANCE_CASE } from "#features/case-studies/content/data-governance.content.ts";
 import { PROJECT_PLANNING_CASE } from "#features/case-studies/content/project-planning.content.tsx";
-import { THEMING_CASE } from "#features/case-studies/content/theming.content.tsx";
 import { caseCards } from "#features/case-studies/gallery/gallery.utils.ts";
 import { PRIVACY } from "#features/privacy/privacy.content.tsx";
 import { UMAMI } from "#shared/lib/analytics/analytics.constants.ts";
@@ -30,18 +30,19 @@ const primaryNav = () => screen.getByRole("navigation", { name: "Primary" });
 describe("App", () => {
   it("opens on Work", () => {
     renderApp();
-    expect(h1()).toHaveTextContent("Clarity for complex enterprise software");
+    expect(h1()).toHaveTextContent("Clarity for Complex Enterprise Software");
     expect(document.title).toBe("Karolina Kita - Senior Product Designer");
     expect(within(primaryNav()).getByRole("link", { name: "Work" })).toHaveAttribute("aria-current", "page");
   });
 
-  it("offers the case studies, the Figma workspace and the code from the hero, and credits the tools in the footer", async () => {
+  it("offers the case studies from the hero, the Figma workspace and the code from the banner, and credits the tools in the footer", async () => {
     const { user } = renderApp();
 
-    const figma = screen.getByRole("link", { name: /^Inspect Figma Workspace.*opens in a new tab/ });
+    const banner = within(screen.getByRole("complementary", { name: "How this portfolio was built" }));
+    const figma = banner.getByRole("link", { name: /^Explore the Figma Workspace.*opens in a new tab/ });
     expect(figma).toHaveAttribute("href", expect.stringContaining("figma.com"));
     expect(figma).toHaveAttribute("target", "_blank");
-    const code = screen.getByRole("link", { name: /^View Code on GitHub.*opens in a new tab/ });
+    const code = banner.getByRole("link", { name: /^Explore the Code on GitHub.*opens in a new tab/ });
     expect(code).toHaveAttribute("href", "https://github.com/karolinakita-ux/portfolio");
 
     const hero = screen.getByRole("heading", { level: 1 });
@@ -66,7 +67,7 @@ describe("App", () => {
 
   it("links each recommendation to its author and company on LinkedIn, and to the full recommendations", () => {
     renderApp();
-    const section = within(screen.getByRole("region", { name: "Trusted by the leaders I worked for" }));
+    const section = within(screen.getByRole("region", { name: "Trusted by the Leaders I Worked For" }));
     const expectNewTab = (name: RegExp, href: string) => {
       const link = section.getByRole("link", { name });
       expect(link).toHaveAttribute("href", href);
@@ -99,11 +100,12 @@ describe("App", () => {
   });
 
   it.each([
-    ["/about", "Designing clarity for complex software"],
-    ["/contact", "Let’s connect"],
-    ["/cv", "Designing clarity for complex software"], // the CV page, removed in 4.0.0: About
+    ["/about", "Designing Clarity for Complex Software"],
+    ["/contact", "Let’s Connect"],
+    ["/cv", "Karolina Kita"],
+    ["/resume", "Karolina Kita"], // the CV's old name
     ["/work/data-governance", "White-Label Theme Generator"],
-    ["/#about", "Designing clarity for complex software"], // old hash link (before 3.0.0)
+    ["/#about", "Designing Clarity for Complex Software"], // old hash link (before 3.0.0)
   ])("deep-links %s", (url, heading) => {
     renderApp(url);
     expect(h1()).toHaveTextContent(heading);
@@ -124,7 +126,7 @@ describe("App", () => {
 
     await user.click(within(primaryNav()).getByRole("link", { name: "About" }));
 
-    expect(h1()).toHaveTextContent("Designing clarity for complex software");
+    expect(h1()).toHaveTextContent("Designing Clarity for Complex Software");
     expect(window.location.pathname).toBe("/about");
     expect(document.title).toBe("About - Karolina Kita");
     expect(within(primaryNav()).getByRole("link", { name: "About" })).toHaveAttribute("aria-current", "page");
@@ -133,45 +135,50 @@ describe("App", () => {
   it("opens a case study from its thumbnail, without an extra Tab stop or screen reader link", async () => {
     const { user } = renderApp();
     const thumbnailLinks = document.querySelectorAll<HTMLAnchorElement>("a[data-case-thumbnail-link]");
-    expect(thumbnailLinks).toHaveLength(3);
+    expect(thumbnailLinks).toHaveLength(4);
     for (const link of thumbnailLinks) {
       expect(link).toHaveAttribute("tabindex", "-1");
       expect(link).toHaveAttribute("aria-hidden", "true");
     }
     // Readers that ignore ARIA (search engines, text extractors) still get a named link: the card title.
     expect([...thumbnailLinks].map((link) => link.textContent)).toEqual([
+      "Smart Ticket: Mobile Ticketing & Transit Operations",
       "Automotive B2B Marketplace Redesign",
       "Project Planning & Cost Management Platform",
       "Enterprise White-Label Theme Generator",
     ]);
     // The image stays readable: the overlay sits beside it, not around it.
-    const thumbnail = screen.getByRole("img", { name: /^A Create New Theme panel between two Edit Theme panels/ });
+    const thumbnail = screen.getByRole("img", { name: /^The same data table in a read-only base theme/ });
     expect(thumbnail.closest("a")).toBeNull();
-    // Only the CTA reaches the theming case from the keyboard / accessibility tree.
-    const themingPath = "/work/data-governance";
-    expect(screen.getAllByRole("link").filter((link) => link.getAttribute("href") === themingPath)).toHaveLength(1);
+    // Only the CTA reaches the Data Governance case from the keyboard / accessibility tree.
+    const casePath = "/work/data-governance";
+    expect(screen.getAllByRole("link").filter((link) => link.getAttribute("href") === casePath)).toHaveLength(1);
 
-    const themingLink = [...thumbnailLinks].find((link) => link.getAttribute("href") === themingPath);
-    await user.click(themingLink!);
+    const caseLink = [...thumbnailLinks].find((link) => link.getAttribute("href") === casePath);
+    await user.click(caseLink!);
     expect(h1()).toHaveTextContent("White-Label Theme Generator");
-    expect(window.location.pathname).toBe(themingPath);
+    expect(window.location.pathname).toBe(casePath);
   });
 
   it("walks the case studies from the Work page", async () => {
     const { user } = renderApp();
 
-    await user.click(screen.getByRole("link", { name: "View Discovery Case" }));
-    expect(h1()).toHaveTextContent("Automotive B2B Marketplace: Research-Backed Redesign");
+    const automotiveCard = within(screen.getByRole("article", { name: "Automotive B2B Marketplace Redesign" }));
+    await user.click(automotiveCard.getByRole("link", { name: "View Case Study" }));
+    expect(h1()).toHaveTextContent(
+      "Automotive B2B Marketplace: From Dealer Research Across Europe to a Validated Redesign",
+    );
     // Work is the current section; only the breadcrumb marks the case study as the current page.
     expect(within(primaryNav()).getByRole("link", { name: "Work" })).toHaveAttribute("aria-current", "true");
 
-    await user.click(screen.getByRole("link", { name: /^Next Case Study.*Enterprise Project Planning/ }));
+    const endNav = within(screen.getByRole("navigation", { name: "Case study navigation" }));
+    await user.click(endNav.getByRole("link", { name: /^Next Case Study.*Enterprise Project Planning/ }));
     expect(h1()).toHaveTextContent("Enterprise Project Planning & Cost Management Platform");
 
     await user.click(
       within(screen.getByRole("navigation", { name: "Breadcrumb" })).getByRole("link", { name: "Work" }),
     );
-    expect(h1()).toHaveTextContent("Clarity for complex enterprise software");
+    expect(h1()).toHaveTextContent("Clarity for Complex Enterprise Software");
   });
 
   it("orders the header as it looks on desktop: logo, primary nav, then the theme switch", () => {
@@ -179,7 +186,7 @@ describe("App", () => {
     const header = screen.getByRole("banner");
     const logo = within(header).getByRole("link", { name: "K.Kita - Karolina Kita, home page" });
     const nav = within(header).getByRole("navigation", { name: "Primary" });
-    const themeSwitch = within(header).getByRole("group", { name: "Color theme" });
+    const themeSwitch = within(header).getByRole("group", { name: "Colour theme" });
 
     expect(logo.compareDocumentPosition(nav) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(nav.compareDocumentPosition(themeSwitch) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
@@ -187,7 +194,7 @@ describe("App", () => {
 
   it("switches and remembers the theme", async () => {
     const { user } = renderApp();
-    const dark = screen.getByRole("button", { name: "Dark theme" });
+    const dark = screen.getByRole("button", { name: "Dark mode" });
 
     await user.click(dark);
 
@@ -203,11 +210,11 @@ describe("App", () => {
 
     await user.click(firstScreenshot);
     const dialog = screen.getByRole("dialog");
-    expect(within(dialog).getByRole("heading", { name: "Multi-Market Survey Analysis" })).toBeInTheDocument();
+    expect(within(dialog).getByRole("heading", { name: "Multi-Market Data Synthesis" })).toBeInTheDocument();
     expect(within(dialog).getByText(/^1 \/ \d+$/)).toBeInTheDocument();
 
     await user.keyboard("{ArrowRight}");
-    expect(within(dialog).getByRole("heading", { name: "1-on-1 Customer Interviews" })).toBeInTheDocument();
+    expect(within(dialog).getByRole("heading", { name: "1:1 Interviews in Polish" })).toBeInTheDocument();
 
     await user.click(within(dialog).getByRole("button", { name: "Close image viewer" }));
     expect(dialog).not.toHaveAttribute("open");
@@ -235,12 +242,12 @@ describe("App", () => {
     // Keyboard focus counts as interest too.
     cardLink("Automotive B2B Marketplace Redesign").focus();
     expect(preloadImages).toHaveBeenLastCalledWith(shots(AUTOMOTIVE_CASE));
-    expect(preloadImages).not.toHaveBeenCalledWith(shots(THEMING_CASE));
+    expect(preloadImages).not.toHaveBeenCalledWith(shots(DATA_GOVERNANCE_CASE));
   });
 
   it("expands FAQ answers on the About page", async () => {
     const { user } = renderApp("/about");
-    const question = screen.getByRole("button", { name: /How does a background in psychology/ });
+    const question = screen.getByRole("button", { name: /How Does a Background in Psychology/ });
     expect(question).toHaveAttribute("aria-expanded", "false");
 
     await user.click(question);

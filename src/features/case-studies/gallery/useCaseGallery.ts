@@ -2,12 +2,14 @@ import { useCallback, useEffect, useMemo } from "react";
 import ASSET_SIZES from "virtual:asset-sizes";
 
 import type { GalleryRow, ShowcaseCard } from "#features/case-studies/case-studies.types.ts";
+import { useDocumentTheme } from "#shared/hooks/theme/useDocumentTheme.ts";
 import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import { track } from "#shared/lib/analytics/analytics.utils.ts";
 import type { View } from "#shared/lib/routes/routes.types.ts";
 import { preloadImages } from "#shared/media/image-preload/image-preload.utils.ts";
 import { useLightbox } from "#shared/media/lightbox/lightbox.context.ts";
 import type { LightboxItem } from "#shared/media/lightbox/lightbox.types.ts";
+import { pickThemedSrc } from "#shared/media/themed-image/themed-image.utils.ts";
 
 /**
  * Turns a case study's screenshot cards into one image-viewer gallery, so
@@ -15,6 +17,7 @@ import type { LightboxItem } from "#shared/media/lightbox/lightbox.types.ts";
  * Returns one row per card, in the same order as `cards`. Once the page is
  * idle, the full screenshots load in the background, so the viewer opens at once.
  * Opening a screenshot is counted (image-open) with the case's view and the card id.
+ * In Dark mode the viewer shows (and preloads) each card's dark version when it has one.
  */
 export function useCaseGallery(
   cards: readonly ShowcaseCard[],
@@ -22,13 +25,15 @@ export function useCaseGallery(
   caseView: View,
 ): GalleryRow[] {
   const openImage = useLightbox();
+  const theme = useDocumentTheme();
 
   const gallery = useMemo(
     () =>
       cards.map((card): LightboxItem => {
-        const size = ASSET_SIZES[card.asset];
+        const asset = pickThemedSrc(theme, card.asset, card.darkAsset);
+        const size = ASSET_SIZES[asset] ?? ASSET_SIZES[card.asset];
         return {
-          src: resolveAsset(card.asset),
+          src: resolveAsset(asset),
           alt: card.alt,
           title: card.title,
           ...(size && { width: size[0], height: size[1] }),
@@ -37,7 +42,7 @@ export function useCaseGallery(
           },
         };
       }),
-    [cards, caseView, resolveAsset],
+    [cards, caseView, resolveAsset, theme],
   );
 
   useEffect(() => preloadImages(gallery.map((item) => item.src)), [gallery]);
@@ -54,6 +59,7 @@ export function useCaseGallery(
   return cards.map((card, index) => ({
     card,
     src: resolveAsset(card.asset),
+    darkSrc: card.darkAsset ? resolveAsset(card.darkAsset) : undefined,
     previewSrc: card.detail ? resolveAsset(card.detail) : undefined,
     onExpand: expandAt(index),
   }));

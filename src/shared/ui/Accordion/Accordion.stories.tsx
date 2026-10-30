@@ -21,17 +21,21 @@ export const Default: Story = {
   args: {
     children: (
       <>
-        <AccordionItem title="How does a background in psychology help?" onOpen={onOpen}>
-          <p>It helps me see how people actually think and work.</p>
+        <AccordionItem title="How Does a Background in Psychology Shape Your Design Work?" onOpen={onOpen}>
+          <p>
+            Psychology helps me understand how people process information, make choices, and handle heavy workloads.
+          </p>
         </AccordionItem>
-        <AccordionItem title="Which tools do you use?">
-          <p>Figma, a token-driven design system, and code prototypes.</p>
+        <AccordionItem title="How Do You Collaborate with Cross-Functional Teams?">
+          <p>Great software is always a team effort.</p>
         </AccordionItem>
       </>
     ),
   },
   play: async ({ canvas }) => {
-    const question = canvas.getByRole("button", { name: "How does a background in psychology help?" });
+    const question = canvas.getByRole("button", {
+      name: "How Does a Background in Psychology Shape Your Design Work?",
+    });
     await expect(question).toHaveAttribute("aria-expanded", "false");
     await userEvent.click(question);
     await expect(question).toHaveAttribute("aria-expanded", "true");

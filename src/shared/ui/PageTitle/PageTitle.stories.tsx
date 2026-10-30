@@ -6,7 +6,7 @@ import { PageTitle } from "./PageTitle.tsx";
 const meta = {
   title: "UI/PageTitle",
   component: PageTitle,
-  args: { id: "story-title", children: "Clarity for complex enterprise software" },
+  args: { id: "story-title", children: "Clarity for Complex Enterprise Software" },
 } satisfies Meta<typeof PageTitle>;
 
 export default meta;

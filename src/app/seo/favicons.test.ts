@@ -2,6 +2,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
+import { headersFor } from "#test/headers.ts";
+
 /**
  * The site icons. Google Search does not read SVG favicons (it lists BMP, GIF, ICO, PNG, JPEG, PPM and TIFF)
  * and shows a plain globe instead, so index.html links PNG and ICO copies after the SVG, made from it by
@@ -36,25 +38,6 @@ function icoSizes(data: Buffer): string[] {
   });
 }
 
-/** A rule in public/_headers: a path, then its indented "Name: value" lines. */
-interface HeaderRule {
-  path: string;
-  headers: string[];
-}
-
-function headerRules(text: string): HeaderRule[] {
-  const rules: HeaderRule[] = [];
-  for (const line of text.split("\n")) {
-    if (!line.trim() || line.startsWith("#")) continue;
-    if (/^\s/.test(line)) rules.at(-1)?.headers.push(line.trim());
-    else rules.push({ path: line.trim(), headers: [] });
-  }
-  return rules;
-}
-
-const matches = (pattern: string, path: string): boolean =>
-  pattern.endsWith("*") ? path.startsWith(pattern.slice(0, -1)) : pattern === path;
-
 describe("site icons", () => {
   it("are linked from index.html: the SVG first, then the PNG and ICO copies, then the iOS icon", () => {
     const attributes = links.map((link) => Object.fromEntries(Array.from(link.attributes, (a) => [a.name, a.value])));
@@ -78,13 +61,12 @@ describe("site icons", () => {
   });
 
   it("may be fetched by search engines, with a short cache because the names never change", () => {
-    const rules = headerRules(read("public", "_headers").toString("utf8"));
     const disallowed = read("public", "robots.txt")
       .toString("utf8")
       .split("\n")
       .flatMap((line) => /^Disallow:\s*(\S+)/i.exec(line)?.[1] ?? []);
     for (const href of hrefs) {
-      const headers = rules.filter((rule) => matches(rule.path, href)).flatMap((rule) => rule.headers);
+      const headers = headersFor(href);
       expect(
         headers.filter((header) => /^X-Robots-Tag:/i.test(header)),
         href,

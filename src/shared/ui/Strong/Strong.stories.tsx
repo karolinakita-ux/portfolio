@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
+import { PROFILE } from "#shared/content/profile.ts";
 import { Lang } from "#shared/ui/Lang/Lang.tsx";
 import { lead } from "#shared/ui/lead/lead.tsx";
 import { NewTabNote } from "#shared/ui/NewTabNote/NewTabNote.tsx";
@@ -28,8 +29,17 @@ export const LeadIn: Story = {
 export const OtherLanguage: Story = {
   render: () => (
     <p>
-      The button said &quot;<Lang lang="pl">Zapisz zmiany</Lang>&quot;.
+      The button said “<Lang lang="pl">Zapisz zmiany</Lang>”.
     </p>
+  ),
+};
+
+/** A whole paragraph in another language (as="p"): Chromium's tagged PDFs carry its language too. */
+export const OtherLanguageParagraph: Story = {
+  render: () => (
+    <Lang lang="pl" as="p">
+      Zgodę mogę wycofać w każdej chwili, pisząc na adres {PROFILE.email}.
+    </Lang>
   ),
 };
 

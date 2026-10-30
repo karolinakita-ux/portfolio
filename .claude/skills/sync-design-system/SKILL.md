@@ -12,5 +12,5 @@ The token chain runs one way: Figma Variables → `src/styles/kita-branding.toke
 3. **Components:** change the component's `*.styles.ts` (variants named as in Figma), its story (real copy) and its test.
 4. **Check the views that use it:** `yarn verify`, then the `ui-reviewer` agent for screenshots at 320, 768 and 1280 px in both themes.
 5. **The KitaBranding design system on claude.ai:** read it first, change `project/tokens.json` and the README where a rule changed, set the index's `lastChange`, and publish once. Afterwards compare every resolved colour with `tokens.css` in both modes.
-6. **Figma:** edit the Figma file only when the user asks. Otherwise write a task for Karolina (where, what, why) on her task page.
+6. **Figma:** Figma is the design source (`docs/design.md`). When the user or Karolina asks, Claude may make a change in Figma itself if the site or one of her answers already decides it: record each node's previous values first, use only Kita Branding variables, check it with a screenshot, and report it on her task page (what changed, where). A change that needs a design decision is a task for Karolina (where, what, why), never a guess.
 7. **Commit** with `ship-change`.

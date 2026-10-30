@@ -51,7 +51,9 @@ export async function writeReport(axeRuns: readonly AxeRun[], notes: readonly st
     "",
     "## Other checks",
     "",
-    ...(notes.length ? notes.map((n) => `- ${n}`) : ["- No Tab, reflow or image viewer problems detected."]),
+    ...(notes.length
+      ? notes.map((n) => `- ${n}`)
+      : ["- No Tab, reflow, large text, forced colours or image viewer problems detected."]),
     "",
     "Details: axe.json (all runs, incl. best-practice and incomplete), sr/*.txt (screen reader transcripts), tab/*.txt (Tab order).",
     "",

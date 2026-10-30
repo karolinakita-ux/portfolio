@@ -24,7 +24,7 @@ export function WorkView({ resolveAsset, onNavigate }: WorkViewProps) {
       >
         <Callout tone="warning" label="Confidentiality note">
           Due to confidentiality and <strong className={styles.emphasis}>NDAs</strong>, client names, product names and
-          sensitive business data in the case studies have been anonymized. In-depth walkthroughs of proprietary flows
+          sensitive business data in the case studies have been anonymised. In-depth walkthroughs of proprietary flows
           are available during interviews.
         </Callout>
         <ul className={styles.cases}>

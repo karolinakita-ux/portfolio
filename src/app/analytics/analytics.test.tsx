@@ -5,13 +5,15 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { App } from "#app/App/App.tsx";
 import { FAQ } from "#features/about/about.content.ts";
 import { AUTOMOTIVE_CASE } from "#features/case-studies/content/automotive.content.ts";
+import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.ts";
 import { caseCards } from "#features/case-studies/gallery/gallery.utils.ts";
 import { WORK_CASES } from "#features/work/work.content.ts";
+import { PROFILE } from "#shared/content/profile.ts";
 import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import type * as Analytics from "#shared/lib/analytics/analytics.utils.ts";
 import { track, trackPageview } from "#shared/lib/analytics/analytics.utils.ts";
 import { describeClick } from "#shared/lib/analytics/clicks.utils.ts";
-import { SECTION } from "#shared/lib/routes/routes.constants.ts";
+import { SECTION, VIEW_PATHS, VIEWS } from "#shared/lib/routes/routes.constants.ts";
 
 /**
  * Which visits and clicks the app counts (src/shared/lib/analytics/analytics.utils.ts): the helpers are mocked,
@@ -96,18 +98,13 @@ describe("events on the Work page", () => {
     expect(events()).toEqual([[EVENT.caseOpen, { case: "case-automotive", from: "thumbnail" }]]);
   });
 
-  it("counts the Figma, GitHub and Storybook links in the hero and in the banner", () => {
+  it("counts the Figma, GitHub and Storybook links in the Behind the Design banner", () => {
     renderApp("/");
-    clickLink(screen.getByRole("link", { name: /^Inspect Figma Workspace/ }));
-    clickLink(screen.getByRole("link", { name: /^View Code on GitHub/ }));
-    clickLink(screen.getByRole("link", { name: /^View Components in Storybook/ }));
-    clickLink(screen.getByRole("link", { name: /^Explore the Figma Workspace/ }));
-    clickLink(screen.getByRole("link", { name: /^Explore the Code on GitHub/ }));
-    clickLink(screen.getByRole("link", { name: /^Explore the Storybook Library/ }));
+    const banner = within(screen.getByRole("complementary", { name: "How this portfolio was built" }));
+    clickLink(banner.getByRole("link", { name: /^Explore the Figma Workspace/ }));
+    clickLink(banner.getByRole("link", { name: /^Explore the Code on GitHub/ }));
+    clickLink(banner.getByRole("link", { name: /^Explore the Storybook Library/ }));
     expect(events()).toEqual([
-      [EVENT.figmaClick, { place: "hero" }],
-      [EVENT.githubClick, { place: "hero" }],
-      [EVENT.storybookClick, { place: "hero" }],
       [EVENT.figmaClick, { place: "banner" }],
       [EVENT.githubClick, { place: "banner" }],
       [EVENT.storybookClick, { place: "banner" }],
@@ -116,7 +113,7 @@ describe("events on the Work page", () => {
 
   it("counts each kind of LinkedIn link in the recommendations", () => {
     renderApp("/");
-    const section = within(screen.getByRole("region", { name: "Trusted by the leaders I worked for" }));
+    const section = within(screen.getByRole("region", { name: "Trusted by the Leaders I Worked For" }));
     clickLink(section.getByRole("link", { name: /^Stewart Wilson, LinkedIn profile/ }));
     clickLink(section.getByRole("link", { name: /^Precisely, company page on LinkedIn/ }));
     clickLink(section.getByRole("link", { name: /^Read the full recommendations on LinkedIn/ }));
@@ -129,9 +126,9 @@ describe("events on the Work page", () => {
 
   it("counts a theme switch, but not picking the theme already shown", async () => {
     const { user } = renderApp("/");
-    await user.click(screen.getByRole("button", { name: "Dark theme" }));
-    await user.click(screen.getByRole("button", { name: "Dark theme" }));
-    await user.click(screen.getByRole("button", { name: "Light theme" }));
+    await user.click(screen.getByRole("button", { name: "Dark mode" }));
+    await user.click(screen.getByRole("button", { name: "Dark mode" }));
+    await user.click(screen.getByRole("button", { name: "Light mode" }));
     expect(events()).toEqual([
       [EVENT.themeSwitch, { theme: "dark" }],
       [EVENT.themeSwitch, { theme: "light" }],
@@ -181,6 +178,39 @@ describe("events in the footer and on the Contact page", () => {
   });
 });
 
+describe("events on the privacy and accessibility pages", () => {
+  it.each([
+    ["/privacy", "privacy", 3],
+    ["/accessibility", "accessibility", 2],
+  ] as const)("counts the email links in the text of %s", (url, place, count) => {
+    renderApp(url);
+    const links = within(screen.getByRole("main")).getAllByRole("link", { name: PROFILE.email });
+    expect(links).toHaveLength(count);
+    for (const link of links) clickLink(link);
+    expect(events()).toEqual(links.map(() => [EVENT.emailClick, { action: "mailto", place }]));
+  });
+});
+
+/** A link that leaves the page for another website, the mail app or a file: a click on it is all Umami sees. */
+const leavesThePage = (link: HTMLAnchorElement) =>
+  new URL(link.href).origin !== window.location.origin ||
+  link.hasAttribute("download") ||
+  link.pathname.endsWith(".pdf");
+
+describe("every way off the site", () => {
+  it.each(VIEWS)("is counted on %s: one event per email, download and external link", (view) => {
+    renderApp(VIEW_PATHS[view]);
+    const links = [...document.querySelectorAll<HTMLAnchorElement>("a[href]")].filter(leavesThePage);
+    expect(links.length).toBeGreaterThan(0);
+    const uncounted = links.filter((link) => {
+      vi.mocked(track).mockClear();
+      clickLink(link);
+      return events().length !== 1;
+    });
+    expect(uncounted.map((link) => link.href)).toEqual([]);
+  });
+});
+
 describe("events on case studies", () => {
   it("counts opening a screenshot and moving to the next case study", async () => {
     const { user } = renderApp("/work/automotive");
@@ -197,6 +227,19 @@ describe("events on case studies", () => {
       [EVENT.imageOpen, { case: "case-automotive", image: caseCards(AUTOMOTIVE_CASE)[0]?.id }],
       [EVENT.imageNav, { case: "case-automotive", image: caseCards(AUTOMOTIVE_CASE)[1]?.id, direction: "next" }],
       [EVENT.caseNav, { from: "case-automotive", to: "case-project-planning", direction: "next", place: "end" }],
+    ]);
+  });
+
+  it("counts the Figma file link under the details panel as the top, the design files banner's as the end", () => {
+    renderApp("/work/smart-ticket");
+    const label = SMART_TICKET_CASE.designFile?.linkLabel ?? "";
+    const [top, end] = screen.getAllByRole("link", { name: new RegExp("^" + label) });
+    if (!top || !end) throw new Error("Smart Ticket has two Figma file links");
+    clickLink(top);
+    clickLink(end);
+    expect(events()).toEqual([
+      [EVENT.figmaClick, { place: "top", case: "case-smart-ticket" }],
+      [EVENT.figmaClick, { place: "end", case: "case-smart-ticket" }],
     ]);
   });
 
@@ -222,6 +265,68 @@ describe("events on the About page", () => {
   });
 });
 
+describe("events for the CV", () => {
+  const h1 = () => screen.getByRole("heading", { level: 1 });
+
+  it("counts each way to the CV page: the Work hero, the About hero and the Contact page", async () => {
+    const { user } = renderApp("/");
+    await user.click(screen.getByRole("link", { name: "View CV" }));
+    expect(window.location.pathname).toBe("/cv");
+    expect(h1()).toHaveTextContent("Karolina Kita");
+
+    const primary = within(screen.getByRole("navigation", { name: "Primary" }));
+    await user.click(primary.getByRole("link", { name: "About" }));
+    await user.click(screen.getByRole("link", { name: "View CV" }));
+    expect(window.location.pathname).toBe("/cv");
+
+    await user.click(primary.getByRole("link", { name: "Contact" }));
+    await user.click(screen.getByRole("link", { name: "View CV" }));
+    expect(window.location.pathname).toBe("/cv");
+
+    expect(events()).toEqual([
+      [EVENT.cvOpen, { place: "hero" }],
+      [EVENT.cvOpen, { place: "about" }],
+      [EVENT.cvOpen, { place: "contact" }],
+    ]);
+  });
+
+  it("counts a View CV link opened in a new tab too, without leaving the page", () => {
+    renderApp("/");
+    // After the app's own handler: stops jsdom from loading the link, which a browser opens in a new tab.
+    document.addEventListener("click", (event) => event.preventDefault(), { once: true });
+    fireEvent.click(screen.getByRole("link", { name: "View CV" }), { ctrlKey: true });
+    expect(window.location.pathname).toBe("/");
+    expect(events()).toEqual([[EVENT.cvOpen, { place: "hero" }]]);
+  });
+
+  it.each([
+    ["/cv", "cv"],
+    ["/contact", "contact"],
+  ] as const)("counts the PDF download on %s", (url, place) => {
+    renderApp(url);
+    clickLink(screen.getByRole("link", { name: /^Download PDF \(2\spages\)$/ }));
+    expect(events()).toEqual([[EVENT.cvDownload, { place }]]);
+  });
+
+  it("counts the CV's email and LinkedIn links; its portfolio link is tagged only in the PDF", () => {
+    renderApp("/cv");
+    const sheet = within(screen.getByRole("article", { name: "Karolina Kita" }));
+    const contacts = within(sheet.getByRole("list", { name: "Contact details" }));
+    clickLink(contacts.getByRole("link", { name: /^https:\/\/www\.linkedin\.com\/in\/karolinakita/ }));
+    clickLink(contacts.getByRole("link", { name: "karolina.kita.zg@gmail.com" }));
+    const [, consentEmail] = sheet.getAllByRole("link", { name: "karolina.kita.zg@gmail.com" });
+    clickLink(consentEmail!);
+    expect(events()).toEqual([
+      [EVENT.linkedinClick, { target: "profile", place: "cv" }],
+      [EVENT.emailClick, { action: "mailto", place: "cv" }],
+      [EVENT.emailClick, { action: "mailto", place: "cv" }],
+    ]);
+    // On the site the link has no tag, so a visit from the CV page does not count as a tagged link (link-ref).
+    // The PDF's copy has ?utm_medium=cv-pdf, which keeps the session's ref (content-rules.test.ts).
+    expect(contacts.getByRole("link", { name: "https://karolina.kita.company" })).toHaveAttribute("href", "/");
+  });
+});
+
 describe("dead clicks", () => {
   it("are described from the page's own markup: the hero, section ids and card titles", () => {
     renderApp("/");
@@ -241,6 +346,47 @@ describe("dead clicks", () => {
       element: "heading",
       area: SECTION.workCases,
       label: first.title,
+    });
+  });
+
+  it("name a case study's comparison and stat cards by their titles, and a screen by its caption", () => {
+    renderApp("/work/smart-ticket");
+    const { rebuild, impact } = SMART_TICKET_CASE;
+    const [comparison] = rebuild.comparisons;
+    const [screenCard] = comparison?.before.media ?? [];
+    const [stat] = impact.stats;
+    if (!comparison || !screenCard || !stat) throw new Error("no comparison, screen or stat");
+    const block = within(screen.getByRole("article", { name: comparison.title }));
+    expect(describeClick(block.getByText(comparison.before.text))).toEqual({
+      element: "text",
+      area: rebuild.id,
+      label: comparison.title,
+    });
+    expect(describeClick(block.getByText(screenCard.title))).toEqual({
+      element: "text",
+      area: rebuild.id,
+      label: screenCard.title,
+    });
+    // The empty space around the screen belongs to the image.
+    const figure = block.getByText(screenCard.title).closest("figure");
+    if (!figure) throw new Error("no figure around the screen");
+    expect(describeClick(figure)).toEqual({ element: "image", area: rebuild.id, label: screenCard.title });
+    expect(describeClick(screen.getByText(stat.label))).toEqual({
+      element: "text",
+      area: impact.id,
+      label: stat.value,
+    });
+  });
+
+  it("name a numbered takeaway card by its title", () => {
+    renderApp("/work/automotive");
+    const [point] = AUTOMOTIVE_CASE.reflections?.points ?? [];
+    if (!point) throw new Error("no reflections");
+    const [title, body] = point;
+    expect(describeClick(screen.getByText(body))).toEqual({
+      element: "text",
+      area: AUTOMOTIVE_CASE.id + "-reflections",
+      label: title,
     });
   });
 });

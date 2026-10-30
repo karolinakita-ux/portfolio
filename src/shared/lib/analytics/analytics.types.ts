@@ -21,7 +21,10 @@ export interface TimeOnPage {
   section?: string;
 }
 
-/** What a click or a copied selection was on: an image, an icon, a heading, text, the empty part of a card, or the page. */
+/**
+ * What a click or a copied selection was on: an image (or the frame around a captioned screenshot), an icon, a
+ * heading, text, the empty part of a card, or the page.
+ */
 export type ClickedElement = "image" | "icon" | "heading" | "text" | "card" | "page";
 
 /** A spot on the page, described from the site's own markup (clicks.utils.ts): dead clicks and text copies. */
@@ -29,8 +32,14 @@ export interface PageSpot {
   element: ClickedElement;
   /** The section id around it, a hero's name (hero, about, case...), or the landmark (header, footer, dialog, main). */
   area: string;
-  /** The image's alt text, the heading, or the card's title: site copy, never anything the visitor typed. */
+  /** The image's alt text or caption, the heading, or the card's title: site copy, never anything the visitor typed. */
   label?: string;
+}
+
+/** A PageSpot's label and the element whose text it is: none for alt text or aria-label, which no selection holds. */
+export interface SpotLabel {
+  text: string;
+  from?: Element;
 }
 
 /** An error in the site's own code (errors.utils.ts). */
@@ -82,16 +91,33 @@ export interface EventData {
   [EVENT.imageOpen]: { case: View; image: string };
   /** The next or previous screenshot in the image viewer (arrow, key or swipe); image: the one now shown. */
   [EVENT.imageNav]: { case: View; image: string; direction: "prev" | "next" };
-  [EVENT.figmaClick]: { place: "hero" | "banner" };
-  [EVENT.githubClick]: { place: "hero" | "banner" };
-  [EVENT.storybookClick]: { place: "hero" | "banner" };
+  /**
+   * banner: the Work page's link to the Figma workspace, in Behind the Design. case: the case study whose Figma file
+   * link was used, at its top (under the details panel) or in the design files banner at the end. The Work hero's
+   * Figma, GitHub and Storybook buttons were removed in 5.14.4: "hero" is earlier data only.
+   */
+  [EVENT.figmaClick]: { place: "banner" } | { place: "top" | "end"; case: View };
+  [EVENT.githubClick]: { place: "banner" };
+  [EVENT.storybookClick]: { place: "banner" };
+  /** cv: the links in the CV's header (the /cv page). */
   [EVENT.linkedinClick]: {
     target: "profile" | "recommendations" | "author" | "company";
-    place: "footer" | "contact" | "testimonials";
+    place: "footer" | "contact" | "testimonials" | "cv";
   };
-  [EVENT.emailClick]: { action: "copy" | "mailto"; place: "footer" | "contact" };
+  /**
+   * cv: the links in the CV's header and consent (the /cv page); privacy, accessibility: the links in the
+   * privacy policy and the accessibility statement (EmailLink).
+   */
+  [EVENT.emailClick]: {
+    action: "copy" | "mailto";
+    place: "footer" | "contact" | "cv" | "privacy" | "accessibility";
+  };
   /** A link to another website that has no event of its own (TextLink external); host: that website. */
   [EVENT.outboundClick]: { host: string };
+  /** A link to the CV page: the Work page hero, the About page hero or the Contact page. */
+  [EVENT.cvOpen]: { place: "hero" | "about" | "contact" };
+  /** A link to the CV's PDF (PROFILE.cvPdfUrl): its Download button on the CV page, or the Contact page. */
+  [EVENT.cvDownload]: { place: "cv" | "contact" };
   /** question: the FAQ item's id. Sent when it opens, not when it closes. */
   [EVENT.faqOpen]: { question: string };
   /** section: the section id (the URL hash the copied link ends in). */
@@ -117,6 +143,9 @@ export type SentData<E extends AnalyticsEvent> = EventData[E] & { input?: InputK
 
 export type EmailPlace = EventData[typeof EVENT.emailClick]["place"];
 
+/** Where a case study's Figma file link sits (figma-click): under the details panel or in the design files banner. */
+export type DesignFilePlace = Extract<EventData[typeof EVENT.figmaClick], { case: View }>["place"];
+
 /** What Umami's tracker sends with each call; the tracker fills it in, analytics.utils.ts overrides the page. */
 export interface UmamiPayload {
   website: string;
@@ -137,8 +166,11 @@ export interface UmamiPayload {
 export type PerformancePayload = UmamiPayload &
   Partial<Record<(typeof LOAD_METRICS)[number] | "cls" | "inp" | "duration", number>>;
 
-/** The kinds of request the tracker makes: pageviews and events, session data, speed reports. */
-export type UmamiSendType = "event" | "identify" | "performance";
+/**
+ * The kinds of request the tracker makes: pageviews and events, session data, speed reports, and its own error
+ * reports (data-errors, off on this site; beforeSend cancels them).
+ */
+export type UmamiSendType = "event" | "identify" | "performance" | "error";
 
 /** data-before-send: gets every request before it goes; null cancels it. */
 export type BeforeSend = (type: UmamiSendType, payload: PerformancePayload) => PerformancePayload | null;

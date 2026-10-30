@@ -2,6 +2,5 @@
 # catch-all rewrite: unknown paths get dist/404.html with a real 404 status.
 /work    /    301
 
-# The CV page was removed in 4.0.0; its old links open About.
-/cv      /about    301
-/resume  /about    301
+# /resume, an old name of the CV page, opens it (the app's VIEW_ALIASES do the same for /#resume).
+/resume  /cv    301

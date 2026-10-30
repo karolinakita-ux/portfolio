@@ -6,14 +6,16 @@
  *   from where it is. With no item on one side (/privacy) it fades instead. Nothing moves on the first
  *   load or under reduced motion.
  * - Theme switch: its pill travels the same way. Where document.startViewTransition exists the
- *   page cross-fades through it (the toggle keeps its own live layer); elsewhere the theme switches
- *   in one frame, with CSS transitions off while it does.
+ *   page cross-fades through it (the toggle keeps its own live layer), except in in-app browsers
+ *   (Messenger); elsewhere the theme switches in one frame, with CSS transitions off while it does.
+ *   On the first load with Dark stored, the Dark pill shows and nothing moves either.
  * - Forced colours: the visible pill keeps a 1px border.
  */
 import { expect, test, type Page } from "@playwright/test";
 
 import { NAV_ITEMS, VIEW, VIEW_PATHS } from "#shared/lib/routes/routes.constants.ts";
 import type { View } from "#shared/lib/routes/routes.types.ts";
+import { UA } from "#test/user-agents.ts";
 
 import { summariseAnimations } from "./helpers/animations.utils.ts";
 import { expectFade, expectJump, expectResting, expectTravel } from "./helpers/expectations.utils.ts";
@@ -67,6 +69,13 @@ test.describe("nav pill at rest", () => {
       expectResting(await sampleNow(page, SELECTOR.themePills), THEME_KEYS, THEME_LABEL.light);
     });
   }
+
+  test("first load with Dark stored: the Dark mode pill shown, nothing animates", async ({ page }) => {
+    await openView(page, VIEW_PATHS[VIEW.about], { theme: "dark" });
+    await page.waitForTimeout(500);
+    expect(await pillLog(page), "pill animations since the document started").toEqual([]);
+    expectResting(await sampleNow(page, SELECTOR.themePills), THEME_KEYS, THEME_LABEL.dark);
+  });
 
   test("pills are hidden from assistive tech: links and buttons keep their names", async ({ page, browserName }) => {
     await openView(page, VIEW_PATHS[VIEW.about]);
@@ -187,7 +196,8 @@ test.describe("nav pill follows every way to change page", () => {
       await openView(page, VIEW_PATHS[VIEW.about], { theme: "dark" });
       const motion = await motionTokens(page);
       await startSampling(page, SELECTOR.navPills);
-      await page.getByRole("link", { name: "Explore Selected Work" }).click();
+      // The hero's button; the career section ends with a second one, same label, same place.
+      await page.getByRole("link", { name: "Explore Case Studies" }).first().click();
       const frames = await finishSampling(page, SELECTOR.navPills, { active: WORK });
       expectTravel(frames, { from: ABOUT, to: WORK, motion });
     });
@@ -347,6 +357,25 @@ test.describe("theme switch without the View Transitions API (older browsers)", 
         await waitIdle(page, SELECTOR.themePills);
       });
     }
+  });
+});
+
+test.describe("theme switch in an in-app browser (Messenger on Android)", () => {
+  test.use({ viewport: VIEWPORTS.phone, userAgent: UA.messengerAndroid });
+
+  test("no view transition: the theme switches in one frame, the pill still travels", async ({ page }) => {
+    await openView(page, VIEW_PATHS[VIEW.work]);
+    const motion = await motionTokens(page);
+    await startSampling(page, SELECTOR.themePills);
+    const run = await switchThemeInPage(page, "dark");
+    const frames = await finishSampling(page, SELECTOR.themePills, { active: THEME_LABEL.dark });
+    expect(await viewTransitionCalls(page), "document.startViewTransition calls").toBe(0);
+    expect(run.frames[0]?.dark, "theme applied by the first frame").toBe(true);
+    expect(
+      run.frames.map((frame) => frame.background),
+      `header background per frame after the click = dark canvas ${CANVAS.dark}`,
+    ).toEqual(run.frames.map(() => run.canvas));
+    expectTravel(frames, { from: THEME_LABEL.light, to: THEME_LABEL.dark, motion });
   });
 });
 

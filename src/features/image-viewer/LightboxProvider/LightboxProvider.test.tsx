@@ -6,7 +6,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { preloadImages } from "#shared/media/image-preload/image-preload.utils.ts";
 import { useLightbox } from "#shared/media/lightbox/lightbox.context.ts";
 import type { LightboxItem } from "#shared/media/lightbox/lightbox.types.ts";
-import { mockMatchMedia } from "#test/matchMedia.ts";
+import { mockMatchMedia } from "#test/match-media.ts";
 
 import { LightboxProvider } from "./LightboxProvider.tsx";
 

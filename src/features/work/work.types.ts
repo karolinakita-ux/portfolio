@@ -5,6 +5,8 @@ import type { View } from "#shared/lib/routes/routes.types.ts";
 export interface WorkCase {
   id: string;
   asset: string;
+  /** Optional Dark-mode thumbnail; without one, Dark mode shows `asset`. */
+  darkAsset?: string;
   alt: string;
   eyebrow: readonly string[];
   title: string;

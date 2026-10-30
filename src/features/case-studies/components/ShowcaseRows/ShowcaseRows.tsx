@@ -2,11 +2,18 @@ import { ShowcaseRow } from "#features/case-studies/components/ShowcaseRow/Showc
 
 import type { ShowcaseRowsProps } from "./ShowcaseRows.types.ts";
 
-/** One list item per screenshot row (the parent supplies the <ul> or <ol>). */
+/** One list item per screenshot row (the parent supplies the <ul> or <ol>); the sides alternate row by row. */
 export function ShowcaseRows({ rows }: ShowcaseRowsProps) {
-  return rows.map((row) => (
+  return rows.map((row, index) => (
     <li key={row.card.id}>
-      <ShowcaseRow item={row.card} src={row.src} previewSrc={row.previewSrc} onExpand={row.onExpand} />
+      <ShowcaseRow
+        item={row.card}
+        src={row.src}
+        darkSrc={row.darkSrc}
+        previewSrc={row.previewSrc}
+        onExpand={row.onExpand}
+        reverse={index % 2 === 1}
+      />
     </li>
   ));
 }

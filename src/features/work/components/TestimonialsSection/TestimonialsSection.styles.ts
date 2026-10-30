@@ -10,5 +10,6 @@ export const styles = {
   person: clsx("flex min-w-0 flex-col items-start gap-3xs"),
   name: clsx("text-title-sm"),
   role: clsx("text-body-sm text-text-secondary"),
-  more: clsx("flex"),
+  /** A section-closing action sits at the end of the row, like the About page's. */
+  more: clsx("flex justify-end"),
 };

@@ -1,6 +1,7 @@
 /* ==========================================================================
    KitaBranding - semantic tokens as CSS custom properties
-   Source: KitaBranding-tokens.json → kitaBranding.light / .dark
+   Source: KitaBranding-tokens.json → kitaBranding.light / .dark, and the more-contrast modes
+   .lightMoreContrast / .darkMoreContrast (only the tokens they change, at the end of this file).
    camelCase token → kebab-case variable (bgCanvas → --bg-canvas).
 
    Theme: the `dark` class sits on <html>. An inline script in index.html sets
@@ -146,5 +147,63 @@
     --elevation-md: 0 4px 8px -2px rgba(0, 0, 0, 0.4), 0 12px 20px -4px rgba(0, 0, 0, 0.5);
     --elevation-lg: 0 8px 12px -3px rgba(0, 0, 0, 0.4), 0 24px 32px -6px rgba(0, 0, 0, 0.6);
     --elevation-xl: 0 12px 18px -4px rgba(0, 0, 0, 0.4), 0 36px 50px -8px rgba(0, 0, 0, 0.75);
+  }
+}
+
+/* More contrast (Figma modes "Light more contrast" and "Dark more contrast"): the visitor asked their system
+   for it (macOS and iOS "Increase contrast"). Windows contrast themes use forced colours instead, which replace
+   every colour. Only these tokens change: text people read reaches 7:1 and borders and focus rings 3:1
+   (contrast.test.ts), from the same palette. The sticky header turns opaque, since a see-through header
+   lowers the contrast of whatever scrolls under it. */
+@media (prefers-contrast: more) {
+  :root {
+    --text-secondary: #2b2b2b; /* neutralsGray800 */
+    --text-muted: #4a4a4a; /* neutralsGray700 */
+    --text-brand-accent: #1a1a1a; /* neutralsGray900 */
+    --text-link-default: #303f9f; /* denimDenim600 */
+    --text-link-hover: #1a237e; /* denimDenim700 */
+    --text-interactive-secondary: #1a1a1a; /* neutralsGray900 */
+    --text-interactive-disabled: #6c757d; /* neutralsGray600 */
+    --border-subtle: #6c757d; /* neutralsGray600 */
+    --border-default: #4a4a4a; /* neutralsGray700 */
+    --border-interactive-default: #4a4a4a; /* neutralsGray700 */
+    --border-interactive-hover: #1a1a1a; /* neutralsGray900 */
+    --border-interactive-focus: #1a237e; /* denimDenim700 */
+    --status-info-text: #22496e; /* blueBlue800 */
+    --status-info-border: #3d75aa; /* blueBlue600 */
+    --status-warning-text: #1a1a1a; /* neutralsGray900 */
+    --status-warning-border: #ad4f28; /* orangeOrange700 */
+    --status-error-text: #1a1a1a; /* neutralsGray900 */
+    --status-error-border: #cc3434; /* redRed700 */
+    --status-success-text: #1a1a1a; /* neutralsGray900 */
+    --status-success-border: #358c5e; /* greenGreen700 */
+    --bg-canvas-translucent: #ffffff; /* the canvas, opaque */
+  }
+}
+
+/* screen, not "not print and ...": `not` would negate the whole query and apply this everywhere. */
+@media screen and (prefers-contrast: more) {
+  :root.dark {
+    --text-secondary: #f8f9fa; /* neutralsGray50 */
+    --text-muted: #dee2e6; /* neutralsGray300 */
+    --text-brand-accent: #f9e391; /* goldGold300 */
+    --text-link-default: #c5cae9; /* denimDenim100 */
+    --text-link-hover: #ffffff; /* neutralsWhite */
+    --text-interactive-secondary: #ffffff; /* neutralsWhite */
+    --text-interactive-disabled: #adb5bd; /* neutralsGray500 */
+    --border-subtle: #adb5bd; /* neutralsGray500 */
+    --border-default: #c1c8ce; /* neutralsGray400 */
+    --border-interactive-default: #dee2e6; /* neutralsGray300 */
+    --border-interactive-hover: #f8f9fa; /* neutralsGray50 */
+    --border-interactive-focus: #c5cae9; /* denimDenim100 */
+    --status-info-text: #f0f5fa; /* blueBlue100 */
+    --status-info-border: #75a4d1; /* blueBlue400 */
+    --status-warning-text: #fff5f0; /* orangeOrange100 */
+    --status-warning-border: #e6936c; /* orangeOrange400 */
+    --status-error-text: #fff0f0; /* redRed100 */
+    --status-error-border: #ff7575; /* redRed400 */
+    --status-success-text: #f0f9f4; /* greenGreen100 */
+    --status-success-border: #75ce9f; /* greenGreen400 */
+    --bg-canvas-translucent: #1a1a1a; /* the canvas, opaque */
   }
 }

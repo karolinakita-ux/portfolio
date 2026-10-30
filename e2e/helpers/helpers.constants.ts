@@ -1,9 +1,9 @@
 import type { Theme } from "./helpers.types.ts";
 
-export const THEMES: readonly Theme[] = ["light", "dark"];
+/** The app's own localStorage key for the visitor's theme pick (the inline script in index.html reads it too). */
+export { THEME_STORAGE_KEY } from "#shared/hooks/theme/theme.constants.ts";
 
-/** Same key as THEME_STORAGE_KEY in src/shared/hooks/theme/useTheme.ts (that module imports React). */
-export const THEME_STORAGE_KEY = "kb-theme";
+export const THEMES: readonly Theme[] = ["light", "dark"];
 
 export const VIEWPORTS = {
   phone: { width: 390, height: 844 },
@@ -13,11 +13,11 @@ export const VIEWPORTS = {
 /** bgCanvas in src/styles/tokens.css. */
 export const CANVAS: Readonly<Record<Theme, string>> = { light: "#ffffff", dark: "#1a1a1a" };
 
-export const THEME_LABEL: Readonly<Record<Theme, string>> = { light: "Light theme", dark: "Dark theme" };
+export const THEME_LABEL: Readonly<Record<Theme, string>> = { light: "Light mode", dark: "Dark mode" };
 
 export const SELECTOR = {
   primaryNav: 'nav[aria-label="Primary"]',
   navPills: 'nav[aria-label="Primary"] [data-pill]',
-  themeGroup: '[role="group"][aria-label="Color theme"]',
-  themePills: '[role="group"][aria-label="Color theme"] [data-pill]',
+  themeGroup: '[role="group"][aria-label="Colour theme"]',
+  themePills: '[role="group"][aria-label="Colour theme"] [data-pill]',
 } as const;

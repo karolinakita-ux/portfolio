@@ -8,5 +8,7 @@ export interface CardProps extends HTMLAttributes<HTMLElement> {
   as?: "article" | "li" | "figure" | "div";
   layout?: CardLayout;
   gap?: CardGap;
+  /** Fade up on scroll (default). Off for cards that close a case study, which stay still. */
+  reveal?: boolean;
   children: ReactNode;
 }

@@ -6,7 +6,7 @@ import { clsx } from "clsx";
  * mode (Windows high contrast), where the background is dropped, so the active item stays marked.
  * transition-none: the hook does all of its motion (it fades a pill in or out when there is no
  * other to slide from); a CSS transition would only add stray ones, such as the near-zero
- * transitions the reduced-motion reset in app.css gives every changed property. Its own text
+ * transitions the reduced-motion reset in motion.css gives every changed property. Its own text
  * colour (it has no text) keeps it from inheriting the label's colour transition, which WebKit
  * otherwise copies onto it even with transition-property: none.
  */

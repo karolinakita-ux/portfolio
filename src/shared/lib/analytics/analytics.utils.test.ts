@@ -81,7 +81,7 @@ describe("analyticsAllowed", () => {
 });
 
 describe("startAnalytics", () => {
-  it("adds the Umami script once: no pageviews of its own, its speed report on, every request past beforeSend", () => {
+  it("adds the Umami script once: speed report on, own pageviews and error reports off, all past beforeSend", () => {
     expect(analytics.startAnalytics(LIVE)).toBe(true);
     expect(analytics.startAnalytics(LIVE)).toBe(true);
     expect(document.querySelectorAll("script")).toHaveLength(1);
@@ -100,6 +100,7 @@ describe("startAnalytics", () => {
       "data-before-send": "kbUmamiBeforeSend",
       "data-exclude-hash": "true",
       "data-do-not-track": "true",
+      "data-errors": "false",
     });
     expect(window.kbUmamiBeforeSend).toBe(analytics.beforeSend);
   });
@@ -310,6 +311,10 @@ describe("events", () => {
     analytics.track("page-scroll", { depth: "50" });
     // @ts-expect-error - figma-click has no target
     analytics.track(EVENT.figmaClick, { target: "hero" });
+    // The Work hero has no Figma, GitHub or Storybook button since 5.14.4: only the banner and the case studies.
+    expectTypeOf<EventData[typeof EVENT.figmaClick]["place"]>().toEqualTypeOf<"banner" | "top" | "end">();
+    expectTypeOf<EventData[typeof EVENT.githubClick]["place"]>().toEqualTypeOf<"banner">();
+    expectTypeOf<EventData[typeof EVENT.storybookClick]["place"]>().toEqualTypeOf<"banner">();
     // @ts-expect-error - case takes a view id
     analytics.track(EVENT.caseOpen, { case: "project-planning", from: "thumbnail" });
   });
@@ -452,6 +457,15 @@ describe("beforeSend", () => {
     analytics.stopAnalytics();
     expect(analytics.beforeSend("identify", TRACKER_PAYLOAD)).toBeNull();
     expect(analytics.beforeSend("event", TRACKER_PAYLOAD)).toBeNull();
+  });
+
+  it("cancels the tracker's own error reports (data-errors): they carry stack traces, js-error is sent instead", () => {
+    analytics.startAnalytics(LIVE);
+    loadTracker();
+    analytics.trackPageview();
+    const report = { ...TRACKER_PAYLOAD, name: "TypeError", message: "x is not a function", stack: "at f (a.js:1:2)" };
+    expect(analytics.beforeSend("error", report)).toBeNull();
+    expect(analytics.beforeSend("identify", TRACKER_PAYLOAD)).not.toBeNull();
   });
 
   it("gives a speed report the page the app counted last, with a clean address", () => {

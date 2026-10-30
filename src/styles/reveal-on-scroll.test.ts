@@ -129,8 +129,9 @@ describe("reveal-on-scroll (app stylesheet)", () => {
 
   it("uses spacing tokens the theme defines", () => {
     const theme = APP.blocks.find((block) => block.prelude === "@theme inline");
-    expect(theme?.declarations).toContainEqual(["--spacing-md", "16px"]);
-    expect(theme?.declarations).toContainEqual(["--spacing-4xl", "96px"]);
+    // 16px and 96px at the browser's default text size (relative-units.test.ts).
+    expect(theme?.declarations).toContainEqual(["--spacing-md", "1rem"]);
+    expect(theme?.declarations).toContainEqual(["--spacing-4xl", "6rem"]);
   });
 
   it("is not animated from anywhere else in the app stylesheet", () => {

@@ -4,6 +4,456 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Release v5.14.16 - 2026-10-30
+
+- A new case study, Smart Ticket, shows a mobile ticketing app and its operations console, and every case study now has a clearer layout with Light and Dark screenshots.
+- Recruiters can read Karolina's CV on its own page and download it as a 2-page PDF with a recruitment consent for employers and agencies in Poland or abroad.
+- The site follows your browser's text size, uses stronger colours when your device asks for more contrast, and has a new accessibility statement.
+- Job titles, dates and case names now read the same on every page and in the CV, in British English throughout.
+- Shared links show a new preview image, search results can show the site's icon, and small fixes keep the header steady and images whole when you hover over them.
+
+Versions: 5.3.4 - 5.14.16.
+
+### 5.14.16 - 2026-10-30
+
+#### Fixed
+
+- Work: hovering a case thumbnail no longer shows a 1 px line of the frame's background at its bottom edge while the zoom runs (seen on the Automotive card). The browser draws the zooming image on its own layer, rounded to whole pixels, and a 16:10 frame is rarely a whole number of pixels tall; the image now overlaps its frame by 1 px on every side, and the frame's rounded clip hides the overlap.
+
+#### Changed
+
+- Work: "Read the full recommendations on LinkedIn" sits at the right end of its row under the testimonials, like the buttons that close the About page's sections. On a phone, where its label wraps onto two lines, the lines are centred between the icons instead of left-aligned against the arrow; every button does this when its label wraps.
+- Docs: docs/design.md records where section-closing buttons sit.
+
+### 5.14.15 - 2026-10-30
+
+#### Changed
+
+- Project Planning: the Work thumbnail and the calendar screenshot show the app's wordmark again, and the case links its Figma file again ("Explore the Figma File" at the top and in the closing banner). Karolina approved showing the wordmark in the screens and the file on 30 October; the name itself stays out of the site's text, alt text and file names, and the hidden-name test keeps it that way.
+
+### 5.14.14 - 2026-10-30
+
+#### Changed
+
+- Docs and editor: CONTRIBUTING.md has an Editor section. VS Code's ESLint can show "error typed value" errors on correct imports after many files change outside the editor; restarting the ESLint server clears them, and `yarn lint` stays the check that counts (the rule stays on). The shared VS Code settings no longer watch or search Claude's temporary worktrees.
+
+### 5.14.13 - 2026-10-30
+
+#### Changed
+
+- CV: the LinkedIn and portfolio links show their full address with https:// (https://www.linkedin.com/in/karolinakita, https://karolina.kita.company). A bare .company address can pass for plain text in the software recruiters use and on paper. The PDF still links the portfolio with its own tag for the UTM report.
+- CV PDF: the recruitment consent sits at the foot of the last page, where a CV's consent clause is expected, instead of right under Education. The script that makes the PDF looks for the tallest sheet that keeps the page count (still 2 pages), so the consent never starts a new page. No photo and no italics: parsers cannot read a photo, and the consent is already set apart by its smaller, secondary text.
+- Tests and docs: the CV tests look for the new link texts, a check keeps both links showing their full address, and CLAUDE.md records the CV's format.
+
+### 5.14.12 - 2026-10-30
+
+#### Changed
+
+- Docs: Karolina's answers of 30 October are project rules now. Figma is the design source: a design change starts there or is mirrored there the same day, and when Figma and the site differ without a decision, she is asked (CLAUDE.md, docs/design.md, the design-sync skill). Figma uses only the Kita Branding variables. She cleans her screenshots before handing them over, so anything that still looks confidential is a question for her, not an edit (CLAUDE.md, the confidentiality reviewer). The case studies keep one order everywhere: Smart Ticket, Automotive, Project Planning, Theme Generator.
+
+### 5.14.11 - 2026-10-30
+
+#### Changed
+
+- Headings use one style across the site, Title Case: page titles, section headings, card and box titles, FAQ questions, eyebrows, the case details panel and the statistics box ("Clarity for Complex Enterprise Software", "Can I Count Your Visit?"). Screenshot captions keep their Figma frame names.
+- Apostrophes and quotation marks are curly in all copy, alt text, labels and page descriptions; the CV keeps plain ones for applicant tracking systems.
+- One form for repeated wording: "frontend", "Light and Dark mode" (the theme switch's buttons now say Light mode and Dark mode), counts as digits (6 UK dealers, 3 taps, 4 badge types, 2-step boarding, answers within 1 month) and prices as PLN 4.40.
+- One label per destination: every button to the case studies says Explore Case Studies, every Work card links with View Case Study, and the Figma, GitHub and Storybook links all start with Explore (Smart Ticket's reads Explore the Figma File). Screen readers hear the top previous / next links as "Next Case Study: ...", like the links at the end.
+- Each Work card shows its case study's own tags, and the cards and search texts tell what the cases tell.
+- Smart Ticket calls its admin product the operations console throughout and quotes one lowest text contrast, the 4.9:1 floor of text/muted.
+- Automotive lists the same payment methods everywhere: card or dealer finance, as its screens show.
+- Theme Generator tells one before story (branding took custom CSS or an engineering ticket, then management proposed an open colour picker), its Work card says admins now brand their portal themselves, and it says public sector instead of federal institutions.
+- Project Planning: the search description no longer claims work from discovery, and the impact stat says Light and Dark mode.
+- CV: "with Light and Dark mode" and the skill "Light and Dark Mode". The PDF is remade from the page (still 2 pages).
+- Storybook's Welcome page and toolbar, the README and the docs use the same wording.
+- Tests and docs: new checks in content-rules.test.ts (rules in src/test/copy-rules.ts) render every page and check Title Case headings and labels, curly quotes, frontend, Light and Dark mode, digits, PLN and one label per destination, and keep one version of each case fact (Smart Ticket's console name and contrast floor, Automotive's payment list, Theme Generator's public sector, no discovery or budget guardrails in Project Planning). CLAUDE.md and the copy reviewer record the rules; docs/analytics.md notes that headings sent as `label` changed case.
+
+### 5.14.10 - 2026-10-30
+
+#### Changed
+
+- Copy: the whole site now uses British spelling, like the CV: colour, organisation, behaviour, customise, specialise, analyse, prioritise, tokenised, white-labelling and artefacts. This changes About, the Work page (the Theme Generator card, the Behind the Design banner and the confidentiality note) and the Theme Generator, Smart Ticket and Project Planning cases. Only the spelling changed, and Smart Ticket writes "Dark mode" as the rest of the site does.
+- Theme Generator: the card titles read "Automated Component States from One Base Colour" and "Colour-Vision Accessibility Preview". Product labels quoted from the screenshots ("Duplicate to customize", the "Participant / Organizer" switch) and the fictional "Harbor Bank" stay as the screens show them.
+- Header: screen readers now call the light / dark switch "Colour theme".
+- Link previews and search: the pages say they are in British English (og:locale en_GB).
+- Tests and docs: a new check fails when common US spellings appear in the copy, the search copy and structured data, llms.txt, the link previews, the components' text and label constants, the Storybook stories or Storybook's Welcome page. Quotes from real people and the screenshot labels are exempt. CLAUDE.md and the copy reviewer record the rule and the words to check by eye (licence / license, practice / practise, programme / program). The Screenshot stories use the site's alt texts word for word.
+
+### 5.14.9 - 2026-10-30
+
+#### Changed
+
+- CV: GlobalLogic Poland is now two entries, UX/UI Designer (Sep 2019 - Dec 2023) and Senior UX/UI Designer (Jan 2024 - Sep 2026); all bullets stay with the Senior entry until Karolina places them. Cinkciarz.pl says Junior UX Researcher & Designer, the degree is MSc in Psychology, at Programado she mentored a UX intern, and the Programado line says the contract ran partly alongside the full-time role. The PDF is remade from the page (still 2 pages).
+- About: the intro and the portrait caption say Senior Product Designer. The career cards name GlobalLogic Poland with both titles and their years, the Programado contract from 2023 to 2026 alongside it, and the MSc in Psychology.
+- Work, CV and search copy: 8+ years, mostly on B2B and enterprise platforms (her first job was consumer FinTech). Contact and its search description say Design Systems Specialist, and the structured data lists the MSc in Psychology and WCAG 2.1 AA, as the CV does.
+- Tests and docs: new profile-fact checks keep these facts in step across the CV, About, Contact, search copy and index.html, About's years included, and the CV page test checks that an entry without bullets shows no empty list. CLAUDE.md records the rule.
+
+### 5.14.8 - 2026-10-30
+
+#### Changed
+
+- Automotive: one name, Marketplace, as Karolina chose. The page heading is now "Automotive B2B Marketplace: From Dealer Research Across Europe to a Validated Redesign" (also in the previous / next links) and the browser tab "Automotive Marketplace Case Study", like the Work card, the breadcrumb and the search data. "7 European markets" stays.
+- Theme Generator (the Data Governance case): the breadcrumb and the browser tab say "Theme Generator", the product the Work card, the heading and the search data name. The address `/work/data-governance` stays, so shared links keep working.
+- Tests: a new check keeps each case's browser tab equal to its breadcrumb name and every word of that name in its heading.
+
+### 5.14.7 - 2026-10-30
+
+#### Changed
+
+- Automotive: the research boards show Karolina's originals again (persona, multi-market survey and interview synthesis, both themes). She approved the figures in writing and confirmed that her screenshots hold no confidential data, so nothing on them is blurred or painted over any more. The confidentiality note no longer says that some figures are hidden.
+- Smart Ticket: the legacy My Profile screen shows its sample email address again, as Karolina approved.
+- Search data: the Person block no longer lists the Google UX Design certificate, which no page mentions.
+
+### 5.14.6 - 2026-10-30
+
+#### Fixed
+
+- Smart Ticket: the user flow under "From trip search to an offline inspection" keeps the top of its legend and its card border when the pointer is over it. The slight zoom on hover hides about 1% of each edge, and the diagram had no space there. Both versions now have 48 px of transparent space on every side in the file (2096 x 1350, was 2000 x 1254); the drawing itself is not scaled.
+- Project Planning: the Brand primary and Semantic status token cards keep their top edge, corners and sides on hover (32 px more transparent space on every side, both themes).
+- Smart Ticket: the lock screen keeps its home indicator on hover (12 px larger on every side, its own background continued, the same rounded corners).
+
+#### Changed
+
+- A new test (`src/app/zoom-margins.test.ts`) reads the zoom from the components and checks every case image and Work thumbnail: content stays out of the band the zoom hides, and out of twice that band on frameless images and thumbnails. Three light phone screens whose bottom sheet runs to the screen edge are listed exceptions.
+- Docs: CLAUDE.md, the README and the architecture doc say that case images need room at their edges.
+
+### 5.14.5 - 2026-10-30
+
+#### Changed
+
+- Link previews: a shared link to the site shows Karolina's new Portfolio Cover from Figma (`og-cover.png`, 1200 x 630 PNG, 134 KB) instead of the old image: her name, role, focus areas, the years of selected work (2018 - 2026) and her experience. LinkedIn, Facebook, Messenger, Slack and X show the light cover to everyone, because a link preview cannot follow the viewer's light or dark theme. The image has a new file name (images are cached for a week), both alt texts describe it, and the old `og-image.png` is gone.
+- Figma: in the 1.91:1 cover the tagline now breaks after "and" instead of inside "token-driven".
+- Tests: a new check keeps the link-preview tags and the image together (one address for Open Graph and X, a 1200 x 630 PNG under 1 MB, alt texts, nothing that keeps search engines or link-preview services from fetching it).
+- Docs: the design doc says where the cover lives in Figma and how to change it; CLAUDE.md, the architecture doc, CONTRIBUTING.md and the docs-seo-reviewer agent name the new file. After the release, refresh the LinkedIn and Facebook previews (Post Inspector, Sharing Debugger), starting with the home page.
+
+### 5.14.4 - 2026-10-30
+
+#### Changed
+
+- Work hero: two buttons only, Explore Case Studies and View CV, in one row from 480px wide; phones stack them as before. The Inspect Figma Workspace, View Code on GitHub and View Components in Storybook buttons left the hero: the same three links are in the Behind the Design banner lower on the page, and in the hero they pulled attention from the two main actions. The banner and its links do not change.
+- Statistics: `figma-click`, `github-click` and `storybook-click` no longer come with `place: "hero"`, so that data stops from this version. The banner links still send `place: "banner"`, and `hero` stays for `cv-open`. No new data, so the privacy policy and the consent box do not change.
+- Tests: the Work page tests check that the hero has exactly these two links and that Figma, GitHub and Storybook are linked only from the banner; the CV e2e spec checks the buttons in one row at 480 and 1280px and stacked at 390px. The scroll-reveal spec no longer needs its exception for the taller two-row hero; the WebKit exception for the About page stays.
+- Docs: CLAUDE.md, the architecture doc and the tracking plan say the Work page links Storybook from the Behind the Design banner only.
+
+### 5.14.3 - 2026-10-30
+
+#### Changed
+
+- The CV's recruitment consent is in English only, the language of the CV. One clause covers employers and recruitment agencies in Poland or abroad: the current recruitment, future recruitment by the same employer or agency for 12 months, and withdrawal by email. The GDPR applies across the EU, and Polish law asks for consent only for future recruitment, which the clause covers; a Polish paragraph in an English CV, a language picker or a second PDF would add length or a click without a legal gain. The PDF is tagged in English only and was made again (still 2 pages).
+- The accessibility statement no longer mentions a Polish consent in the CV's PDF.
+
+### 5.14.2 - 2026-10-30
+
+#### Fixed
+
+- Data Governance: the continued handoff cards (05, 06) now give their numbers to screen readers too. Before, screen readers counted them as 1 and 2 (WCAG 1.3.1). The list carries `start`, and only a list that does not start at 01 shows its numbers to assistive tech.
+- The previous and next case links now name each case by its page title, so a case has one name in its links and on its page. The link to Data Governance used a shorter name. The names come from the cases themselves (`CASE_TITLES`), so they can no longer drift.
+- In Dark mode, pointing at a case study preloads its Dark screenshots, not the Light ones (about 2 MB per case that Dark visitors never saw).
+- Statistics switched off in one tab, or cleared site data, now stop at once in the other open tabs. Before, those tabs kept sending events and pageviews. A yes given in one tab now starts the statistics in the others.
+- The email links on the privacy policy and the accessibility statement are now counted as `email-click`, with the new places `privacy` and `accessibility`. The policy already lists email links, so earlier yeses are not asked again (`STORED_CHOICE` unchanged).
+- The CV PDF's portfolio link now uses `?utm_medium=cv-pdf` instead of `?ref=cv`. A click on it no longer replaces the company tag of a visitor who came from `/cv?ref=<company>`. The PDF was made again.
+- The CV's English consent now matches the Polish one ("after they receive it", "a role I agree to").
+- The case pages' sitemap dates are now 2026-10-30.
+- Copy now says only what the cases show:
+  - Automotive: the Work card, the Key Outcome and the reflections heading are plainer. The confidentiality note now says some research figures are hidden. The 1:1 interviews are now said to be with Polish dealers only.
+  - Data Governance: the Key Outcome now claims AA contrast, not full compliance, and no longer says "days to minutes". Two other lines no longer state unmeasured results as fact.
+  - Smart Ticket: the 2022 - 23 role is UX/UI Designer.
+  - About: the GlobalLogic milestone no longer uses buzzwords.
+
+- Smart Ticket: the 2022 profile screen no longer shows an email address on a real domain (painted out).
+
+#### Changed
+
+- `BannerLink` is now a shared component with a story. The Behind the Design banner and the case Figma file links both use it, instead of two copies of the same styles.
+- New shared `EmailLink`: the email address as a link that is counted.
+- A test now clicks every email, download and external link on every page and expects one statistics event for each.
+- The release steps (CONTRIBUTING.md and the release skill) now set each changed page's sitemap date to the release date and commit `public/sitemap.xml` with the release.
+- Docs:
+  - README: the test count is now 860+.
+  - Architecture doc: the preload size is now about 6 MB per theme, the consent section covers choices made in other tabs, and the new shared links are listed.
+  - Tracking plan: new email `place` values, and what the PDF's links send.
+  - Third-party notices: copy, mail, maximize-2 and sun added to the Feather list.
+
+### 5.14.1 - 2026-10-30
+
+#### Changed
+
+- In the code, the Data Governance case is named after its page instead of "theming": `content/data-governance.content.ts`, `DATA_GOVERNANCE_CASE`, `DataGovernanceCaseStudy`, `CaseDataGovernanceView/` and `VIEW.caseDataGovernance`. The view id stays `case-theming`, so old `/#case-theming` links and the `case` value in the statistics do not change (a comment in `routes.constants.ts` and the tracking plan say so); the Work card id stays `theming-system`.
+- File names follow one rule: content files without JSX end in `.ts` (`smart-ticket.content.ts`, `data-governance.content.ts`), the test helper is `src/test/match-media.ts`, and other modules in a component folder take the component's name (`Dialog.constants.ts`, `Dialog.utils.ts`), as CLAUDE.md and `docs/architecture.md` now say. `SmartTicketBlocks` moved to `CaseSmartTicketView.types.ts`.
+- Removed the unused outcomes section from the shared case layout (`outcomes`, `outcomesTitle`, `outcomesIntro`); `DetailList` stays for the reflections, lessons and takeaways. The case order test keys the cases by `VIEW` constants.
+- No visible change: every prerendered page is the same apart from the script bundle's file name, and the CSS, `llms.txt` and the CV PDF are byte for byte the same.
+
+### 5.14.0 - 2026-10-30
+
+#### Added
+
+- A CV page at /cv, built from Karolina's Long CV in Figma with the site's design tokens. It shows Light or Dark on screen and is always light on paper. It has two columns from md and in print. Every section heading has a link to copy (/cv#experience). Opening one of these links leaves as much space under the header as on other pages. The breadcrumb reads Home > CV. The text is the Long CV as she wrote it, with the broken spacing of the Figma export fixed. There is no phone number or street address.
+- A recruitment consent at the end of the CV, in English and in Polish (the Polish paragraph is marked as Polish). It covers:
+  - the current recruitment, and future recruitment for 12 months;
+  - an agency may send the CV only for a role she agreed to;
+  - how to withdraw by email.
+- The CV as a PDF, `public/karolina-kita-cv.pdf`, made from the page by `yarn cv-pdf` (`scripts/cv-pdf.ts`).
+  - It is A4, 2 pages and always light. The footer has page numbers and takes its type style and colour from the design tokens. The page break is where Figma has it.
+  - It has tagged headings, lists and links, bookmarks for its sections, clickable links, and the Polish consent tagged as Polish.
+  - Its portfolio link carries `?ref=cv`.
+  - The CV page has a Download PDF (2 pages) button. In an app's built-in browser (LinkedIn, Messenger), a short hint says the PDF opens best in the phone's browser. Screen readers hear this hint with the button.
+- Ways to the CV:
+  - Work hero: View CV next to Explore Case Studies, at the same height. From 480px wide the hero has two rows of buttons: the case studies and the CV, then Figma, GitHub and Storybook. Phones stack them as before.
+  - About hero: View CV next to Explore Selected Work.
+  - Contact page: a CV cell with View CV and Download PDF links. They sit as close to their label as the LinkedIn link does.
+  - "(2 pages)" never breaks across two lines. One helper (`cvPdfLabel`) builds this label for the CV page and Contact.
+- Statistics:
+  - New `cv-open` (`place`: `hero`, `about`, `contact`) and `cv-download` (`place`: `cv`, `contact`) events.
+  - `email-click` and `linkedin-click` get `place: "cv"` for the CV's own links.
+  - "download" joins the verbs in the tracking plan.
+  - The privacy policy's "What I count" names links to the CV and to its PDF (updated 30 October 2026).
+  - Not a new kind of data: the consent box already covers what visitors click, so `STORED_CHOICE` stays `on-3`.
+- New tests:
+  - `src/app/seo/cv-pdf.test.tsx` fails when the CV's text, markup or classes change without a new PDF. It compares them with two hashes in `scripts/cv-pdf.lock.json`.
+    - It also checks the PDF's A4 size, page count, tags, title, languages and links, its `_headers` rule, and that git publishes it.
+    - A change in `tokens.css` or `print.css` still needs `yarn cv-pdf` by hand.
+  - `e2e/cv.e2e.ts` checks in Chromium, Firefox and WebKit:
+    - the page in both themes and light in print;
+    - the download, and the in-app hint and its link to the button;
+    - /resume, and the page at 320px;
+    - section links on the CV;
+    - the Work hero's first row;
+    - the Contact page's CV cell.
+  - `relative-units.test.ts`: width media queries in the stylesheets must use a breakpoint token (the CV's `sheet:` variant is md).
+- Icons: FileText and Download (Lucide).
+
+#### Changed
+
+- /resume and /#resume open the CV again, not About. /cv is now the CV page; the 4.0.0 redirect from /cv to About is gone.
+- Search and AI assistants: /cv is a profile page with its own description. It is in the sitemap and in `llms.txt`, together with the PDF's address.
+- `public/_headers`: the PDF keeps its address and is checked again on every visit. A canonical link points search engines at /cv. `.gitignore` publishes this one PDF and still ignores every other PDF. `.gitattributes` marks PDFs as binary.
+- The accessibility statement names the CV under what you can do: read it as a page or download the PDF. Its known limits add that the PDF is A4 and always light, and does not follow text size or contrast settings; the CV page does (updated 30 October 2026).
+- `Lang` can mark a whole paragraph (`as="p"`). Chromium tags a paragraph's language in a PDF, but not a span's. New "Other language, paragraph" story.
+- `yarn a11y` also tabs through /cv with the consent box showing.
+- Sitemap dates for the pages that changed: Work, About, Contact, CV, Privacy and Accessibility.
+- Docs:
+  - CLAUDE.md, README (now four case studies), architecture, the tracking plan, and third-party notices (new icons, fonts embedded in the PDF).
+  - The copy reviewer now checks that facts agree across Work, About, Contact and the CV.
+
+#### Fixed
+
+- `e2e/scroll-reveal.e2e.ts` failed after the heroes grew. Two checks now leave out exactly two cases, and nothing else:
+  - axe's colour-contrast report on a fading card whose text is not on screen. At 1280 x 800, Work now opens with its first case card at the fold.
+  - WebKit's `translate: 0px` at the one scroll position where a card's bottom meets the scroll padding (the end of WebKit's view timeline).
+  - Faint text on screen, and a `fill: both` regression, still fail.
+
+### 5.13.4 - 2026-10-30
+
+#### Fixed
+
+- With Dark saved (or a dark system setting), the theme switch shows and announces Dark from the first moment the page appears, not Light until the site has loaded: the inline script in `index.html` presses the right button before the first paint, and the switch's look follows `aria-pressed` in CSS.
+- Pressing Tab through the stuck header while reading further down no longer scrolls the page (Chrome and Edge jumped about 400px up per Tab, Safari a little), also while the statistics consent box shows. The header's own controls are exempt from the scroll padding; page content focused behind the header still scrolls clear of it (WCAG 2.4.11).
+
+#### Changed
+
+- On phones there is more space between the logo and theme switch row and the menu row of the header (`gap-y-xs`, 8px instead of 4px).
+- In Messenger and other in-app browsers the theme now changes at once, without the cross-fade, which most likely hid the top of the header there for a moment.
+- Comments and docs that named the wrong file or behaviour are fixed (theme, pill, image viewer, in-app browsers); `docs/architecture.md` and CLAUDE.md describe the switch's first paint, the header's scroll margin and the case screenshot helper. `e2e/header-layout.e2e.ts` covers the phone header rows and focus inside the stuck header.
+
+### 5.13.3 - 2026-10-30
+
+#### Changed
+
+- The two Figma file links on a case study are counted apart: `figma-click` sends `place: "top"` for the link under the details panel and `place: "end"` for the design files banner, each with `case` (both sent `place: "case"` in 5.7.0 - 5.13.2, never live). Not a new kind of data: the privacy policy already lists Figma links.
+- Clicks that do nothing and text copies on the new case-study blocks get a label: the before / after comparisons and the numbered cards count as cards (named by their title), a stat card is named by its figure (`data-card-title`), and a screenshot by its caption. A click on the empty space around a captioned screenshot counts as a click on the image.
+- The tracking plan test also checks each event's Properties column in `docs/analytics.md` against `EventData` (`EVENT_PROPERTIES`); the add-tracking skill says so.
+
+#### Fixed
+
+- Umami's own error reports can never send stack traces: the script tag sets `data-errors="false"`, and `beforeSend` cancels every request of type `error`. `js-error` with its short message stays the only error data, as the privacy policy says.
+- `text-copy` never sends the copied text as its label: when the selection holds part of a heading, caption or stat figure, that label is skipped for the card's name, or left out. Copying a heading used to send the heading itself.
+- `docs/analytics.md` says that the speed report covers only the first 10 s of each view, so INP and CLS miss later interactions, and lists `testimonials` among the `place` values and image captions under `label`.
+
+### 5.13.2 - 2026-10-30
+
+#### Fixed
+
+- Smart Ticket: the user flow diagram no longer sits inside a second frame; its legend sits on the page as in Figma (Light and Dark).
+- Smart Ticket: "60 s" no longer breaks between the number and the unit on phones.
+- Code comments that said the wrong thing are fixed (the Smart Ticket and Project Planning content headers, the Smart Ticket row spacing, the `MediaSection` type, the persona goal tint). Project Planning cites only the Figma node id.
+
+#### Changed
+
+- One naming convention for case screenshots. A card's id is its image's base name in all four case studies (for example `multi-market-survey`, `admin-operations-dashboard`), so the statistics' `image` value names the file it shows; many old ids, such as `survey` or `contrast`, belonged to screenshots that have since been replaced. Smart Ticket's Security & Biometrics screen no longer shares an id with its comparison.
+- Six Smart Ticket screenshots have names that say what they show: `legacy-sign-up-email.webp`, `legacy-sign-up-phone-number.webp`, `semantic-inversion-light.webp` / `-dark.webp`, `create-account-details-light.webp` / `-dark.webp` (never published under the old names).
+- The case content builds its screenshot cards with one helper, `caseShots(folder)`: `shot()` for a Light and Dark pair, `singleShot()` for a screen in one version; a test checks that each card's id, Light file and Dark file name the same screen. README shows it.
+- The case content names the previous and next cases with `VIEW` constants. `BentoVisual` has its own component folder, and content types no longer share a component's name (`Feature`, `ImpactSection`, `ComparisonSideContent`, `BentoVisualContent`).
+
+#### Removed
+
+- `KeyOutcomes` and the `highlights` field of a case section: no case study has used them since 5.11.0.
+
+### 5.13.1 - 2026-10-30
+
+#### Changed
+
+- 5.7.0 - 5.13.0 were built outside this repo and are committed here together. Before that, every image and text was checked for names and figures that may not be published:
+  - The Project Planning product name is painted out of its Work thumbnail and its calendar screenshot (Light and Dark), removed from this changelog and a code comment, and added to the hidden-name test.
+  - The Automotive persona, survey and interview boards hide the respondent counts, the salary, the per-market response counts, shares and bars, and the dealer's sales quote again, as decided on 2026-10-26. The case text keeps its totals and rounded figures (545 responses, 7 of 8 markets, over 40% from one market).
+  - Project Planning shows no Figma link for now: the linked file still shows the product name.
+- The Work thumbnails are `thumbnail-light.webp` / `thumbnail-dark.webp` in every case folder (one name for all four; they were never published under another).
+- New case images carry no Content Credentials metadata (a 5.8 KB chunk per file, removed losslessly).
+
+#### Fixed
+
+- The numbered bento cards that close the Data Governance case stay still, like every closing section (`Card` takes `reveal={false}`; new "Still" story).
+- Status badges (success, warning, error) keep their tinted fill and border but write the label in the body text colour, as Figma's bento badge does: the green label reached only 3.9:1 at Label Small (WCAG 1.4.3 needs 4.5:1).
+- The property names in the Data Governance code card use Figma's orange (`status-warning-text`); the link colour reached only 3.8:1 on the Dark code fill.
+- The Data Governance code card carries its name on a figure: ARIA does not allow `aria-label` on `<pre>` (WCAG 4.1.2).
+- Smart Ticket prices read "PLN 4.40" in the text and alt texts, so a screen reader no longer reads the Polish "zł" in an English voice (WCAG 3.1.2).
+- The tests follow the new content: four Work cards, the new Automotive headings, and link names in jsdom. The scroll-reveal e2e covers Smart Ticket too, and counts cards side by side as entering together.
+
+### 5.13.0 - 2026-10-29
+
+#### Added
+
+- `BentoCards`: numbered cards (01, 02 ...) on the Card surface with a status badge, a title, a short body and an optional small visual (tags, checks, label samples, colour swatches, a code snippet or two phases on a line). Wide cards span two columns of a three-column grid; every colour is a token, so Light and Dark mode work without extra rules. Sample brand colours inside a visual are content and stay the same in both modes.
+- Badge `warning` tone for planned, not-yet-shipped items ("Phase 2 · Roadmap"), with a story.
+- `--font-mono` (system monospace, no web font) for code snippets.
+
+#### Changed
+
+- Data Governance: MVP Delivery (01 - 04) and Developer Handoff (05 - 06) now use `BentoCards` instead of text lists, with the facts aligned in 5.12.0: label samples for the automatic white / near-black labels, swatches for hover (+30% black), pressed (+30% white) and disabled (40% opacity), and the selection rules as stylesheet variables.
+
+### 5.12.0 - 2026-10-29
+
+#### Changed
+
+- Data Governance case study: 8 new screenshots, each in a Light and a Dark version (`cases/data-governance/<name>-light.webp` / `-dark.webp`, 2000 px wide); the old ones are no longer shipped.
+- Data Governance copy checked against the new screens: the state rules now match them (hover +30% black, pressed +30% white, disabled 40% opacity, labels white or near-black; selected rows and sidebar items at full colour, 35% tint on hover, +8% black when pressed; navigation tabs +35% white or +8% black). The theme editor is described as a full-page editor with sections, not a modal; Custom CSS sits last, marked Advanced, with a re-test checkbox. The colour-vision preview stays labelled Phase 2, and the confidentiality note says the screens are rebuilt with sample data and that "Tallyst", "Harbor Bank" and "Northwind Health" are fictional.
+- MVP Delivery: the status moved from the titles into badges ("Shipped · MVP", "Phase 2 · Roadmap"). Key Takeaways use the numbered cards (`NumberedCards`), as in Automotive.
+
+### 5.11.1 - 2026-10-29
+
+#### Changed
+
+- Automotive case study: the copy now credits each step to the right person. The Team Leader (Design Lead) built the coded prototype, the UX Researcher ran the sessions with UK dealers, and Karolina audited the prototype and turned the research and audit findings into refined designs in Figma (Overview, Auditing the Coded Prototype, Testing & Final Design, Reflections).
+
+### 5.11.0 - 2026-10-29
+
+#### Changed
+
+- Automotive case study rewritten as "Automotive B2B Ecosystem: From Dealer Research Across Europe to a Validated Redesign": new Overview & Problem, five sections (Research Across 7 European Markets; Personas, Journeys & Usability Audit; Benchmarking, Flows & Specifications; Auditing the Coded Prototype; Testing & Final Design) with 17 screenshots, each in a Light and a Dark version (`cases/automotive/<name>-light.webp` / `-dark.webp`, 2000 px wide), and a new confidentiality note. The Work card and the page description now say 7 European markets; the previous / next labels on Smart Ticket and Project Planning use the new title.
+- The old Automotive screenshots and the replaced Work thumbnails (`thumbnail-v2.webp`, `smart-ticket/thumbnail.webp`) are no longer shipped (moved out of `public/`), so no unused image stays reachable by URL.
+
+#### Added
+
+- `NumberedCards`: numbered takeaway cards (01, 02, 03) in the info colours, an opt-in closing layout for case studies (`reflections.layout: "numbered"`), used by Automotive's Reflections.
+- `CaseSummary`: summary columns may leave out their title; untitled columns read as plain paragraphs in one column.
+
+### 5.10.0 - 2026-10-29
+
+#### Changed
+
+- Work page: new case thumbnails for all four case studies, each in a Light and a Dark version that switches with the theme (`thumbnail-light.webp` / `thumbnail-dark.webp`, 1440x900). The thumbnail frame is now 16:10 (new `aspect-case`) and the image fills it edge to edge: no border, no inner padding, no letterboxing, corners rounded to match the card (`rounded-md`). Hover keeps the slight zoom; the border colour change is gone with the border.
+
+### 5.9.0 - 2026-10-28
+
+#### Added
+
+- Case studies with a Figma file (Smart Ticket, Project Planning) link it at the top too: "Open the Figma file" with the Figma icon sits right under the details panel, so the design files are one click from the start. The Design files banner at the end stays. Both links share one component (`DesignFileLink`) and count as the same `figma-click` (`place: "case"`). Cases without a file (Automotive, Data Governance) show no link.
+
+### 5.8.5 - 2026-10-28
+
+#### Changed
+
+- Before / after comparison cards: from tablet width the two columns share their rows (CSS subgrid), so the screens of "Legacy concept" and "Modern rebuild" start on the same line however long the text and chips above them are. Every preview keeps the same width, height, frame and spacing.
+- Comparison card titles ("Legacy concept (2022)", "Modern rebuild (2026)", "2022 brief", "2026 decision") and the reasoning titles below the cards use the body text colour and bold (700) instead of grey or link blue. The site and Storybook now load Inter 700.
+
+### 5.8.4 - 2026-10-28
+
+#### Changed
+
+- Smart Ticket, "Visual foundation" comparison: the 2026 column shows the Create account screen in Light and Dark mode side by side, as in the Figma frame, so it fills the column like the two 2022 screens without making the card taller. This pair shows both token modes, so it does not switch with the site's theme.
+
+### 5.8.3 - 2026-10-28
+
+#### Changed
+
+- Project Planning: the "46 screens" outcome card is replaced by "Light & Dark" (one token collection with two modes; the same screens switch mode through token values). The outcome cards now hold no screen counts, only facts the Figma file's variables and contrast checks show.
+
+### 5.8.2 - 2026-10-28
+
+#### Changed
+
+- Project Planning: the outcome cards keep only facts from the Figma file (46 screens with status pills, AA+); the extra "1:1 PrimeNG" card that stood in for the removed sprint-velocity claim is gone, and the token mapping stays in the brand foundation section. Two cards now share a row from 768px (`CaseImpact` picks two or three columns by count).
+- Project Planning: the note under the header ("About these screens") says the screens are a curated, sanitised and refactored subset of a larger production system, adapted for the portfolio, with company names, logos and financial data generalised or removed under NDA and realistic sample data in European formats. The Key Outcome leads with the token system; the outcomes section is "Design outcomes - What the design system delivers".
+
+### 5.8.1 - 2026-10-27
+
+#### Changed
+
+- Smart Ticket and Project Planning copy checked against the Figma files (screens, notes, status pills and variables), and every claim the canvas does not show is rewritten or removed:
+  - Project Planning: the unproven "~35% faster sprint velocity" and "4 → 1 spreadsheets" stats are replaced by what the file shows (46 desktop screens with status pills - 29 production ready, 17 proposals; a 1:1 PrimeNG Aura token mapping; AA+). The goals and milestones timeline is labelled a proposal, as in Figma. The calendar no longer claims to show meeting cost (the Meetings page does), and the budget-bar, drawer, KPI and approval copy follows the Figma notes.
+  - Smart Ticket: 56 mobile screens and states (not 53 or 76), the offline pass describes the signed token as an engineering requirement, the 2022 "black lines" claim and the "sign-out in red" shift are replaced by what the 2022 screens show, status colours use the real token values, checkout names the Review & Pay sheet and the Smart Wallet, and "0 passenger data fields" becomes "No passenger browsing" (one masked record by exact reference, 15 minutes, logged).
+  - The Project Planning Work card summary follows the same facts.
+
+### 5.8.0 - 2026-10-27
+
+#### Added
+
+- A new case study at `/work/smart-ticket`: "Smart Ticket: Mobile Ticketing & Transit Operations", first on the Work page and first in the case navigation (Smart Ticket → Automotive → Project Planning → Data Governance). It follows the Figma frame "Case Study / Smart Ticket (2026)": details table and info note, executive summary, three rider personas as text cards, the user flow, design system rows, two 2022 vs 2026 comparisons with measured results, five passenger app features beside their phone screens, the operations console with eight captioned screens, six outcome cards with a note that they are design decisions, lessons learned, and a design files banner linking the Smart Ticket Figma file. It has a page title, a search description, a sitemap entry and a Work card with its own thumbnail.
+- 43 screenshots and a thumbnail in `cases/smart-ticket/`: every 2026 screen in Light and Dark (they switch with the site's theme, in the page and the image viewer); the five 2022 screens and the Lock Screen exist in one version and show as they are in both themes.
+- `CaseSmartTicketView` and its building blocks in the case-studies slice: `PersonaCard`, `ComparisonBlock`, `ComparisonSide`, `ScreenGrid`. `ShowcaseRow` takes phone screens (`device: "phone"`: a wide text column beside a 376px phone card) and extra paragraphs; `CaseImpact` takes a note under the cards.
+- `Badge` takes a `tone` (`neutral`, `error`, `success`) for measured results, with stories.
+
+### 5.7.0 - 2026-10-27
+
+#### Added
+
+- The Project Planning case follows its new Figma layout: a details table and an info note, an executive summary with a lead line and "The problem" / "My part" columns, four feature sections (brand foundation and tokens, calendar, goals and milestones timeline, dashboards and budget) with a text column beside the screenshots, and a "What changed" section with three stat cards. Twelve new screenshots (six screens, each in Light and Dark), WebP at quality 90; the eleven old screenshots and the old thumbnail are removed.
+- Light and Dark screenshots: a screenshot card can name a `darkAsset`, shown while the site is in Dark mode, in the card, the image viewer and the background preload. A missing or broken dark file falls back to the light one. `useDocumentTheme` reads the theme from `<html>`, so images switch in the same frame as the colours. The Work page thumbnail takes an optional `darkAsset` too.
+- A design files banner near the end of a case study (`designFile` in the case content): an info banner with a link to the case's Figma file, opened in a new tab and counted as `figma-click` with `place: "case"`. The Project Planning case links its Figma file.
+- `Section` takes an optional `eyebrow` above its heading, with a story.
+
+#### Changed
+
+- Every case study shares the new layout: screenshot rows drop their card box for a 440px text column beside a framed screenshot (12px radius, medium shadow), alternating sides from 1024px and stacked text first below it; the executive summary uses titled columns in all three cases; the details table uses Title Medium labels and Body Large values with 24px padding; confidentiality notes use the info tone.
+- The Project Planning thumbnail on the Work page is the new dashboard composition (`thumbnail-v2.webp`).
+
+### 5.6.1 - 2026-10-26
+
+#### Changed
+
+- The footer's Privacy and Accessibility links are separated by a vertical bar, like the copyright line above them: "Privacy | Accessibility". They stay on one line down to 320px; if a large text size wraps them, the taller lines keep their 24px target areas apart (WCAG 2.5.8).
+
+### 5.6.0 - 2026-10-26
+
+#### Added
+
+- An accessibility statement at `/accessibility`, linked from the footer next to Privacy: what the site supports (keyboard, screen readers, zoom, text size, dark mode, reduced motion, more contrast, Windows contrast themes), its known limits (text inside screenshots, other websites), how it is checked and how to report a problem. Like the privacy policy it has a page title, a search description, a sitemap date, an `llms.txt` line and a breadcrumb; the copy rules test checks its text, and `yarn a11y` checks it with every other page (38 scans, 0 violations). A copy review made two claims more exact (Storybook's examples are checked without colour contrast; one real browser, with reduced motion and more contrast tested separately).
+- `ProseSection` in `shared/ui`, with a story: a text page's section of paragraphs, points and an optional component. The privacy policy and the accessibility statement both use it; it replaces the privacy slice's own section view.
+
+#### Changed
+
+- The footer's Privacy and Accessibility links sit side by side.
+- The `a11y-reviewer` agent names the specs that test reduced motion (`header-motion`, `scroll-reveal`) and more contrast (`contrast`).
+
+### 5.5.0 - 2026-10-26
+
+#### Added
+
+- Stronger colours when a visitor's system asks for more contrast (macOS and iOS "Increase contrast"; `prefers-contrast: more`), in both themes. Secondary text, links, borders, focus rings and callout colours move to darker or lighter colours from the same palette, so reading text reaches 7:1 and borders 3:1; nothing changes for everyone else. The Figma colour collection has two new modes, "Light more contrast" and "Dark more contrast" (copies of Light and Dark with 20 tokens pointing elsewhere; all 106 semantic colours checked against the code), and the token export carries them. In light, the warning, error and success texts become near-black, because no warm palette colour reaches 7:1 on its tinted background.
+- `src/styles/contrast.test.ts` checks those targets (proved on the normal palette, where it fails), `tokens.test.ts` keeps the new modes in step with Figma, and `e2e/contrast.e2e.ts` checks in Chromium, Firefox and WebKit that the stronger colours apply with the setting and only then.
+
+### 5.4.0 - 2026-10-26
+
+#### Added
+
+- The site follows the browser's text size: spacing, type, layout widths, breakpoints and icons are in rem (Figma's px / 16), so a visitor who sets a larger default size gets a page that grows as with zoom. At the default size nothing moved: all boxes on 7 pages at 3 widths in both themes are the same to the pixel as before. At 200% text no page scrolls sideways and no text is cut off; long words break only where they do not fit (`overflow-wrap`), section headings may shrink beside their copy-link button, and button labels may wrap.
+- `yarn a11y` checks every page at a 200% browser text size (no sideways scrolling, no text cut off) and in a Windows contrast theme (forced colours: a focus outline on every Tab stop, plus a screenshot per page). Both pass.
+- `src/styles/relative-units.test.ts` fails when a stylesheet or the theme gets a px length where rem belongs (proved with a px probe file).
+
+### 5.3.4 - 2026-10-26
+
+#### Added
+
+- LICENSE has a Contributions section: everyone who contributes to the site, such as a co-author named in a commit, gives Karolina Kita a non-exclusive, perpetual licence to use, change, publish and sublicense the contribution under any terms she chooses, also for contributions made before it was added; contributors keep their copyright. CONTRIBUTING.md says so under Every commit.
+
 ## Release v5.3.3 - 2026-10-26
 
 - Visitor statistics, which run only if you allow them, now also note the height of your browser window and which pages were read after opening a tagged link, such as one in a job application; the privacy page says so and explains more exactly how visits are counted.

@@ -9,7 +9,7 @@ const meta = {
   args: {
     tone: "warning",
     label: "Confidentiality note",
-    children: "Client names have been anonymized, except where explicitly permitted.",
+    children: "Client names have been anonymised, except where explicitly permitted.",
   },
 } satisfies Meta<typeof Callout>;
 

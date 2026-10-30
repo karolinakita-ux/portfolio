@@ -1,9 +1,10 @@
 import { PROFILE } from "#shared/content/profile.ts";
+import { pageCount } from "#shared/content/profile.utils.ts";
 import { VIEW, VIEW_PATHS, VIEWS } from "#shared/lib/routes/routes.constants.ts";
 import type { View } from "#shared/lib/routes/routes.types.ts";
 import { isCaseView, titleForView } from "#shared/lib/routes/routes.utils.ts";
 
-import { PERSON_ID, PROFILE_PAGES, SITE_URL, WEBSITE_ID } from "./seo.constants.ts";
+import { CV_PDF_URL, PERSON_ID, PROFILE_PAGES, SITE_URL, WEBSITE_ID } from "./seo.constants.ts";
 import { HOME_NAME, PAGE_DESCRIPTIONS, PAGE_NAMES } from "./seo.content.ts";
 import type { PageHead } from "./seo.types.ts";
 
@@ -68,7 +69,7 @@ export function headFor(view: View): PageHead {
 export function llmsTxt(): string {
   const line = (view: View) => `- [${PAGE_NAMES[view]}](${absoluteUrl(view)}): ${PAGE_DESCRIPTIONS[view]}`;
   const cases = VIEWS.filter(isCaseView);
-  const pages = [VIEW.about, VIEW.contact, VIEW.privacy];
+  const pages = [VIEW.about, VIEW.cv, VIEW.contact, VIEW.privacy, VIEW.accessibility];
   return [
     `# ${PROFILE.name} - ${PROFILE.role}`,
     "",
@@ -76,7 +77,7 @@ export function llmsTxt(): string {
     "",
     "Every page below is plain HTML: no login, no JavaScript needed to read it.",
     "",
-    "## Case studies",
+    "## Case Studies",
     "",
     ...cases.map(line),
     "",
@@ -89,6 +90,7 @@ export function llmsTxt(): string {
     "",
     `- Email: ${PROFILE.email}`,
     `- LinkedIn: ${PROFILE.linkedinUrl}`,
+    `- CV (PDF, ${pageCount(PROFILE.cvPdfPages)}): ${CV_PDF_URL}`,
     `- GitHub: ${PROFILE.githubProfileUrl}`,
     "",
   ].join("\n");

@@ -27,7 +27,7 @@ function DialogDemo({ onClose }: Pick<DialogProps, "onClose">) {
         }}
       >
         <div>
-          <h2 id={titleId}>Dialog title</h2>
+          <h2 id={titleId}>Dialog Title</h2>
           <IconButton label="Close dialog" icon={X} onClick={() => dialogRef.current?.close()} />
         </div>
       </Dialog>
@@ -47,7 +47,7 @@ type Story = StoryObj<typeof meta>;
 export const OpenAndClose: Story = {
   play: async ({ canvas, args }) => {
     await userEvent.click(canvas.getByRole("button", { name: "Open dialog" }));
-    const dialog = canvas.getByRole("dialog", { name: "Dialog title" });
+    const dialog = canvas.getByRole("dialog", { name: "Dialog Title" });
     await expect(dialog).toHaveAttribute("open");
     await userEvent.click(canvas.getByRole("button", { name: "Close dialog" }));
     await expect(dialog).not.toHaveAttribute("open");

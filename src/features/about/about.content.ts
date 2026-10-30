@@ -1,24 +1,36 @@
 import type { FaqItem, Milestone, Principle } from "./about.types.ts";
 
 export const ABOUT_INTRO: readonly string[] = [
-  "I am a Product and UX/UI Designer with a background in psychology. Since 2018, I have been turning complicated software into clear, practical tools that people actually enjoy using. My psychology foundation helps me understand how people think, make decisions, and deal with cognitive overload in fast-paced work environments.",
-  "I specialize in data-heavy enterprise workflows, B2B SaaS platforms, and multi-brand design systems. Working closely with product managers and engineers, I bridge the gap between human behavior, design consistency, and technical feasibility.",
+  "I am a Senior Product Designer with a background in psychology. Since 2018, I have been turning complicated software into clear, practical tools that people actually enjoy using. My psychology foundation helps me understand how people think, make decisions, and deal with cognitive overload in fast-paced work environments.",
+  "I specialise in data-heavy enterprise workflows, B2B SaaS platforms, and multi-brand design systems. Working closely with product managers and engineers, I bridge the gap between human behaviour, design consistency, and technical feasibility.",
 ];
 
-/** Authored oldest → newest; the About timeline reads newest first. `lesson` (quote block) is optional. */
+/**
+ * The hero's buttons, under the intro: the CV (secondary), then the case studies (primary). The career section's
+ * button to the case studies says `work` too: one label for one destination, the Work hero's (content-rules.test.ts).
+ */
+export const ABOUT_ACTIONS = {
+  cv: "View CV",
+  work: "Explore Case Studies",
+};
+
+/**
+ * Authored oldest → newest; the About timeline reads newest first. `lesson` (quote block) is optional. Each `org`
+ * starts with the employer or school and names its titles as the CV does (content-rules.test.ts checks it).
+ */
 export const MILESTONES: readonly Milestone[] = [
   {
     id: "academic",
     period: "2015 - 2020",
     title: "Academic Foundation in Psychology",
-    org: "University of Zielona Góra - Master's Degree in Psychology",
+    org: "University of Zielona Góra - MSc in Psychology",
     focus:
-      "Built a strong foundation in human behavior, decision-making, and research methodology. Conducted quantitative and qualitative studies, learning how to analyze user needs objectively and design interfaces that reduce cognitive strain.",
+      "Built a strong foundation in human behaviour, decision-making, and research methodology. Conducted quantitative and qualitative studies, learning how to analyse user needs objectively and design interfaces that reduce cognitive strain.",
     tags: [
       "Cognitive Psychology",
       "Quantitative Research",
       "Qualitative Research",
-      "Behavioral Analysis",
+      "Behavioural Analysis",
       "Research Methodology",
     ],
   },
@@ -35,18 +47,18 @@ export const MILESTONES: readonly Milestone[] = [
     id: "enterprise",
     period: "2019 - 2026",
     title: "Enterprise Platforms & B2B Solutions",
-    org: "GlobalLogic Poland - Senior UX/UI Designer",
+    org: "GlobalLogic Poland - UX/UI Designer (2019 - 2023), then Senior UX/UI Designer (2024 - 2026)",
     focus:
-      "Designing core workflows for large-scale European automotive platforms, fleet telematics, and data governance portals. Owned complex data tables, multi-variable filtering systems, and role-based access models (RBAC). Documented edge cases, interaction states, and system behaviors to ensure seamless delivery alongside engineering and product teams.",
+      "Designed core workflows for large-scale European automotive platforms, fleet telematics and data governance portals. Owned complex data tables, multi-variable filtering and role-based access models (RBAC). Documented edge cases, interaction states and system behaviour so engineering and product teams could build without guessing.",
     tags: ["Enterprise UX", "Data Tables & Filters", "Permissions (RBAC)", "Developer Handoff", "WCAG 2.1 AA"],
   },
   {
     id: "architecture",
     period: "2023 - Present",
     title: "Design Systems & Product Design",
-    org: "Programado - Senior Product Designer (Consulting / Contract)",
+    org: "Programado - Senior Product Designer (Consulting / Contract), from 2023 to 2026 alongside my full-time role at GlobalLogic Poland",
     focus:
-      "Leading the design and evolution of scalable design systems tailored to enterprise front-end frameworks (such as PrimeNG and Angular). Defining design tokens, theming structures (light/dark modes), and accessibility standards to help product teams deliver consistent interfaces faster.",
+      "Leading the design and evolution of scalable design systems tailored to enterprise frontend frameworks (such as PrimeNG and Angular). Defining design tokens, theming structures (Light and Dark mode), and accessibility standards to help product teams deliver consistent interfaces faster.",
     tags: [
       "Design Systems",
       "Design Tokens",
@@ -63,24 +75,24 @@ export const FAQ: { title: string; intro: string; items: readonly FaqItem[] } = 
   items: [
     {
       id: "dribbble",
-      question: "Why do you focus on case studies rather than visual platforms like Dribbble?",
+      question: "Why Do You Focus on Case Studies Rather than Visual Platforms like Dribbble?",
       answer:
         "Enterprise software cannot be fully explained in a single static visual. Most of my work involves confidential B2B tools, detailed tables, permissions, and complex workflows covered by NDAs. I prefer sharing in-depth case studies that explain the problem, real constraints, and the reasoning behind each design decision.",
     },
     {
       id: "psychology",
-      question: "How does a background in psychology shape your design work?",
+      question: "How Does a Background in Psychology Shape Your Design Work?",
       answer:
-        "Psychology helps me understand how people process information, make choices, and handle heavy workloads. In complex business tools, good design reduces mental fatigue by organizing information clearly and preventing mistakes before they happen.",
+        "Psychology helps me understand how people process information, make choices, and handle heavy workloads. In complex business tools, good design reduces mental fatigue by organising information clearly and preventing mistakes before they happen.",
     },
     {
       id: "engineers",
-      question: "How do you collaborate with cross-functional teams?",
+      question: "How Do You Collaborate with Cross-Functional Teams?",
       answer: "Great software is always a team effort:",
       points: [
         [
           "Product Managers",
-          "Partner early to understand business goals, prioritize requirements, and define realistic delivery phases.",
+          "Partner early to understand business goals, prioritise requirements, and define realistic delivery phases.",
         ],
         [
           "Frontend Developers",
@@ -94,7 +106,7 @@ export const FAQ: { title: string; intro: string; items: readonly FaqItem[] } = 
     },
     {
       id: "problems",
-      question: "What kinds of problems do you enjoy working on most?",
+      question: "What Kinds of Problems Do You Enjoy Working On Most?",
       answer:
         "I enjoy projects with heavy data and complex logic, like automotive platforms, management portals, and financial tools. Turning messy, complicated workflows into simple, predictable tools that save people time is what I find most rewarding.",
     },
@@ -105,7 +117,7 @@ export const PRINCIPLES: readonly Principle[] = [
   {
     id: "utility",
     title: "Clarity First",
-    body: "Complex tools don't have to feel messy. I organize information so users can quickly find what they need without feeling lost in buttons and tables.",
+    body: "Complex tools don’t have to feel messy. I organise information so users can quickly find what they need without feeling lost in buttons and tables.",
   },
   {
     id: "edge-cases",

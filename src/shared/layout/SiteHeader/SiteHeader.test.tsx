@@ -13,7 +13,7 @@ function Header({ view = VIEW.work, theme = "light" }: { view?: View; theme?: Th
 }
 
 const navLinks = () => within(screen.getByRole("navigation", { name: "Primary" })).getAllByRole("link");
-const themeGroup = () => screen.getByRole("group", { name: "Color theme" });
+const themeGroup = () => screen.getByRole("group", { name: "Colour theme" });
 const pillsIn = (element: HTMLElement) => [...element.querySelectorAll<HTMLElement>("[data-pill]")];
 /** The one pill inside an item; fails when there is none or more than one. */
 const pillOf = (element: HTMLElement) => {
@@ -68,7 +68,7 @@ describe("SiteHeader nav pill", () => {
     expect(animations).toHaveLength(1);
     expect(animations[0]?.target).toBe(pillOf(screen.getByRole("link", { name: "Contact" })));
 
-    rerender(<Header view={VIEW.caseTheming} />); // a case study: Work
+    rerender(<Header view={VIEW.caseDataGovernance} />); // a case study: Work
     expect(animations[1]?.target).toBe(pillOf(screen.getByRole("link", { name: "Work" })));
 
     rerender(<Header view={VIEW.privacy} />); // out of the nav: the Work pill fades out
@@ -80,19 +80,25 @@ describe("SiteHeader nav pill", () => {
 describe("SiteHeader theme switch pill", () => {
   it("gives each theme button a pill, visible on the pressed one", () => {
     render(<Header theme="dark" />);
-    const light = screen.getByRole("button", { name: "Light theme" });
-    const dark = screen.getByRole("button", { name: "Dark theme" });
+    const light = screen.getByRole("button", { name: "Light mode" });
+    const dark = screen.getByRole("button", { name: "Dark mode" });
     expect(pillOf(light)).toHaveAttribute("data-pill", "light");
     expect(pillOf(dark)).toHaveAttribute("data-pill", "dark");
     expect(pillOf(light)).toHaveAttribute("aria-hidden", "true");
     expect(dark).toHaveAttribute("aria-pressed", "true");
     expect(light).toHaveAttribute("aria-pressed", "false");
-    expect(visiblePills(themeGroup())).toEqual(["dark"]);
+    // Shown by the button's aria-pressed (ThemeToggle.test.tsx), so the prerendered switch can be pressed before the app runs.
+    for (const pill of pillsIn(themeGroup())) expect(pill).toHaveClass("group-aria-pressed/theme:opacity-100");
   });
 
   it("names the group's view-transition layer and keeps the pills above its background", () => {
     render(<Header />);
     expect(themeGroup()).toHaveClass("kb-theme-toggle", "isolate");
+  });
+
+  it("carries the class base.css uses to keep focus on its links and buttons from scrolling the page", () => {
+    render(<Header />);
+    expect(screen.getByRole("banner")).toHaveClass("kb-site-header");
   });
 
   it("slides the pill to the new theme", () => {
@@ -101,6 +107,6 @@ describe("SiteHeader theme switch pill", () => {
     const { rerender } = render(<Header theme="light" />);
     rerender(<Header theme="dark" />);
     expect(animations).toHaveLength(1);
-    expect(animations[0]?.target).toBe(pillOf(screen.getByRole("button", { name: "Dark theme" })));
+    expect(animations[0]?.target).toBe(pillOf(screen.getByRole("button", { name: "Dark mode" })));
   });
 });

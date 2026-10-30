@@ -6,7 +6,7 @@ import type { LoadingSkeletonProps } from "./LoadingSkeleton.types.ts";
 
 /**
  * Placeholder while an image loads: the size the fitted image will have
- * (.kb-lightbox-skeleton in app.css), or the whole pane when the size is unknown.
+ * (.kb-lightbox-skeleton in lightbox.css), or the whole pane when the size is unknown.
  */
 export function LoadingSkeleton({ item, className }: LoadingSkeletonProps) {
   const style = skeletonStyle(item);

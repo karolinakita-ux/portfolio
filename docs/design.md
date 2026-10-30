@@ -2,21 +2,23 @@
 
 The site's look comes from Karolina's KitaBranding design system in Figma.
 
-- Figma file: [Karolina Kita Branding](https://www.figma.com/design/U5ke9Li7uZq06u8VM2VMCB/%F0%9F%A6%86-Karolina-Kita-Branding?node-id=0-1) - colour, typography, spacing, radius, shadow and motion variables in light and dark mode. The Work page links to it as "Figma workspace".
+**Figma is the source of truth for the design** (Karolina, 30 October 2026). A design change starts in Figma, or is mirrored there the same day when it starts in code, so the Figma file and `develop` show the same thing; the live site follows at the next release. When the two differ and nobody has decided which is right, ask Karolina rather than copying one over the other. In Figma, use only the Kita Branding variables, text styles and components: no values from other libraries (the old Portfolio library) and no new custom colours.
+
+- Figma file: [Karolina Kita Branding](https://www.figma.com/design/U5ke9Li7uZq06u8VM2VMCB/%F0%9F%A6%86-Karolina-Kita-Branding?node-id=0-1) - colour, typography, spacing, radius, shadow and motion variables in Light and Dark mode. The Work page links to it as "Explore the Figma Workspace".
 
 ## From Figma to code
 
-1. The variables live in the Figma collection "Kita Branding", with two modes: Light and Dark. Motion variables (`motion/duration/fast|medium|slow` in milliseconds, `motion/easing/standard` as a CSS easing) have the same value in both modes.
+1. The variables live in the Figma collection "Kita Branding", with four modes: Light, Dark, and their stronger versions "Light more contrast" and "Dark more contrast", used when a visitor's system asks for more contrast (macOS and iOS "Increase contrast"). The stronger modes copy Light and Dark and point 20 text, link, border, focus and status tokens to darker or lighter palette variables, so reading text reaches 7:1 and borders 3:1. Motion variables (`motion/duration/fast|medium|slow` in milliseconds, `motion/easing/standard` as a CSS easing) have the same value in both modes.
 2. They are exported as JSON to `src/styles/kita-branding.tokens.json`.
-3. `src/styles/tokens.css` turns each token into a CSS variable, for both modes. Dark mode swaps the variables when `<html>` has the `.dark` class.
-4. `src/styles/theme.css` (imported by `app.css`) maps the variables into Tailwind's theme (`bg-bg-canvas`, `text-text-secondary`, `p-md`, `rounded-lg`, `duration-medium ease-standard` ...) and removes Tailwind's default colours, radii, shadows, font sizes and easings, so only tokens can be used.
-5. `src/styles/tokens.test.ts` fails when `tokens.css` and the JSON export drift apart; `src/styles/motion-tokens.test.ts` fails on a raw duration or easing in the code.
+3. `src/styles/tokens.css` turns each token into a CSS variable, for both modes. Dark mode swaps the variables when `<html>` has the `.dark` class. The more-contrast modes come last, inside `@media (prefers-contrast: more)`, and list only the tokens they change.
+4. `src/styles/theme.css` (imported by `app.css`) maps the variables into Tailwind's theme (`bg-bg-canvas`, `text-text-secondary`, `p-md`, `rounded-lg`, `duration-medium ease-standard` ...) and removes Tailwind's default colours, radii, shadows, font sizes and easings, so only tokens can be used. Figma works in px; the code writes spacing, type, layout widths and breakpoints as rem (px / 16, so `spacing/md` 16px is `1rem`). At the browser's default text size the result is the same to the pixel, and visitors who set a larger text size get a page that grows with it.
+5. `src/styles/tokens.test.ts` fails when `tokens.css` and the JSON export drift apart (all four modes); `src/styles/contrast.test.ts` checks the more-contrast targets; `src/styles/motion-tokens.test.ts` fails on a raw duration or easing in the code.
 
 ## Changing a token
 
 1. Change the variable in Figma first. Semantic tokens (for example `border/interactive/focus`) point to palette variables, so change the alias rather than typing a raw hex value.
 2. Re-export `kita-branding.tokens.json`.
-3. Update the variable in `tokens.css` in both modes (motion tokens once), and its mapping in `theme.css` if it is new.
+3. Update the variable in `tokens.css` in both modes (motion tokens once), and its mapping in `theme.css` if it is new. A new text, border or status token also gets its value in the two more-contrast modes, in Figma and in the `prefers-contrast: more` blocks.
 4. Mirror the change in the KitaBranding design system on claude.ai (its `tokens.json`), so design agents see the same values.
 5. Run `yarn verify`.
 
@@ -24,12 +26,20 @@ The site's look comes from Karolina's KitaBranding design system in Figma.
 
 The Figma Components page maps to `src/shared/ui` (the table is in [architecture.md](architecture.md#component-library-srcsharedui)). Components and variants keep their Figma names: `Button` has the Primary, Secondary, Subtle and Link types, `Callout` the Info and Warning tones of the Figma Banner.
 
-The library is published in Storybook at [karolina.kita.company/storybook](https://karolina.kita.company/storybook/). Its Welcome page explains the design system; every story shows a component with real copy, in light and dark.
+The library is published in Storybook at [karolina.kita.company/storybook](https://karolina.kita.company/storybook/). Its Welcome page explains the design system; every story shows a component with real copy, in Light and Dark mode.
+
+## Link-preview image
+
+The picture LinkedIn, Facebook, Messenger, Slack and X show with a shared link is Karolina's "Portfolio Cover": the frame [Portfolio Cover · Open Graph 1200x630 · Light](https://www.figma.com/design/U5ke9Li7uZq06u8VM2VMCB/%F0%9F%A6%86-Karolina-Kita-Branding?node-id=2742-2910) on the Figma page Portfolio Thumbnails. The site serves it as `public/assets/site/og-cover.png`, named in `og:image` and `twitter:image` in `index.html`.
+
+- **Light only:** a link preview cannot follow the viewer's theme. `og:image` has no colour-scheme variant, and each service fetches one image for everyone. The Dark and Square frames beside it are not used by the site.
+- **Changing it:** edit the cover in Figma, export the Light frame as PNG at its export setting (2x, 1200 x 630), compress it without loss (`sharp`: no alpha channel, `compressionLevel: 9`), save it under a new file name (`/assets` is cached for a week), then update `og:image`, `twitter:image` and both alt texts. `src/app/seo/link-preview.test.ts` checks the file and the tags. After the release, refresh the previews ([CONTRIBUTING.md](../CONTRIBUTING.md#5-refresh-what-other-services-cached)).
 
 ## Design rules in code
 
 Karolina's rules that a reviewer could miss, kept by the code and its tests:
 
+- **Section-closing actions at the end of the row:** a button that closes a section (the About hero and career section, "Read the full recommendations on LinkedIn" under the Work testimonials) sits at the right end of its row; a button label that wraps on a narrow screen is centred between its icons.
 - **One primary action per screen:** other buttons are secondary, so the page keeps one clear next step.
 - **Equal choices look equal:** allow and decline in the consent box are the same secondary button (a story checks it).
 - **Link buttons are as big as bordered buttons:** the Button Link type ("View Case Study") has a transparent border and the button padding, so its click area is a Secondary button's box, not only the text.

@@ -3,17 +3,32 @@
  * a theme: at first paint (the inline script in index.html, before the app runs), after React has
  * taken over, and live when the system setting changes. A pick is stored and wins, also over later
  * system changes and after a reload. With storage blocked the site falls back to the system setting
- * without page errors.
+ * without page errors. The prerendered theme switch shows (and announces) the applied theme from its
+ * first frame, and nothing moves when the app takes over.
  */
 import { expect, test, type Page } from "@playwright/test";
 
 import { VIEW, VIEW_PATHS } from "#shared/lib/routes/routes.constants.ts";
 
-import { CANVAS, THEME_STORAGE_KEY, THEMES } from "./helpers/helpers.constants.ts";
+import { summariseAnimations } from "./helpers/animations.utils.ts";
+import { activeKeys } from "./helpers/geometry.utils.ts";
+import { CANVAS, SELECTOR, THEME_LABEL, THEME_STORAGE_KEY, THEMES } from "./helpers/helpers.constants.ts";
 import type { Theme } from "./helpers/helpers.types.ts";
-import { appRan, blockScriptFiles, nextFrames, openView, themeButton, waitForApp } from "./helpers/page.utils.ts";
+import {
+  appRan,
+  blockScriptFiles,
+  holdScriptFiles,
+  nextFrames,
+  openView,
+  prepare,
+  themeButton,
+  waitForApp,
+} from "./helpers/page.utils.ts";
+import { finishSampling, pillLog } from "./helpers/sampling.utils.ts";
 
 const PATH = VIEW_PATHS[VIEW.about];
+/** The dev server sends an empty page: no prerendered theme switch before the app runs. */
+const DEV = process.env.E2E_DEV === "1";
 
 const opposite = (theme: Theme): Theme => (theme === "dark" ? "light" : "dark");
 
@@ -37,6 +52,15 @@ async function expectAppTheme(page: Page, theme: Theme): Promise<void> {
   await expect(page.locator("body")).toHaveCSS("background-color", rgb(CANVAS[theme]));
   await expect(themeButton(page, theme)).toHaveAttribute("aria-pressed", "true");
   await expect(themeButton(page, opposite(theme))).toHaveAttribute("aria-pressed", "false");
+}
+
+/** The prerendered theme switch before the app runs: the theme's button pressed and its pill the one shown. */
+async function expectSwitchBeforeApp(page: Page, theme: Theme): Promise<void> {
+  if (DEV) return;
+  await expect(themeButton(page, theme)).toHaveAttribute("aria-pressed", "true");
+  await expect(themeButton(page, opposite(theme))).toHaveAttribute("aria-pressed", "false");
+  await expect(page.locator(`${SELECTOR.themeGroup} [data-pill="${theme}"]`)).toHaveCSS("opacity", "1");
+  await expect(page.locator(`${SELECTOR.themeGroup} [data-pill="${opposite(theme)}"]`)).toHaveCSS("opacity", "0");
 }
 
 /** The stored pick, null when there is none, "(blocked)" when storage throws. */
@@ -71,6 +95,7 @@ for (const system of THEMES) {
       await page.goto(PATH);
       expect(await appRan(page), "the app bundle is blocked").toBe(false);
       await expectDocumentTheme(page, system);
+      await expectSwitchBeforeApp(page, system);
     });
 
     test("after React: the same theme, nothing stored; live system changes are followed", async ({ page }) => {
@@ -107,6 +132,7 @@ for (const system of THEMES) {
         await page.reload();
         expect(await appRan(page), "the app bundle is blocked").toBe(false);
         await expectDocumentTheme(page, pick);
+        await expectSwitchBeforeApp(page, pick);
         await unblock();
         await page.reload();
         await waitForApp(page);
@@ -132,6 +158,54 @@ for (const system of THEMES) {
       await themeButton(page, opposite(system)).click();
       await expectAppTheme(page, opposite(system));
       expect(errors, "page errors").toEqual([]);
+    });
+  });
+}
+
+for (const pick of THEMES) {
+  test.describe(`stored ${pick} (system ${opposite(pick)}), from the first frame through the app's takeover`, () => {
+    test.use({ colorScheme: opposite(pick) });
+
+    test("the switch shows and announces the pick in every frame, nothing moves", async ({ page }) => {
+      test.skip(DEV, "the dev server sends no prerendered HTML");
+      const label = THEME_LABEL[pick];
+      await prepare(page, { theme: pick });
+      // Samples the theme pills in every frame from the start of the document (frames before the switch: no items).
+      await page.addInitScript((selector) => {
+        window.__kb?.startSampling(selector);
+      }, SELECTOR.themePills);
+      const release = await holdScriptFiles(page);
+      await page.goto(PATH, { waitUntil: "commit" });
+      await page.locator(SELECTOR.themeGroup).waitFor();
+      await nextFrames(page, 5);
+      expect(await appRan(page), "the app bundle is held").toBe(false);
+      release();
+      await waitForApp(page);
+      // Longer than any animation, so one started by the takeover would be sampled and logged.
+      await page.waitForTimeout(500);
+
+      const frames = (await finishSampling(page, SELECTOR.themePills)).filter((frame) => frame.items.length > 0);
+      expect(frames.length, "frames with the switch").toBeGreaterThan(5);
+      expect(
+        frames
+          .filter((frame) => activeKeys(frame).join() !== label)
+          .map((frame) => `${activeKeys(frame).join("+") || "none"} at ${String(Math.round(frame.t))}ms`),
+        `frames that do not press ${label}`,
+      ).toEqual([]);
+      // Firefox runs frame callbacks before the stylesheet has loaded, when the pills are unstyled spans (both at
+      // opacity 1): the opacity check counts the frames with the stylesheet applied (each pill covers its button).
+      const styled = frames.filter((frame) =>
+        frame.items.every((item) => item.control !== null && Math.abs(item.width - item.control.width) < 1),
+      );
+      expect(styled.length, "frames with the stylesheet applied").toBeGreaterThan(5);
+      const wrong = styled.flatMap((frame) =>
+        frame.items
+          .filter((item) => item.opacity !== (item.key === label ? 1 : 0))
+          .map((item) => `${item.key} ${String(item.opacity)} at ${String(Math.round(frame.t))}ms`),
+      );
+      expect(wrong, `only the ${label} pill shows, at full opacity`).toEqual([]);
+      expect(summariseAnimations(frames), "pill animations in the sampled frames").toEqual([]);
+      expect(await pillLog(page), "pill animations since the document started").toEqual([]);
     });
   });
 }

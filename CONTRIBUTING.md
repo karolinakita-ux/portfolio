@@ -22,6 +22,8 @@ How work moves from a commit to the live site at karolina.kita.company.
 5. Commit to `develop` and push. Put the version in the commit subject, e.g. `Add zoom to the image viewer (1.1.0)`.
 6. Credit co-authors with trailers at the end of the message. Engineering commits (code structure, refactors, tooling, libraries) carry `Co-authored-by: Mateusz Kita <mkita.webdev@gmail.com>`; commits written with Claude carry its trailer too.
 
+By contributing, you license your contribution to Karolina Kita as [LICENSE](LICENSE) describes (Contributions); you keep the copyright in it.
+
 New code follows the file and folder rules in [docs/architecture.md](docs/architecture.md#files-and-folders): one component per folder with its `*.types.ts` and `*.styles.ts`, one folder per domain for other modules, files under 200 lines. ESLint enforces the slice boundaries, the class rule and the length cap. A new shared component gets a story next to it (`Name.stories.tsx`); `src/test/stories.test.tsx` fails without one.
 
 ### Version rules ([Semantic Versioning](https://semver.org/))
@@ -65,6 +67,8 @@ git log --oneline main..develop
 
 Every commit in that log should have its version under `## Unreleased`. If something is missing, add it before going on.
 
+Then date the sitemap: in `public/sitemap.xml`, set `<lastmod>` to the release date (today) for every page whose visible content or structured data changed since `origin/main` (`git diff --stat origin/main..develop` shows what changed; the footer's version number does not count). Commits on `develop` set the day they were made, which is too early once the release comes later, so check every changed page, not only the ones without today's date. The file goes into the release commit with `CHANGELOG.md`.
+
 ### 2. Write the release notes
 
 In `CHANGELOG.md`, rename `## Unreleased` to `## Release vX.Y.Z - YYYY-MM-DD` (today's date) and write the notes right under it, above the first `###` entry:
@@ -93,7 +97,7 @@ Versions: 1.0.3 - 1.1.0.
 ### 3. Merge, tag and push
 
 ```sh
-git add CHANGELOG.md
+git add CHANGELOG.md public/sitemap.xml
 git commit -m "Release vX.Y.Z"
 git push origin develop
 
@@ -116,7 +120,7 @@ Netlify builds `main` (tests run first; a failing test stops the deploy). Check 
 
 ### 5. Refresh what other services cached
 
-Only when the release changed what they show: a page's title or description, the link-preview image (`public/assets/site/og-image.png`), the site icon, or a page's address. The pages are listed in `public/sitemap.xml`.
+Only when the release changed what they show: a page's title or description, the link-preview image (`public/assets/site/og-cover.png`), the site icon, or a page's address. The pages are listed in `public/sitemap.xml`.
 
 | Service                              | Tool                                         | What to do                                                                                                                                                               |
 | ------------------------------------ | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -131,6 +135,10 @@ Google shows a new site icon only after it recrawls the home page, which can tak
 ### Urgent fixes
 
 Fix on `develop` as usual (patch version), then make a release with just that fix. Do not patch `main` directly.
+
+## Editor
+
+VS Code with the extensions in `.vscode/extensions.json`. Its ESLint keeps the types of the files it has already read, so after Claude, a workflow or a script changes many files outside the editor it can report errors such as "Unsafe assignment of an error typed value" on imports that are fine. Run **ESLint: Restart ESLint Server** (and **TypeScript: Restart TS Server**) from the Command Palette. `yarn lint` is the check that counts: it reads every file fresh, and `yarn verify` runs it with zero warnings allowed. Do not switch the rule off for such errors; it is what stops untyped values from slipping into the code. The editor does not watch or search Claude's temporary worktrees (`.claude/worktrees/`).
 
 ## Claude Code helpers
 

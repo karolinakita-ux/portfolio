@@ -6,7 +6,7 @@
     <title>Karolina Kita - Senior Product Designer</title>
     <meta
       name="description"
-      content="Senior Product Designer with 8+ years on B2B and enterprise platforms: UX research, complex workflows and token-driven design systems. MSc in Psychology."
+      content="Senior Product Designer with 8+ years, mostly on B2B and enterprise platforms: UX research, complex workflows and token-based design systems. MSc in Psychology."
     />
     <meta name="author" content="Karolina Kita" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
@@ -20,37 +20,40 @@
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
 
-    <!-- Link previews (Slack, LinkedIn, Messenger, X). Image: 1200 × 630 PNG, absolute URL. -->
+    <!-- Link previews (Slack, LinkedIn, Messenger, X). Image: the Light "Portfolio Cover" from Figma (docs/design.md),
+         1200 x 630 PNG, absolute URL. Light only: og:image has no colour-scheme variant, and LinkedIn, Facebook,
+         Messenger, Slack and X fetch one image for everyone, so it cannot follow the viewer's theme. A new image gets
+         a new file name (/assets is cached for a week). -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Karolina Kita" />
-    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale" content="en_GB" />
     <meta property="og:url" content="https://karolina.kita.company/" />
     <meta property="og:title" content="Karolina Kita - Senior Product Designer" />
     <meta
       property="og:description"
-      content="Senior Product Designer with 8+ years on B2B and enterprise platforms: UX research, complex workflows and token-driven design systems."
+      content="Senior Product Designer with 8+ years, mostly on B2B and enterprise platforms: UX research, complex workflows and token-based design systems."
     />
-    <meta property="og:image" content="https://karolina.kita.company/assets/site/og-image.png" />
+    <meta property="og:image" content="https://karolina.kita.company/assets/site/og-cover.png" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta
       property="og:image:alt"
-      content="Karolina Kita - Deconstructing complexity through human cognition and systems. Senior Product Designer."
+      content="Karolina Kita - Senior Product Designer. Enterprise systems, B2B platforms and token-driven design systems. Selected work 2018 - 2026, 8+ years, UX research, MSc Psychology."
     />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Karolina Kita - Senior Product Designer" />
     <meta
       name="twitter:description"
-      content="Senior Product Designer with 8+ years on B2B and enterprise platforms: UX research, complex workflows and token-driven design systems."
+      content="Senior Product Designer with 8+ years, mostly on B2B and enterprise platforms: UX research, complex workflows and token-based design systems."
     />
-    <meta name="twitter:image" content="https://karolina.kita.company/assets/site/og-image.png" />
+    <meta name="twitter:image" content="https://karolina.kita.company/assets/site/og-cover.png" />
     <meta
       name="twitter:image:alt"
-      content="Karolina Kita - Deconstructing complexity through human cognition and systems. Senior Product Designer."
+      content="Karolina Kita - Senior Product Designer. Enterprise systems, B2B platforms and token-driven design systems. Selected work 2018 - 2026, 8+ years, UX research, MSc Psychology."
     />
 
-    <!-- Site-wide structured data (Google rich results, knowledge panel); facts match the About page and LinkedIn.
+    <!-- Site-wide structured data (Google rich results, knowledge panel); facts match the About page, the CV and LinkedIn.
          Each page adds its own WebPage / ProfilePage / CreativeWork block at build time (scripts/prerender.ts). -->
     <script type="application/ld+json">
       {
@@ -71,7 +74,7 @@
             "url": "https://karolina.kita.company/",
             "image": "https://karolina.kita.company/assets/site/portrait.webp",
             "jobTitle": "Senior Product Designer",
-            "description": "Senior Product Designer with 8+ years on B2B and enterprise platforms: UX research, complex workflows and token-driven design systems. MSc in Psychology.",
+            "description": "Senior Product Designer with 8+ years, mostly on B2B and enterprise platforms: UX research, complex workflows and token-based design systems. MSc in Psychology.",
             "email": "mailto:karolina.kita.zg@gmail.com",
             "address": { "@type": "PostalAddress", "addressCountry": "PL" },
             "knowsLanguage": ["en", "pl"],
@@ -83,7 +86,7 @@
               "Design Systems",
               "Design Tokens",
               "Information Architecture",
-              "Accessibility (WCAG 2.1)",
+              "Accessibility (WCAG 2.1 AA)",
               "B2B SaaS",
               "Enterprise Software",
               "Figma",
@@ -98,13 +101,7 @@
               {
                 "@type": "EducationalOccupationalCredential",
                 "credentialCategory": "degree",
-                "name": "Master of Science (MSc) in Psychology"
-              },
-              {
-                "@type": "EducationalOccupationalCredential",
-                "credentialCategory": "certificate",
-                "name": "Google UX Design Specialization",
-                "recognizedBy": { "@type": "Organization", "name": "Google" }
+                "name": "MSc in Psychology"
               }
             ],
             "sameAs": ["https://www.linkedin.com/in/karolinakita", "https://github.com/karolinakita-ux"]
@@ -113,7 +110,9 @@
       }
     </script>
 
-    <!-- Theme before first paint: stored choice, else the system setting (see src/shared/hooks/useTheme.ts). -->
+    <!-- Theme before first paint: stored choice, else the system setting (see src/shared/hooks/theme/useTheme.ts).
+         The prerendered theme switch was built with Light pressed: the script presses the applied theme's button
+         as the parser adds it (mutation observers run before the browser paints), and its look follows. -->
     <script>
       (function () {
         var theme = null;
@@ -125,6 +124,15 @@
         }
         if (theme === "dark") document.documentElement.classList.add("dark");
         document.documentElement.style.colorScheme = theme;
+
+        var observer = new MutationObserver(function () {
+          var buttons = document.querySelectorAll("[data-theme-option]");
+          for (var i = 0; i < buttons.length; i++) {
+            buttons[i].setAttribute("aria-pressed", String(buttons[i].getAttribute("data-theme-option") === theme));
+          }
+          if (buttons.length >= 2) observer.disconnect();
+        });
+        observer.observe(document.documentElement, { childList: true, subtree: true });
       })();
     </script>
   </head>

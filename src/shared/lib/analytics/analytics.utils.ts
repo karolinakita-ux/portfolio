@@ -37,7 +37,7 @@ import { sessionData } from "./session.utils.ts";
  * - The tracker keeps its own idea of the current page, so every call passes the page itself: address
  *   without the hash, title and referrer. beforeSend does the same for the tracker's own requests (speed
  *   reports, session data), keeps only the link tag and UTM parameters in addresses, and cancels
- *   everything once statistics are off.
+ *   everything once statistics are off. Umami's own error reports (stack traces) never go.
  * - Calls made before the script has loaded wait in a queue; if the script is blocked, they are dropped.
  * - Besides pageviews and track() calls, it measures time on page (engagement.utils.ts), dead clicks and
  *   text copies (clicks.utils.ts), prints and errors in the site's code (errors.utils.ts), and tags events
@@ -56,6 +56,9 @@ export const analyticsAllowed = ({ production, base, hostname, privacy }: Analyt
   production && base === "/" && hostname === UMAMI.host && !optedOut(privacy);
 
 const state: AnalyticsState = { on: false, queue: [], page: null, referrer: null, unwatch: null, notFound: null };
+
+/** True while statistics run on this page. */
+export const analyticsOn = (): boolean => state.on;
 
 /** Sends nothing more on this page (the script is blocked, or the visitor switched statistics off). */
 export const stopAnalytics = (): void => {
@@ -89,8 +92,11 @@ const send = (build: BuildPayload) => {
 /**
  * Runs before every request the tracker makes (data-before-send), its own speed reports and session
  * data included: nothing goes once statistics are off, and addresses are cleaned (payload.utils.ts).
+ * Umami's own error reports carry stack traces, so none goes even if they were switched on: the site
+ * sends js-error instead (errors.utils.ts).
  */
-export const beforeSend: BeforeSend = (type, payload) => (state.on ? cleanPayload(type, payload, state.page) : null);
+export const beforeSend: BeforeSend = (type, payload) =>
+  state.on && type !== "error" ? cleanPayload(type, payload, state.page) : null;
 
 /** The current page, read when the call is made (not when a queued call goes out). */
 const currentPage = (): PageSnapshot => ({
@@ -160,6 +166,8 @@ export function startAnalytics(site: AnalyticsSite): boolean {
   script.dataset.beforeSend = UMAMI.beforeSend;
   script.dataset.excludeHash = "true";
   script.dataset.doNotTrack = "true";
+  // Umami's own error reports (stack traces) stay off, also if window.umamiConfig asked for them: js-error instead.
+  script.dataset.errors = "false";
   if (site.release) script.dataset.tag = site.release;
   script.addEventListener("load", flush);
   script.addEventListener("error", stopAnalytics);

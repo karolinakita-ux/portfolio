@@ -41,11 +41,20 @@ const EARLY_PX = [12, 24, 36];
 /** Same tags as scripts/a11y-audit.ts (without best-practice hints). */
 const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22a", "wcag22aa"];
 
-const PAGES = [VIEW.work, VIEW.about, VIEW.caseTheming, VIEW.caseProjectPlanning, VIEW.caseAutomotive].map(
-  (view) => VIEW_PATHS[view],
-);
-/** A tall screen (a large monitor, or zoomed out): every page then has cards on its first screen. */
+const PAGES = [
+  VIEW.work,
+  VIEW.about,
+  VIEW.caseSmartTicket,
+  VIEW.caseDataGovernance,
+  VIEW.caseProjectPlanning,
+  VIEW.caseAutomotive,
+].map((view) => VIEW_PATHS[view]);
+/** A tall screen (a large monitor, or zoomed out): most pages then have cards on their first screen. */
 const TALL = { width: 1280, height: 2000 };
+const NO_CARDS_ON_TALL_FIRST_SCREEN = new Set<string>([
+  VIEW_PATHS[VIEW.caseSmartTicket],
+  VIEW_PATHS[VIEW.caseProjectPlanning],
+]);
 
 interface CardState {
   /** Heading or caption text, for messages. */
@@ -65,6 +74,8 @@ interface Snapshot {
   maxScrollY: number;
   /** Height of the scrollport (the view timeline's viewport). */
   viewport: number;
+  /** The page's scroll padding under the sticky header (base.css), in px. */
+  scrollPaddingTop: number;
   cards: CardState[];
 }
 
@@ -135,6 +146,7 @@ function installRevealProbe({ selector, record }: ProbeOptions): void {
       scrollY: window.scrollY,
       maxScrollY: root.scrollHeight - root.clientHeight,
       viewport: root.clientHeight,
+      scrollPaddingTop: Number.parseFloat(getComputedStyle(root).scrollPaddingTop) || 0,
       cards: Array.from(document.querySelectorAll(selector), read),
     };
   };
@@ -298,7 +310,11 @@ function revealProblems(snap: Snapshot): string[] {
   return snap.cards.flatMap((card) => {
     const inside = snap.viewport - card.top;
     const waiting = card.opacity === 0 && Math.abs(card.translateY - OFFSET_PX) < 0.01;
-    const shown = card.opacity === 1 && card.translate === "none";
+    // WebKit 26 ends a view timeline at the scroll padding, and at the one position where a card's bottom edge sits
+    // exactly on it, it shows the animation's end state (translate: 0px) instead of letting go: the same look,
+    // one pixel of scrolling. Found on 2026-10-30 when the About hero grew 2px and a scroll stop landed there.
+    const atTimelineEnd = card.translate === "0px" && Math.abs(card.bottom - snap.scrollPaddingTop) < 0.5;
+    const shown = card.opacity === 1 && (card.translate === "none" || atTimelineEnd);
     const between = card.opacity >= 0 && card.opacity <= 1 && card.translateY >= 0 && card.translateY <= OFFSET_PX;
     const ok = inside <= -2 ? waiting : inside >= REVEAL_PX + 2 ? shown : between;
     return ok ? [] : [describeCard(card, snap)];
@@ -365,15 +381,22 @@ async function wcagViolations(page: Page, rule?: string): Promise<Violation[]> {
 }
 const formatViolation = ({ rule, target, detail }: Violation): string => `${rule} ${target}: ${detail}`;
 
-/** Whether the element is inside card `index`, and whether its box is fully inside the viewport. */
+/**
+ * Whether the element is inside card `index` or a card in the same row (cards side by side enter together),
+ * and whether its box is fully inside the viewport.
+ */
 async function placeOf(page: Page, target: string, index: number): Promise<{ inCard: boolean; onScreen: boolean }> {
   return page.evaluate(
     ({ selector, cardSelector, cardIndex }) => {
       const element = document.querySelector(selector);
       if (!element) return { inCard: false, onScreen: false };
       const box = element.getBoundingClientRect();
+      const cards = [...document.querySelectorAll(cardSelector)];
+      const rowTop = cards[cardIndex]?.getBoundingClientRect().top;
+      const inRow = (card: Element) =>
+        rowTop !== undefined && Math.abs(card.getBoundingClientRect().top - rowTop) < 2 && card.contains(element);
       return {
-        inCard: document.querySelectorAll(cardSelector)[cardIndex]?.contains(element) ?? false,
+        inCard: cards.some(inRow),
         onScreen: box.top >= 0 && box.bottom <= document.documentElement.clientHeight,
       };
     },
@@ -493,7 +516,10 @@ test.describe("motion allowed", () => {
         expect([...checked].sort(), "cards checked: every card inside the viewport at the end").toEqual(
           expect.arrayContaining(inside.map((card) => card.name)),
         );
-        if (viewport === TALL) expect(checked.size, "cards on the tall first screen").toBeGreaterThan(0);
+        // Smart Ticket and Project Planning open with details, a summary and screens that do not fade: no card in 2000px.
+        if (viewport === TALL && !NO_CARDS_ON_TALL_FIRST_SCREEN.has(path)) {
+          expect(checked.size, "cards on the tall first screen").toBeGreaterThan(0);
+        }
       });
     }
   }

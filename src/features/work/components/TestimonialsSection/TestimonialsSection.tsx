@@ -17,7 +17,7 @@ import { styles } from "./TestimonialsSection.styles.ts";
 /** Quotes are excerpts of LinkedIn recommendations: each names its author and company, with links to both. */
 export function TestimonialsSection() {
   return (
-    <Section id="testimonials" title="Trusted by the leaders I worked for">
+    <Section id="testimonials" title="Trusted by the Leaders I Worked For">
       <ul className={styles.list}>
         {TESTIMONIALS.map((item) => (
           <li key={item.id} className={styles.item}>

@@ -33,9 +33,12 @@ const VARIANT: Record<ButtonVariant, string> = {
   ),
 };
 
+// wrap-anywhere: the label may wrap inside its icons, so a long label fits a narrow screen at a large browser
+// text size (min-content shrinks; at the default size the button keeps its one line). A wrapped label is centred
+// between the icons, as button labels are, not left-aligned against the right arrow.
 export const button = cva(
   [
-    "group/button inline-flex cursor-pointer items-center justify-center gap-xs rounded-md px-md py-xs text-label-lg",
+    "group/button inline-flex cursor-pointer items-center justify-center gap-xs rounded-md px-md py-xs text-center text-label-lg wrap-anywhere",
     "transition-[background-color,border-color,color,box-shadow] duration-fast ease-standard disabled:cursor-not-allowed",
     FOCUS_RING,
   ],

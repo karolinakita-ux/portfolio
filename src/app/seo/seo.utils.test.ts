@@ -18,7 +18,8 @@ describe("page descriptions", () => {
     const text = PAGE_DESCRIPTIONS[view];
     expect(text.length).toBeGreaterThan(70);
     expect(text.length).toBeLessThanOrEqual(160);
-    expect(text).not.toMatch(/[–—‘’“”]/); // no long dashes or curly quotes
+    expect(text).not.toMatch(/[–—]/); // no long dashes
+    expect(text).not.toMatch(/['"]/); // curly quotes, as in all site copy but the CV (search results show them)
   });
 });
 
@@ -35,6 +36,10 @@ describe("headFor", () => {
       "@type": "ProfilePage",
       mainEntity: { "@id": SITE_URL + "/#person" },
     });
+    expect(graph(VIEW.cv)[0]).toMatchObject({
+      "@type": "ProfilePage",
+      mainEntity: { "@id": SITE_URL + "/#person" },
+    });
     expect(graph(VIEW.contact)[0]).toMatchObject({ "@type": "WebPage" });
     expect(graph(VIEW.caseAutomotive)[1]).toMatchObject({
       "@type": "CreativeWork",
@@ -46,12 +51,12 @@ describe("headFor", () => {
   it("adds a breadcrumb from Work to a case study, and from Home to the other pages", () => {
     const crumbs = (view: (typeof VIEWS)[number]) =>
       (graph(view)[0]?.breadcrumb as { itemListElement: Node[] }).itemListElement;
-    expect(crumbs(VIEW.caseTheming).map((item) => item.item)).toEqual([
+    expect(crumbs(VIEW.caseDataGovernance).map((item) => item.item)).toEqual([
       SITE_URL + "/",
       SITE_URL + "/work/data-governance",
     ]);
-    expect(crumbs(VIEW.caseTheming)[0]?.name).toBe("Work");
-    for (const view of [VIEW.about, VIEW.contact, VIEW.privacy]) {
+    expect(crumbs(VIEW.caseDataGovernance)[0]?.name).toBe("Work");
+    for (const view of [VIEW.about, VIEW.contact, VIEW.cv, VIEW.privacy, VIEW.accessibility]) {
       expect(crumbs(view).map((item) => item.name)).toEqual(["Home", PAGE_NAMES[view]]);
       expect(crumbs(view)[0]?.item).toBe(SITE_URL + "/");
     }
@@ -66,6 +71,7 @@ describe("llmsTxt", () => {
     for (const view of VIEWS) expect(text).toContain(`](${absoluteUrl(view)}): `);
     expect(text).toContain("karolina.kita.zg@gmail.com");
     expect(text).toContain(`- GitHub: ${PROFILE.githubProfileUrl}`);
+    expect(text).toContain("- CV (PDF, 2 pages): https://karolina.kita.company/karolina-kita-cv.pdf");
   });
 });
 

@@ -1,14 +1,18 @@
 import type { ReactNode } from "react";
 
 import { AboutView } from "#features/about/index.ts";
+import { AccessibilityView } from "#features/accessibility/index.ts";
 import {
   AUTOMOTIVE_CASE,
+  CaseDataGovernanceView,
+  CaseSmartTicketView,
   CaseStudyView,
-  CaseThemingView,
+  DATA_GOVERNANCE_CASE,
   PROJECT_PLANNING_CASE,
-  THEMING_CASE,
+  SMART_TICKET_CASE,
 } from "#features/case-studies/index.ts";
 import { ContactView } from "#features/contact/index.ts";
+import { CvView } from "#features/cv/index.ts";
 import { PrivacyView } from "#features/privacy/index.ts";
 import { WorkView } from "#features/work/index.ts";
 import { VIEW } from "#shared/lib/routes/routes.constants.ts";
@@ -21,9 +25,11 @@ export const VIEW_RENDERERS: Record<View, (ctx: ViewContext) => ReactNode> = {
   [VIEW.work]: ({ navigate, resolveAsset }) => <WorkView resolveAsset={resolveAsset} onNavigate={navigate} />,
   [VIEW.about]: ({ navigate, portraitSrc }) => <AboutView portraitSrc={portraitSrc} onNavigate={navigate} />,
   [VIEW.contact]: ({ navigate }) => <ContactView onNavigate={navigate} />,
+  [VIEW.cv]: ({ navigate }) => <CvView onNavigate={navigate} />,
   [VIEW.privacy]: ({ navigate }) => <PrivacyView onNavigate={navigate} />,
-  [VIEW.caseTheming]: ({ navigate, resolveAsset }) => (
-    <CaseThemingView c={THEMING_CASE} resolveAsset={resolveAsset} onNavigate={navigate} />
+  [VIEW.accessibility]: ({ navigate }) => <AccessibilityView onNavigate={navigate} />,
+  [VIEW.caseDataGovernance]: ({ navigate, resolveAsset }) => (
+    <CaseDataGovernanceView c={DATA_GOVERNANCE_CASE} resolveAsset={resolveAsset} onNavigate={navigate} />
   ),
   [VIEW.caseProjectPlanning]: ({ navigate, resolveAsset }) => (
     <CaseStudyView c={PROJECT_PLANNING_CASE} resolveAsset={resolveAsset} onNavigate={navigate} />
@@ -31,7 +37,10 @@ export const VIEW_RENDERERS: Record<View, (ctx: ViewContext) => ReactNode> = {
   [VIEW.caseAutomotive]: ({ navigate, resolveAsset }) => (
     <CaseStudyView c={AUTOMOTIVE_CASE} resolveAsset={resolveAsset} onNavigate={navigate} />
   ),
+  [VIEW.caseSmartTicket]: ({ navigate, resolveAsset }) => (
+    <CaseSmartTicketView c={SMART_TICKET_CASE} resolveAsset={resolveAsset} onNavigate={navigate} />
+  ),
 };
 
 /** Every case study, for preloading their screenshots in the background. */
-export const ALL_CASES = [AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE, THEMING_CASE] as const;
+export const ALL_CASES = [SMART_TICKET_CASE, AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE, DATA_GOVERNANCE_CASE] as const;

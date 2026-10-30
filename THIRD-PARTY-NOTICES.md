@@ -26,7 +26,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ## Feather icons
 
-Lucide icons derived from [Feather](https://feathericons.com) that this project uses: arrow-down, arrow-left, arrow-right, arrow-up, arrow-up-right, check, chevron-down, chevron-left, chevron-right, external-link, link, moon, x, zoom-in, zoom-out.
+Lucide icons derived from [Feather](https://feathericons.com) that this project uses: arrow-down, arrow-left, arrow-right, arrow-up, arrow-up-right, check, chevron-down, chevron-left, chevron-right, copy, download, external-link, file-text, link, mail, maximize-2, moon, sun, x, zoom-in, zoom-out.
 
 ```text
 The MIT License (MIT)
@@ -54,7 +54,7 @@ SOFTWARE.
 
 ## Fonts and packages
 
-The site serves two fonts, installed from `@fontsource` (`@fontsource/inter`, `@fontsource/zilla-slab`), each under the [SIL Open Font License 1.1](https://openfontlicense.org/open-font-license-official-text/). The full licence text comes with each package (`node_modules/@fontsource/*/LICENSE`).
+The site serves two fonts, installed from `@fontsource` (`@fontsource/inter`, `@fontsource/zilla-slab`), each under the [SIL Open Font License 1.1](https://openfontlicense.org/open-font-license-official-text/), which allows embedding them in documents: the CV's PDF (`public/karolina-kita-cv.pdf`) carries subsets of both. The full licence text comes with each package (`node_modules/@fontsource/*/LICENSE`).
 
 - **Inter**: Copyright 2016 The Inter Project Authors (https://github.com/rsms/inter).
 - **Zilla Slab**: Copyright 2017, The Mozilla Foundation.

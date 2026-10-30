@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { AUTOMOTIVE_CASE } from "#features/case-studies/content/automotive.content.ts";
@@ -12,14 +12,28 @@ vi.mock("#shared/media/image-preload/image-preload.utils.ts", () => ({ preloadIm
 
 const resolveAsset = (name: string) => "/assets/" + name;
 
-describe.each([AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE])("CaseStudyView scroll reveal ($shortTitle)", (c) => {
-  it("fades up each screenshot card, and nothing else", () => {
-    render(<CaseStudyView c={c} resolveAsset={resolveAsset} onNavigate={() => undefined} />);
-    const cards = caseCards(c).map((card) => screen.getByRole("article", { name: card.title }));
+describe("CaseStudyView scroll reveal (Automotive)", () => {
+  it("fades up each screenshot row, and nothing else", () => {
+    render(<CaseStudyView c={AUTOMOTIVE_CASE} resolveAsset={resolveAsset} onNavigate={() => undefined} />);
+    const cards = caseCards(AUTOMOTIVE_CASE).map((card) => screen.getByRole("article", { name: card.title }));
     for (const card of cards) expect(card).toHaveClass(REVEAL);
     expect(Array.from(document.querySelectorAll(`.${REVEAL}`))).toEqual(cards);
   });
+});
 
+describe("CaseStudyView scroll reveal (Project Planning)", () => {
+  it("fades up the stat cards only: the feature sections stay still", () => {
+    render(<CaseStudyView c={PROJECT_PLANNING_CASE} resolveAsset={resolveAsset} onNavigate={() => undefined} />);
+    const stats = (PROJECT_PLANNING_CASE.impact?.stats ?? []).map((stat) =>
+      screen.getByText(stat.value).closest("[data-card]"),
+    );
+    expect(stats.length).toBeGreaterThan(0);
+    for (const stat of stats) expect(stat).toHaveClass(REVEAL);
+    expect(Array.from(document.querySelectorAll(`.${REVEAL}`))).toEqual(stats);
+  });
+});
+
+describe.each([AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE])("CaseStudyView still parts ($shortTitle)", (c) => {
   it("keeps the intro, the headings, the notice and the case navigation still", () => {
     render(<CaseStudyView c={c} resolveAsset={resolveAsset} onNavigate={() => undefined} />);
     const still = [
@@ -33,20 +47,85 @@ describe.each([AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE])("CaseStudyView scroll re
   });
 });
 
-describe("CaseStudyView scroll reveal: closing sections", () => {
-  it("keeps the key outcomes and the reflections still (Automotive)", () => {
-    render(<CaseStudyView c={AUTOMOTIVE_CASE} resolveAsset={resolveAsset} onNavigate={() => undefined} />);
-    const outcomes = screen.getAllByRole("list", { name: "Key Outcomes" });
-    expect(outcomes.length).toBeGreaterThan(0);
-    const reflections = screen.getByRole("region", { name: AUTOMOTIVE_CASE.reflections?.title ?? "(no reflections)" });
-    expect([...outcomes, reflections].flatMap(revealsAround)).toEqual([]);
+describe("CaseStudyView feature sections (Project Planning)", () => {
+  const features = PROJECT_PLANNING_CASE.features ?? [];
+
+  it("gives each feature section an H2 region with its screenshots, which open the image viewer", () => {
+    render(<CaseStudyView c={PROJECT_PLANNING_CASE} resolveAsset={resolveAsset} onNavigate={() => undefined} />);
+    expect(features.length).toBeGreaterThan(0);
+    for (const feature of features) {
+      const region = screen.getByRole("region", { name: feature.title });
+      expect(region).toHaveAttribute("id", feature.id);
+      expect(within(region).getByRole("heading", { level: 2, name: feature.title })).toBeInTheDocument();
+      expect(within(region).getAllByRole("button", { name: /^View full size/ })).toHaveLength(feature.media.length);
+    }
   });
 
-  it("keeps the outcomes still (Project Planning)", () => {
+  it("shows the light screenshots by default", () => {
     render(<CaseStudyView c={PROJECT_PLANNING_CASE} resolveAsset={resolveAsset} onNavigate={() => undefined} />);
-    const outcomes = screen.getByRole("region", {
-      name: PROJECT_PLANNING_CASE.outcomesTitle ?? "Outcomes & Business Impact",
-    });
-    expect(revealsAround(outcomes)).toEqual([]);
+    const first = features[0]?.media[0];
+    expect(screen.getByAltText(first?.alt ?? "(none)")).toHaveAttribute("src", "/assets/" + (first?.asset ?? ""));
+  });
+
+  it("switches to the dark screenshots when the page turns dark, and back", async () => {
+    render(<CaseStudyView c={PROJECT_PLANNING_CASE} resolveAsset={resolveAsset} onNavigate={() => undefined} />);
+    const first = features[0]?.media[0];
+    const image = screen.getByAltText(first?.alt ?? "(none)");
+    document.documentElement.classList.add("dark");
+    await waitFor(() => expect(image).toHaveAttribute("src", "/assets/" + (first?.darkAsset ?? "")));
+    document.documentElement.classList.remove("dark");
+    await waitFor(() => expect(image).toHaveAttribute("src", "/assets/" + (first?.asset ?? "")));
+  });
+
+  it("falls back to the light screenshot when the dark one fails", async () => {
+    document.documentElement.classList.add("dark");
+    render(<CaseStudyView c={PROJECT_PLANNING_CASE} resolveAsset={resolveAsset} onNavigate={() => undefined} />);
+    const first = features[0]?.media[0];
+    const image = screen.getByAltText(first?.alt ?? "(none)");
+    expect(image).toHaveAttribute("src", "/assets/" + (first?.darkAsset ?? ""));
+    fireEvent.error(image);
+    await waitFor(() =>
+      expect(screen.getByAltText(first?.alt ?? "(none)")).toHaveAttribute("src", "/assets/" + (first?.asset ?? "")),
+    );
+    document.documentElement.classList.remove("dark");
+  });
+
+  it("links the case's Figma file in a new tab at the top and in the design files banner", () => {
+    // No CaseStudyView case links a file right now (Project Planning's file is being cleaned), so give it one.
+    const withFile = {
+      ...PROJECT_PLANNING_CASE,
+      designFile: {
+        url: "https://www.figma.com/design/example/Planning",
+        title: "Inspect the Design Files",
+        body: "The Figma file holds the design system and tokens.",
+        linkLabel: "Explore the Figma File",
+      },
+    };
+    render(<CaseStudyView c={withFile} resolveAsset={resolveAsset} onNavigate={() => undefined} />);
+    const file = withFile.designFile;
+    const links = screen.getAllByRole("link", { name: new RegExp("^" + file.linkLabel) });
+    expect(links).toHaveLength(2);
+    for (const link of links) {
+      expect(link).toHaveAttribute("href", file.url);
+      expect(link).toHaveAttribute("target", "_blank");
+      // jsdom drops NewTabNote's leading space from the name; browsers keep it (plain-text.test.tsx checks the text).
+      expect(link).toHaveAccessibleName(new RegExp("^" + file.linkLabel + " ?\\(opens in a new tab\\)$"));
+    }
+    const intro = screen.getByRole("region", { name: PROJECT_PLANNING_CASE.title });
+    expect(intro).toContainElement(links[0] ?? null);
+  });
+
+  it("shows no Figma link when the case has no design file", () => {
+    render(<CaseStudyView c={AUTOMOTIVE_CASE} resolveAsset={resolveAsset} onNavigate={() => undefined} />);
+    expect(screen.queryByRole("link", { name: /Figma file/i })).not.toBeInTheDocument();
+  });
+});
+
+describe("CaseStudyView scroll reveal: closing sections", () => {
+  it("keeps the numbered reflections still (Automotive)", () => {
+    render(<CaseStudyView c={AUTOMOTIVE_CASE} resolveAsset={resolveAsset} onNavigate={() => undefined} />);
+    const reflections = screen.getByRole("region", { name: AUTOMOTIVE_CASE.reflections?.title ?? "(no reflections)" });
+    expect(within(reflections).getAllByRole("listitem").length).toBeGreaterThan(0);
+    expect(revealsAround(reflections)).toEqual([]);
   });
 });

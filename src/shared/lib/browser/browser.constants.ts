@@ -1,8 +1,9 @@
 /**
  * Browsers built into social and messaging apps, by the marks they add to the user agent, in the
  * order they are tried: Messenger and Instagram carry Facebook's marks too. They show a loading bar
- * on every history write (useSectionHash leaves the hash alone there), and visitor statistics name
- * the app a visit came through (session data: inApp).
+ * on every history write (useSectionHash leaves the hash alone there), the theme switch skips its
+ * view-transition cross-fade there (changeTheme in shared/hooks/theme/theme.utils.ts), and visitor
+ * statistics name the app a visit came through (session data: inApp).
  */
 export const IN_APP_BROWSERS = [
   ["messenger", /\b(Orca-Android|MessengerForiOS)/i],

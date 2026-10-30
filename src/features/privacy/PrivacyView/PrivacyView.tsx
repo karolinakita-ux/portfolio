@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 
-import { PrivacySectionView } from "#features/privacy/components/PrivacySectionView/PrivacySectionView.tsx";
 import { RecipientsTable } from "#features/privacy/components/RecipientsTable/RecipientsTable.tsx";
 import { StatisticsSwitch } from "#features/privacy/components/StatisticsSwitch/StatisticsSwitch.tsx";
 import { PRIVACY } from "#features/privacy/privacy.content.tsx";
@@ -11,6 +10,7 @@ import { Callout } from "#shared/ui/Callout/Callout.tsx";
 import { Container } from "#shared/ui/Container/Container.tsx";
 import { Eyebrow } from "#shared/ui/Eyebrow/Eyebrow.tsx";
 import { PageTitle } from "#shared/ui/PageTitle/PageTitle.tsx";
+import { ProseSection } from "#shared/ui/ProseSection/ProseSection.tsx";
 
 import { styles } from "./PrivacyView.styles.ts";
 import type { PrivacyViewProps } from "./PrivacyView.types.ts";
@@ -46,7 +46,7 @@ export function PrivacyView({ onNavigate }: PrivacyViewProps) {
       </section>
 
       {PRIVACY.sections.map((section) => (
-        <PrivacySectionView key={section.id} section={section} extra={EXTRAS[section.id]} />
+        <ProseSection key={section.id} section={section} extra={EXTRAS[section.id]} />
       ))}
     </>
   );

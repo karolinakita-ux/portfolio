@@ -5,8 +5,8 @@
  * from the local preview server. The real Umami script loads from cloud.umami.is (this spec needs the
  * internet), and every call to Umami's collector is caught here, so nothing reaches the Umami account.
  * Checks: nothing loads before consent (the consent box), what is sent and when after it, no hash in
- * addresses, no cookies, only the choice and the theme stored, and no box and no script on any other
- * host or for a visitor with Global Privacy Control.
+ * addresses, no cookies, no error reports of the tracker's own, only the choice and the theme stored, and
+ * no box and no script on any other host or for a visitor with Global Privacy Control.
  */
 import { AxeBuilder } from "@axe-core/playwright";
 import { expect, test, type Page, type Request } from "@playwright/test";
@@ -18,17 +18,21 @@ import {
   VIEWPORT_HEIGHT_BUCKET_LAST,
   VIEWPORT_HEIGHT_BUCKETS,
 } from "#shared/lib/analytics/analytics.constants.ts";
+import type { UmamiSendType } from "#shared/lib/analytics/analytics.types.ts";
 
 import { THEME_STORAGE_KEY } from "./helpers/helpers.constants.ts";
 import { themeButton, waitForApp } from "./helpers/page.utils.ts";
 
 const SITE = "https://" + UMAMI.host;
 const COLLECTOR = "https://gateway.umami.is/**";
-const CONSENT_BOX = "Can I count your visit?";
+const CONSENT_BOX = "Can I Count Your Visit?";
 
-/** One call to Umami's collector, as the tracker posts it: an event or pageview, session data, a speed report. */
+/**
+ * One call to Umami's collector, as the tracker posts it: an event or pageview, session data, a speed report,
+ * or one of its own error reports (never expected).
+ */
 interface Sent {
-  type: "event" | "identify" | "performance";
+  type: UmamiSendType;
   payload: {
     website: string;
     hostname: string;
@@ -180,6 +184,17 @@ test("counts pages and clicks after consent, without the hash, and stores only t
   await themeButton(page, "dark").click();
   await expect.poll(() => named(sent).at(-1)).toMatchObject({ name: EVENT.themeSwitch, data: { theme: "dark" } });
   expect(await storage(page)).toEqual({ local: [STATISTICS_CHOICE_KEY, THEME_STORAGE_KEY].sort(), session: [] });
+
+  // An error nobody handled goes out as js-error with its short message; the tracker's own error reports
+  // (stack traces, data-errors) never do.
+  await page.evaluate(() => {
+    void Promise.reject(new Error("e2e-test rejection"));
+  });
+  await expect
+    .poll(() => named(sent).at(-1))
+    .toMatchObject({ name: EVENT.jsError, data: { kind: "rejection", message: "e2e-test rejection" } });
+  await page.waitForTimeout(500);
+  expect(ofType(sent, "error")).toEqual([]);
 });
 
 test("stops at once when switched off on the privacy page, and does not load after a reload", async ({
@@ -213,6 +228,36 @@ test("stops at once when switched off on the privacy page, and does not load aft
   await page.waitForTimeout(500);
   expect(requests).toEqual([]);
   await expect(consentBox(page)).toHaveCount(0);
+});
+
+test("a choice made in another tab applies to the open ones: switched off there, nothing more goes from here", async ({
+  page,
+  baseURL,
+}) => {
+  const first = await openAsLiveSite(page, baseURL, "/about");
+  await allowStatistics(page);
+  await expect.poll(() => pageviews(first.sent).length).toBe(1);
+
+  // A second tab of the site starts at once (the yes is stored) and switches the statistics off on /privacy.
+  const other = await page.context().newPage();
+  const second = await openAsLiveSite(other, baseURL, "/privacy");
+  await expect.poll(() => pageviews(second.sent).length).toBe(1);
+  await other.getByRole("button", { name: "Switch statistics off" }).click();
+  await expect(other.getByRole("status").filter({ hasText: "Statistics are off" })).toBeVisible();
+
+  // Back in the first tab: a theme switch, a new view and a hidden tab send nothing, and /privacy says so.
+  await page.bringToFront();
+  const before = first.sent.length;
+  await themeButton(page, "dark").click();
+  await page.getByRole("contentinfo").getByRole("link", { name: "Privacy", exact: true }).click();
+  await expect(page.getByRole("status").filter({ hasText: "Statistics are off" })).toBeVisible();
+  await page.evaluate(() => {
+    Object.defineProperty(document, "visibilityState", { value: "hidden", configurable: true });
+    document.dispatchEvent(new Event("visibilitychange"));
+  });
+  await page.waitForTimeout(800);
+  expect(first.sent).toHaveLength(before);
+  await other.close();
 });
 
 test("neither asks nor loads on any other host (local preview, Netlify's own addresses)", async ({ page }) => {
@@ -317,7 +362,8 @@ test("sends the session data once, and one speed report per page, none while rea
   });
   expect(session?.payload.data, "no link tag in the address, so none in the session data").not.toHaveProperty("ref");
 
-  // Reading moves the hash (useSectionHash): not a new page, so the tracker's speed report waits.
+  // Reading moves the hash (useSectionHash): not a new page, so the tracker's speed report waits. It goes by
+  // itself 10 s after the script started, so these steps must end before that (a slow run could fail here).
   await page.mouse.wheel(0, 1500);
   await page.mouse.wheel(0, 1500);
   await expect.poll(() => new URL(page.url()).hash).not.toBe("");

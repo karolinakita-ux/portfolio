@@ -2,7 +2,7 @@ import { useRef } from "react";
 
 import { styles } from "./Dialog.styles.ts";
 import type { DialogProps } from "./Dialog.types.ts";
-import { unlockScroll } from "./dialog.utils.ts";
+import { unlockScroll } from "./Dialog.utils.ts";
 import { useModalDialog } from "./useModalDialog.ts";
 
 /**

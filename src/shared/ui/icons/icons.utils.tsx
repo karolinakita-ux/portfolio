@@ -3,13 +3,16 @@ import { createElement } from "react";
 import { styles } from "./icons.styles.ts";
 import type { IconComponent, IconNode, IconProps } from "./icons.types.ts";
 
+/** The size in rem (px / 16): the same at the browser's default text size, and it grows with a larger one. */
+const toRem = (size: number | string): string => (typeof size === "number" ? `${size / 16}rem` : size);
+
 /** An icon component from Lucide-style SVG nodes, with the lucide-react prop API. */
 export function createIcon(name: string, nodes: readonly IconNode[]): IconComponent {
   const Icon = ({ size = 24, strokeWidth = 2, color = "currentColor", className, ...props }: IconProps) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={size}
-      height={size}
+      width={toRem(size)}
+      height={toRem(size)}
       viewBox="0 0 24 24"
       fill="none"
       stroke={color}

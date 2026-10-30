@@ -2,12 +2,17 @@ import { VIEW } from "#shared/lib/routes/routes.constants.ts";
 
 import type { Testimonial, WorkCase } from "./work.types.ts";
 
-/** Hero buttons below the intro. The arrows are icons, not part of the label. */
+/** The hero's intro under the H1. */
+export const HERO_LEAD =
+  "I have spent 8+ years, mostly on B2B and enterprise platforms, turning messy, data-heavy workflows into clear, usable digital products. With a background in psychology, I focus on how people actually think and work - combining practical research with solid design systems that engineers can easily build.";
+
+/**
+ * Hero buttons below the intro: one primary, one secondary. The arrow is an icon, not part of the label. The Figma
+ * workspace, the code and Storybook are linked from the Behind the Design banner (PROCESS_BANNER).
+ */
 export const HERO_ACTIONS = {
   cases: "Explore Case Studies",
-  figma: "Inspect Figma Workspace",
-  source: "View Code on GitHub",
-  components: "View Components in Storybook",
+  cv: "View CV",
 };
 
 export const WORK_INTRO =
@@ -41,42 +46,60 @@ export const TESTIMONIALS: readonly Testimonial[] = [
 
 const CASES: readonly WorkCase[] = [
   {
+    id: "smart-ticket",
+    asset: "cases/smart-ticket/thumbnail-light.webp",
+    darkAsset: "cases/smart-ticket/thumbnail-dark.webp",
+    alt: "The Smart Ticket operations console with fare revenue and an hourly boarding chart, beside a phone showing an active offline ticket with a QR code.",
+    eyebrow: ["Public Mobility", "B2C Mobile & B2B Operations"],
+    title: "Smart Ticket: Mobile Ticketing & Transit Operations",
+    summary:
+      "Rebuilt a 2022 transit ticketing concept into a token-based system: offline QR passes, buy-now-start-later boarding and a privacy-safe operations console for transit staff, checked against WCAG 2.2 and European transit data standards.",
+    cta: "View Case Study",
+    view: VIEW.caseSmartTicket,
+  },
+  {
     id: "theming-system",
-    asset: "cases/data-governance/thumbnail-v2.webp",
-    alt: "A Create New Theme panel between two Edit Theme panels from a data governance platform, showing the header, navigation and general color settings used to brand each tenant.",
-    eyebrow: ["B2B Platform", "Feature Design"],
+    asset: "cases/data-governance/thumbnail-light.webp",
+    darkAsset: "cases/data-governance/thumbnail-dark.webp",
+    alt: "The same data table in a read-only base theme and in a custom tenant theme under a tritanopia simulation, beside contrast guardrails that pick readable text colours automatically.",
+    eyebrow: ["Enterprise Systems", "Multi-Tenant Architecture & Accessibility"],
     title: "Enterprise White-Label Theme Generator",
     summary:
-      "Replaced a raw CSS configuration panel with a visual theme generator for non-technical users. Automated text color selection based on contrast so custom themes stayed readable, and provided developers with clear rules for calculating interactive states like hovers.",
+      "Gave non-technical admins a visual theme generator, so they brand their portal themselves instead of relying on custom CSS or engineering tickets. Automated text colour selection based on contrast so custom themes stayed readable, and provided developers with clear rules for calculating interactive states like hovers.",
     cta: "View Case Study",
-    view: VIEW.caseTheming,
+    view: VIEW.caseDataGovernance,
   },
   {
     id: "project-planning",
-    asset: "cases/project-planning/thumbnail.webp",
-    alt: "Month overview: a participant calendar with a mini month picker beside a weekly schedule of meetings.",
-    eyebrow: ["Enterprise SaaS", "Design System & Product Design"],
+    asset: "cases/project-planning/thumbnail-light.webp",
+    darkAsset: "cases/project-planning/thumbnail-dark.webp",
+    // The alt describes the image as it is, its largest card included. The case shows no budget thresholds, so the
+    // copy claims none (CLAUDE.md, Copy rules): drop the card's half of the alt once the thumbnail is re-exported
+    // without it.
+    alt: "Sample project dashboards: a goals and milestones timeline, a budget burn table that marks each project’s status with 1 project over budget, and a card that turns a project orange at 80% and red at 100% of its budget.",
+    eyebrow: ["B2B Enterprise SaaS", "Design System & PrimeNG"],
     title: "Project Planning & Cost Management Platform",
     summary:
-      "Designed an enterprise resource planning and budget estimation platform from discovery to release. Built a scalable Figma component library aligned with PrimeNG, mentored a junior designer, and transformed complex spreadsheet workflows into an intuitive planning tool.",
+      "Designed a desktop platform for time tracking, meeting cost, project budgets and portfolio reporting, built on PrimeNG design tokens in Light and Dark mode. Mentored a UX intern and labelled every new piece of business logic as a proposal for client sign-off.",
     cta: "View Case Study",
     view: VIEW.caseProjectPlanning,
   },
   {
     id: "automotive-discovery",
-    asset: "cases/automotive/thumbnail-v2.webp",
-    alt: "UX benchmarking page that lists best practices to adopt and flaws to avoid on vehicle search.",
-    eyebrow: ["European Automotive B2B", "UX Research & Interface Design"],
+    asset: "cases/automotive/thumbnail-light.webp",
+    darkAsset: "cases/automotive/thumbnail-dark.webp",
+    alt: "A contrast check of the marketplace status chips, a vehicle basket with mixed funding and a vehicle detail page with Great Deal and Bid & Buy Now tags.",
+    eyebrow: ["European Automotive B2B", "Discovery, Research & Product Strategy"],
     title: "Automotive B2B Marketplace Redesign",
     summary:
-      "Redesigned the core vehicle purchasing flow across 6 European markets. Synthesized qualitative interviews and competitor data into a streamlined transaction architecture, eliminating checkout friction and reducing cognitive overload for commercial buyers.",
-    cta: "View Discovery Case",
+      "Researched how dealers in 7 European markets buy used cars, audited the live platform and a coded prototype, and designed the buyer flows from basket to checkout. In testing, 6 UK dealers completed 91.6% of tasks.",
+    cta: "View Case Study",
     view: VIEW.caseAutomotive,
   },
 ];
 
 /** Work page order: most recent and highest-impact first. */
-const WORK_CASE_ORDER = ["automotive-discovery", "project-planning", "theming-system"] as const;
+const WORK_CASE_ORDER = ["smart-ticket", "automotive-discovery", "project-planning", "theming-system"] as const;
 
 export const WORK_CASES: readonly WorkCase[] = WORK_CASE_ORDER.map((id) => CASES.find((item) => item.id === id)).filter(
   (item): item is WorkCase => item !== undefined,
@@ -85,7 +108,7 @@ export const WORK_CASES: readonly WorkCase[] = WORK_CASE_ORDER.map((id) => CASES
 /** Work page banner below the case-study grid. */
 export const PROCESS_BANNER = {
   title: "Behind the Design",
-  body: "I treat design handoff seriously. Components and flows are organized with clear states, responsive layouts, and practical documentation so developers don't have to guess how things should behave.",
+  body: "I treat design handoff seriously. Components and flows are organised with clear states, responsive layouts, and practical documentation so developers don’t have to guess how things should behave.",
   linkLabel: "Explore the Figma Workspace",
   /** Shown while PROFILE.repositoryUrl is set. */
   sourceLinkLabel: "Explore the Code on GitHub",
