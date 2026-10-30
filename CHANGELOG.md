@@ -6,6 +6,14 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.8 - 2026-10-30
+
+#### Changed
+
+- Automotive: one name, Marketplace, as Karolina chose. The page heading is now "Automotive B2B Marketplace: From Dealer Research Across Europe to a Validated Redesign" (also in the previous / next links) and the browser tab "Automotive Marketplace Case Study", like the Work card, the breadcrumb and the search data. "7 European markets" stays.
+- Theme Generator (the Data Governance case): the breadcrumb and the browser tab say "Theme Generator", the product the Work card, the heading and the search data name. The address `/work/data-governance` stays, so shared links keep working.
+- Tests: a new check keeps each case's browser tab equal to its breadcrumb name and every word of that name in its heading.
+
 ### 5.14.7 - 2026-10-30
 
 #### Changed

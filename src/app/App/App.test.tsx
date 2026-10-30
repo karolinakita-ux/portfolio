@@ -165,7 +165,7 @@ describe("App", () => {
 
     await user.click(screen.getByRole("link", { name: "View Discovery Case" }));
     expect(h1()).toHaveTextContent(
-      "Automotive B2B Ecosystem: From Dealer Research Across Europe to a Validated Redesign",
+      "Automotive B2B Marketplace: From Dealer Research Across Europe to a Validated Redesign",
     );
     // Work is the current section; only the breadcrumb marks the case study as the current page.
     expect(within(primaryNav()).getByRole("link", { name: "Work" })).toHaveAttribute("aria-current", "true");

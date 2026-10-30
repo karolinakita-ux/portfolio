@@ -6,13 +6,13 @@ import { caseShots } from "./content.utils.ts";
 /** Every Automotive screenshot has a Light and a Dark version. */
 const { shot } = caseShots("automotive");
 
-/* Case study - Automotive B2B Ecosystem. Screenshot fields: see ShowcaseCard in case-studies.types.ts. */
+/* Case study - Automotive B2B Marketplace. Screenshot fields: see ShowcaseCard in case-studies.types.ts. */
 export const AUTOMOTIVE_CASE: CaseStudy = {
   view: VIEW.caseAutomotive,
   id: "auto",
   shortTitle: "Automotive Marketplace",
   eyebrow: ["European Automotive B2B", "Discovery, Research & Product Strategy"],
-  title: "Automotive B2B Ecosystem: From Dealer Research Across Europe to a Validated Redesign",
+  title: "Automotive B2B Marketplace: From Dealer Research Across Europe to a Validated Redesign",
   meta: [
     { label: "My role", value: "Senior UX Designer" },
     {

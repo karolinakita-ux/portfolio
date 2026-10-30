@@ -199,6 +199,13 @@ describe("work page", () => {
     for (const asset of assets) expect(asset).toMatch(ASSET_PATH);
   });
 
+  it("names each case one way: its browser tab says the breadcrumb name, and the H1 contains every word of it", () => {
+    for (const c of CASES) {
+      expect(VIEW_TITLES[c.view], c.view).toBe(`${c.shortTitle} Case Study - ${PROFILE.name}`);
+      for (const word of c.shortTitle.split(" ")) expect(c.title, c.view).toContain(word);
+    }
+  });
+
   it("chains case studies in the same order as the Work page", () => {
     const order = WORK_CASES.map((item) => item.view);
     const byView: Partial<Record<View, AnyCase>> = {

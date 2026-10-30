@@ -91,8 +91,8 @@ export const VIEW_TITLES: Readonly<Record<View, string>> = {
   [VIEW.cv]: SITE_NAME + " - CV",
   [VIEW.privacy]: "Privacy - " + SITE_NAME,
   [VIEW.accessibility]: "Accessibility - " + SITE_NAME,
-  [VIEW.caseDataGovernance]: "Data Governance Case Study - " + SITE_NAME,
+  [VIEW.caseDataGovernance]: "Theme Generator Case Study - " + SITE_NAME,
   [VIEW.caseProjectPlanning]: "Project Planning Case Study - " + SITE_NAME,
-  [VIEW.caseAutomotive]: "Automotive Ecosystem Case Study - " + SITE_NAME,
+  [VIEW.caseAutomotive]: "Automotive Marketplace Case Study - " + SITE_NAME,
   [VIEW.caseSmartTicket]: "Smart Ticket Case Study - " + SITE_NAME,
 };
