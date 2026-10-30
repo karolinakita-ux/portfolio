@@ -12,7 +12,7 @@ export interface LightboxState {
 export interface ZoomState {
   /** Index in ZOOM_STEPS; 0 is "fit to the viewer". */
   step: number;
-  /** Intrinsic size of the image: app.css derives the fitted width from it, so zoom follows window resizes. */
+  /** Intrinsic size of the image: lightbox.css derives the fitted width from it, so zoom follows window resizes. */
   aspect: number;
   naturalWidth: number;
 }

@@ -2,6 +2,7 @@ import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it, onTestFinished, vi } from "vitest";
 
 import { mockMatchMedia } from "#test/matchMedia.ts";
+import { UA } from "#test/user-agents.ts";
 
 import { THEME_STORAGE_KEY, THEME_SWITCHING_CLASS } from "./theme.constants.ts";
 import { useTheme } from "./useTheme.ts";
@@ -140,6 +141,36 @@ describe("useTheme cross-fade", () => {
     expect(start).not.toHaveBeenCalled();
     expect(result.current[0]).toBe("light");
     expect(html()).not.toHaveClass("dark");
+  });
+
+  it.each([
+    ["Messenger on Android", UA.messengerAndroid],
+    ["Facebook on Android", UA.facebookAndroid],
+  ])("applies the theme in one frame, without a transition, in %s", (_, userAgent) => {
+    vi.spyOn(navigator, "userAgent", "get").mockReturnValue(userAgent);
+    mockMatchMedia(false);
+    const start = mockStartViewTransition();
+    const frames = mockFrames();
+    const { result } = renderHook(() => useTheme());
+
+    act(() => result.current[1]("dark"));
+    expect(start).not.toHaveBeenCalled();
+    expect(result.current[0]).toBe("dark");
+    expect(html()).toHaveClass("dark", THEME_SWITCHING_CLASS);
+    act(() => frames.next());
+    act(() => frames.next());
+    expect(html()).not.toHaveClass(THEME_SWITCHING_CLASS);
+  });
+
+  it("keeps the cross-fade in Chrome on Android", () => {
+    vi.spyOn(navigator, "userAgent", "get").mockReturnValue(UA.chromeAndroid);
+    mockMatchMedia(false);
+    const start = mockStartViewTransition();
+    const { result } = renderHook(() => useTheme());
+
+    act(() => result.current[1]("dark"));
+    expect(start).toHaveBeenCalledOnce();
+    expect(html()).toHaveClass("dark");
   });
 
   it("applies the theme directly where the browser has no view transitions", () => {

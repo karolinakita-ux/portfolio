@@ -4,15 +4,16 @@ import { PILL, pillVisibility } from "#shared/layout/pill/pill.styles.ts";
 import { FOCUS_RING } from "#shared/lib/ui/ui.styles.ts";
 
 export const styles = {
+  /** kb-site-header: base.css keeps focus on its links and buttons from scrolling the page. */
   root: (scrolled: boolean) =>
     clsx(
-      "sticky z-header border-b border-border-subtle bg-bg-canvas px-lg pt-sm pb-xs md:px-2xl md:py-sm lg:px-4xl short:static",
+      "kb-site-header sticky z-header border-b border-border-subtle bg-bg-canvas px-lg pt-sm pb-xs md:px-2xl md:py-sm lg:px-4xl short:static",
       "transition-[box-shadow,background-color,border-color] duration-medium ease-standard",
       scrolled ? "shadow-sm" : "shadow-none",
     ),
   /** Phones: flex-wrap puts the nav on its own row below. From md: a 3-column grid keeps the nav centred. */
   row: clsx(
-    "mx-auto flex w-full max-w-header flex-wrap items-center justify-between gap-x-md gap-y-2xs md:grid md:grid-cols-header",
+    "mx-auto flex w-full max-w-header flex-wrap items-center justify-between gap-x-md gap-y-xs md:grid md:grid-cols-header",
   ),
   home: clsx("block cursor-pointer justify-self-start rounded-sm", FOCUS_RING),
   nav: clsx("order-last w-full md:order-none md:w-auto"),

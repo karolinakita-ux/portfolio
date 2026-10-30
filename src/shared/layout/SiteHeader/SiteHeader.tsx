@@ -17,7 +17,7 @@ import { useHeaderHeight } from "./useHeaderHeight.ts";
  * borderSubtle hairline, and shadow-sm once the page scrolls.
  *
  * Layout: one row from md (logo | nav centred | theme switch, ~67px); two rows
- * on phones (logo + theme switch, then the nav, ~103px). Its height never
+ * on phones (logo + theme switch, then the nav, ~107px). Its height never
  * changes while scrolling, so nothing jumps and anchor offsets stay right.
  * DOM order is logo → nav → theme switch, the same as the desktop row.
  *

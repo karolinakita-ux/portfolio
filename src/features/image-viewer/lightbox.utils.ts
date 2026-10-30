@@ -34,7 +34,7 @@ export const neighbourSources = (items: readonly LightboxItem[], index: number):
 export const isSwipe = (dx: number, dy: number): boolean =>
   Math.abs(dx) >= SWIPE_MIN_DISTANCE && Math.abs(dx) >= Math.abs(dy) * 1.5;
 
-/** CSS variables app.css sizes the zoomed image with (.kb-lightbox-image-zoomed). */
+/** CSS variables lightbox.css sizes the zoomed image with (.kb-lightbox-image-zoomed). */
 export const zoomStyle = (zoom: ZoomState, level: number): CSSProperties =>
   ({ "--kb-zoom": level, "--kb-aspect": zoom.aspect, "--kb-natural-width": zoom.naturalWidth + "px" }) as CSSProperties;
 

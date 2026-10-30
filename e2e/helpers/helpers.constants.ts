@@ -1,9 +1,9 @@
 import type { Theme } from "./helpers.types.ts";
 
-export const THEMES: readonly Theme[] = ["light", "dark"];
+/** The app's own localStorage key for the visitor's theme pick (the inline script in index.html reads it too). */
+export { THEME_STORAGE_KEY } from "#shared/hooks/theme/theme.constants.ts";
 
-/** Same key as THEME_STORAGE_KEY in src/shared/hooks/theme/useTheme.ts (that module imports React). */
-export const THEME_STORAGE_KEY = "kb-theme";
+export const THEMES: readonly Theme[] = ["light", "dark"];
 
 export const VIEWPORTS = {
   phone: { width: 390, height: 844 },

@@ -6,6 +6,19 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.13.4 - 2026-10-30
+
+#### Fixed
+
+- With Dark saved (or a dark system setting), the theme switch shows and announces Dark from the first moment the page appears, not Light until the site has loaded: the inline script in `index.html` presses the right button before the first paint, and the switch's look follows `aria-pressed` in CSS.
+- Pressing Tab through the stuck header while reading further down no longer scrolls the page (Chrome and Edge jumped about 400px up per Tab, Safari a little), also while the statistics consent box shows. The header's own controls are exempt from the scroll padding; page content focused behind the header still scrolls clear of it (WCAG 2.4.11).
+
+#### Changed
+
+- On phones there is more space between the logo and theme switch row and the menu row of the header (`gap-y-xs`, 8px instead of 4px).
+- In Messenger and other in-app browsers the theme now changes at once, without the cross-fade, which most likely hid the top of the header there for a moment.
+- Comments and docs that named the wrong file or behaviour are fixed (theme, pill, image viewer, in-app browsers); `docs/architecture.md` and CLAUDE.md describe the switch's first paint, the header's scroll margin and the case screenshot helper. `e2e/header-layout.e2e.ts` covers the phone header rows and focus inside the stuck header.
+
 ### 5.13.3 - 2026-10-30
 
 #### Changed

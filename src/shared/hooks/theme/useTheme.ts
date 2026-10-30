@@ -14,10 +14,12 @@ import { changeTheme, readStoredTheme, systemTheme } from "./theme.utils.ts";
  * - Once the visitor picks a theme with the toggle, that choice is stored and
  *   wins on every later visit.
  * The inline script in index.html applies the same logic before the first
- * paint, so the page never flashes the wrong theme. Keep THEME_STORAGE_KEY (theme.constants.ts) in sync.
+ * paint, to the page colours and to the prerendered theme switch (it presses the applied
+ * theme's button), so neither shows the wrong theme. Keep THEME_STORAGE_KEY (theme.constants.ts) in sync.
  *
- * A change cross-fades the page where the browser has view transitions (app.css times it
- * with the motion tokens), and every colour on the page switches in the same frame.
+ * A change cross-fades the page where the browser has view transitions, except in in-app
+ * browsers (changeTheme; motion.css times it with the motion tokens), and every colour on the
+ * page switches in the same frame.
  */
 export function useTheme(): [Theme, (theme: Theme) => void] {
   const [state, setState] = useState<ThemeState>(() => {

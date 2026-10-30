@@ -10,7 +10,10 @@ const subscribe = (onChange: () => void) => {
 
 const readTheme = (): Theme => (document.documentElement.classList.contains("dark") ? "dark" : "light");
 
-/** Prerendered HTML is the light page; the browser switches to the stored or system theme right after. */
+/**
+ * Prerendered HTML is built as the light page (themed images carry their light source); the inline script
+ * in index.html puts the stored or system theme on <html> before the first paint, and the app reads it there.
+ */
 const readServerTheme = (): Theme => "light";
 
 /**

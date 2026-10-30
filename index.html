@@ -113,7 +113,9 @@
       }
     </script>
 
-    <!-- Theme before first paint: stored choice, else the system setting (see src/shared/hooks/useTheme.ts). -->
+    <!-- Theme before first paint: stored choice, else the system setting (see src/shared/hooks/theme/useTheme.ts).
+         The prerendered theme switch was built with Light pressed: the script presses the applied theme's button
+         as the parser adds it (mutation observers run before the browser paints), and its look follows. -->
     <script>
       (function () {
         var theme = null;
@@ -125,6 +127,15 @@
         }
         if (theme === "dark") document.documentElement.classList.add("dark");
         document.documentElement.style.colorScheme = theme;
+
+        var observer = new MutationObserver(function () {
+          var buttons = document.querySelectorAll("[data-theme-option]");
+          for (var i = 0; i < buttons.length; i++) {
+            buttons[i].setAttribute("aria-pressed", String(buttons[i].getAttribute("data-theme-option") === theme));
+          }
+          if (buttons.length >= 2) observer.disconnect();
+        });
+        observer.observe(document.documentElement, { childList: true, subtree: true });
       })();
     </script>
   </head>

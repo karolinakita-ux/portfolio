@@ -87,12 +87,18 @@ describe("SiteHeader theme switch pill", () => {
     expect(pillOf(light)).toHaveAttribute("aria-hidden", "true");
     expect(dark).toHaveAttribute("aria-pressed", "true");
     expect(light).toHaveAttribute("aria-pressed", "false");
-    expect(visiblePills(themeGroup())).toEqual(["dark"]);
+    // Shown by the button's aria-pressed (ThemeToggle.test.tsx), so the prerendered switch can be pressed before the app runs.
+    for (const pill of pillsIn(themeGroup())) expect(pill).toHaveClass("group-aria-pressed/theme:opacity-100");
   });
 
   it("names the group's view-transition layer and keeps the pills above its background", () => {
     render(<Header />);
     expect(themeGroup()).toHaveClass("kb-theme-toggle", "isolate");
+  });
+
+  it("carries the class base.css uses to keep focus on its links and buttons from scrolling the page", () => {
+    render(<Header />);
+    expect(screen.getByRole("banner")).toHaveClass("kb-site-header");
   });
 
   it("slides the pill to the new theme", () => {

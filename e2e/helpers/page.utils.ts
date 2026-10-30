@@ -57,6 +57,23 @@ export async function blockScriptFiles(page: Page): Promise<() => Promise<void>>
   return () => page.unroute("**/*", handler);
 }
 
+/**
+ * Holds every script file the page requests (as blockScriptFiles) until the returned release() is called: the
+ * page shows its HTML and runs its inline scripts, and the app starts on release. Load with
+ * page.goto(path, { waitUntil: "commit" }): the load event waits for the held bundle.
+ */
+export async function holdScriptFiles(page: Page): Promise<() => void> {
+  let release: () => void = () => undefined;
+  const held = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await page.route("**/*", async (route) => {
+    if (route.request().resourceType() === "script") await held;
+    await route.fallback();
+  });
+  return release;
+}
+
 /** prepare() + goto + waitForApp(), and checks that a stored theme took (theme null: nothing to check). */
 export async function openView(page: Page, path: string, options: PrepareOptions = {}): Promise<void> {
   await prepare(page, options);

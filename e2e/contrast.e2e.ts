@@ -30,7 +30,8 @@ for (const theme of THEMES) {
       await openView(page, "/about", { theme });
       const mode = contrast === "more" ? `${theme}MoreContrast` : theme;
       await expect(page.locator("header").first()).toHaveCSS("border-bottom-color", rgb(mode, "borderSubtle"));
-      await expect(page.locator(".text-text-secondary").first()).toHaveCSS("color", rgb(mode, "textSecondary"));
+      // Body text in main: the header's pressed theme button also carries text-secondary, shown in the accent text colour.
+      await expect(page.locator("main .text-text-secondary").first()).toHaveCSS("color", rgb(mode, "textSecondary"));
     });
   }
 }

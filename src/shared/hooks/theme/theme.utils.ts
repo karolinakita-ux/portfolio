@@ -1,5 +1,6 @@
 import { flushSync } from "react-dom";
 
+import { inAppBrowser } from "#shared/lib/browser/browser.utils.ts";
 import { prefersReducedMotion } from "#shared/lib/ui/ui.utils.ts";
 
 import { DARK_QUERY, THEME_STORAGE_KEY } from "./theme.constants.ts";
@@ -28,9 +29,18 @@ export const systemTheme = (): Theme => {
  * Runs a theme state update. With view transitions and motion allowed, the browser snapshots
  * the page, the update renders synchronously inside the transition (flushSync) and the old
  * page cross-fades into the new one. Otherwise the update just applies.
+ *
+ * Not in in-app browsers (Messenger, Facebook, LinkedIn...): in Messenger on Android the top of the
+ * header hid under the app's bar for as long as the cross-fade ran, most likely because its browser
+ * places the transition's snapshot of the page too high. There the theme switches in one frame, as
+ * in browsers without view transitions.
  */
 export const changeTheme = (update: () => void) => {
-  if (typeof document.startViewTransition !== "function" || prefersReducedMotion()) {
+  if (
+    typeof document.startViewTransition !== "function" ||
+    prefersReducedMotion() ||
+    inAppBrowser(navigator.userAgent) !== null
+  ) {
     update();
     return;
   }
