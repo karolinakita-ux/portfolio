@@ -9,13 +9,13 @@ import type { View } from "#shared/lib/routes/routes.types.ts";
  */
 export const PAGE_DESCRIPTIONS: Readonly<Record<View, string>> = {
   [VIEW.work]:
-    "Senior Product Designer with 8+ years on B2B and enterprise platforms: UX research, complex workflows and token-driven design systems. MSc in Psychology.",
+    "Senior Product Designer with 8+ years, mostly on B2B and enterprise platforms: UX research, complex workflows and token-based design systems. MSc in Psychology.",
   [VIEW.about]:
-    "Background, principles and career of Karolina Kita, a Product and UX/UI Designer with a psychology degree who works on enterprise workflows and design systems.",
+    "Background, principles and career of Karolina Kita, a Senior Product Designer with a psychology degree who works on enterprise workflows and design systems.",
   [VIEW.contact]:
-    "Contact Karolina Kita, Senior Product Designer and Design Systems specialist, open to new opportunities: email, LinkedIn, availability and working hours.",
+    "Contact Karolina Kita, Senior Product Designer and Design Systems Specialist, open to new opportunities: email, LinkedIn, availability and working hours.",
   [VIEW.cv]:
-    "CV of Karolina Kita, Senior Product Designer: 8+ years in product design, mostly B2B and enterprise platforms, design systems and UX research. Also as a PDF.",
+    "CV of Karolina Kita, Senior Product Designer with 8+ years, mostly on B2B and enterprise platforms: design systems and UX research. Also as a PDF.",
   [VIEW.privacy]:
     "How Karolina Kita's portfolio handles your data: no cookies, visitor statistics with Umami only if you allow them, hosting on Netlify, and your GDPR rights.",
   [VIEW.accessibility]:

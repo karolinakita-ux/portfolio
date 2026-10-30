@@ -1,4 +1,4 @@
-import { HERO_ACTIONS } from "#features/work/work.content.ts";
+import { HERO_ACTIONS, HERO_LEAD } from "#features/work/work.content.ts";
 import { PROFILE } from "#shared/content/profile.ts";
 import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import { track } from "#shared/lib/analytics/analytics.utils.ts";
@@ -22,11 +22,7 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
           <Eyebrow parts={[PROFILE.name, PROFILE.role]} />
           {/* No trailing period. Kept short (~40 characters) so it fits one line on desktop from 1024px. */}
           <PageTitle id="hero-title">Clarity for complex enterprise software</PageTitle>
-          <p className={styles.lead}>
-            I have 8+ years of experience turning data-heavy B2B platforms and messy workflows into clear, usable
-            digital products. With a background in psychology, I focus on how people actually think and work - combining
-            practical research with solid design systems that engineers can easily build.
-          </p>
+          <p className={styles.lead}>{HERO_LEAD}</p>
           {/*
             One primary and one secondary action. The Figma workspace, the code and the component library are in the
             Behind the Design banner below the case studies (ProcessBanner): here they split attention.

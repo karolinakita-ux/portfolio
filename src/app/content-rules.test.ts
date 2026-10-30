@@ -16,7 +16,7 @@ import { CONTACT } from "#features/contact/contact.content.ts";
 import { CV, CV_PAGE } from "#features/cv/cv.content.ts";
 import { formatMonthYear } from "#features/cv/dates/dates.utils.ts";
 import { PRIVACY } from "#features/privacy/privacy.content.tsx";
-import { PROCESS_BANNER, TESTIMONIALS, WORK_CASES, WORK_INTRO } from "#features/work/work.content.ts";
+import { HERO_LEAD, PROCESS_BANNER, TESTIMONIALS, WORK_CASES, WORK_INTRO } from "#features/work/work.content.ts";
 import { PROFILE } from "#shared/content/profile.ts";
 import { linkRef } from "#shared/lib/analytics/payload.utils.ts";
 import { VIEW, VIEW_PATHS, VIEW_TITLES, VIEWS } from "#shared/lib/routes/routes.constants.ts";
@@ -97,6 +97,7 @@ const ALL_CONTENT = {
   PROFILE,
   PROCESS_BANNER,
   TESTIMONIALS,
+  HERO_LEAD,
   WORK_CASES,
   WORK_INTRO,
   CASES,
@@ -260,6 +261,134 @@ describe("CV", () => {
     expect(consent).toMatch(/withdraw my consent at any time/);
     // One language: the CV's (no Polish paragraph beside it).
     expect(consent).not.toMatch(/[ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/);
+  });
+});
+
+/**
+ * Karolina's job facts, one version everywhere (her answers of 2026-10-30). The CV is the source; About, Contact,
+ * the search copy and index.html follow it. Quotes from real people (TESTIMONIALS) stay verbatim, so they are left out.
+ */
+describe("profile facts", () => {
+  type Job = (typeof CV.experience)[number];
+  const html = readFileSync(join(process.cwd(), "index.html"), "utf8");
+  const jsonLd = /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(html)?.[1] ?? "{}";
+  const person = (JSON.parse(jsonLd) as { "@graph": Array<Record<string, unknown>> })["@graph"].find(
+    (node) => node["@type"] === "Person",
+  ) as { description: string; jobTitle: string; knowsAbout: string[]; hasCredential: Array<{ name: string }> };
+  const profileDescriptions = [VIEW.work, VIEW.about, VIEW.contact, VIEW.cv].map((view) => PAGE_DESCRIPTIONS[view]);
+  /** Everything the site says, case studies included, and index.html line by line. */
+  const ownText = [...collectText({ ...ALL_CONTENT, TESTIMONIALS: [], PAGE_DESCRIPTIONS }), ...html.split("\n")];
+  /** What the site says about her: About, the CV, Contact, the profile, search copy and index.html. */
+  const profileText = [
+    ...collectText({ ABOUT_INTRO, FAQ, MILESTONES, PRINCIPLES, CV, CONTACT, PROFILE, HERO_LEAD, profileDescriptions }),
+    ...html.split("\n"),
+  ];
+  const employer = (entry: Job): string => entry.org[0] ?? "";
+  const milestoneOf = (entry: Job) => MILESTONES.find((item) => item.org.startsWith(employer(entry) + " - "));
+
+  it("writes UX/UI, never UI/UX", () => {
+    expect(ownText.filter((text) => /\bUI\s*\/\s*UX\b/.test(text))).toEqual([]);
+  });
+
+  it("names the degree as the CV does (MSc in Psychology), never M.Sc. or Master's Degree, in the structured data too", () => {
+    expect(ownText.filter((text) => /\bM\.\s?Sc\b|\bMaster(?:['’]s)? (?:degree|of science)/i.test(text))).toEqual([]);
+    expect(person.hasCredential.map((credential) => credential.name)).toEqual(CV.education.map((entry) => entry.title));
+    // "MSc" alone only as the CV research bullet's "(MSc)". The link-preview alt texts copy the cover image, which
+    // still reads "MSc Psychology" until Karolina re-exports it as "MSc in Psychology" (Figma follow-up, 2026-10-30).
+    const imageAlts = [...html.matchAll(/<meta\s+(?:property|name)="(?:og|twitter):image:alt"\s+content="([^"]*)"/g)];
+    const altTexts = imageAlts.map((match) => match[1] ?? "");
+    expect(altTexts).toHaveLength(2);
+    const shortForms = ownText.filter(
+      (text) => !altTexts.some((alt) => text.includes(alt)) && /(?<!\()\bMSc\b(?! in Psychology)/.test(text),
+    );
+    expect(shortForms).toEqual([]);
+  });
+
+  it("says she mentored a UX intern at Programado, never a junior designer", () => {
+    expect(ownText.filter((text) => /\bjunior designers?\b/i.test(text))).toEqual([]);
+  });
+
+  it("says the 8+ years were mostly, not all, on B2B and enterprise platforms (her first job was consumer FinTech)", () => {
+    const claims = ownText.flatMap((text) => text.match(/[^.]*8\+ years[^.]*/g) ?? []);
+    expect(claims.length).toBeGreaterThan(0);
+    const unqualified = claims.filter(
+      (claim) => /B2B|enterprise/i.test(claim) && !claim.includes("8+ years, mostly on B2B and enterprise platforms"),
+    );
+    expect(unqualified).toEqual([]);
+  });
+
+  it("calls her a Design Systems Specialist, one form, plural as the CV names the skill", () => {
+    const forms = ownText.flatMap((text) => text.match(/design systems? specialist/gi) ?? []);
+    expect(forms.length).toBeGreaterThan(0);
+    expect(new Set(forms)).toEqual(new Set(["Design Systems Specialist"]));
+  });
+
+  it("gives one WCAG version in claims about her, the CV's skills' (a case study keeps its project's)", () => {
+    const VERSION = /WCAG \d\.\d(?: A{1,3}\b)?/g;
+    const cvForm = collectText(CV.skills).join("\n").match(VERSION)?.[0];
+    expect(cvForm).toBeDefined();
+    const claims = collectText({ ABOUT_INTRO, FAQ, MILESTONES, PRINCIPLES, CONTACT, profileDescriptions });
+    const forms = [...claims, CV.summary, ...person.knowsAbout].flatMap((text) => text.match(VERSION) ?? []);
+    expect(new Set(forms)).toEqual(new Set([cvForm]));
+  });
+
+  it("names her employer GlobalLogic Poland in her job history", () => {
+    expect(profileText.filter((text) => /GlobalLogic(?! Poland)/.test(text))).toEqual([]);
+  });
+
+  it("gives About's career each employer and title of the CV", () => {
+    // A title of its own, after "Employer - ", ", " or "then ": "Junior UX Researcher" does not name "UX Researcher".
+    const names = (org: string, title: string): boolean =>
+      org
+        .split(title)
+        .slice(0, -1)
+        .some((before) => /(?:- |, |then )$/.test(before));
+    for (const entry of [...CV.experience, ...CV.education]) {
+      const org = milestoneOf(entry)?.org ?? "";
+      expect(names(org, entry.title), `${entry.id}: "${org}" names "${entry.title}"`).toBe(true);
+    }
+  });
+
+  it("gives About's career the CV's years: each employer's span, and the years after a title", () => {
+    const year = (date: string | null): string => date?.slice(0, 4) ?? "Present";
+    const entries: readonly Job[] = [...CV.experience, ...CV.education];
+    for (const milestone of MILESTONES) {
+      const jobs = entries.filter((entry) => milestone.org.startsWith(employer(entry) + " - "));
+      expect(jobs.length, `${milestone.id}: a CV entry for "${milestone.org}"`).toBeGreaterThan(0);
+      const start = jobs.reduce((min, job) => (job.start < min ? job.start : min), "9999-12");
+      const ongoing = jobs.some((job) => job.end === null);
+      const end = ongoing ? null : jobs.reduce((max, job) => ((job.end ?? "") > max ? (job.end ?? "") : max), "");
+      expect(milestone.period, milestone.id).toBe(`${year(start)} - ${year(end)}`);
+      for (const job of jobs) {
+        const title = job.title.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+        const after = new RegExp(String.raw`(?:- |, |then )${title} \((\d{4}) - (\d{4}|Present)\)`).exec(milestone.org);
+        if (after)
+          expect(`${after[1] ?? ""} - ${after[2] ?? ""}`, `${job.id} in "${milestone.org}"`).toBe(
+            `${year(job.start)} - ${year(job.end)}`,
+          );
+      }
+    }
+  });
+
+  it("says a job ran alongside another employer's where the dates overlap, on the CV and on About", () => {
+    const until = (end: string | null): string => end ?? "9999-12";
+    const overlap = (a: Job, b: Job): boolean =>
+      employer(a) !== employer(b) && a.start < until(b.end) && b.start < until(a.end);
+    const saysAlongside = (job: Job): boolean => job.org.some((part) => /\balongside\b/i.test(part));
+    for (const [index, a] of CV.experience.entries()) {
+      for (const b of CV.experience.slice(index + 1).filter((other) => overlap(a, other))) {
+        const side = [a, b].find(saysAlongside);
+        expect(side, `${a.id} and ${b.id} overlap: say "alongside" on the side job`).toBeDefined();
+        if (side) expect(milestoneOf(side)?.org, side.id).toMatch(/\balongside\b/i);
+      }
+    }
+  });
+
+  it("keeps index.html's description and person in step with the Work page and the profile", () => {
+    const description = /<meta\s+name="description"\s+content="([^"]*)"/.exec(html)?.[1];
+    expect(description).toBe(PAGE_DESCRIPTIONS[VIEW.work]);
+    expect(person.description).toBe(PAGE_DESCRIPTIONS[VIEW.work]);
+    expect(person.jobTitle).toBe(PROFILE.role);
   });
 });
 

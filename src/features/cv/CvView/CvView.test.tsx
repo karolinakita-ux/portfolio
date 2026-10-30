@@ -65,6 +65,15 @@ describe("CvView", () => {
     for (const bullet of bullets) expect(bullet.firstElementChild?.textContent).toMatch(/\S:$/);
   });
 
+  it("gives an entry without bullets (an earlier title at the same employer) no empty list", () => {
+    renderCv();
+    for (const entry of [...CV.experience, ...CV.education]) {
+      const title = sheet().getByRole("heading", { level: 3, name: entry.title });
+      const root = title.closest("div")?.parentElement?.parentElement;
+      expect(within(root!).queryAllByRole("list"), entry.id).toHaveLength(entry.bullets.length > 0 ? 1 : 0);
+    }
+  });
+
   it("joins each skill area's skills into one line, as applicant tracking systems read them", () => {
     renderCv();
     const skills = within(screen.getByRole("region", { name: CV_PAGE.titles.skills }));

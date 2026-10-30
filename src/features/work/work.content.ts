@@ -2,6 +2,10 @@ import { VIEW } from "#shared/lib/routes/routes.constants.ts";
 
 import type { Testimonial, WorkCase } from "./work.types.ts";
 
+/** The hero's intro under the H1. */
+export const HERO_LEAD =
+  "I have spent 8+ years, mostly on B2B and enterprise platforms, turning messy, data-heavy workflows into clear, usable digital products. With a background in psychology, I focus on how people actually think and work - combining practical research with solid design systems that engineers can easily build.";
+
 /**
  * Hero buttons below the intro: one primary, one secondary. The arrow is an icon, not part of the label. The Figma
  * workspace, the code and Storybook are linked from the Behind the Design banner (PROCESS_BANNER).

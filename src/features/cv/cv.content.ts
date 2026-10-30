@@ -24,13 +24,16 @@ export const CV: Cv = {
   },
 
   summary:
-    "Senior Product Designer with 8+ years on B2B and enterprise platforms: data-dense applications, transactional flows and token-based design systems. With an M.Sc. in Psychology, I ground design decisions in research to reduce cognitive load in decision-heavy workflows. I own the work end to end, from discovery and usability testing to Figma libraries mapped to code, WCAG contrast rules and handoff specs that cover states, errors and edge cases.",
+    "Senior Product Designer with 8+ years, mostly on B2B and enterprise platforms: data-dense applications, transactional flows and token-based design systems. With an MSc in Psychology, I ground design decisions in research to reduce cognitive load in decision-heavy workflows. I own the work end to end, from discovery and usability testing to Figma libraries mapped to code, WCAG contrast rules and handoff specs that cover states, errors and edge cases.",
 
   experience: [
     {
       id: "programado",
       title: "Senior Product Designer (Consulting / Contract)",
-      org: ["Programado", "Remote"],
+      // The contract ran alongside the full-time job at GlobalLogic Poland until 2026-09 (Karolina, 2026-10-30), so
+      // "Partly": it runs to Present. No company name or date in this line: an applicant tracking system could read
+      // either as this job's.
+      org: ["Programado", "Remote", "Partly alongside full-time role"],
       start: "2023-11",
       end: null,
       bullets: [
@@ -52,15 +55,17 @@ export const CV: Cv = {
         },
         {
           lead: "Mentoring",
-          text: "Mentored a junior designer through design critiques and documentation standards.",
+          text: "Mentored a UX intern through design critiques and documentation standards.",
         },
       ],
     },
+    // GlobalLogic Poland: two titles, two entries (newest first), as applicant tracking systems read a promotion.
+    // The bullets have no dates, so all stay with the Senior role until Karolina places them.
     {
       id: "globallogic",
-      title: "Senior UI/UX Designer",
-      org: ["GlobalLogic", "Full-time", "Remote"],
-      start: "2019-09",
+      title: "Senior UX/UI Designer",
+      org: ["GlobalLogic Poland", "Full-time", "Remote"],
+      start: "2024-01",
       end: "2026-09",
       bullets: [
         {
@@ -69,7 +74,7 @@ export const CV: Cv = {
         },
         {
           lead: "Evidence-Based UX Research",
-          text: "Planned and ran mixed-methods research (user interviews, surveys, usability benchmarking and A/B testing), using a psychology background (M.Sc.) to turn behavioural data into product decisions.",
+          text: "Planned and ran mixed-methods research (user interviews, surveys, usability benchmarking and A/B testing), using a psychology background (MSc) to turn behavioural data into product decisions.",
         },
         {
           lead: "Complex IA and Data-Heavy Workflows",
@@ -94,8 +99,16 @@ export const CV: Cv = {
       ],
     },
     {
+      id: "globallogic-ux-ui",
+      title: "UX/UI Designer",
+      org: ["GlobalLogic Poland", "Full-time", "Remote"],
+      start: "2019-09",
+      end: "2023-12",
+      bullets: [],
+    },
+    {
       id: "cinkciarz",
-      title: "UX Researcher & Designer",
+      title: "Junior UX Researcher & Designer",
       org: ["Cinkciarz.pl", "Zielona Góra"],
       start: "2018-07",
       end: "2019-09",
@@ -178,7 +191,7 @@ export const CV: Cv = {
   education: [
     {
       id: "psychology",
-      title: "M.Sc. in Psychology",
+      title: "MSc in Psychology",
       org: ["University of Zielona Góra"],
       start: "2015-10",
       end: "2020-06",

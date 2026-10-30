@@ -1,7 +1,7 @@
 import type { FaqItem, Milestone, Principle } from "./about.types.ts";
 
 export const ABOUT_INTRO: readonly string[] = [
-  "I am a Product and UX/UI Designer with a background in psychology. Since 2018, I have been turning complicated software into clear, practical tools that people actually enjoy using. My psychology foundation helps me understand how people think, make decisions, and deal with cognitive overload in fast-paced work environments.",
+  "I am a Senior Product Designer with a background in psychology. Since 2018, I have been turning complicated software into clear, practical tools that people actually enjoy using. My psychology foundation helps me understand how people think, make decisions, and deal with cognitive overload in fast-paced work environments.",
   "I specialize in data-heavy enterprise workflows, B2B SaaS platforms, and multi-brand design systems. Working closely with product managers and engineers, I bridge the gap between human behavior, design consistency, and technical feasibility.",
 ];
 
@@ -11,13 +11,16 @@ export const ABOUT_ACTIONS = {
   work: "Explore Selected Work",
 };
 
-/** Authored oldest → newest; the About timeline reads newest first. `lesson` (quote block) is optional. */
+/**
+ * Authored oldest → newest; the About timeline reads newest first. `lesson` (quote block) is optional. Each `org`
+ * starts with the employer or school and names its titles as the CV does (content-rules.test.ts checks it).
+ */
 export const MILESTONES: readonly Milestone[] = [
   {
     id: "academic",
     period: "2015 - 2020",
     title: "Academic Foundation in Psychology",
-    org: "University of Zielona Góra - Master's Degree in Psychology",
+    org: "University of Zielona Góra - MSc in Psychology",
     focus:
       "Built a strong foundation in human behavior, decision-making, and research methodology. Conducted quantitative and qualitative studies, learning how to analyze user needs objectively and design interfaces that reduce cognitive strain.",
     tags: [
@@ -41,7 +44,7 @@ export const MILESTONES: readonly Milestone[] = [
     id: "enterprise",
     period: "2019 - 2026",
     title: "Enterprise Platforms & B2B Solutions",
-    org: "GlobalLogic Poland - Senior UX/UI Designer",
+    org: "GlobalLogic Poland - UX/UI Designer (2019 - 2023), then Senior UX/UI Designer (2024 - 2026)",
     focus:
       "Designed core workflows for large-scale European automotive platforms, fleet telematics and data governance portals. Owned complex data tables, multi-variable filtering and role-based access models (RBAC). Documented edge cases, interaction states and system behaviour so engineering and product teams could build without guessing.",
     tags: ["Enterprise UX", "Data Tables & Filters", "Permissions (RBAC)", "Developer Handoff", "WCAG 2.1 AA"],
@@ -50,7 +53,7 @@ export const MILESTONES: readonly Milestone[] = [
     id: "architecture",
     period: "2023 - Present",
     title: "Design Systems & Product Design",
-    org: "Programado - Senior Product Designer (Consulting / Contract)",
+    org: "Programado - Senior Product Designer (Consulting / Contract), from 2023 to 2026 alongside my full-time role at GlobalLogic Poland",
     focus:
       "Leading the design and evolution of scalable design systems tailored to enterprise front-end frameworks (such as PrimeNG and Angular). Defining design tokens, theming structures (light/dark modes), and accessibility standards to help product teams deliver consistent interfaces faster.",
     tags: [

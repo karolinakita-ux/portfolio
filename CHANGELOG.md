@@ -6,6 +6,15 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.9 - 2026-10-30
+
+#### Changed
+
+- CV: GlobalLogic Poland is now two entries, UX/UI Designer (Sep 2019 - Dec 2023) and Senior UX/UI Designer (Jan 2024 - Sep 2026); all bullets stay with the Senior entry until Karolina places them. Cinkciarz.pl says Junior UX Researcher & Designer, the degree is MSc in Psychology, at Programado she mentored a UX intern, and the Programado line says the contract ran partly alongside the full-time role. The PDF is remade from the page (still 2 pages).
+- About: the intro and the portrait caption say Senior Product Designer. The career cards name GlobalLogic Poland with both titles and their years, the Programado contract from 2023 to 2026 alongside it, and the MSc in Psychology.
+- Work, CV and search copy: 8+ years, mostly on B2B and enterprise platforms (her first job was consumer FinTech). Contact and its search description say Design Systems Specialist, and the structured data lists the MSc in Psychology and WCAG 2.1 AA, as the CV does.
+- Tests and docs: new profile-fact checks keep these facts in step across the CV, About, Contact, search copy and index.html, About's years included, and the CV page test checks that an entry without bullets shows no empty list. CLAUDE.md records the rule.
+
 ### 5.14.8 - 2026-10-30
 
 #### Changed
