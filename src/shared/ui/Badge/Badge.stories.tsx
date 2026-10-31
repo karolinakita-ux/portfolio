@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Badge } from "./Badge.tsx";
 
-/** Figma: Badge. A skill tag, or a status next to a title. */
+/** Figma: Badge. A skill tag, or a status next to a title; 22px tall in every tone, as in Figma. */
 const meta = { title: "UI/Badge", component: Badge, args: { children: "Design Systems" } } satisfies Meta<typeof Badge>;
 
 export default meta;

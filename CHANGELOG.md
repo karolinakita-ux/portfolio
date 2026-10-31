@@ -6,6 +6,17 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.15.9 - 2026-10-31
+
+#### Changed
+
+- Badges are now 22px tall in every tone, as in Figma's Badge. The tags on About (career), Smart Ticket (personas) and Theme Generator (bento cards) were 20px; the status badges (Smart Ticket's before and after, Theme Generator's Shipped and Roadmap) were already 22px. Figma's fixed 22px frame holds Label Small's 16px line inside its 4px padding and inside stroke; the site gets the same box and text position from 2px padding and a 1px border, transparent on tags, so in forced colours (Windows contrast themes) tags now show their outline like status badges.
+- Breadcrumbs follow Figma: a 16px chevron (was 14px) with 8px on each side (was 4px), on About, Contact, CV, Privacy, Accessibility and the 4 case studies. Home's house icon is 16px too, like Figma's icon/home, 4px from its label as before. On phones the case pages' previous / next links wrap as before.
+- Bento card titles (Theme Generator's delivery and engineering cards) are Title Medium in its own medium weight, as in Figma, instead of semibold.
+- The menu's current-page underline stays as it is (Karolina, 2026-10-31); Figma's SiteNav shows it too.
+- Tests: `e2e/figma-sizes.e2e.ts` measures in Chromium, Firefox and WebKit that every badge tone is 22px tall, that the breadcrumb's chevron and house are 16px with 8px on each side (About and Theme Generator), and that a bento title is 16/24px at weight 500. On the code of 5.15.7 it fails: neutral badge 20px, chevron 14px, title weight 600.
+- Docs: the comments in the Badge, Breadcrumb and BentoCards styles, and the Badge and Breadcrumb stories' descriptions.
+
 ### 5.15.8 - 2026-10-31
 
 #### Changed

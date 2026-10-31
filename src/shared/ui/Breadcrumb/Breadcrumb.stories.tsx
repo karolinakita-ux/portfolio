@@ -6,7 +6,8 @@ import { Breadcrumb } from "./Breadcrumb.tsx";
 
 /**
  * Figma: Breadcrumbs. Pages outside Work start at Home (the house icon, the home page); case studies start at
- * Work, which opens the list of case studies on that page.
+ * Work, which opens the list of case studies on that page. As in Figma: Body Small, 16px icons, and 8px between
+ * a crumb and the chevron on each side.
  */
 const meta = {
   title: "UI/Breadcrumb",

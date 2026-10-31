@@ -8,7 +8,8 @@ export const styles = {
   header: clsx("flex items-center justify-between gap-sm"),
   /** The card's number: hidden from screen readers in a list from 01, read out in a continued one (BentoCards). */
   number: clsx("text-label-md text-text-secondary tabular-nums"),
-  title: clsx("text-title-md font-semibold text-text-primary"),
+  /** Figma: Title Medium as it is, in its medium weight (Karolina, 2026-10-31). */
+  title: clsx("text-title-md text-text-primary"),
   body: clsx("text-body-md text-text-secondary"),
   /** The card's small visual (BentoVisual) sits at its foot. */
   visual: clsx("mt-auto pt-sm"),
