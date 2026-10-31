@@ -6,6 +6,16 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.16.0 - 2026-10-31
+
+#### Added
+
+- Image viewer on phones: the zoom buttons and the zoom level now show on every screen, and a tap on the image zooms to 200% where it lands, with another tap going back to fit, as a click does with a mouse (Karolina's answer to a28). Until now a phone showed a wide screenshot no larger than the page does (about 330px wide, its text about 3px tall), so reading it took a 3.5 - 5x pinch. Pinch-zoom, moving the zoomed image with a finger, swiping to the next screenshot and the fling after a swipe work as before, and none of them zooms: a finger that moves, a second finger (a pinch) and the tap that stops a fling are not taps. Zoom stays instant, also with reduced motion, and keyboard and screen reader use is unchanged.
+- At 320px the toolbar keeps one row: Previous, Zoom out, the zoom level, Zoom in and Next. The "Swipe to browse" hint shows from 480px up, where it fits beside the zoom controls; on a phone held upright the buttons are there instead. The viewer's icon buttons still look 32px but take taps up to 40px on touch screens. The image pane has `touch-action: manipulation`, so two quick taps zoom in and back out instead of zooming the page. The phone-only limit on zoom (`ZOOM_QUERY`, `canZoom()`, the reset below 768px) is gone.
+- Statistics: a tap that zooms is sent as `image-zoom` with `method: "click"`, like a mouse click on the image, and `input: "touch"` tells them apart (the tracking plan defines `method` as the control and `input` as the device). Not a new kind of data: the privacy policy already covers zooming in the viewer and the input, so it and `STORED_CHOICE` stay as they are. A tap on the viewer's image is no longer a dead click, since it now zooms (`data-clickable`, in `INTERACTIVE`).
+- Tests: `LightboxProvider.test.tsx` (a tap and a pen zoom on a phone-sized screen; a moving finger, a cancelled press, a pinch and a swipe do not; a tap counts as a click), `clicks.utils.test.ts`, `e2e/image-zoom.e2e.ts` (in Chromium, Firefox and WebKit: a tap on a tablet keeps the tapped point under the finger, and at 320px the toolbar is one row inside the panel and works; on an Android phone in Messenger: a 40px touch target on every viewer button, tap to zoom at once with and without reduced motion, and a swipe, a pan, a fling stopped by a tap and a pinch that zoom nothing), `e2e/analytics.e2e.ts` (a tap that zooms is `click` from `touch`, with no dead click). `yarn a11y` now also zooms the viewer at phone width.
+- Docs: README (image viewer), docs/analytics.md (`method`, Screenshots up close), docs/architecture.md (dead clicks), docs/motion.md (image viewer zoom).
+
 ### 5.15.9 - 2026-10-31
 
 #### Changed

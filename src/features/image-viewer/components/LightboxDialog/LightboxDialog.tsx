@@ -23,8 +23,8 @@ import type { LightboxDialogProps } from "./LightboxDialog.types.ts";
  *
  * Controls: close button, Escape, click on the dimmed backdrop; with more than
  * one image, Previous / Next buttons, the ← / → keys and, on touch screens,
- * a swipe left / right (all wrapping around). Zoom: + / - / 0, the toolbar and a mouse
- * click on the image (useZoom); the item's onZoom hears each one.
+ * a swipe left / right (all wrapping around). Zoom: + / - / 0, the toolbar and a click
+ * or tap on the image (useZoom), on every screen; the item's onZoom hears each one.
  *
  * Loading: the neighbouring images load ahead (usePreloadNeighbours). An image
  * that is not in the cache yet shows a skeleton of its own size and shape
@@ -34,7 +34,6 @@ import type { LightboxDialogProps } from "./LightboxDialog.types.ts";
 export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
-  const closeRef = useRef<HTMLButtonElement>(null);
   const zoomInRef = useRef<HTMLButtonElement>(null);
   const titleId = useId();
   const item = state ? state.items[state.index] : undefined;
@@ -47,7 +46,6 @@ export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps)
   const { zoom, zoomStep, zoomLevel, dragging, zoomTo, resetZoom, paneHandlers } = useZoom({
     viewportRef,
     imageRef,
-    closeRef,
     zoomInRef,
     loaded,
     onZoom: (direction, method) => item?.onZoom?.(direction, method),
@@ -101,14 +99,7 @@ export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps)
     >
       {state && item && (
         <figure {...swipe} className={styles.figure}>
-          <LightboxHeader
-            index={state.index}
-            count={count}
-            title={item.title}
-            titleId={titleId}
-            closeRef={closeRef}
-            onClose={close}
-          />
+          <LightboxHeader index={state.index} count={count} title={item.title} titleId={titleId} onClose={close} />
 
           <div
             ref={viewportRef}
@@ -137,8 +128,8 @@ export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps)
                   alt={item.alt}
                   decoding="async"
                   draggable={false}
-                  // A mouse click on it zooms (useZoom): the statistics do not count that click as a dead click.
-                  data-mouse-click={loaded ? "" : undefined}
+                  // A click or tap on it zooms (useZoom): the statistics do not count it as a dead click.
+                  data-clickable={loaded ? "" : undefined}
                   onLoad={onLoad}
                   onError={handleImageError}
                   style={imageStyle}

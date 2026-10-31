@@ -32,8 +32,8 @@ export interface DragStart {
 }
 
 /**
- * A click that zooms in: the point of the image it hit (fractions of the image's width and height) and where the
- * pointer was in the pane (px from its top left corner), so that point stays under the pointer once zoomed.
+ * A click or tap that zooms in: the point of the image it hit (fractions of the image's width and height) and where
+ * the pointer was in the pane (px from its top left corner), so that point stays under the pointer once zoomed.
  */
 export interface ZoomAnchor {
   x: number;
@@ -42,8 +42,11 @@ export interface ZoomAnchor {
   top: number;
 }
 
-/** A mouse press in the image pane, kept until its click: where it started, whether on the image, whether it dragged. */
-export interface MousePress {
+/**
+ * A press in the image pane (a mouse button, a finger or a pen), kept until its click: where it started, whether on
+ * the image, whether it moved (a drag, a pan, a swipe).
+ */
+export interface PointerPress {
   x: number;
   y: number;
   onImage: boolean;

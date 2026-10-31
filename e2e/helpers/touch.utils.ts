@@ -1,9 +1,9 @@
 import type { Page } from "@playwright/test";
 
 /*
- * Touch scrolling as a phone sends it, in Chromium (the DevTools protocol's raw touch events: Playwright's own
- * touchscreen only taps), and where the page sits in the frames it paints. Needs a context with hasTouch, e.g.
- * MESSENGER_ANDROID.
+ * Touch scrolling, swipes and pinches as a phone sends them, in Chromium (the DevTools protocol's raw touch events:
+ * Playwright's own touchscreen only taps), and where the page sits in the frames it paints. Needs a context with
+ * hasTouch, e.g. MESSENGER_ANDROID.
  */
 
 /**
@@ -38,6 +38,60 @@ export async function touchFling(page: Page, distance: number): Promise<void> {
     // 8 ms per step, as a finger moves; Playwright's waitForTimeout is too coarse to leave the fling its speed.
     await new Promise((resolve) => setTimeout(resolve, 8));
   }
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+  await cdp.detach();
+}
+
+/** A point on the screen, in CSS px from the viewport's top left corner. */
+interface ScreenPoint {
+  x: number;
+  y: number;
+}
+
+/**
+ * One finger along `path` (its first point is where it lands): `stepMs` between moves, then `holdMs` still before it
+ * lifts. With no hold it lifts while still moving, so a fling follows, as after touchFling().
+ */
+export async function touchPath(
+  page: Page,
+  path: readonly ScreenPoint[],
+  { stepMs = 8, holdMs = 0 }: { stepMs?: number; holdMs?: number } = {},
+): Promise<void> {
+  const [start, ...moves] = path;
+  if (!start) throw new Error("a touch needs a point to start from");
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [start] });
+  for (const point of moves) {
+    await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [point] });
+    await new Promise((resolve) => setTimeout(resolve, stepMs));
+  }
+  if (holdMs > 0) await page.waitForTimeout(holdMs);
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+  await cdp.detach();
+}
+
+/** `steps` points from `from` to `to`, `from` included: a straight finger path for touchPath(). */
+export const straightPath = (from: ScreenPoint, to: ScreenPoint, steps = 10): ScreenPoint[] =>
+  Array.from({ length: steps + 1 }, (_, step) => ({
+    x: from.x + ((to.x - from.x) * step) / steps,
+    y: from.y + ((to.y - from.y) * step) / steps,
+  }));
+
+/** Two fingers around `center` that spread from `fromGap` to `toGap` px apart, hold still and lift: a pinch-zoom. */
+export async function touchPinch(page: Page, center: ScreenPoint, fromGap: number, toGap: number): Promise<void> {
+  const cdp = await page.context().newCDPSession(page);
+  const fingers = (gap: number) => [
+    { x: center.x - gap / 2, y: center.y, id: 0 },
+    { x: center.x + gap / 2, y: center.y, id: 1 },
+  ];
+  const steps = 10;
+  await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: fingers(fromGap) });
+  for (let step = 1; step <= steps; step++) {
+    const gap = fromGap + ((toGap - fromGap) * step) / steps;
+    await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: fingers(gap) });
+    await new Promise((resolve) => setTimeout(resolve, 16));
+  }
+  await page.waitForTimeout(200);
   await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
   await cdp.detach();
 }

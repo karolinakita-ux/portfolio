@@ -9,17 +9,16 @@ import {
   type UIEvent,
 } from "react";
 
-import { CLICK_ZOOM_STEP, MAX_ZOOM_STEP, ZOOM_QUERY, ZOOM_STEPS } from "#features/image-viewer/lightbox.constants.ts";
+import { CLICK_ZOOM_STEP, MAX_ZOOM_STEP, ZOOM_STEPS } from "#features/image-viewer/lightbox.constants.ts";
 import type {
   DragStart,
-  MousePress,
+  PointerPress,
   ScrollCenter,
   ZoomAnchor,
   ZoomState,
 } from "#features/image-viewer/lightbox.types.ts";
 import {
   anchorAt,
-  canZoom,
   readCenter,
   scrollToAnchor,
   scrollToCenter,
@@ -30,42 +29,44 @@ import type { ZoomDirection, ZoomMethod } from "#shared/media/lightbox/lightbox.
 interface UseZoomOptions {
   viewportRef: RefObject<HTMLDivElement | null>;
   imageRef: RefObject<HTMLImageElement | null>;
-  /** Gets focus when the zoom controls hide (window narrowed below md) while the pane had it. */
-  closeRef: RefObject<HTMLButtonElement | null>;
   /** Gets focus when zooming back to fit makes the pane unfocusable. */
   zoomInRef: RefObject<HTMLButtonElement | null>;
   loaded: boolean;
-  /** The visitor zoomed in or out (a click, a button or a key); not called when the viewer resets to fit by itself. */
+  /**
+   * The visitor zoomed in or out (a click or tap, a button or a key); not called when the viewer resets to fit by
+   * itself.
+   */
   onZoom?: (direction: ZoomDirection, method: ZoomMethod) => void;
 }
 
 /**
- * Zoom (md and up; phones pinch-zoom natively) in ZOOM_STEPS. Zoomed, the image pane scrolls:
- * drag with the mouse, use the trackpad or scroll wheel, or focus the pane and use the arrow keys.
- * The zoomed width is computed in CSS, so it follows resizes, and the point in the middle of the
- * pane stays there across zoom and resize. Narrowing the window below md resets to fit.
+ * Zoom in ZOOM_STEPS, on every screen, phones too. Zoomed, the image pane scrolls: drag with the mouse, move a finger
+ * on a touch screen, use the trackpad or scroll wheel, or focus the pane and use the arrow keys. The zoomed width is
+ * computed in CSS, so it follows resizes, and the point in the middle of the pane stays there across zoom and resize.
  *
- * A mouse click on the fitted image zooms to CLICK_ZOOM_STEP with the clicked point kept under the
- * pointer; a click on the zoomed image goes back to fit. Each way the zoomed image is still smaller than
- * the pane (the height of a wide screenshot), it stays centred, as when fitted, so that way only a point
- * on the image's middle line stays exactly under the pointer. A press that travels (a drag to pan) is not
- * a click, and a tap or a pen does nothing: touch screens keep their own pinch-zoom and swipes.
+ * A click or tap on the fitted image zooms to CLICK_ZOOM_STEP with the point it hit kept under the pointer; a click or
+ * tap on the zoomed image goes back to fit. Each way the zoomed image is still smaller than the pane (the height of a
+ * wide screenshot), it stays centred, as when fitted, so that way only a point on the image's middle line stays
+ * exactly under the pointer. A press that travels is not a click or a tap: a mouse drag that pans, a finger that pans
+ * the zoomed image or swipes to the next one (the browser also cancels a press when its own panning starts). Neither
+ * is a pinch: a second finger voids the first one's press, and pinch-zoom stays the browser's own. A tap that stops
+ * the zoomed image's fling gets no click from the browser, so it does not zoom out (e2e/image-zoom.e2e.ts, Android).
  * Zoom is instant, so there is nothing to shorten for reduced motion.
  */
-export function useZoom({ viewportRef, imageRef, closeRef, zoomInRef, loaded, onZoom }: UseZoomOptions) {
+export function useZoom({ viewportRef, imageRef, zoomInRef, loaded, onZoom }: UseZoomOptions) {
   const [zoom, setZoom] = useState<ZoomState | null>(null);
   const [dragging, setDragging] = useState(false);
   // Point to keep in the middle of the pane: set on zoom, kept current by scrolling and dragging.
   const centerRef = useRef<ScrollCenter>({ x: 0.5, y: 0.5 });
-  // A click that zoomed in: the point to keep under the pointer instead.
+  // A click or tap that zoomed in: the point to keep under the pointer instead.
   const anchorRef = useRef<ZoomAnchor | null>(null);
   const dragRef = useRef<DragStart | null>(null);
-  const pressRef = useRef<MousePress | null>(null);
+  const pressRef = useRef<PointerPress | null>(null);
   const zoomStep = zoom?.step ?? 0;
   const zoomLevel = ZOOM_STEPS[zoomStep] ?? 1;
   const isZoomed = zoom !== null;
 
-  // After a zoom change, scroll so the same point stays in the middle of the pane (or under the pointer that clicked).
+  // After a zoom change, scroll so the same point stays in the middle of the pane (or under the pointer that zoomed).
   useLayoutEffect(() => {
     const viewport = viewportRef.current;
     const image = imageRef.current;
@@ -78,7 +79,7 @@ export function useZoom({ viewportRef, imageRef, closeRef, zoomInRef, loaded, on
     }
     scrollToAnchor(viewport, image, anchor);
     centerRef.current = readCenter(viewport);
-    // Keys keep working after a click on the image: + / - / 0 reach the viewer, the arrow keys pan.
+    // Keys keep working after a click or tap on the image: + / - / 0 reach the viewer, the arrow keys pan.
     viewport.focus({ preventScroll: true });
   }, [imageRef, viewportRef, zoomStep]);
 
@@ -92,21 +93,7 @@ export function useZoom({ viewportRef, imageRef, closeRef, zoomInRef, loaded, on
     return () => observer.disconnect();
   }, [imageRef, isZoomed, viewportRef]);
 
-  // The zoom controls hide below md: drop back to fit when the window narrows.
-  useEffect(() => {
-    if (!isZoomed || typeof window.matchMedia !== "function") return undefined;
-    const query = window.matchMedia(ZOOM_QUERY);
-    const onChange = (event: MediaQueryListEvent) => {
-      if (event.matches) return;
-      // The zoom controls are hidden now: keep focus in the dialog on Close.
-      if (document.activeElement === viewportRef.current) closeRef.current?.focus();
-      setZoom(null);
-    };
-    query.addEventListener("change", onChange);
-    return () => query.removeEventListener("change", onChange);
-  }, [closeRef, isZoomed, viewportRef]);
-
-  /** Zooms to `target` (an index in ZOOM_STEPS) and reports it; `anchor`: the point a click zoomed in on. */
+  /** Zooms to `target` (an index in ZOOM_STEPS) and reports it; `anchor`: the point a click or tap zoomed in on. */
   const zoomTo = (target: number, method: ZoomMethod, anchor?: ZoomAnchor) => {
     const viewport = viewportRef.current;
     const image = imageRef.current;
@@ -119,7 +106,7 @@ export function useZoom({ viewportRef, imageRef, closeRef, zoomInRef, loaded, on
       onZoom?.("out", method);
       return;
     }
-    if (!canZoom() || !image.naturalWidth || !image.naturalHeight) return; // Small touch screen, or not loaded yet.
+    if (!image.naturalWidth || !image.naturalHeight) return; // Not decoded yet.
     centerRef.current = readCenter(viewport);
     anchorRef.current = anchor ?? null;
     setZoom({ step: next, aspect: image.naturalWidth / image.naturalHeight, naturalWidth: image.naturalWidth });
@@ -128,7 +115,7 @@ export function useZoom({ viewportRef, imageRef, closeRef, zoomInRef, loaded, on
 
   const resetZoom = () => setZoom(null);
 
-  // Drag to pan the zoomed image (mouse only; touch and trackpads scroll natively).
+  // Drag to pan the zoomed image (mouse only; touch, pens and trackpads scroll natively).
   const endDrag = () => {
     dragRef.current = null;
     setDragging(false);
@@ -137,19 +124,20 @@ export function useZoom({ viewportRef, imageRef, closeRef, zoomInRef, loaded, on
   const paneHandlers = {
     onPointerDown: (event: PointerEvent<HTMLDivElement>) => {
       const viewport = viewportRef.current;
-      const mouse = event.pointerType === "mouse" && event.button === 0;
-      // Only a mouse press can become a click that zooms: a tap or a pen leaves the zoom alone.
-      pressRef.current = mouse
+      // A mouse's main button, a finger or a pen. A second finger starts a pinch: it makes no tap and voids the
+      // first one's. The browser cancels a press itself once its own panning or pinch-zoom starts (onPointerCancel).
+      const pressed = event.isPrimary && event.button === 0;
+      pressRef.current = pressed
         ? { x: event.clientX, y: event.clientY, onImage: event.target === imageRef.current, moved: false }
         : null;
-      if (!zoom || !viewport || !mouse) return;
+      if (!zoom || !viewport || !pressed || event.pointerType !== "mouse") return;
       viewport.setPointerCapture(event.pointerId);
       dragRef.current = { x: event.clientX, y: event.clientY, left: viewport.scrollLeft, top: viewport.scrollTop };
     },
     onPointerMove: (event: PointerEvent<HTMLDivElement>) => {
       const press = pressRef.current;
       const drag = dragRef.current;
-      if (press && !press.moved && travelledFar(press, event.clientX, event.clientY)) {
+      if (press && !press.moved && event.isPrimary && travelledFar(press, event.clientX, event.clientY)) {
         press.moved = true;
         if (drag) setDragging(true);
       }
@@ -159,15 +147,17 @@ export function useZoom({ viewportRef, imageRef, closeRef, zoomInRef, loaded, on
       viewport.scrollTop = drag.top - (event.clientY - drag.y);
     },
     onPointerUp: endDrag,
+    // The browser took the press over: a finger that pans the pane or the page, a pinch.
     onPointerCancel: () => {
       pressRef.current = null;
       endDrag();
     },
-    // A mouse shortcut: the keyboard has + / - / 0 and the zoom buttons (handleKeyDown, LightboxToolbar).
+    // A shortcut for a mouse, a finger or a pen: the keyboard has + / - / 0 and the zoom buttons (handleKeyDown,
+    // LightboxToolbar).
     onClick: (event: MouseEvent<HTMLDivElement>) => {
       const press = pressRef.current;
       pressRef.current = null;
-      // Not a press made with the mouse on the image (a tap, a key, the empty pane), or a drag.
+      // Not a press on the image (a key, the empty pane), or one that moved (a drag, a pan, a swipe).
       if (!press?.onImage || event.detail === 0 || press.moved || travelledFar(press, event.clientX, event.clientY))
         return;
       const viewport = viewportRef.current;

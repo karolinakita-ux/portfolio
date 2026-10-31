@@ -3,10 +3,8 @@ import type { CSSProperties } from "react";
 import { DRAG_PX } from "#shared/lib/analytics/analytics.constants.ts";
 import type { LightboxItem } from "#shared/media/lightbox/lightbox.types.ts";
 
-import { SWIPE_MIN_DISTANCE, ZOOM_QUERY } from "./lightbox.constants.ts";
+import { SWIPE_MIN_DISTANCE } from "./lightbox.constants.ts";
 import type { ScrollCenter, TouchPoint, ZoomAnchor, ZoomState } from "./lightbox.types.ts";
-
-export const canZoom = (): boolean => typeof window.matchMedia !== "function" || window.matchMedia(ZOOM_QUERY).matches;
 
 export const readCenter = (pane: HTMLElement): ScrollCenter => ({
   x: (pane.scrollLeft + pane.clientWidth / 2) / (pane.scrollWidth || 1),
@@ -20,14 +18,14 @@ export const scrollToCenter = (pane: HTMLElement, center: ScrollCenter): void =>
 
 /**
  * A pointer that travelled further than DRAG_PX from where it was pressed dragged (panned the zoomed image): its
- * release is not a click. The statistics draw the same line between a click and a drag.
+ * release is not a click or a tap. The statistics draw the same line between a click and a drag.
  */
 export const travelledFar = (from: TouchPoint, x: number, y: number): boolean =>
   Math.hypot(x - from.x, y - from.y) > DRAG_PX;
 
 const fraction = (offset: number, size: number): number => (size > 0 ? Math.min(Math.max(offset / size, 0), 1) : 0.5);
 
-/** The point of the fitted image a click at (x, y) hit, and where the pointer was in the pane. */
+/** The point of the fitted image a click or tap at (x, y) hit, and where the pointer was in the pane. */
 export const anchorAt = (x: number, y: number, image: HTMLElement, pane: HTMLElement): ZoomAnchor => {
   const shown = image.getBoundingClientRect();
   const frame = pane.getBoundingClientRect();

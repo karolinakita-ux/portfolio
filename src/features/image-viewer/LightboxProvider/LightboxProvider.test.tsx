@@ -161,17 +161,17 @@ describe("Lightbox zoom", () => {
     expect(image.parentElement).not.toHaveClass("justify-center");
   });
 
-  it("returns to fit when the window narrows below md, and does not zoom there", async () => {
-    const media = mockMatchMedia(true);
+  it("zooms on a phone too (below md, no mouse), and keeps the zoom when the window narrows to one", async () => {
+    const media = mockMatchMedia(false);
     const { user, zoomIn, readout } = await openViewer();
     await user.click(zoomIn);
     expect(readout()).toHaveTextContent("150%");
-
-    act(() => media.change(false));
-    expect(readout()).toHaveTextContent("Fit");
-
     await user.keyboard("+");
-    expect(readout()).toHaveTextContent("Fit");
+    expect(readout()).toHaveTextContent("200%");
+
+    act(() => media.change(true));
+    act(() => media.change(false));
+    expect(readout()).toHaveTextContent("200%");
   });
 
   it("starts at fit and steps in and out with the buttons", async () => {
@@ -231,16 +231,6 @@ describe("Lightbox zoom", () => {
 
     await user.keyboard("+"); // keys still reach the viewer
     expect(readout()).toHaveTextContent("150%");
-  });
-
-  it("moves focus from the zoomed pane to Close when the window narrows below md", async () => {
-    const media = mockMatchMedia(true);
-    const { user, dialog, zoomIn } = await openViewer();
-    await user.click(zoomIn);
-    act(() => within(dialog).getByRole("region", { name: "Zoomed image, scroll to pan" }).focus());
-
-    act(() => media.change(false));
-    expect(within(dialog).getByRole("button", { name: "Close image viewer" })).toHaveFocus();
   });
 
   it("resets to fit when browsing to another image and after closing", async () => {
@@ -359,7 +349,7 @@ describe("Lightbox steps", () => {
   });
 });
 
-describe("Lightbox click to zoom", () => {
+describe("Lightbox click or tap to zoom", () => {
   beforeEach(() => {
     vi.spyOn(HTMLImageElement.prototype, "naturalWidth", "get").mockReturnValue(4000);
     vi.spyOn(HTMLImageElement.prototype, "naturalHeight", "get").mockReturnValue(1000);
@@ -369,21 +359,33 @@ describe("Lightbox click to zoom", () => {
   const image = (dialog: HTMLElement) => within(dialog).getByRole("img", { name: "Wide screen" });
   const zoomedPane = (dialog: HTMLElement) =>
     within(dialog).getByRole("region", { name: "Zoomed image, scroll to pan" });
-  /** A mouse press on the image that moves by `path` before its release, then the click the browser sends. */
-  const press = (dialog: HTMLElement, path: Array<[number, number]>, pointerType = "mouse") => {
+  type Point = [number, number];
+  /** A pointer event's details; pointer 1 is the primary one (the first finger), 2 a second finger. */
+  const pointer = (pointerType: string, [clientX, clientY]: Point, pointerId = 1) => ({
+    pointerType,
+    pointerId,
+    isPrimary: pointerId === 1,
+    button: 0,
+    clientX,
+    clientY,
+  });
+  /** A press on the image (mouse, finger or pen) that moves along `path` before its release, then its click. */
+  const press = (dialog: HTMLElement, path: Point[], pointerType = "mouse") => {
     const target = image(dialog);
-    const at = ([clientX, clientY]: [number, number]) => ({ pointerType, pointerId: 1, button: 0, clientX, clientY });
-    const [start = [100, 100] as [number, number]] = path;
+    const [start = [100, 100] as Point] = path;
     const end = path.at(-1) ?? start;
-    fireEvent.pointerDown(target, at(start));
-    for (const point of path.slice(1)) fireEvent.pointerMove(target, at(point));
-    fireEvent.pointerUp(target, at(end));
+    fireEvent.pointerDown(target, pointer(pointerType, start));
+    for (const point of path.slice(1)) fireEvent.pointerMove(target, pointer(pointerType, point));
+    fireEvent.pointerUp(target, pointer(pointerType, end));
     fireEvent.click(target, { detail: 1, clientX: end[0], clientY: end[1] });
+  };
+  const tap = (dialog: HTMLElement, at: Point = [100, 100]) => {
+    press(dialog, [at], "touch");
   };
 
   it("zooms in to 200% with a click on the image, and back to fit with another, the cursor saying which", async () => {
     const { user, dialog, zoomIn, zoomOut, readout } = await openViewer();
-    expect(image(dialog)).toHaveClass("md:cursor-zoom-in", "pointer-fine:cursor-zoom-in");
+    expect(image(dialog)).toHaveClass("cursor-zoom-in");
 
     await user.click(image(dialog));
     expect(readout()).toHaveTextContent("200%");
@@ -391,17 +393,32 @@ describe("Lightbox click to zoom", () => {
     expect(zoomOut).toHaveAttribute("aria-disabled", "false");
     expect(zoomedPane(dialog)).toHaveFocus(); // + / - / 0 and the arrow keys work next
     expect(image(dialog)).toHaveClass("cursor-zoom-out");
-    expect(image(dialog)).not.toHaveClass("md:cursor-zoom-in");
+    expect(image(dialog)).not.toHaveClass("cursor-zoom-in");
 
     await user.click(image(dialog));
     expect(readout()).toHaveTextContent("Fit");
     expect(zoomOut).toHaveAttribute("aria-disabled", "true");
     expect(zoomIn).toHaveFocus(); // the pane is no longer focusable (WCAG 2.4.3)
-    expect(image(dialog)).toHaveClass("md:cursor-zoom-in");
+    expect(image(dialog)).toHaveClass("cursor-zoom-in");
     expect(image(dialog)).not.toHaveClass("cursor-zoom-out");
   });
 
-  it("goes back to fit with a click from any zoom level", async () => {
+  it("zooms the same way with a tap or a pen on a phone (below md, no mouse)", async () => {
+    mockMatchMedia(false);
+    const { dialog, zoomIn, readout } = await openViewer();
+
+    tap(dialog);
+    expect(readout()).toHaveTextContent("200%");
+    expect(zoomedPane(dialog)).toHaveFocus();
+    tap(dialog);
+    expect(readout()).toHaveTextContent("Fit");
+    expect(zoomIn).toHaveFocus();
+
+    press(dialog, [[100, 100]], "pen");
+    expect(readout()).toHaveTextContent("200%");
+  });
+
+  it("goes back to fit with a click or tap from any zoom level", async () => {
     const { user, dialog, zoomIn, readout } = await openViewer();
     await user.click(zoomIn);
     await user.click(zoomIn);
@@ -410,6 +427,10 @@ describe("Lightbox click to zoom", () => {
 
     await user.click(image(dialog));
     expect(readout()).toHaveTextContent("Fit");
+
+    await user.click(zoomIn);
+    tap(dialog);
+    expect(readout()).toHaveTextContent("Fit");
   });
 
   it("takes a drag that pans the zoomed image for a drag, not a click, also when it ends where it started", async () => {
@@ -417,11 +438,11 @@ describe("Lightbox click to zoom", () => {
     await user.click(image(dialog));
 
     const target = image(dialog);
-    fireEvent.pointerDown(target, { pointerType: "mouse", pointerId: 1, button: 0, clientX: 100, clientY: 100 });
-    fireEvent.pointerMove(target, { pointerType: "mouse", pointerId: 1, clientX: 160, clientY: 130 });
+    fireEvent.pointerDown(target, pointer("mouse", [100, 100]));
+    fireEvent.pointerMove(target, pointer("mouse", [160, 130]));
     expect(target).toHaveClass("cursor-grabbing");
     expect(zoomedPane(dialog)).toHaveClass("cursor-grabbing");
-    fireEvent.pointerUp(target, { pointerType: "mouse", pointerId: 1, clientX: 160, clientY: 130 });
+    fireEvent.pointerUp(target, pointer("mouse", [160, 130]));
     fireEvent.click(target, { detail: 1, clientX: 160, clientY: 130 });
     expect(readout()).toHaveTextContent("200%");
     expect(target).toHaveClass("cursor-zoom-out");
@@ -441,18 +462,68 @@ describe("Lightbox click to zoom", () => {
     expect(readout()).toHaveTextContent("Fit");
   });
 
-  it("leaves the zoom alone on a tap, a pen, a click beside the image and before the image has loaded", async () => {
+  it("does not take a finger that pans, swipes or pinches for a tap", async () => {
     const { user, dialog, readout } = await openViewer();
-    press(dialog, [[100, 100]], "touch");
-    press(dialog, [[100, 100]], "pen");
+    const target = image(dialog);
+
+    // A finger that moves, and one the browser takes over for its own panning: neither is a tap.
+    press(
+      dialog,
+      [
+        [200, 100],
+        [140, 100],
+        [200, 100],
+      ],
+      "touch",
+    );
+    fireEvent.pointerDown(target, pointer("touch", [100, 100]));
+    fireEvent.pointerCancel(target, pointer("touch", [100, 100]));
+    fireEvent.click(target, { detail: 1, clientX: 100, clientY: 100 });
+    expect(readout()).toHaveTextContent("Fit");
+
+    // A pinch: the second finger voids the first one's tap and makes none of its own.
+    fireEvent.pointerDown(target, pointer("touch", [100, 100]));
+    fireEvent.pointerDown(target, pointer("touch", [140, 120], 2));
+    fireEvent.pointerUp(target, pointer("touch", [100, 100]));
+    fireEvent.pointerUp(target, pointer("touch", [140, 120], 2));
+    fireEvent.click(target, { detail: 1, clientX: 140, clientY: 120 });
+    expect(readout()).toHaveTextContent("Fit");
+
+    // Zoomed, a finger pans the pane natively: no drag of the viewer's own, and no tap.
+    await user.click(within(dialog).getByRole("button", { name: "Zoom in" }));
+    fireEvent.pointerDown(target, pointer("touch", [100, 100]));
+    fireEvent.pointerMove(target, pointer("touch", [60, 40]));
+    expect(zoomedPane(dialog)).not.toHaveClass("cursor-grabbing");
+    fireEvent.pointerCancel(target, pointer("touch", [60, 40]));
+    fireEvent.click(target, { detail: 1, clientX: 60, clientY: 40 });
+    expect(readout()).toHaveTextContent("150%");
+  });
+
+  it("browses with a swipe and does not zoom", async () => {
+    const { dialog, readout } = await openViewer();
+    const target = image(dialog);
+    // As a phone sends it: the press, the browser taking the move over, then the swipe's touch events.
+    fireEvent.pointerDown(target, pointer("touch", [300, 200]));
+    fireEvent.pointerMove(target, pointer("touch", [280, 200]));
+    fireEvent.pointerCancel(target, pointer("touch", [280, 200]));
+    swipe(dialog, [300, 200], [100, 200]);
+    expect(title(dialog)).toHaveTextContent("Tall");
+    expect(readout()).toHaveTextContent("Fit");
+  });
+
+  it("leaves the zoom alone on another button, a click beside the image and before the image has loaded", async () => {
+    const { user, dialog, readout } = await openViewer();
+    fireEvent.pointerDown(image(dialog), { ...pointer("mouse", [100, 100]), button: 2 });
+    fireEvent.click(image(dialog), { detail: 1, clientX: 100, clientY: 100 });
     await user.click(image(dialog).parentElement ?? dialog); // the empty pane around the fitted image
     expect(readout()).toHaveTextContent("Fit");
 
     await user.click(within(dialog).getByRole("button", { name: "Next image" }));
     vi.spyOn(HTMLImageElement.prototype, "complete", "get").mockReturnValue(false);
     await user.click(within(dialog).getByRole("button", { name: "Previous image" }));
-    expect(image(dialog)).not.toHaveClass("md:cursor-zoom-in");
+    expect(image(dialog)).not.toHaveClass("cursor-zoom-in");
     await user.click(image(dialog));
+    tap(dialog);
     expect(readout()).toHaveTextContent("Fit");
   });
 });
@@ -480,6 +551,12 @@ describe("Lightbox zoom statistics", () => {
     await user.keyboard("0"); // fit
     await user.keyboard("0"); // already at fit: nothing to count
     await user.click(zoomIn);
+    const image = within(dialog).getByRole("img", { name: "Wide screen" });
+    // A tap on the image counts as a click: the statistics' input tells the two apart.
+    fireEvent.pointerDown(image, { pointerType: "touch", pointerId: 1, isPrimary: true, button: 0 });
+    fireEvent.pointerUp(image, { pointerType: "touch", pointerId: 1, isPrimary: true, button: 0 });
+    fireEvent.click(image, { detail: 1 });
+    await user.click(zoomIn);
     await user.click(within(dialog).getByRole("button", { name: "Next image" })); // back to fit by itself
     await user.click(within(dialog).getByRole("button", { name: "Close image viewer" }));
 
@@ -488,6 +565,8 @@ describe("Lightbox zoom statistics", () => {
       ["Wide", "out", "key"],
       ["Wide", "in", "button"],
       ["Wide", "out", "key"],
+      ["Wide", "in", "button"],
+      ["Wide", "out", "click"],
       ["Wide", "in", "button"],
     ]);
   });

@@ -31,7 +31,7 @@ What this site sends to [Umami Cloud](https://umami.is), why, and the rules for 
 | `element`   | the kind of element (`image`, `icon`, `heading`, `text`, `card`, `page`); the frame around a captioned screenshot is `image`                                                    |
 | `label`     | site copy that names the element (alt text, heading, card title, image caption); for `text-copy`, never one the selection holds; headings and titles in Title Case from 5.14.11 |
 | `direction` | `prev` or `next`; `in` or `out` for a zoom                                                                                                                                      |
-| `method`    | the control the visitor used: `click` (on the image itself), `button` or `key`; `input` says which device                                                                       |
+| `method`    | the control the visitor used: `click` (a click or tap on the image itself), `button` or `key`; `input` says which device (`touch` for a tap)                                    |
 | `input`     | `mouse`, `touch`, `pen` or `keyboard`; added by `track()`, never by hand                                                                                                        |
 
 Never a property called `id`: `umami.identify()` takes it as a Distinct ID and links visits.
@@ -153,7 +153,7 @@ The Hobby plan allows 100,000 events a month and keeps data for 6 months, which 
 - **Performance tab**: p75 of LCP, INP and CLS per page and device. Google's limits: LCP 2.5 s, INP 200 ms, CLS 0.1. INP and CLS cover only the first 10 s of each view ([Speed reports](#speed-reports)), so check a slow interaction later on a page by hand.
 - **UTM report** for `utm_*` links; `link-ref` for `?ref=` tags.
 - **Events → Properties**: `dead-click` by `area` and `label`, `time-on-page` by `time` and `scroll`, `cv-open` and `cv-download` by `place`, `page-not-found` by `path`, `js-error` by `message`, `figma-click` by `place` and `case` (the link at the top of a case study or the design files banner at its end).
-- **Screenshots up close**: `image-open` by `image` shows which screenshots people open; `image-zoom` by `image` (with `direction` `in`) shows which ones they still need to zoom into, a hint that their text is too small at fit, and by `method` whether they click the image, use the buttons or the keys.
+- **Screenshots up close**: `image-open` by `image` shows which screenshots people open; `image-zoom` by `image` (with `direction` `in`) shows which ones they still need to zoom into, a hint that their text is too small at fit, and by `method` whether they click or tap the image (`input` tells which), use the buttons or the keys.
 - **Shared section links**: `section-link-copy` by `section` counts the copies. The visits they bring: `link-ref` by `ref` (`section-link`) for links copied by visitors who came without a tag, and the UTM report's medium `section-link` for the ones that passed a tag on (`link-ref` and the session's `ref` keep that company or channel). A Segment on `ref` = `section-link` shows what the first group read.
 
 ## Your own visits

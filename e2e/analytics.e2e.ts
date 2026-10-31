@@ -298,6 +298,38 @@ test("tells a tap on a touch screen from a mouse click", async ({ browser, baseU
   await context.close();
 });
 
+test("counts a tap that zooms a screenshot on a phone as a click from a touch screen, not a dead click", async ({
+  browser,
+  baseURL,
+}) => {
+  const context = await browser.newContext({ hasTouch: true, viewport: { width: 390, height: 844 } });
+  const page = await context.newPage();
+  const { sent } = await openAsLiveSite(page, baseURL, "/work/automotive");
+  await allowStatistics(page);
+  await expect.poll(() => pageviews(sent).length).toBe(1);
+
+  await page
+    .getByRole("button", { name: /^View full size/ })
+    .first()
+    .tap();
+  await expect.poll(() => eventsNamed(sent, EVENT.imageOpen).length).toBe(1);
+  const opened = eventsNamed(sent, EVENT.imageOpen)[0]?.data;
+  const shot = { case: opened?.case, image: opened?.image };
+
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.locator("img")).not.toHaveClass(/opacity-0/);
+  await dialog.locator("img").tap(); // zooms in
+  await dialog.getByRole("button", { name: "Zoom out" }).tap();
+  await expect
+    .poll(() => eventsNamed(sent, EVENT.imageZoom).map((payload) => payload.data))
+    .toEqual([
+      { ...shot, direction: "in", method: "click", input: "touch" },
+      { ...shot, direction: "out", method: "button", input: "touch" },
+    ]);
+  expect(eventsNamed(sent, EVENT.deadClick)).toEqual([]);
+  await context.close();
+});
+
 test("sends the session data once, and one speed report per page, none while reading", async ({ page, baseURL }) => {
   const { sent } = await openAsLiveSite(page, baseURL, "/about");
   await allowStatistics(page);

@@ -93,7 +93,7 @@ export interface EventData {
   [EVENT.imageNav]: { case: View; image: string; direction: "prev" | "next" };
   /**
    * The visitor zoomed a screenshot in or out in the image viewer, one event per step; image: the one shown.
-   * method: a click on the image, a zoom button, or a key (+, -, 0).
+   * method: a click or tap on the image (input tells which), a zoom button, or a key (+, -, 0).
    */
   [EVENT.imageZoom]: { case: View; image: string; direction: "in" | "out"; method: "click" | "button" | "key" };
   /**

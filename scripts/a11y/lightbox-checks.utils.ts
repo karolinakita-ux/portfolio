@@ -70,15 +70,14 @@ export async function checkLightbox({ browser, base, vsrBundle, axeRuns, notes }
         if (escaped.length) notes.push(`Lightbox (${viewport}): Tab left the open dialog ${escaped.length} time(s)`);
       }
 
-      if (viewport === "desktop") {
-        const zoomIn = page.getByRole("button", { name: "Zoom in" });
-        if (await zoomIn.isVisible()) {
-          await zoomIn.click();
-          await zoomIn.click();
-          await page.waitForTimeout(300);
-          axeRuns.push(await runAxe(page, `lightbox zoomed | ${theme} | ${viewport}`));
-        } else notes.push(`Lightbox (${viewport}, ${theme}): no visible "Zoom in" button`);
-      }
+      // The zoom buttons show on every screen, phones included.
+      const zoomIn = page.getByRole("button", { name: "Zoom in" });
+      if (await zoomIn.isVisible()) {
+        await zoomIn.click();
+        await zoomIn.click();
+        await page.waitForTimeout(300);
+        axeRuns.push(await runAxe(page, `lightbox zoomed | ${theme} | ${viewport}`));
+      } else notes.push(`Lightbox (${viewport}, ${theme}): no visible "Zoom in" button`);
 
       await page.keyboard.press("Escape");
       await page.waitForTimeout(300);

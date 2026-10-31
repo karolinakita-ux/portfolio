@@ -5,7 +5,7 @@ import { styles } from "./LightboxHeader.styles.ts";
 import type { LightboxHeaderProps } from "./LightboxHeader.types.ts";
 
 /** "2 / 7" (with more than one image), the image title, and the close button. */
-export function LightboxHeader({ index, count, title, titleId, closeRef, onClose }: LightboxHeaderProps) {
+export function LightboxHeader({ index, count, title, titleId, onClose }: LightboxHeaderProps) {
   return (
     <div className={styles.root}>
       <div className={styles.heading}>
@@ -19,7 +19,7 @@ export function LightboxHeader({ index, count, title, titleId, closeRef, onClose
         </h2>
       </div>
       {/* First focusable element, so showModal() puts focus here. */}
-      <IconButton ref={closeRef} label="Close image viewer" icon={X} onClick={onClose} />
+      <IconButton label="Close image viewer" icon={X} onClick={onClose} />
     </div>
   );
 }
