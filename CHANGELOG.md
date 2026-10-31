@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.17.5 - 2026-10-31
+
+#### Changed
+
+- Project Planning: the case page heading is now "Project Planning & Cost Management Platform", the same name as its Work card. The Next link on the Automotive page and the Previous link on the Theme Generator page use the new name too. The browser tab and the breadcrumb still say "Project Planning".
+
 ### 5.17.4 - 2026-10-31
 
 #### Changed

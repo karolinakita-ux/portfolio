@@ -5,6 +5,8 @@ export const SITE_NAME = "Karolina Kita";
 
 /** Names that two fields below share, written once. */
 const SMART_TICKET = "Smart Ticket: Mobile Ticketing & Transit Operations";
+/** The page heading and the Work card share it (Karolina, 2026-10-31). */
+const PROJECT_PLANNING = "Project Planning & Cost Management Platform";
 const THEME_GENERATOR = "Enterprise White-Label Theme Generator";
 
 /**
@@ -21,8 +23,8 @@ export const CASE_NAMES: Readonly<Record<CaseView, CaseNames>> = {
     shortTitle: "Automotive Marketplace",
   },
   [VIEW.caseProjectPlanning]: {
-    title: "Enterprise Project Planning & Cost Management Platform",
-    cardTitle: "Project Planning & Cost Management Platform",
+    title: PROJECT_PLANNING,
+    cardTitle: PROJECT_PLANNING,
     shortTitle: "Project Planning",
   },
   [VIEW.caseDataGovernance]: {

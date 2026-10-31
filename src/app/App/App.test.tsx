@@ -253,8 +253,8 @@ describe("App", () => {
     expect(within(primaryNav()).getByRole("link", { name: "Work" })).toHaveAttribute("aria-current", "true");
 
     const endNav = within(screen.getByRole("navigation", { name: "Case study navigation" }));
-    await user.click(endNav.getByRole("link", { name: /^Next Case Study.*Enterprise Project Planning/ }));
-    expect(h1()).toHaveTextContent("Enterprise Project Planning & Cost Management Platform");
+    await user.click(endNav.getByRole("link", { name: /^Next Case Study.*Project Planning/ }));
+    expect(h1()).toHaveTextContent(/^Project Planning & Cost Management Platform$/);
 
     await user.click(
       within(screen.getByRole("navigation", { name: "Breadcrumb" })).getByRole("link", { name: "Work" }),
