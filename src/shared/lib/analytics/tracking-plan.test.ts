@@ -52,6 +52,7 @@ const EVENT_PROPERTIES: { [E in AnalyticsEvent]: Record<KeysOfUnion<EventData[E]
   [EVENT.imageOpen]: { case: true, image: true },
   [EVENT.imageNav]: { case: true, image: true, direction: true },
   [EVENT.imageZoom]: { case: true, image: true, direction: true, method: true },
+  [EVENT.imageDescriptionOpen]: { case: true, image: true },
   [EVENT.figmaClick]: { place: true, case: true },
   [EVENT.githubClick]: { place: true },
   [EVENT.storybookClick]: { place: true },

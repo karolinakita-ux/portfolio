@@ -11,13 +11,14 @@ import type { FeatureSectionProps } from "./FeatureSection.types.ts";
  * Figma: case-study feature section. Text column (eyebrow, H2 with its copy-link anchor, lead, bullets) beside
  * a visual column of one or more screenshots, which open the image viewer. From lg the columns sit side by side
  * and every other section is mirrored (`reverse`); below lg they stack, text first.
+ * `data-image-area`: closing the image viewer on one of its screenshots brings the columns into view (gallery.utils).
  */
 export function FeatureSection({ section, rows, reverse = false }: FeatureSectionProps) {
   const titleId = section.id + "-title";
   return (
     <section id={section.id} aria-labelledby={titleId} data-anchor="" className={styles.root}>
       <Container>
-        <div className={styles.grid(reverse)}>
+        <div data-image-area="" className={styles.grid(reverse)}>
           <div className={styles.text}>
             <Eyebrow parts={[section.eyebrow]} />
             <div className={styles.titleRow}>
@@ -42,6 +43,7 @@ export function FeatureSection({ section, rows, reverse = false }: FeatureSectio
                   darkSrc={row.darkSrc}
                   alt={row.card.alt}
                   onExpand={row.onExpand}
+                  imageId={row.card.id}
                   frameless={row.card.frameless}
                 />
               </li>

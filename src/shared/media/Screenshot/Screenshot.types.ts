@@ -7,6 +7,11 @@ export interface ScreenshotProps {
   alt: string;
   /** When given, the screenshot becomes a button that opens the full-size viewer; `trigger` is the button, for focus return. */
   onExpand?: (trigger: HTMLElement) => void;
+  /**
+   * Names the screenshot on the page (`data-image` on its button): the image viewer finds it there to land on it when
+   * it closes on this image (a case study's card id, useCaseGallery).
+   */
+  imageId?: string;
   /** The image draws its own frame (rounded corners, shadow): no border, surface or shadow around it. */
   frameless?: boolean;
 }

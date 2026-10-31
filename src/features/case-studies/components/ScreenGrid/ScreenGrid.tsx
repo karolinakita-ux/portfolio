@@ -9,6 +9,7 @@ import type { ScreenGridProps } from "./ScreenGrid.types.ts";
 /**
  * Figma: Run the Network (Operations Console). The operations console: a scope note beside the description and design decisions
  * (side by side from lg), then the screens two to a row from md, each named in a caption.
+ * `data-image-area`: closing the image viewer on a screen brings its figure, caption included, into view (gallery.utils).
  */
 export function ScreenGrid({ section, rows }: ScreenGridProps) {
   return (
@@ -31,8 +32,14 @@ export function ScreenGrid({ section, rows }: ScreenGridProps) {
       <ul aria-label={section.title + " - screens"} className={styles.grid}>
         {rows.map((row) => (
           <li key={row.card.id}>
-            <figure className={styles.figure}>
-              <Screenshot src={row.src} darkSrc={row.darkSrc} alt={row.card.alt} onExpand={row.onExpand} />
+            <figure data-image-area="" className={styles.figure}>
+              <Screenshot
+                src={row.src}
+                darkSrc={row.darkSrc}
+                alt={row.card.alt}
+                onExpand={row.onExpand}
+                imageId={row.card.id}
+              />
               <figcaption className={styles.caption}>{row.card.title}</figcaption>
             </figure>
           </li>

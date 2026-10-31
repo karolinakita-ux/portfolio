@@ -1,10 +1,11 @@
 import type { CSSProperties } from "react";
 
 import { DRAG_PX } from "#shared/lib/analytics/analytics.constants.ts";
-import type { LightboxItem } from "#shared/media/lightbox/lightbox.types.ts";
+import { prefersReducedMotion } from "#shared/lib/ui/ui.utils.ts";
+import type { LightboxItem, LightboxPlace } from "#shared/media/lightbox/lightbox.types.ts";
 
 import { SWIPE_MIN_DISTANCE } from "./lightbox.constants.ts";
-import type { ScrollCenter, TouchPoint, ZoomAnchor, ZoomState } from "./lightbox.types.ts";
+import type { FreeBand, ScrollCenter, TouchPoint, ZoomAnchor, ZoomState } from "./lightbox.types.ts";
 
 export const readCenter = (pane: HTMLElement): ScrollCenter => ({
   x: (pane.scrollLeft + pane.clientWidth / 2) / (pane.scrollWidth || 1),
@@ -99,3 +100,43 @@ export const skeletonStyle = ({ width, height }: LightboxItem): CSSProperties | 
   width !== undefined && height !== undefined && width > 0 && height > 0
     ? ({ "--kb-aspect": width / height, "--kb-natural-width": width + "px" } as CSSProperties)
     : undefined;
+
+/** The part of the window the sticky header and the consent box leave free: the page's scroll padding (base.css). */
+export const freeBand = (): FreeBand => {
+  const style = getComputedStyle(document.documentElement);
+  const top = parseFloat(style.scrollPaddingTop) || 0;
+  return { top, bottom: window.innerHeight - (parseFloat(style.scrollPaddingBottom) || 0) };
+};
+
+/** A box that shows in the free band, at least in part. */
+export const showsIn = (box: DOMRect, band: FreeBand): boolean => box.bottom > band.top && box.top < band.bottom;
+
+/**
+ * How far to scroll the page (down; negative is up) to land on an image's place: its area from the top of the free
+ * band, so the image shows with its description. When that would leave the image itself below the band (an area taller
+ * than the window, such as a feature section's second screenshot on a phone), the whole image at the band's bottom
+ * instead, with what fits of the area above it. 0 while the area shows in full.
+ */
+export const landingOffset = (area: DOMRect, target: DOMRect, band: FreeBand): number => {
+  if (area.top >= band.top && area.bottom <= band.bottom) return 0;
+  const toArea = area.top - band.top;
+  if (target.top - toArea < band.bottom) return toArea;
+  return Math.min(target.bottom - band.bottom, target.top - band.top);
+};
+
+/**
+ * After the viewer closed: focus on the shown image's place on the page, scrolled into view (landingOffset), or else
+ * back on the element that opened the viewer. Nothing moves when the shown image is the one that opened the viewer and
+ * it still shows, unless the visitor asked for its description. The scroll is a jump within the page: smooth, instant
+ * with reduced motion (docs/motion.md); focus moves without a scroll of its own.
+ */
+export function landOnPage(place: LightboxPlace | null, opener: HTMLElement | null, toDescription: boolean): void {
+  (place?.target ?? opener)?.focus({ preventScroll: true });
+  if (!place) return;
+  const band = freeBand();
+  const shown = place.target.getBoundingClientRect();
+  if (place.target === opener && !toDescription && showsIn(shown, band)) return;
+  const offset = landingOffset(place.area.getBoundingClientRect(), shown, band);
+  if (Math.abs(offset) < 1) return;
+  window.scrollTo({ top: window.scrollY + offset, behavior: prefersReducedMotion() ? "auto" : "smooth" });
+}

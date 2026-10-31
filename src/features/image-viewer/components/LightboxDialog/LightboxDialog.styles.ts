@@ -5,8 +5,12 @@ import type { StepDirection } from "#features/image-viewer/lightbox.types.ts";
 import { FOCUS_RING } from "#shared/lib/ui/ui.styles.ts";
 
 export const styles = {
+  /**
+   * At least as tall as the window inside the dialog's padding (min-h-full): the image pane takes the height the
+   * title rows and the toolbar leave (.kb-lightbox-pane in lightbox.css). Taller only when they need more.
+   */
   figure: clsx(
-    "my-auto flex w-full max-w-header min-w-0 flex-col gap-sm rounded-lg border border-border-subtle bg-bg-surface-raised p-sm shadow-xl motion-safe:animate-view-in md:p-md",
+    "my-auto flex min-h-full w-full max-w-header min-w-0 flex-col gap-sm rounded-lg border border-border-subtle bg-bg-surface-raised p-sm shadow-xl motion-safe:animate-view-in md:p-md",
   ),
   /**
    * Zoomed, the pane is a flex box and the image has auto margins (`image`): they centre it each way it is still
@@ -17,7 +21,7 @@ export const styles = {
    */
   pane: (zoomed: boolean, dragging: boolean) =>
     clsx(
-      "kb-lightbox-pane relative min-h-0 touch-manipulation rounded-sm border border-border-subtle bg-bg-surface-default",
+      "kb-lightbox-pane relative touch-manipulation rounded-sm border border-border-subtle bg-bg-surface-default",
       zoomed
         ? clsx(
             "kb-lightbox-viewport flex overflow-auto overscroll-contain select-none",

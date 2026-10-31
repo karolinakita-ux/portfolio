@@ -16,7 +16,7 @@ import type { ScreenshotProps } from "./Screenshot.types.ts";
  * a broken file falls back to the next one (dark version → `src` → `fallbackSrc`). The image carries the shown
  * file's width and height (`assetSize`), so the page holds its height before the file arrives.
  */
-export function Screenshot({ src, darkSrc, fallbackSrc, alt, onExpand, frameless = false }: ScreenshotProps) {
+export function Screenshot({ src, darkSrc, fallbackSrc, alt, onExpand, imageId, frameless = false }: ScreenshotProps) {
   const theme = useDocumentTheme();
   const sources = themedSources(theme, src, darkSrc, fallbackSrc);
   // Files that failed to load: the image moves on to the next source in the list.
@@ -61,6 +61,7 @@ export function Screenshot({ src, darkSrc, fallbackSrc, alt, onExpand, frameless
     <button
       type="button"
       aria-haspopup="dialog"
+      data-image={imageId}
       onClick={(event) => onExpand(event.currentTarget)}
       className={styles.button(frameless)}
     >

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { DRAG_PX } from "#shared/lib/analytics/analytics.constants.ts";
 
-import { anchorAt, scrollToAnchor, travelledFar } from "./lightbox.utils.ts";
+import { anchorAt, landingOffset, scrollToAnchor, showsIn, travelledFar } from "./lightbox.utils.ts";
 
 /** An element with a fixed box on the screen (jsdom has no layout) and a 1px border, like the image pane. */
 const boxed = (rect: { left: number; top: number; width: number; height: number }, border = 0) => {
@@ -60,5 +60,46 @@ describe("scrollToAnchor", () => {
     // 100 + 0.5 * 400 = 300 down the content: under the pointer already. Pinned to the top, the point would sit
     // 200px down, and no scroll could move it to 300.
     expect(pane.scrollTop).toBe(0);
+  });
+});
+
+describe("landingOffset", () => {
+  /** Below an 80px header, above an 800px window's bottom edge. */
+  const band = { top: 80, bottom: 800 };
+  const box = (top: number, height: number) => DOMRect.fromRect({ x: 0, y: top, width: 600, height });
+
+  it("leaves a row that shows in full where it is", () => {
+    expect(landingOffset(box(80, 720), box(200, 300), band)).toBe(0);
+    expect(landingOffset(box(300, 400), box(350, 300), band)).toBe(0);
+  });
+
+  it("brings a row below or above the window to the top, just under the header", () => {
+    expect(landingOffset(box(1500, 500), box(1600, 300), band)).toBe(1500 - 80);
+    expect(landingOffset(box(-900, 500), box(-800, 300), band)).toBe(-900 - 80);
+    expect(landingOffset(box(60, 500), box(100, 300), band)).toBe(-20); // half under the header
+  });
+
+  it("starts a row taller than the window at its top, where the description is, while the screenshot shows too", () => {
+    // Text 600px, then the screenshot: at the top of the band it starts 600px down, still inside the window.
+    expect(landingOffset(box(2000, 1400), box(2600, 800), band)).toBe(2000 - 80);
+  });
+
+  it("shows the whole screenshot instead when the row's top would leave it below the window", () => {
+    // A feature section's second screenshot on a phone: 900px down its section, 300px tall.
+    expect(landingOffset(box(2000, 1300), box(2900, 300), band)).toBe(2900 + 300 - 800);
+    // A screenshot taller than the band: its top under the header.
+    expect(landingOffset(box(2000, 2400), box(2900, 1000), band)).toBe(2900 - 80);
+  });
+});
+
+describe("showsIn", () => {
+  const band = { top: 80, bottom: 800 };
+  const box = (top: number, height: number) => DOMRect.fromRect({ x: 0, y: top, width: 600, height });
+
+  it("takes a box that shows in part, not one hidden under the header or below the window", () => {
+    expect(showsIn(box(700, 300), band)).toBe(true);
+    expect(showsIn(box(-100, 200), band)).toBe(true);
+    expect(showsIn(box(0, 80), band)).toBe(false);
+    expect(showsIn(box(800, 100), band)).toBe(false);
   });
 });

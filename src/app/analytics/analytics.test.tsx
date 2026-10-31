@@ -243,6 +243,25 @@ describe("events on case studies", () => {
     ]);
   });
 
+  it("counts going from the viewer to a screenshot's description, not closing it", async () => {
+    const { user } = renderApp("/work/automotive");
+    const [firstScreenshot] = screen.getAllByRole("button", { name: /View full size/ });
+    if (!firstScreenshot) throw new Error("no screenshots rendered");
+    const cards = caseCards(AUTOMOTIVE_CASE);
+    await user.click(firstScreenshot);
+    await user.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Close image viewer" }));
+    await user.click(firstScreenshot);
+    await user.keyboard("{ArrowRight}");
+    await user.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Go to Description" }));
+
+    expect(events()).toEqual([
+      [EVENT.imageOpen, { case: "case-automotive", image: cards[0]?.id }],
+      [EVENT.imageOpen, { case: "case-automotive", image: cards[0]?.id }],
+      [EVENT.imageNav, { case: "case-automotive", image: cards[1]?.id, direction: "next" }],
+      [EVENT.imageDescriptionOpen, { case: "case-automotive", image: cards[1]?.id }],
+    ]);
+  });
+
   it("counts zooming a screenshot in and out in the viewer, with how it was done", async () => {
     vi.spyOn(HTMLImageElement.prototype, "naturalWidth", "get").mockReturnValue(2880);
     vi.spyOn(HTMLImageElement.prototype, "naturalHeight", "get").mockReturnValue(1800);

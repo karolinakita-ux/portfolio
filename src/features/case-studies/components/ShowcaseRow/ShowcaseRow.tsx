@@ -10,12 +10,13 @@ import type { ShowcaseRowProps } from "./ShowcaseRow.types.ts";
  * One screenshot with its rationale, in the feature-row layout every case study shares: a 440px text column
  * beside the framed screenshot from lg, the sides alternating row by row (`reverse`); stacked, text first, below lg.
  * A phone screen (`device: "phone"`) flips the proportions: a wide text column beside a 376px card holding the screen.
+ * `data-image-area`: closing the image viewer on this screenshot brings the whole row into view (gallery.utils).
  */
 export function ShowcaseRow({ src, darkSrc, previewSrc, item, onExpand, reverse = false }: ShowcaseRowProps) {
   const titleId = useId();
   const phone = item.device === "phone";
   return (
-    <article data-card="" aria-labelledby={titleId} className={styles.root(reverse, phone)}>
+    <article data-card="" data-image-area="" aria-labelledby={titleId} className={styles.root(reverse, phone)}>
       <div className={styles.body}>
         <h3 id={titleId} className={styles.title}>
           {item.title}
@@ -50,6 +51,7 @@ export function ShowcaseRow({ src, darkSrc, previewSrc, item, onExpand, reverse 
             fallbackSrc={previewSrc ? src : undefined}
             alt={item.alt}
             onExpand={onExpand}
+            imageId={item.id}
             frameless={item.frameless}
           />
         </div>

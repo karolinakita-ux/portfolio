@@ -572,6 +572,172 @@ describe("Lightbox zoom statistics", () => {
   });
 });
 
+describe("Lightbox closing", () => {
+  /** The page's sticky header ends 80px down (its scroll padding); jsdom's window is 768px tall. */
+  const HEADER = 80;
+  const box = (top: number, height: number) => DOMRect.fromRect({ x: 0, y: top, width: 600, height });
+  /** Boxes on the screen by image title: its row's and its button's [top, height]. */
+  type Boxes = Readonly<Record<string, { row: readonly [number, number]; button: readonly [number, number] }>>;
+  const openButton = (title: string) => screen.getByRole("button", { name: "View " + title });
+  const row = (title: string) => screen.getByRole("article", { name: title });
+
+  /** Each image's place on a page: its own open button in a row that holds its description. */
+  const placed = (items: readonly LightboxItem[] = ITEMS): LightboxItem[] =>
+    items.map((item) => ({
+      ...item,
+      place: () => {
+        const target = screen.queryByRole("button", { name: "View " + item.title });
+        return target && { target, area: row(item.title) };
+      },
+    }));
+
+  /** A case page in short: one row per image, each with the button that opens the viewer at it. */
+  function GalleryPage({ items }: { items: readonly LightboxItem[] }) {
+    const open = useLightbox();
+    return items.map((item, index) => (
+      <article key={item.src} aria-label={item.title}>
+        <p>{item.alt}</p>
+        <button type="button" onClick={(event) => open(items, index, event.currentTarget)}>
+          {"View " + item.title}
+        </button>
+      </article>
+    ));
+  }
+
+  /** Renders the page, gives each row and button a box on the screen (top, height), and opens the viewer at `index`. */
+  const openFromPage = async (items: readonly LightboxItem[], index: number, boxes: Boxes = {}) => {
+    const user = userEvent.setup();
+    render(
+      <LightboxProvider>
+        <GalleryPage items={items} />
+      </LightboxProvider>,
+    );
+    for (const [title, { row: rowBox, button }] of Object.entries(boxes)) {
+      vi.spyOn(row(title), "getBoundingClientRect").mockReturnValue(box(...rowBox));
+      vi.spyOn(openButton(title), "getBoundingClientRect").mockReturnValue(box(...button));
+    }
+    const getStyle = window.getComputedStyle.bind(window);
+    vi.spyOn(window, "getComputedStyle").mockImplementation((element, pseudo) =>
+      element === document.documentElement
+        ? ({ scrollPaddingTop: HEADER + "px", scrollPaddingBottom: "0px" } as unknown as CSSStyleDeclaration)
+        : getStyle(element, pseudo),
+    );
+    const scrollTo = vi.spyOn(window, "scrollTo");
+    await user.click(openButton(items[index]?.title ?? ""));
+    const dialog = screen.getByRole("dialog");
+    return { user, dialog, scrollTo };
+  };
+
+  /** The third image's row sits further down the page, below the window: it takes a scroll to show. */
+  const BELOW = { Square: { row: [1500, 500], button: [1600, 300] } } as const;
+
+  it.each([
+    ["the close button", (dialog: HTMLElement) => within(dialog).getByRole("button", { name: "Close image viewer" })],
+    ["Go to Description", (dialog: HTMLElement) => within(dialog).getByRole("button", { name: "Go to Description" })],
+  ])("lands on the screenshot shown after %s: its row below the header, focus on its button", async (_way, control) => {
+    const { user, dialog, scrollTo } = await openFromPage(placed(), 0, BELOW);
+    await user.keyboard("{ArrowRight}{ArrowRight}");
+    expect(within(dialog).getByRole("heading", { name: "Square" })).toBeInTheDocument();
+
+    await user.click(control(dialog));
+    expect(dialog).not.toHaveAttribute("open");
+    expect(openButton("Square")).toHaveFocus();
+    expect(scrollTo).toHaveBeenCalledExactlyOnceWith({ top: 1500 - HEADER, behavior: "smooth" });
+  });
+
+  it("lands the same way when Escape or a click on the backdrop closes it", async () => {
+    const { user, dialog, scrollTo } = await openFromPage(placed(), 0, BELOW);
+    await user.keyboard("{ArrowRight}{ArrowRight}");
+    // Escape: the browser closes the dialog itself (jsdom has no Escape handling).
+    act(() => (dialog as HTMLDialogElement).close());
+    expect(openButton("Square")).toHaveFocus();
+    expect(scrollTo).toHaveBeenCalledTimes(1);
+
+    await user.click(openButton("Wide"));
+    await user.keyboard("{ArrowLeft}");
+    fireEvent.pointerDown(dialog);
+    fireEvent.click(dialog);
+    expect(dialog).not.toHaveAttribute("open");
+    expect(openButton("Square")).toHaveFocus();
+    expect(scrollTo).toHaveBeenCalledTimes(2);
+  });
+
+  it("scrolls at once with reduced motion", async () => {
+    mockMatchMedia(false, { "(prefers-reduced-motion: reduce)": true });
+    const { user, dialog, scrollTo } = await openFromPage(placed(), 0, BELOW);
+    await user.keyboard("{ArrowLeft}");
+    await user.click(within(dialog).getByRole("button", { name: "Close image viewer" }));
+    expect(scrollTo).toHaveBeenCalledExactlyOnceWith({ top: 1500 - HEADER, behavior: "auto" });
+  });
+
+  it("moves nothing when the row shown is in view already, nor for the opener still in view", async () => {
+    const inView: Boxes = {
+      Wide: { row: [100, 300], button: [150, 200] },
+      Tall: { row: [420, 300], button: [450, 200] },
+    };
+    const { user, dialog, scrollTo } = await openFromPage(placed(), 0, inView);
+    await user.click(within(dialog).getByRole("button", { name: "Close image viewer" }));
+    expect(openButton("Wide")).toHaveFocus();
+
+    await user.click(openButton("Wide"));
+    await user.keyboard("{ArrowRight}");
+    await user.click(within(dialog).getByRole("button", { name: "Close image viewer" }));
+    expect(openButton("Tall")).toHaveFocus();
+    expect(scrollTo).not.toHaveBeenCalled();
+  });
+
+  it("keeps the opener in place when closed, and shows its description with Go to Description", async () => {
+    // The visitor scrolled down to the screenshot: the top of its row, where the description starts, is above the header.
+    const opener = { Wide: { row: [-200, 700], button: [100, 300] } } as const;
+    const { user, dialog, scrollTo } = await openFromPage(placed(), 0, opener);
+    await user.click(within(dialog).getByRole("button", { name: "Close image viewer" }));
+    expect(openButton("Wide")).toHaveFocus();
+    expect(scrollTo).not.toHaveBeenCalled();
+
+    await user.click(openButton("Wide"));
+    await user.click(within(dialog).getByRole("button", { name: "Go to Description" }));
+    expect(openButton("Wide")).toHaveFocus();
+    expect(scrollTo).toHaveBeenCalledExactlyOnceWith({ top: -200 - HEADER, behavior: "smooth" });
+  });
+
+  it("falls back to the opener, without Go to Description, for images with no place on the page", async () => {
+    const { user, dialog, scrollTo } = await openFromPage(ITEMS, 0);
+    expect(within(dialog).queryByRole("button", { name: "Go to Description" })).not.toBeInTheDocument();
+    await user.keyboard("{ArrowRight}");
+    await user.click(within(dialog).getByRole("button", { name: "Close image viewer" }));
+    expect(openButton("Wide")).toHaveFocus();
+    expect(scrollTo).not.toHaveBeenCalled();
+  });
+
+  it("falls back to the opener when the shown image's place is gone from the page", async () => {
+    const items = placed().map((item) => (item.title === "Tall" ? { ...item, place: () => null } : item));
+    const { user, dialog, scrollTo } = await openFromPage(items, 0);
+    await user.keyboard("{ArrowRight}");
+    await user.click(within(dialog).getByRole("button", { name: "Go to Description" }));
+    expect(openButton("Wide")).toHaveFocus();
+    expect(scrollTo).not.toHaveBeenCalled();
+  });
+
+  it("names Go to Description by its label, keeps Close first for the focus on open, and tells the image's owner", async () => {
+    const described = vi.fn<(title: string) => void>();
+    const items = placed().map((item) => ({ ...item, onGoToDescription: () => described(item.title) }));
+    const { user, dialog } = await openFromPage(items, 1);
+    const close = within(dialog).getByRole("button", { name: "Close image viewer" });
+    expect(close).toHaveFocus();
+    await user.tab();
+    expect(within(dialog).getByRole("button", { name: "Go to Description" })).toHaveFocus();
+
+    await user.keyboard("{ArrowRight}");
+    await user.click(within(dialog).getByRole("button", { name: "Go to Description" }));
+    expect(described.mock.calls).toEqual([["Square"]]);
+
+    // Closing is not going to the description.
+    await user.click(openButton("Tall"));
+    await user.click(within(dialog).getByRole("button", { name: "Close image viewer" }));
+    expect(described).toHaveBeenCalledTimes(1);
+  });
+});
+
 /** Stands in for the `new Image()` that loads a sharper copy: records each one; arrive() and fail() end its load. */
 class FakeCopy {
   static made: FakeCopy[] = [];

@@ -2,15 +2,17 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { LightboxDialog } from "#features/image-viewer/components/LightboxDialog/LightboxDialog.tsx";
 import type { LightboxState } from "#features/image-viewer/lightbox.types.ts";
-import { wrapIndex } from "#features/image-viewer/lightbox.utils.ts";
+import { landOnPage, wrapIndex } from "#features/image-viewer/lightbox.utils.ts";
 import { LightboxContext } from "#shared/media/lightbox/lightbox.context.ts";
-import type { OpenLightbox } from "#shared/media/lightbox/lightbox.types.ts";
+import type { LightboxItem, OpenLightbox } from "#shared/media/lightbox/lightbox.types.ts";
 
 import type { LightboxProviderProps } from "./LightboxProvider.types.ts";
 
 /**
  * Full-size image viewer for case-study screenshots. Wrap the app once; open it with useLightbox()
- * from #shared/media/lightbox.context.ts. On close, focus returns to the screenshot that opened it.
+ * from #shared/media/lightbox.context.ts. Closing it (Close, Escape, the backdrop, Go to Description) lands on the
+ * screenshot it shows: scrolled into view with its description, focus on its button (landOnPage). An item without a
+ * place on the page gives focus back to the screenshot that opened the viewer.
  */
 export function LightboxProvider({ children }: LightboxProviderProps) {
   const [state, setState] = useState<LightboxState | null>(null);
@@ -22,11 +24,11 @@ export function LightboxProvider({ children }: LightboxProviderProps) {
     setState({ items, index: Math.min(Math.max(index, 0), items.length - 1), direction: 0 });
   }, []);
 
-  const handleClosed = useCallback(() => {
+  const handleClosed = useCallback((shown: LightboxItem | undefined, toDescription: boolean) => {
     setState(null);
     const trigger = triggerRef.current;
     triggerRef.current = null;
-    trigger?.focus({ preventScroll: true });
+    landOnPage(shown?.place?.() ?? null, trigger, toDescription);
   }, []);
 
   // The viewer moved to another image: its owner may count it (the case gallery sends image-nav).

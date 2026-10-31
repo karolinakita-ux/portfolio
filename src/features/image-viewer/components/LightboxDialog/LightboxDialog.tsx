@@ -21,10 +21,12 @@ import type { LightboxDialogProps } from "./LightboxDialog.types.ts";
  * The viewer itself, in a modal Dialog (shared/ui/Dialog: the page behind becomes inert,
  * Escape and a backdrop click close it, focus stays inside, page scroll is locked).
  *
- * Controls: close button, Escape, click on the dimmed backdrop; with more than
+ * Controls: close button, Escape, click on the dimmed backdrop, and Go to Description for an image with a place on
+ * the page (item.place; it closes too, and the item's onGoToDescription hears it); with more than
  * one image, Previous / Next buttons, the ← / → keys and, on touch screens,
  * a swipe left / right (all wrapping around). Zoom: + / - / 0, the toolbar and a click
  * or tap on the image (useZoom), on every screen; the item's onZoom hears each one.
+ * Every way of closing reports the image shown (onClosed): the page lands on it.
  *
  * Loading: the neighbouring images load ahead (usePreloadNeighbours). An image
  * that is not in the cache yet shows a skeleton of its own size and shape
@@ -35,6 +37,8 @@ export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps)
   const dialogRef = useRef<HTMLDialogElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const zoomInRef = useRef<HTMLButtonElement>(null);
+  // Set by Go to Description just before it closes the dialog; every other way of closing leaves it false.
+  const toDescriptionRef = useRef(false);
   const titleId = useId();
   const item = state ? state.items[state.index] : undefined;
   const count = state ? state.items.length : 0;
@@ -61,9 +65,17 @@ export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps)
     if (dialogRef.current?.open) dialogRef.current.close();
   };
 
+  const goToDescription = () => {
+    item?.onGoToDescription?.();
+    toDescriptionRef.current = true;
+    close();
+  };
+
   const handleClose = () => {
+    const toDescription = toDescriptionRef.current;
+    toDescriptionRef.current = false;
     resetZoom();
-    onClosed();
+    onClosed(item, toDescription);
   };
 
   const step = (delta: number) => {
@@ -99,7 +111,14 @@ export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps)
     >
       {state && item && (
         <figure {...swipe} className={styles.figure}>
-          <LightboxHeader index={state.index} count={count} title={item.title} titleId={titleId} onClose={close} />
+          <LightboxHeader
+            index={state.index}
+            count={count}
+            title={item.title}
+            titleId={titleId}
+            onClose={close}
+            onGoToDescription={item.place ? goToDescription : undefined}
+          />
 
           <div
             ref={viewportRef}

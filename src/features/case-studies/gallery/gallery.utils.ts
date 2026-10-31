@@ -4,6 +4,15 @@ import type {
   ShowcaseCard,
   SmartTicketCaseStudy,
 } from "#features/case-studies/case-studies.types.ts";
+import type { LightboxPlace } from "#shared/media/lightbox/lightbox.types.ts";
+
+/** A screenshot's button on the page, named by its card id (Screenshot's `imageId`). */
+const IMAGE = "[data-image]";
+/**
+ * What shows a screenshot with its description: a screenshot row (ShowcaseRow), a feature section's columns, a
+ * comparison column, a captioned figure. A screenshot outside one (Smart Ticket's user flow) takes its section.
+ */
+const IMAGE_AREA = "[data-image-area], section";
 
 /**
  * The Smart Ticket case's images in page order: user flow, design system rows, each comparison
@@ -34,6 +43,16 @@ export const caseCards = (c: AnyCase): ShowcaseCard[] => {
  * pixels than the page's file has (LightboxItem.zoomSrc); the page and its preloads keep the lighter file.
  */
 export const zoomAsset = (asset: string): string => asset.replace(/[^/]+$/, (file) => "zoom/" + file);
+
+/**
+ * A screenshot card's place on the page, where the image viewer lands when it closes on that card: its button, and
+ * the area that shows it with its description (IMAGE_AREA). Null when the page does not show the card.
+ */
+export const imagePlace = (id: string): LightboxPlace | null => {
+  const target = [...document.querySelectorAll<HTMLElement>(IMAGE)].find((element) => element.dataset.image === id);
+  if (!target) return null;
+  return { target, area: target.closest<HTMLElement>(IMAGE_AREA) ?? target };
+};
 
 /** Every image file a card can show: the default and the Dark-mode version. */
 export const cardAssets = (card: ShowcaseCard): string[] =>

@@ -51,6 +51,7 @@ export function CaseSmartTicketView({ c, resolveAsset, onNavigate }: CaseViewPro
             darkSrc={blocks.flow.darkSrc}
             alt={blocks.flow.card.alt}
             onExpand={blocks.flow.onExpand}
+            imageId={blocks.flow.card.id}
             frameless={blocks.flow.card.frameless}
           />
         )}

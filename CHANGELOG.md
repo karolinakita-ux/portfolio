@@ -6,6 +6,19 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.17.0 - 2026-10-31
+
+#### Added
+
+- Image viewer: a Go to Description button in the title row closes the viewer and takes you to the description of the screenshot you are looking at. From 768px up it sits next to Close. On phones it has its own row under Close, so long titles keep their width.
+
+#### Changed
+
+- Image viewer: closing it (Close, Escape or a click outside) now takes you to the screenshot it was showing, not the one you opened it from. The page scrolls so that screenshot's row sits just below the header, with its description in view, and keyboard focus goes to the screenshot. If you close it on the screenshot you opened and that screenshot is still on screen, the page stays where it is. The scroll is smooth, or instant if your device asks for reduced motion.
+- Image viewer: the image takes the height that the title rows and the buttons leave, measured by the browser instead of a fixed allowance, so the whole panel fits the window with the case studies' longest titles. That includes a 320px phone, where a 3-line title made the dialog scroll, and a 390px phone at 200% zoom or text size, where the title row now puts the counter beside Close and the title under them at full width. Previous and Next stay in place from screenshot to screenshot. Below the 4rem minimum, at 400% zoom on a short window, the dialog scrolls as before. `e2e/image-viewer-fit.e2e.ts` checks it in three browsers (checked against the old allowance, which fails at 320px, 195px and with a 32px text size). The Storybook story "Patterns/Image Viewer" shows the narrow layout as "Phone At 200 Percent".
+- Statistics: using Go to Description is counted (`image-description-open`, with the case and the screenshot). The privacy policy mentions it. It is one more click of a kind the policy already lists, so nobody is asked for consent again.
+- Accessibility statement: it now says where closing the viewer, or Go to Description, takes you and where keyboard focus goes.
+
 ### 5.16.3 - 2026-10-31
 
 #### Fixed

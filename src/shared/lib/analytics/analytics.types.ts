@@ -96,6 +96,8 @@ export interface EventData {
    * method: a click or tap on the image (input tells which), a zoom button, or a key (+, -, 0).
    */
   [EVENT.imageZoom]: { case: View; image: string; direction: "in" | "out"; method: "click" | "button" | "key" };
+  /** Go to Description in the image viewer: it closes onto the screenshot's description; image: the one shown. */
+  [EVENT.imageDescriptionOpen]: { case: View; image: string };
   /**
    * banner: the Work page's link to the Figma workspace, in Behind the Design. case: the case study whose Figma file
    * link was used, at its top (under the details panel) or in the design files banner at the end. The Work hero's

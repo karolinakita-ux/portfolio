@@ -7,6 +7,14 @@ export type ZoomDirection = "in" | "out";
  */
 export type ZoomMethod = "click" | "button" | "key";
 
+/** Where an image sits on the page: the viewer lands there when it closes on that image. */
+export interface LightboxPlace {
+  /** Gets keyboard focus: the image's own button on the page (the one that opens it). */
+  target: HTMLElement;
+  /** Scrolled into view below the sticky header: the image with its description (a screenshot row, a figure). */
+  area: HTMLElement;
+}
+
 export interface LightboxItem {
   src: string;
   /**
@@ -27,10 +35,19 @@ export interface LightboxItem {
    * viewer goes back to fit by itself (another image, closing).
    */
   onZoom?: (direction: ZoomDirection, method: ZoomMethod) => void;
+  /**
+   * Finds the image's place on the page, read when the viewer closes on this image: closing lands there (the area in
+   * view, focus on the target), and the viewer shows Go to Description. Without it, or when it finds nothing, focus
+   * goes back to the element that opened the viewer.
+   */
+  place?: () => LightboxPlace | null;
+  /** Called when the visitor leaves the viewer for this image's description (Go to Description). */
+  onGoToDescription?: () => void;
 }
 
 /**
- * Opens the image viewer at `index` of `items`; `trigger` gets focus back on close.
+ * Opens the image viewer at `index` of `items`. On close, focus goes to the shown item's place on the page
+ * (LightboxItem.place) or else back to `trigger`.
  *   const openImage = useLightbox();
  *   openImage(items, index, triggerElement);
  */

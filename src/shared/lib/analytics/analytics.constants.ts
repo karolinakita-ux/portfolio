@@ -21,6 +21,7 @@ export const EVENT = {
   imageOpen: "image-open",
   imageNav: "image-nav",
   imageZoom: "image-zoom",
+  imageDescriptionOpen: "image-description-open",
   figmaClick: "figma-click",
   githubClick: "github-click",
   storybookClick: "storybook-click",

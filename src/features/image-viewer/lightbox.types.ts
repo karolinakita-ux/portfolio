@@ -57,3 +57,9 @@ export interface TouchPoint {
   x: number;
   y: number;
 }
+
+/** The part of the window that nothing fixed or sticky covers, in px from its top: below the header, above the consent box. */
+export interface FreeBand {
+  top: number;
+  bottom: number;
+}
