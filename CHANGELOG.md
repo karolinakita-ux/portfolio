@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.17.6 - 2026-10-31
+
+#### Changed
+
+- CV: three bullets of the earlier GlobalLogic role (UX/UI Designer, 2019 - 2023) are reworded so they no longer repeat the Senior role's lines and claim only what her case studies show: white-label theming with state colours, surveys and interviews that led to personas, and brand palette audits with contrast rules for developers. The PDF is remade and still has 2 pages.
+
 ### 5.17.5 - 2026-10-31
 
 #### Changed
