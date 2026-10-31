@@ -6,6 +6,16 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.17.1 - 2026-10-31
+
+#### Fixed
+
+- The calendar week view screenshot in the Project Planning case study shows the hour lines on Wednesday again. In Light mode that day's column was plain, so the grid looked cut off. The Dark mode image was already right.
+
+#### Changed
+
+- The changed screenshot has new file names, `calendar-week-view-v2-light.webp` and `-dark.webp` (images are cached for a week): `shot()` in `content.utils.ts` takes an optional file version, and the card id stays `calendar-week-view`, so the statistics go on counting the same screen. The Screenshot and Image Viewer stories in Storybook use the new files.
+
 ### 5.17.0 - 2026-10-31
 
 #### Added

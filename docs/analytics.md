@@ -26,7 +26,7 @@ What this site sends to [Umami Cloud](https://umami.is), why, and the rules for 
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `place`     | where on the site a link or button sits (`hero`, `banner`, `footer`, `about`, `contact`, `cv`, `privacy`, `accessibility`, `testimonials`; `top` or `end` of a case study)      |
 | `case`      | a case study's view id (`case-project-planning`); Data Governance keeps its old id `case-theming`                                                                               |
-| `image`     | a screenshot card's id: its image's base name (`multi-market-survey`, `admin-operations-dashboard`); ids changed in 5.13.2                                                      |
+| `image`     | a screenshot card's id: its image's base name (`multi-market-survey`, `admin-operations-dashboard`) without a changed file's `-v2`; ids changed in 5.13.2                       |
 | `area`      | the section id around an element, a hero's name, or the landmark                                                                                                                |
 | `element`   | the kind of element (`image`, `icon`, `heading`, `text`, `card`, `page`); the frame around a captioned screenshot is `image`                                                    |
 | `label`     | site copy that names the element (alt text, heading, card title, image caption); for `text-copy`, never one the selection holds; headings and titles in Title Case from 5.14.11 |

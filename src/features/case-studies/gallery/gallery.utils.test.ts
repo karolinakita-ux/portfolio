@@ -52,7 +52,9 @@ describe("caseCards", () => {
     (c) => {
       for (const card of caseCards(c)) {
         const file = card.asset.split("/").pop() ?? "";
-        expect(card.id, card.asset).toBe(file.replace(card.darkAsset ? /-light\.webp$/ : /\.webp$/, ""));
+        // A changed Light and Dark pair's files carry a version (`-v2`) that the card id leaves out (caseShots).
+        const id = file.replace(card.darkAsset ? /(?:-v\d+)?-light\.webp$/ : /\.webp$/, "");
+        expect(card.id, card.asset).toBe(id);
         const darkPair = card.darkAsset === undefined ? undefined : card.asset.replace(/-light\.webp$/, "-dark.webp");
         expect(card.darkAsset, card.id).toBe(darkPair);
       }

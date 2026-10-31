@@ -127,7 +127,7 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
       ],
       media: [
         {
-          ...shot("calendar-week-view"),
+          ...shot("calendar-week-view", 2),
           alt: "Month overview in week view: a Participant and Organizer switch, a project filter, a mini calendar with meeting counts, the selected day’s meetings and a weekly grid of meetings with a current-time line.",
           title: "Month overview - week view",
         },

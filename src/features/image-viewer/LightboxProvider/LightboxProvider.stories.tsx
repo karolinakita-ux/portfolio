@@ -10,10 +10,11 @@ import { Section } from "#shared/ui/Section/Section.tsx";
 
 import { LightboxProvider } from "./LightboxProvider.tsx";
 
-/** Three of Project Planning's screenshots with the copy its case study gives them. */
+/** Three of Project Planning’s screenshots with the copy its case study gives them; `file`: their files’ base name. */
 const SHOTS = [
   {
     id: "calendar-week-view",
+    file: "calendar-week-view-v2",
     section: "Scheduling and Time Logging in One Calendar",
     lead: "People plan, attend and log time without switching context.",
     title: "Month overview - week view",
@@ -21,6 +22,7 @@ const SHOTS = [
   },
   {
     id: "goals-milestones-timeline",
+    file: "goals-milestones-timeline",
     section: "Goals & Milestones Timeline (Proposal)",
     lead: "A proposed view that answers “are we on track?” for every goal in a project. Its goal-tracking logic is new, so it waits for the client’s sign-off.",
     title: "Goals & milestones timeline",
@@ -28,6 +30,7 @@ const SHOTS = [
   },
   {
     id: "cost-distribution",
+    file: "cost-distribution",
     section: "From One Project’s Budget to the Whole Portfolio",
     lead: "Finance, delivery and the PMO look at the same numbers, at the level of detail they need.",
     title: "PMO - cost distribution",
@@ -35,7 +38,7 @@ const SHOTS = [
   },
 ] as const;
 
-const file = (id: string, theme: Theme) => `/assets/cases/project-planning/${id}-${theme}.webp`;
+const file = (name: string, theme: Theme) => `/assets/cases/project-planning/${name}-${theme}.webp`;
 
 /** As a case study finds it (features/case-studies, imagePlace): the screenshot's button and the section around it. */
 const placeOf = (id: string) => (): LightboxPlace | null => {
@@ -49,7 +52,7 @@ function CasePage() {
   const openImage = useLightbox();
   const theme = useDocumentTheme();
   const items: LightboxItem[] = SHOTS.map((shot) => ({
-    src: file(shot.id, theme),
+    src: file(shot.file, theme),
     alt: shot.alt,
     title: shot.title,
     place: placeOf(shot.id),
@@ -57,8 +60,8 @@ function CasePage() {
   return SHOTS.map((shot, index) => (
     <Section key={shot.id} id={"viewer-" + shot.id} title={shot.section} description={shot.lead}>
       <Screenshot
-        src={file(shot.id, "light")}
-        darkSrc={file(shot.id, "dark")}
+        src={file(shot.file, "light")}
+        darkSrc={file(shot.file, "dark")}
         alt={shot.alt}
         imageId={shot.id}
         onExpand={(trigger) => openImage(items, index, trigger)}

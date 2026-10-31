@@ -88,7 +88,7 @@ Leave room at the edges: the hover zoom hides about 1% of each side, so content 
 
 For close looks in the image viewer, a screenshot can have a sharper copy: the same picture with about twice the pixels, under the same file name in a `zoom/` folder beside it (`public/assets/cases/<case>/zoom/<name>-light.webp`). The viewer finds it by itself and loads it only when the screen needs more pixels than the page's file has; the page never downloads it. `gallery.utils.test.ts` checks that each copy has its page file's shape and at least 1.5 times its width.
 
-Images are cached for a week, so a changed image gets a new file name.
+Images are cached for a week, so a changed image gets a new file name. For a Light and Dark pair, `shot("purchase-flow", 2)` reads `purchase-flow-v2-light.webp` and `purchase-flow-v2-dark.webp` and keeps the card id `purchase-flow`, so the statistics go on counting the same screen.
 
 ## Deploy and releases
 
