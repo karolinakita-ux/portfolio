@@ -54,6 +54,22 @@ describe("SiteHeader nav pill", () => {
     expect(screen.getByRole("link", { name: "About" })).not.toHaveAttribute("aria-current");
   });
 
+  it("underlines the current page's link as well: the gold pill alone is 1.54:1 on white (WCAG 1.4.11)", () => {
+    const underlined = () =>
+      navLinks()
+        .filter((link) => link.classList.contains("underline"))
+        .map((link) => link.textContent);
+    const { rerender } = render(<Header view={VIEW.about} />);
+    expect(underlined()).toEqual(["About"]);
+    expect(screen.getByRole("link", { name: "About" })).toHaveClass("decoration-2", "underline-offset-4");
+
+    rerender(<Header view={VIEW.caseProjectPlanning} />); // a case study: Work, with aria-current="true"
+    expect(underlined()).toEqual(["Work"]);
+
+    rerender(<Header view={VIEW.privacy} />); // out of the nav: no pill, no underline
+    expect(underlined()).toEqual([]);
+  });
+
   it("shows no pill on a page outside the nav (Privacy)", () => {
     render(<Header view={VIEW.privacy} />);
     expect(visiblePills(screen.getByRole("navigation", { name: "Primary" }))).toEqual([]);

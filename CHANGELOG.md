@@ -4,6 +4,14 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Unreleased
+
+### 5.15.1 - 2026-10-31
+
+#### Changed
+
+- Tests and docs pin the menu's current-page underline (since 5.14.17), which stays: the gold pill alone is 1.54:1 on the white header, under the 3:1 a state needs (WCAG 1.4.11). The SiteHeader stories check that only the current page's link is underlined (About with `aria-current="page"`, Work on a case study), `SiteHeader.test.tsx` checks it on a page, a case study and /privacy (none), and all three checks fail without the underline. docs/design.md (Design rules in code) says the menu underlines the current page as well as showing the pill, as the theme switch fills its icon. Figma and the KitaBranding design system on claude.ai follow separately.
+
 ## Release v5.15.0 - 2026-10-31
 
 - In the image viewer, a click on a screenshot zooms in where you clicked, and another click zooms back out.
