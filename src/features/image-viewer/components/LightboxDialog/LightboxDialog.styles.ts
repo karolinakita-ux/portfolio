@@ -31,10 +31,14 @@ export const styles = {
         : "flex items-center justify-center overflow-hidden",
     ),
   unavailable: clsx("flex items-center gap-xs p-xl text-body-md text-text-secondary"),
-  /** The cursor says what a click does: zoom in, back to fit once zoomed, and grabbing while a drag pans. */
+  /**
+   * The cursor says what a click does: zoom in, back to fit once zoomed, and grabbing while a drag pans.
+   * transition-none: zoom is instant. Reduced motion gives every property a 0.01ms transition (motion.css), and the
+   * one on flex-shrink (1 to 0 when zooming) showed the image at its file's width for a frame.
+   */
   image: (direction: StepDirection, zoomed: boolean, loaded: boolean, dragging: boolean) =>
     clsx(
-      "block h-auto select-none",
+      "block h-auto transition-none select-none",
       IMAGE_ENTRY[direction],
       zoomed ? "kb-lightbox-image-zoomed m-auto max-w-none shrink-0" : "kb-lightbox-image w-auto object-contain",
       {

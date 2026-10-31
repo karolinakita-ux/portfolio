@@ -6,7 +6,7 @@
  * - a wide screenshot still shorter than the pane at 200% stays centred in it, as when fitted, so a click on its
  *   middle line keeps the clicked point under the pointer there too;
  * - a drag that pans the zoomed image is not a click;
- * - zoom is instant, with or without reduced motion;
+ * - zoom is instant, with or without reduced motion, and nothing on the image starts a transition;
  * - on a touch screen a tap zooms the same way, and at 320px the toolbar holds Previous, the zoom controls and Next
  *   in one row; narrower (200% page zoom or text size on a phone) the zoom controls take a centred row of their own,
  *   inside the panel and without sideways scrolling;
@@ -176,12 +176,22 @@ test.describe("with a mouse", () => {
       await page.emulateMedia({ reducedMotion });
       const { image, readout } = await openViewer(page);
       const fitted = (await image.boundingBox())?.width ?? 0;
+      // Reduced motion gives every property of every element a 0.01ms transition (motion.css). Zooming changes the
+      // image's flex-shrink (1 to 0), and that transition once showed it at its file's width for a frame: nothing on
+      // the image may start one. Caught as it starts, so the check does not depend on which frame a measurement hits.
+      await image.evaluate((element) => {
+        element.addEventListener("transitionrun", (event) => {
+          const { propertyName } = event as TransitionEvent;
+          element.dataset.transitioned = (element.dataset.transitioned ?? "") + propertyName + " ";
+        });
+      });
       const point = await pointOn(image, 0.5, 0.5);
       await page.mouse.click(point.x, point.y);
       await expect(readout).toHaveText("200%");
       // The first frame after the click has the final size, and nothing runs on the image.
       const first = (await image.boundingBox())?.width ?? 0;
       await page.waitForTimeout(400);
+      expect(await image.getAttribute("data-transitioned"), "no transition on the image").toBeNull();
       expect(first).toBeCloseTo(fitted * 2, 0);
       expect((await image.boundingBox())?.width).toBeCloseTo(first, 0);
       expect(await image.evaluate((element) => element.getAnimations().length)).toBe(0);

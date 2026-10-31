@@ -6,6 +6,16 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.17.2 - 2026-10-31
+
+#### Fixed
+
+- Image viewer: with reduced motion, zooming in showed the image at its file's width for one frame before its zoomed size. Reduced motion gives every property a 0.01ms transition (`motion.css`), and the one on the image's flex-shrink (1 to 0 when zooming) let it shrink for that frame. Nothing on the image transitions now (`transition-none`), so zoom is instant with or without reduced motion. This was also why `zoom is instant (reduce motion)` in `e2e/image-zoom.e2e.ts` failed now and then in Chromium and WebKit.
+
+#### Changed
+
+- Tests: that e2e test now catches any transition that starts on the image while it zooms (`transitionrun`), so it no longer depends on which frame it measures. Before the fix it failed 9 of 9 runs with reduced motion in Chromium, Firefox and WebKit; after it, it passed 30 of 30. docs/motion.md says so.
+
 ### 5.17.1 - 2026-10-31
 
 #### Fixed
