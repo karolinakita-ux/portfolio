@@ -141,9 +141,9 @@
          as its HTML is in, not seconds later when the app's script has loaded, and keeps it there while the page
          settles (an in-app browser's keyboard, toolbar or sheet resizing the window, fonts, the consent box). The
          browser's own jump to the hash (to the section, not its heading) is put right, or undone when the visitor
-         has scrolled. It lets go at the visitor's first touch, wheel, key or click, a Back or Forward, or when the
-         page scrolls away by itself (a screen reader, find in page). data-kb-anchor-held tells the app to only move
-         focus (useRouteFocus). The section is the hash up to "?" or "&", as in readRoute: some apps write their
+         has scrolled, and the focus it takes from a visitor who has tabbed into the page is given back. It lets go
+         at the visitor's first touch, wheel, key or click, a Back or Forward, or when the page scrolls away by
+         itself (a screen reader, find in page). data-kb-anchor-held tells the app to only move focus (useRouteFocus). The section is the hash up to "?" or "&", as in readRoute: some apps write their
          tracking tag after the hash. Pages without the section in their HTML (the dev server) leave it to the app. -->
     <script>
       (function () {
@@ -164,6 +164,7 @@
         var placedAt = 0; // the heading's top after the last alignment
         var lastY = 0; // the scroll position at the latest scroll that was not the browser's jump
         var watching = 0; // > 0 while the browser may jump to the hash
+        var presses = 0; // pointer presses so far: a click may take focus away by itself
         var inputs = ["touchstart", "wheel", "keydown", "pointerdown"];
         var px = function (value) {
           return parseFloat(value) || 0;
@@ -206,15 +207,29 @@
           lastY = scrollY;
           return true;
         }
+        function pressed() {
+          presses++;
+        }
+        // Chromium and WebKit take focus away at their jump, from a visitor who has tabbed into the page meanwhile
+        // (the next Tab would start from the section): give it back, unless they clicked since.
+        function keepFocus(had, pressesBefore) {
+          var now = document.activeElement;
+          var lost = had && had !== document.body && had !== now && (!now || now === document.body);
+          if (lost && pressesBefore === presses && had.isConnected) had.focus({ preventScroll: true });
+        }
         // Browsers jump to the hash when the HTML is parsed (Firefox), when the page's scripts have run (Chromium:
         // DOMContentLoaded) and may again at load, even after the visitor has scrolled. Chromium may paint the jump
         // before it reports the scroll: check in the next two frames, before they are painted, and on each scroll.
         function expectJump() {
+          var had = document.activeElement;
+          var pressesBefore = presses;
           watching++;
           requestAnimationFrame(function () {
             undoJump();
+            keepFocus(had, pressesBefore);
             requestAnimationFrame(function () {
               undoJump();
+              keepFocus(had, pressesBefore);
               watching--;
             });
           });
@@ -233,6 +248,7 @@
         addEventListener("popstate", release);
         addEventListener("hashchange", release);
         for (var i = 0; i < inputs.length; i++) addEventListener(inputs[i], release, { capture: true, passive: true });
+        addEventListener("pointerdown", pressed, { capture: true, passive: true });
         addEventListener("scroll", onScroll, { passive: true });
         document.addEventListener("readystatechange", expectJump);
         addEventListener("DOMContentLoaded", expectJump);

@@ -168,6 +168,21 @@ describe("App", () => {
     }
   });
 
+  it("leaves focus where a keyboard visitor put it before the app started, on a section link", async () => {
+    document.documentElement.setAttribute(ANCHOR_HELD_ATTRIBUTE, "");
+    try {
+      renderApp("/about#career");
+      // On the site the prerendered page is there before the app: the visitor tabs to a header link meanwhile.
+      const work = within(primaryNav()).getByRole("link", { name: "Work" });
+      work.focus();
+      await act(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+      expect(work).toHaveFocus();
+      expect(screen.getByRole("heading", { level: 2, name: "Career Progression" })).not.toHaveFocus();
+    } finally {
+      document.documentElement.removeAttribute(ANCHOR_HELD_ATTRIBUTE);
+    }
+  });
+
   it("navigates with the primary nav and updates URL, title and active pill", async () => {
     const { user } = renderApp();
 

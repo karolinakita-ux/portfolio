@@ -202,6 +202,39 @@ describe("the section-link script in index.html", () => {
     expect(scrollTo).not.toHaveBeenCalled();
   });
 
+  /** A header link the visitor tabs to while the app's script loads. */
+  const tabToHeaderLink = () => {
+    const link = document.createElement("a");
+    link.href = "/";
+    document.querySelector(".kb-site-header")?.append(link);
+    window.dispatchEvent(new Event("keydown"));
+    link.focus();
+    return link;
+  };
+
+  it("gives focus back when the browser's jump takes it from a visitor who has tabbed into the page", () => {
+    open("/about#career");
+    const link = tabToHeaderLink();
+    window.dispatchEvent(new Event("DOMContentLoaded"));
+    link.blur(); // Chromium and WebKit clear focus at their jump to the hash
+    runFrames();
+    expect(link).toHaveFocus();
+  });
+
+  it("leaves focus where a click put it, and an untouched page as it is", () => {
+    open("/about#career");
+    const link = tabToHeaderLink();
+    window.dispatchEvent(new Event("DOMContentLoaded"));
+    window.dispatchEvent(new Event("pointerdown")); // a click on the page's text, which takes focus away
+    link.blur();
+    runFrames();
+    expect(document.body).toHaveFocus();
+
+    window.dispatchEvent(new Event("load"));
+    runFrames();
+    expect(document.body).toHaveFocus();
+  });
+
   it("watches for that jump only in the frames after DOMContentLoaded and load", () => {
     const { scrollTo } = open("/about#career");
     window.dispatchEvent(new Event("touchstart"));

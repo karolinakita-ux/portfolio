@@ -4,7 +4,7 @@
  * - At once: the section-link script in index.html lands it as soon as the HTML is in, before the app's script has
  *   loaded (seconds on a slow phone), and the app only moves focus there.
  * - A visitor who starts scrolling while the app loads keeps their place: neither the browser's own jump to the hash
- *   nor the app pulls them back.
+ *   nor the app pulls them back. One who has tabbed to a link meanwhile keeps their focus there.
  * - On an Android phone in Messenger's in-app browser (a Chromium WebView; tag @android: the "android" project): the
  *   heading stays in place when the window grows after the app has started (the keyboard closing, a sheet pulled up:
  *   past the short-screen layout the header turns sticky), until the visitor touches the page; a fling still running
@@ -111,6 +111,21 @@ test.describe("a section link", () => {
     await startApp(page, release);
     expect(Math.abs((await settledScrollY(page)) - visitorY)).toBeLessThanOrEqual(1);
     await expect(page.locator("#career-title")).toBeFocused();
+  });
+
+  test("a keyboard visitor who tabs before the app has started keeps their focus", async ({ page }) => {
+    const release = await openBeforeApp(page, "/about#career");
+    await expectPlaced(page, "career");
+    // Chromium: the header's Work link. WebKit's Tab skips links (as Safari does by default) and Firefox's starts
+    // from the section: other controls, kept all the same.
+    for (let presses = 0; presses < 3; presses++) await page.keyboard.press("Tab");
+    const focused = await page.evaluateHandle(() => document.activeElement);
+    expect(await page.evaluate((element) => element !== document.body, focused), "Tab moved focus").toBe(true);
+    // Chromium and WebKit take focus away at their own jump to the hash, when the app's script has run.
+    await startApp(page, release);
+    await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    expect(await page.evaluate((element) => document.activeElement === element, focused)).toBe(true);
+    await expect(page.locator("#career-title")).not.toBeFocused();
   });
 
   test("a link to a section the page does not have leaves it at its top", async ({ page }) => {

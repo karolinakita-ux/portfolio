@@ -6,6 +6,14 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.31 - 2026-10-31
+
+#### Fixed
+
+- A keyboard visitor who opens a section link (`/about#career`) on a slow connection and presses Tab before the site's script has loaded now keeps their place (WCAG 2.4.3 Focus Order). Focus used to jump to the section's heading when the script arrived, so the next Tab went on from the section, not from where they were. Two things moved it: the browser's own jump to the section, which in Chrome and Safari also takes focus away, and the site, which then put it on the heading.
+- How: the section-link script in `index.html` gives focus back after the browser's jump, unless the visitor clicked since, and on the first load `useRouteFocus` moves focus to the heading only while nothing has focus. A visitor who has not touched the page, or uses a screen reader, still starts on the heading. The architecture doc (Routing) describes it.
+- Tests: `section-link-script.test.ts` (focus given back; not after a click), `App.test.tsx`, and `e2e/section-links.e2e.ts` in Chromium, Firefox and WebKit, which presses Tab while the site's script is held back. It fails on 5.14.30 in all three.
+
 ### 5.14.30 - 2026-10-31
 
 #### Fixed

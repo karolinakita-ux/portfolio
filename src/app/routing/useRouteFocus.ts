@@ -7,14 +7,21 @@ import { findAnchorTarget } from "./anchor.utils.ts";
 import type { Route } from "./history.types.ts";
 
 /**
+ * Nothing has focus yet. On a slow load the visitor may have tabbed into the prerendered page before the app
+ * started: they keep their place (WCAG 2.4.3); an untouched page, or a screen reader's, starts on the heading.
+ */
+const focusUntouched = (): boolean => document.activeElement === null || document.activeElement === document.body;
+
+/**
  * After each navigation: restore scroll (Back / Forward), land on an anchor, or go to the top,
  * and move focus to the new view (or the anchored heading). `route` is a new object on every
  * navigation (route.key increments), so it is the trigger. The first load only acts on a deep
  * link to a section (/about#career). On a prerendered page the section-link script in index.html
  * has already landed it and keeps it in place (ANCHOR_HELD_ATTRIBUTE), and the visitor may have
- * scrolled on since: the app only moves focus there. Without that HTML (the dev server, a one-page
- * build) the app scrolls to it once. A link to a section of the open page that the browser follows
- * itself (route.afterBrowserJump) lands after the browser's own jump to the section.
+ * scrolled on since: the app only moves focus there, unless the visitor has already put it somewhere
+ * (Tab before the app started). Without that HTML (the dev server, a one-page build) the app scrolls
+ * to it once. A link to a section of the open page that the browser follows itself
+ * (route.afterBrowserJump) lands after the browser's own jump to the section.
  */
 export function useRouteFocus(route: Route, mainRef: RefObject<HTMLElement | null>): void {
   useEffect(() => {
@@ -24,7 +31,7 @@ export function useRouteFocus(route: Route, mainRef: RefObject<HTMLElement | nul
       const landed = document.documentElement.hasAttribute(ANCHOR_HELD_ATTRIBUTE);
       const frame = window.requestAnimationFrame(() => {
         if (!landed) target.scrollIntoView({ block: "start", behavior: "auto" });
-        target.focus({ preventScroll: true });
+        if (focusUntouched()) target.focus({ preventScroll: true });
       });
       return () => window.cancelAnimationFrame(frame);
     }
