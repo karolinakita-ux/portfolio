@@ -66,8 +66,10 @@ export const CV: Cv = {
     // end-to-end design ran through both roles, so the earlier one says them in its own words. Its lead-ins name what
     // that role's work shows (white-label theming and contrast rules: Theme Generator, 2020 - 2022), never a Senior
     // lead-in with a word added (content-rules.test.ts), and its research names only methods her own text gives for
-    // GlobalLogic Poland (interviews, benchmarking). Strategy, AI and workshops stay with the Senior role only. The
-    // earlier role's bullets are short because the PDF is full: one more line anywhere on the CV makes a third page.
+    // GlobalLogic Poland (interviews, surveys, benchmarking). Strategy, AI and workshops stay with the Senior role
+    // only. The earlier role's research bullet keeps one line because the PDF is full: page 2 has 11px to spare and
+    // a line is 16px, so one more line anywhere on the CV makes a third page. A smaller consent font frees nothing
+    // (2026-10-31): Label Small, the only smaller type token, keeps the 16px line height and the clause its 5 lines.
     {
       id: "globallogic",
       title: "Senior UX/UI Designer",
@@ -122,7 +124,7 @@ export const CV: Cv = {
         },
         {
           lead: "User Research",
-          text: "Ran user interviews and usability benchmarking.",
+          text: "Ran user interviews, surveys and usability benchmarking.",
         },
         {
           lead: "Colour Contrast (WCAG 2.1 AA)",

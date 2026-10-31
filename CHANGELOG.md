@@ -6,6 +6,13 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.17.4 - 2026-10-31
+
+#### Changed
+
+- CV: the UX/UI Designer (2019 - 2023) research line now names surveys too: "Ran user interviews, surveys and usability benchmarking." The PDF is remade and still has 2 pages.
+- CV: the recruitment consent keeps its text size. The only smaller text style, Label Small (11px), has the same line height, so in the PDF the consent would still take 5 lines and free no room.
+
 ### 5.17.3 - 2026-10-31
 
 #### Fixed
