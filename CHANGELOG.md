@@ -4,7 +4,15 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v5.15.0 - 2026-10-31
+
+- In the image viewer, a click on a screenshot zooms in where you clicked, and another click zooms back out.
+- A link to a section now opens right at its heading, also in the Messenger and LinkedIn apps and on slow connections, and pages on phones no longer shift after you stop scrolling.
+- Pages show their images as soon as they appear and keep their layout while images load, and the gentle card animations now run only on tablets and computers.
+- The menu underlines the page you are on, and the Behind the Design section has a link of its own that you can copy.
+- Search engines and shared links get more accurate details about each page.
+
+Versions: 5.14.17 - 5.15.0.
 
 ### 5.15.0 - 2026-10-31
 
