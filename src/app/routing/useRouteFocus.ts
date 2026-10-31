@@ -13,7 +13,8 @@ import type { Route } from "./history.types.ts";
  * link to a section (/about#career). On a prerendered page the section-link script in index.html
  * has already landed it and keeps it in place (ANCHOR_HELD_ATTRIBUTE), and the visitor may have
  * scrolled on since: the app only moves focus there. Without that HTML (the dev server, a one-page
- * build) the app scrolls to it once.
+ * build) the app scrolls to it once. A link to a section of the open page that the browser follows
+ * itself (route.afterBrowserJump) lands after the browser's own jump to the section.
  */
 export function useRouteFocus(route: Route, mainRef: RefObject<HTMLElement | null>): void {
   useEffect(() => {
@@ -39,14 +40,23 @@ export function useRouteFocus(route: Route, mainRef: RefObject<HTMLElement | nul
     }
 
     const smooth = route.smooth && !prefersReducedMotion();
-    const target = findAnchorTarget(route.anchor);
-    if (target) {
-      target.scrollIntoView({ block: "start", behavior: smooth ? "smooth" : "auto" });
-      target.focus({ preventScroll: true });
-    } else {
-      window.scrollTo({ top: 0, behavior: smooth ? "smooth" : "auto" });
-      focusMain();
+    const land = () => {
+      const target = findAnchorTarget(route.anchor);
+      if (target) {
+        target.scrollIntoView({ block: "start", behavior: smooth ? "smooth" : "auto" });
+        target.focus({ preventScroll: true });
+      } else {
+        window.scrollTo({ top: 0, behavior: smooth ? "smooth" : "auto" });
+        focusMain();
+      }
+    };
+    if (!route.afterBrowserJump) {
+      land();
+      return undefined;
     }
-    return undefined;
+    // The browser jumps to the section (its top, not its heading) as part of the navigation, which may come after
+    // this effect: land in the next frame, after that jump and before it is painted.
+    const frame = window.requestAnimationFrame(land);
+    return () => window.cancelAnimationFrame(frame);
   }, [mainRef, route]);
 }

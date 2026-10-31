@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { act, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
@@ -135,6 +135,22 @@ describe("App", () => {
       "href",
       "#behind-the-design",
     );
+  });
+
+  it("lands on the heading of a section link the browser follows within the open page, after its own jump", async () => {
+    renderApp("/about");
+    const scrollIntoView = vi.spyOn(Element.prototype, "scrollIntoView");
+    const scrollTo = vi.spyOn(window, "scrollTo");
+    act(() => {
+      // A fragment navigation: an entry the app never wrote, popstate, then the browser's own jump to the section.
+      window.history.pushState(null, "", "/about#career");
+      window.dispatchEvent(new PopStateEvent("popstate", { state: null }));
+    });
+    expect(scrollIntoView).not.toHaveBeenCalled(); // not before the browser's jump: in the next frame
+    const heading = screen.getByRole("heading", { level: 2, name: "Career Progression" });
+    await waitFor(() => expect(heading).toHaveFocus());
+    expect(scrollIntoView.mock.contexts).toEqual([heading]);
+    expect(scrollTo).not.toHaveBeenCalled(); // never to the top of the page
   });
 
   it("only moves focus to the section when the page's own script has landed it (index.html): it never scrolls again", async () => {

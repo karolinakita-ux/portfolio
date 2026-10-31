@@ -11,6 +11,8 @@
  *   when the app's script arrives carries on, without the browser's jump to the hash.
  * - An app's link wrapper may write its tracking tag after the hash (#career?fbclid=...): the link still lands, and
  *   the address keeps only the section.
+ * - A link to a section of the page already open, which the browser follows without loading the page (an in-app
+ *   browser reusing it, a hash typed in the address bar), lands on the heading too, not at the top.
  * Production build: the dev server sends an empty page, so there the app lands the link itself, once.
  */
 import { expect, test, type Page } from "@playwright/test";
@@ -71,6 +73,15 @@ async function openBeforeApp(page: Page, path: string): Promise<() => void> {
   return release;
 }
 
+/**
+ * Follows a link to section `id` of the page already open (an in-app browser reusing the page, a hash typed in the
+ * address bar, a plain <a href="#id">): the browser navigates within the page and jumps to the section by itself.
+ */
+const followHashLink = (page: Page, id: string) =>
+  page.evaluate((section) => {
+    window.location.hash = section;
+  }, id);
+
 /** Lets the held app run, and waits until it has taken over and the page has loaded. */
 async function startApp(page: Page, release: () => void): Promise<void> {
   expect(await appRan(page)).toBe(false);
@@ -110,7 +121,32 @@ test.describe("a section link", () => {
   });
 });
 
+test.describe("a link to a section of the page already open", () => {
+  test("lands on the heading, focused, after the browser's own jump to the section", async ({ page }) => {
+    await page.goto("/about");
+    await waitForApp(page);
+    await followHashLink(page, "career");
+    await expectOnHeading(page, "career");
+    await settledScrollY(page);
+    await expectOnHeading(page, "career");
+    expect(new URL(page.url()).hash).toBe("#career");
+
+    // Another section's address on the open page (typed in the address bar).
+    await page.goto("/about#faq");
+    await expectOnHeading(page, "faq");
+  });
+});
+
 test.describe("a section link opened in Messenger on an Android phone", { tag: "@android" }, () => {
+  test("on the page already open, lands on the section's heading", async ({ page }) => {
+    await page.goto("/about");
+    await waitForApp(page);
+    await followHashLink(page, "career");
+    await expectOnHeading(page, "career");
+    await settledScrollY(page);
+    await expectOnHeading(page, "career");
+  });
+
   test("lands on the section's heading, below the header", async ({ page }) => {
     await page.goto("/about#career");
     await waitForApp(page);

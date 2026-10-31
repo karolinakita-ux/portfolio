@@ -6,6 +6,14 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.30 - 2026-10-31
+
+#### Fixed
+
+- A link to a section of the page that is already open now lands on that section's heading. When the browser follows it without loading the page again (an in-app browser reusing the open page, a hash typed in the address bar), the page used to end at its top: the site took the new address for a Back to an entry it did not know. It now lands on the heading below the header, after the browser's own jump to the section, moves focus there and keeps the section in the address bar.
+- How: `useHistoryRoute` treats a `popstate` for an entry the app never wrote as a link to a section (`afterBrowserJump`); `useRouteFocus` lands in the next frame, before it is painted. The entry gets its id and clean address, as the first one does, so Back to it later brings back where the visitor was. The architecture doc (Routing) describes it.
+- Tests: `useHistoryRoute` (the section, the entry's id and address, Back to it, an old view hash), `App.test.tsx` (lands after the browser's jump, never at the top), and `e2e/section-links.e2e.ts` in Chromium, Firefox and WebKit and on an Android phone in Messenger's in-app browser. The new e2e tests fail on 5.14.29 (the page ended at its top).
+
 ### 5.14.29 - 2026-10-31
 
 #### Changed

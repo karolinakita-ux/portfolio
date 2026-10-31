@@ -148,6 +148,44 @@ describe("useHistoryRoute", () => {
     expect(result.current[0]).toMatchObject({ view: VIEW.caseDataGovernance, restoreY: 640, key: 2, viewKey: 2 });
   });
 
+  it("lands on the section of a link the browser followed within the open page (an entry the app never wrote)", () => {
+    const result = start("/about");
+    act(() => {
+      // A fragment navigation (a plain #career link, a hash typed in the address bar): a new entry without state.
+      window.history.pushState(null, "", "/about#career?fbclid=IwAR0abc");
+      window.dispatchEvent(new PopStateEvent("popstate", { state: null }));
+    });
+    expect(result.current[0]).toMatchObject({
+      view: VIEW.about,
+      anchor: "career",
+      restoreY: null,
+      afterBrowserJump: true,
+      key: 1,
+      viewKey: 0,
+    });
+    // The entry gets an id, as the first one does, and the address loses the tag after the hash.
+    expect(window.history.state).toMatchObject({ kbView: VIEW.about, scrollY: 0, kbId: expect.any(String) as string });
+    expect(window.location.pathname + window.location.search + window.location.hash).toBe("/about#career");
+
+    // Back to it later brings back where the visitor left it, not the section.
+    const fragmentEntry = window.history.state as unknown;
+    scrollTo(1200);
+    act(() => result.current[1](VIEW.contact));
+    act(() => travelTo(fragmentEntry, "/about#career"));
+    expect(result.current[0]).toMatchObject({ view: VIEW.about, restoreY: 1200, afterBrowserJump: false });
+    scrollTo(0);
+  });
+
+  it("opens the view an old view hash names when the browser follows it within the open page", () => {
+    const result = start("/");
+    act(() => {
+      window.history.pushState(null, "", "/#about");
+      window.dispatchEvent(new PopStateEvent("popstate", { state: null }));
+    });
+    expect(result.current[0]).toMatchObject({ view: VIEW.about, anchor: null, afterBrowserJump: true, viewKey: 1 });
+    expect(window.location.pathname + window.location.hash).toBe("/about");
+  });
+
   it("never writes to the history while scrolling (in-app browsers show a loading bar on each write)", async () => {
     start("/about");
     // On the prototype: replaceAddress() calls it there, past a tracker's wrapper on window.history.

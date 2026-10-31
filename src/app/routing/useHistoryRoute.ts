@@ -18,6 +18,8 @@ import { newEntryId, nextViewKey, saveScrollPosition, urlFor } from "./history.u
  *   entry id and written to the history only when leaving an entry, never while
  *   scrolling: in-app browsers (Messenger, LinkedIn) flash their loading bar on every write.
  * - Re-selecting the current view resets it to the top (or to its anchor) without adding history.
+ * - A link to a section of the open page that the browser follows by itself (a fragment navigation: popstate
+ *   with an entry the app never wrote) lands on that section's heading, not at the top.
  * - The first load normalises the URL: old hash links (/#about), aliases (/resume) and the
  *   file forms the host also serves (/about.html, /about/index.html) become their path, an
  *   unknown path becomes /, a section hash (/about#career) stays.
@@ -29,7 +31,15 @@ import { newEntryId, nextViewKey, saveScrollPosition, urlFor } from "./history.u
 export function useHistoryRoute(initialView: View = VIEW.work): [Route, Navigate] {
   const [route, setRoute] = useState<Route>(() => {
     const { view, anchor } = readRoute(window.location);
-    return { view: view ?? initialView, anchor, smooth: false, restoreY: null, key: 0, viewKey: 0 };
+    return {
+      view: view ?? initialView,
+      anchor,
+      smooth: false,
+      restoreY: null,
+      afterBrowserJump: false,
+      key: 0,
+      viewKey: 0,
+    };
   });
 
   // The committed view, read by event handlers and navigate().
@@ -60,16 +70,40 @@ export function useHistoryRoute(initialView: View = VIEW.work): [Route, Navigate
     const onPopState = (event: PopStateEvent) => {
       // The page still shows the entry being left: remember where it was, in memory only.
       positions.set(entryIdRef.current, window.scrollY);
-      const view = readRoute(window.location).view ?? VIEW.work;
+      const route = readRoute(window.location);
+      const view = route.view ?? VIEW.work;
       const state = event.state as HistoryState | null;
-      entryIdRef.current = state?.kbId ?? newEntryId();
-      const remembered = state?.kbId === undefined ? undefined : positions.get(state.kbId);
-      const restoreY = remembered ?? (typeof state?.scrollY === "number" ? state.scrollY : 0);
+      if (state?.kbView === undefined) {
+        // An entry the app never wrote: the browser followed a link to a section of this page by itself (a
+        // fragment navigation) and jumps to the section. Land on its heading, as a link from elsewhere does,
+        // and give the entry its id and normalised address, as the first load does: one write, not while scrolling.
+        entryIdRef.current = newEntryId();
+        try {
+          const entry: HistoryState = { kbView: view, scrollY: 0, kbId: entryIdRef.current };
+          replaceAddress(urlFor(view, route.anchor), entry);
+        } catch {
+          /* ignore */
+        }
+        setRoute((current) => ({
+          view,
+          anchor: route.anchor,
+          smooth: false,
+          restoreY: null,
+          afterBrowserJump: true,
+          key: current.key + 1,
+          viewKey: nextViewKey(current, view),
+        }));
+        return;
+      }
+      entryIdRef.current = state.kbId ?? newEntryId();
+      const remembered = state.kbId === undefined ? undefined : positions.get(state.kbId);
+      const restoreY = remembered ?? (typeof state.scrollY === "number" ? state.scrollY : 0);
       setRoute((current) => ({
         view,
         anchor: null,
         smooth: false,
         restoreY,
+        afterBrowserJump: false,
         key: current.key + 1,
         viewKey: nextViewKey(current, view),
       }));
@@ -109,6 +143,7 @@ export function useHistoryRoute(initialView: View = VIEW.work): [Route, Navigate
       // while it fades in. It starts at its top (or anchor) at once.
       smooth: Boolean(options.smooth) && view === current.view,
       restoreY: null,
+      afterBrowserJump: false,
       key: current.key + 1,
       viewKey: nextViewKey(current, view),
     }));
