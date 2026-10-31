@@ -9,14 +9,15 @@ Designed by Karolina in Figma and built with [Claude Code](docs/claude-code.md):
 - **Design tokens from Figma.** Every colour, space, radius, shadow and type style is a token exported from the Figma file; a test fails when the CSS drifts from the export. Light and Dark mode swap the same variables. [Design source](docs/design.md)
 - **Component library in Storybook.** Every shared component has stories with its Figma variants and real copy, published at [karolina.kita.company/storybook](https://karolina.kita.company/storybook/) with a welcome page on the design system. Each story is also a test: it renders, runs its interaction checks and passes axe. [Storybook](docs/architecture.md#storybook)
 - **Vertical slices.** Each page is a feature folder with its own view, copy, types and tests; ESLint enforces the boundaries between `app`, `features` and `shared`. [Architecture](docs/architecture.md)
-- **Real pages, prerendered.** Every page has its own URL (`/work/project-planning`) and is written to static HTML at build time, so search engines, link previews and AI assistants read the full content without JavaScript. Per-page titles, descriptions, structured data, a sitemap and [`/llms.txt`](https://karolina.kita.company/llms.txt).
-- **Section links.** Each section heading has a link that copies its address with a tag for the visitor statistics (`/about?ref=section-link#career`); the address bar follows the section you are reading.
+- **Real pages, prerendered.** Every page has its own URL (`/work/project-planning`) and is written to static HTML at build time, so search engines, link previews and AI assistants read the full content without JavaScript. The browser keeps that HTML when the app starts (React hydration), so nothing is drawn twice, and every image in it has its width and height, so the text below does not jump while images load. Per-page titles, descriptions, structured data, a sitemap and [`/llms.txt`](https://karolina.kita.company/llms.txt).
+- **Section links.** Each section heading has a link that copies its address with a tag for the visitor statistics: `/about?ref=section-link#career`, or the tag the copier came with. The address bar follows the section you are reading (not in in-app browsers, which flash a loading bar at every address change). A section link lands on its heading as soon as the page arrives, before the site's script, also in in-app browsers such as Messenger and LinkedIn, and lets go at the visitor's first touch, scroll, key or click.
 - **Accessible by design.** WCAG 2.2 AA is the minimum: keyboard focus that nothing covers, labelled controls, landmarks, reduced motion, text that follows the browser's text size (sizes in rem), stronger colours when the system asks for more contrast, and Windows contrast themes. `yarn a11y` audits every page in real Chromium (axe, an emulated screen reader, the Tab order with a check that no focused element is hidden, also with the consent box showing, reflow at 320 px and 400% zoom, 200% text size, forced colours).
+- **Calm motion.** Motion only where it has a job: the menu's gold pill slides to the new page, carrying the current page's underline (the gold alone is too faint to show a state), and cards fade in as they scroll into view from tablet width up. Nothing moves on the first screen at load, nothing loops, and reduced motion makes every change instant. [Motion guide](docs/motion.md)
 - **Readable as plain text.** Search engines and AI assistants read the HTML without CSS, so neighbouring elements always have a space between them; a test renders every page and checks it. Favicons in SVG, PNG and ICO, because Google Search does not read SVG ones.
 - **A CV for people and machines.** `/cv` is the CV as a page (in Light and Dark mode, following the browser's text size), and `yarn cv-pdf` prints that page to a tagged A4 PDF with real text, an outline and clickable links, so its text copies out as clean words. A test fails when the page's text or classes change and the PDF does not.
-- **Image viewer.** Screenshots open full size with zoom, swipe and arrow keys; WebP images and loading a case's screenshots as soon as a visitor points at it keep it fast.
-- **Statistics only with consent.** Visits, time on page, clicks (including taps on things that do nothing, told apart from mouse clicks), page speed and errors are counted with [Umami](https://umami.is) only after the visitor allows it in the consent box. No cookies; with Do Not Track or Global Privacy Control on, nobody is asked and nothing loads. The [privacy page](https://karolina.kita.company/privacy) explains it and has the switch. [Visitor statistics](docs/architecture.md#visitor-statistics), [tracking plan](docs/analytics.md)
-- **Quality gate.** `yarn verify` runs the typecheck, ESLint with zero warnings, a Prettier check, 860+ tests and the full build before every commit.
+- **Image viewer.** Screenshots open full size, with swipe and arrow keys. With a mouse, a click zooms to 200% where you clicked and another click goes back to fit; the zoom buttons and the + / - / 0 keys zoom step by step, and phones keep their own pinch-zoom. It stays fast and sharp: WebP images, a case's screenshots load as soon as a visitor points at the case, and a screenshot can have a sharper copy that loads only when the screen needs more pixels (a Retina screen, a zoom or a pinch).
+- **Statistics only with consent.** Visits, the tagged link that brought them (`?ref=` or UTM), time on page, clicks (including taps on things that do nothing, told apart from mouse clicks), zooms in the image viewer, page speed and errors are counted with [Umami](https://umami.is) only after the visitor allows it in the consent box. No cookies; with Do Not Track or Global Privacy Control on, nobody is asked and nothing loads, and Playwright checks this with the real tracker in three browsers. The [privacy page](https://karolina.kita.company/privacy) explains it and has the switch. [Visitor statistics](docs/architecture.md#visitor-statistics), [tracking plan](docs/analytics.md)
+- **Quality gate.** `yarn verify` runs the typecheck, ESLint with zero warnings, a Prettier check, 1,200+ tests and the full build before every commit.
 
 ## Getting started
 
@@ -54,11 +55,11 @@ public/                        copied as-is: robots.txt, sitemap.xml, _headers, 
                                site icons (favicon.svg and its PNG and ICO copies), the CV's PDF,
                                Google Search Console's verification file (keep it)
 public/assets/site/            portrait and link-preview image
-public/assets/cases/<case>/    case-study screenshots and thumbnail (WebP)
+public/assets/cases/<case>/    case-study screenshots and thumbnails (WebP); zoom/ holds the image viewer's sharper copies
 src/app/                       shell: App, routing, section hash, SEO, hydration, prerender entry, copy tests
 src/features/<name>/           one slice per page or capability (image viewer, privacy and the consent box):
                                view, components, copy (*.content.ts), types, tests
-src/shared/                    ui/, layout/, media/, hooks/, lib/ (routes, ui, analytics, motion, clipboard),
+src/shared/                    ui/, layout/, media/, hooks/, lib/ (routes, ui, analytics, browser, motion, clipboard),
                                content/ (profile)
 src/styles/                    tokens.css (light/dark), theme.css (Tailwind theme), app.css (entry), Figma export
 e2e/                           Playwright specs and their helpers
@@ -84,6 +85,8 @@ const { shot, singleShot } = caseShots("automotive");
 The card id is the image's base name, which is also the `image` value in the statistics.
 
 Leave room at the edges: the hover zoom hides about 1% of each side, so content (a legend, a card's border) needs padding in the file itself. `src/app/zoom-margins.test.ts` checks every case image.
+
+For close looks in the image viewer, a screenshot can have a sharper copy: the same picture with about twice the pixels, under the same file name in a `zoom/` folder beside it (`public/assets/cases/<case>/zoom/<name>-light.webp`). The viewer finds it by itself and loads it only when the screen needs more pixels than the page's file has; the page never downloads it. `gallery.utils.test.ts` checks that each copy has its page file's shape and at least 1.5 times its width.
 
 Images are cached for a week, so a changed image gets a new file name.
 

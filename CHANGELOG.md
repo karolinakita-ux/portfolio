@@ -6,6 +6,16 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.15.6 - 2026-10-31
+
+#### Changed
+
+- README: the image viewer (a click zooms to 200% where you clicked, a sharper copy loads only when the screen needs more pixels) and how to add that copy in a `zoom/` folder; section links (the copier's tag passes on, the landing before the site's script, in-app browsers); real pages (hydration, image sizes in the HTML); a new Calm motion bullet with a link to the motion guide; statistics (tagged links, zooms, Playwright with the real tracker); 1,200+ tests; `lib/browser` and the `zoom/` folder in Where things live.
+- CLAUDE.md: the case studies' order now holds in the sitemap and llms.txt too, with the tests that check it; `lib/browser/` (`inAppBrowser()`, `savesData()`); a section link's focus stays where a visitor who tabbed in first put it; the menu's underline is a border inside the pill; the e2e helpers and the hourly copy of the Umami tracker (never fetch it per test); the tracker's referrer in the Pitfalls.
+- CONTRIBUTING.md: release step 1 fetches and compares against `origin/main`.
+- docs/analytics.md: `link-ref` goes with the first pageview of each page load whose address carries a tag, once statistics are allowed. docs/architecture.md: a mouse click on the viewer's image is not a dead click, a tap still is. docs/motion.md: `image-zoom` and `section-links` in the browser tests. docs/claude-code.md: what the Playwright tests cover and where they run.
+- Review agents: docs-seo-reviewer reads docs/motion.md, ui-reviewer checks against it, a11y-reviewer checks focus after a section link and lists `image-zoom` among the reduced-motion specs. `public/_headers`: the Storybook comment names the Behind the Design banner.
+
 ### 5.15.5 - 2026-10-31
 
 #### Fixed

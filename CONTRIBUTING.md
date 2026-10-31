@@ -61,8 +61,9 @@ The release commit and the merge do not bump the version. The release is named a
 ```sh
 git switch develop
 git pull --ff-only
+git fetch origin
 yarn verify
-git log --oneline main..develop
+git log --oneline origin/main..develop
 ```
 
 Every commit in that log should have its version under `## Unreleased`. If something is missing, add it before going on.

@@ -27,7 +27,7 @@
   Cache-Control: public, max-age=0, must-revalidate
   Link: <https://karolina.kita.company/cv>; rel="canonical"
 
-# The component library (Storybook, production only): not for search engines (linked from the Work page hero).
+# The component library (Storybook, production only): not for search engines (linked from the Behind the Design banner on the Work page).
 /storybook/*
   X-Robots-Tag: noindex, nofollow
 
