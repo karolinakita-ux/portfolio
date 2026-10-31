@@ -2,7 +2,7 @@ import type { FaqItem, Milestone, Principle } from "./about.types.ts";
 
 export const ABOUT_INTRO: readonly string[] = [
   "I am a Senior Product Designer with a background in psychology. Since 2018, I have been turning complicated software into clear, practical tools that people actually enjoy using. My psychology foundation helps me understand how people think, make decisions, and deal with cognitive overload in fast-paced work environments.",
-  "I specialise in data-heavy enterprise workflows, B2B SaaS platforms, and multi-brand design systems. Working closely with product managers and engineers, I bridge the gap between human behaviour, design consistency, and technical feasibility.",
+  "I specialise in data-heavy enterprise workflows, B2B SaaS platforms, and multi-brand design systems. Working closely with product managers and engineers, I connect how people behave with a consistent design and what the team can build.",
 ];
 
 /**
@@ -49,7 +49,7 @@ export const MILESTONES: readonly Milestone[] = [
     title: "Enterprise Platforms & B2B Solutions",
     org: "GlobalLogic Poland - UX/UI Designer (2019 - 2023), then Senior UX/UI Designer (2024 - 2026)",
     focus:
-      "Designed core workflows for large-scale European automotive platforms, fleet telematics and data governance portals. Owned complex data tables, multi-variable filtering and role-based access models (RBAC). Documented edge cases, interaction states and system behaviour so engineering and product teams could build without guessing.",
+      "Designed core workflows for large-scale European automotive platforms, fleet telematics and data governance portals. Designed complex data tables, multi-variable filtering and role-based access models (RBAC). Documented edge cases, interaction states and system behaviour so engineering and product teams could build without guessing.",
     tags: ["Enterprise UX", "Data Tables & Filters", "Permissions (RBAC)", "Developer Handoff", "WCAG 2.1 AA"],
   },
   {

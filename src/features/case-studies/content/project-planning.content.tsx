@@ -24,7 +24,7 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
   meta: [
     {
       label: "My Role",
-      value: "Senior UX / Product Designer - end-to-end UX, design system architecture and engineering alignment",
+      value: "Senior Product Designer - end-to-end UX, design system architecture and engineering alignment",
     },
     {
       label: "Team",
@@ -53,7 +53,7 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
     },
     {
       title: "My Part",
-      body: "I led product design from problem definition to delivery. With the product owners, the business analyst and the developers, I turned complex resource workflows into one desktop app: a time tracker that stays visible, a calendar with day-level time entries, a meetings page that shows what each meeting costs, budget burn on every project and a portfolio view for the PMO - all on one PrimeNG token system. Screens that need new business logic are marked as proposals for the client to sign off.",
+      body: "I led product design from requirements to delivery. With the product owners, the business analyst and the developers, I turned complex resource workflows into one desktop app: a time tracker that stays visible, a calendar with day-level time entries, a meetings page that shows what each meeting costs, budget burn on every project and a portfolio view for the PMO - all on one PrimeNG token system. Screens that need new business logic are marked as proposals for the client to sign off.",
     },
   ],
   features: [

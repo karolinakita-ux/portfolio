@@ -65,7 +65,7 @@ const CASES: readonly WorkCase[] = [
     eyebrow: ["Enterprise Systems", "Multi-Tenant Architecture & Accessibility"],
     title: "Enterprise White-Label Theme Generator",
     summary:
-      "Gave non-technical admins a visual theme generator, so they brand their portal themselves instead of relying on custom CSS or engineering tickets. Automated text colour selection based on contrast so custom themes stayed readable, and provided developers with clear rules for calculating interactive states like hovers.",
+      "Designed a visual theme generator for non-technical users, with raw CSS kept as an advanced option. Text colour is picked by contrast so custom themes stay readable, and developers got clear rules for states like hover.",
     cta: "View Case Study",
     view: VIEW.caseDataGovernance,
   },

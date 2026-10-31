@@ -374,10 +374,13 @@ const caseTexts = (c: AnyCase): string[] =>
   collectCopy({ c, card: WORK_CASES.filter((card) => card.view === c.view), page: PAGE_DESCRIPTIONS[c.view] });
 
 describe("case facts, one version per case", () => {
-  it("Project Planning claims only what it shows: no budget guardrails, no work from discovery", () => {
-    expect(
-      hitsIn(caseTexts(PROJECT_PLANNING_CASE), (text) => text.match(/guardrails?|from discovery/gi) ?? []),
-    ).toEqual([]);
+  it("Project Planning claims only what it shows: no budget guardrails, no discovery, design from requirements to delivery", () => {
+    const texts = caseTexts(PROJECT_PLANNING_CASE);
+    expect(hitsIn(texts, (text) => text.match(/guardrails?|\bdiscovery\b|problem definition/gi) ?? [])).toEqual([]);
+    expect(texts.filter((text) => text.includes("from requirements to delivery"))).toHaveLength(1);
+    // Her title there is the CV's for that contract (Programado): Senior Product Designer (Karolina, 2026-10-31).
+    const role = PROJECT_PLANNING_CASE.meta.find((item) => item.label === "My Role")?.value;
+    expect(role).toMatch(/^Senior Product Designer - /);
   });
 
   it("Smart Ticket calls its console the operations console, as its section heading does", () => {
@@ -615,6 +618,19 @@ describe("CV", () => {
   it("writes lead-ins without their own colon (lead() adds it) and gives each entry its own id", () => {
     for (const bullet of entries.flatMap((entry) => entry.bullets)) expect(bullet.lead).not.toMatch(/:\s*$/);
     expect(new Set(entries.map((entry) => entry.id)).size).toBe(entries.length);
+  });
+
+  it("gives every job a full set of its own bullets, none copied from another entry", () => {
+    // Both GlobalLogic titles keep a full set (Karolina, 2026-10-31): the work ran through both roles.
+    for (const job of CV.experience) expect(job.bullets.length, job.id).toBeGreaterThanOrEqual(3);
+    const bullets = entries.flatMap((entry) => entry.bullets);
+    expect(new Set(bullets.map((bullet) => bullet.lead)).size).toBe(bullets.length);
+    expect(new Set(bullets.map((bullet) => bullet.text)).size).toBe(bullets.length);
+    // The earlier title claims no leading, strategy, roadmaps or workshops: those were the Senior role's.
+    const earlier = CV.experience.filter((job) => job.title === "UX/UI Designer").flatMap((job) => job.bullets);
+    expect(earlier.length).toBeGreaterThan(0);
+    const claims = collectText(earlier).filter((text) => /\blead|\bled\b|strateg|roadmap|workshop/i.test(text));
+    expect(claims).toEqual([]);
   });
 
   it("shares the contact details with the profile, and marks the PDF's portfolio link for the UTM report only", () => {

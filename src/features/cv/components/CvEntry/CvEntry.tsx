@@ -6,7 +6,7 @@ import type { CvEntryProps } from "./CvEntry.types.ts";
 
 /**
  * One job or degree (Figma's "Job" frame): title, employer line and dates, then bullets with a bold lead-in. An
- * entry without bullets (an earlier title at the same employer) has no list: screen readers would announce an empty one.
+ * entry without bullets has no list: screen readers would announce an empty one.
  */
 export function CvEntry({ entry }: CvEntryProps) {
   const hasBullets = entry.bullets.length > 0;

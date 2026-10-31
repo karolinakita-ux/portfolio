@@ -6,6 +6,16 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.15.8 - 2026-10-31
+
+#### Changed
+
+- CV: the UX/UI Designer role at GlobalLogic Poland (Sep 2019 - Dec 2023) now has its own 4 bullets: end-to-end UX/UI design, multi-tenant enterprise platforms (RBAC, data tables, white-label theming), user research and WCAG 2.1 AA audits. The Senior UX/UI Designer role keeps its 7 bullets. The PDF is remade from the page and stays at 2 pages; the research bullet is one line because page 2 had no more room.
+- About: the intro now says "I connect how people behave with a consistent design and what the team can build", and the GlobalLogic Poland card says "Designed complex data tables" instead of "Owned".
+- Project Planning: My Role reads "Senior Product Designer", and My Part says "from requirements to delivery" instead of "from problem definition to delivery".
+- Work: the Theme Generator card has a new summary: a visual theme generator for non-technical users, with raw CSS kept as an advanced option.
+- Tests: `content-rules.test.ts` checks that every job on the CV has at least 3 bullets of its own (no lead-in or text repeated, and no leading, strategy, roadmap or workshop claims for the earlier GlobalLogic title). It also checks that Project Planning claims no discovery or problem definition, says "from requirements to delivery" and gives her role as Senior Product Designer. `CvView.test.tsx` renders an entry without bullets on its own.
+
 ### 5.15.7 - 2026-10-31
 
 #### Fixed

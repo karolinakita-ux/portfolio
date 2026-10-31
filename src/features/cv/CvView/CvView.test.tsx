@@ -2,8 +2,10 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
+import { CvEntry } from "#features/cv/components/CvEntry/CvEntry.tsx";
 import { CV_SECTION } from "#features/cv/cv.constants.ts";
 import { CV, CV_PAGE } from "#features/cv/cv.content.ts";
+import type { CvEntryContent } from "#features/cv/cv.types.ts";
 import { PROFILE } from "#shared/content/profile.ts";
 import { cvPdfLabel } from "#shared/content/profile.utils.ts";
 import { VIEW } from "#shared/lib/routes/routes.constants.ts";
@@ -21,6 +23,16 @@ const renderCv = () => {
 const sheet = () => within(screen.getByRole("article", { name: CV.header.name }));
 /** "Download PDF (2 pages)" with a no-break space: getByRole matches names as they are, so the space is checked too. */
 const downloadLabel = cvPdfLabel(CV_PAGE.download);
+
+/** A job with no bullets, as no CV entry has now. */
+const BULLETLESS: CvEntryContent = {
+  id: "bulletless",
+  title: "UX/UI Designer",
+  org: ["GlobalLogic Poland", "Full-time", "Remote"],
+  start: "2019-09",
+  end: "2023-12",
+  bullets: [],
+};
 
 describe("CvView", () => {
   it("names the page in the breadcrumb and Karolina in the only H1", () => {
@@ -65,13 +77,20 @@ describe("CvView", () => {
     for (const bullet of bullets) expect(bullet.firstElementChild?.textContent).toMatch(/\S:$/);
   });
 
-  it("gives an entry without bullets (an earlier title at the same employer) no empty list", () => {
+  it("gives each entry its bullets in one list", () => {
     renderCv();
     for (const entry of [...CV.experience, ...CV.education]) {
       const title = sheet().getByRole("heading", { level: 3, name: entry.title });
       const root = title.closest("div")?.parentElement?.parentElement;
       expect(within(root!).queryAllByRole("list"), entry.id).toHaveLength(entry.bullets.length > 0 ? 1 : 0);
     }
+  });
+
+  it("gives an entry without bullets no empty list", () => {
+    // No CV entry is empty now (every job has its bullets: content-rules.test.ts), so one is rendered on its own.
+    render(<CvEntry entry={BULLETLESS} />);
+    expect(screen.getByRole("heading", { level: 3, name: BULLETLESS.title })).toBeInTheDocument();
+    expect(screen.queryByRole("list")).not.toBeInTheDocument();
   });
 
   it("joins each skill area's skills into one line, as applicant tracking systems read them", () => {

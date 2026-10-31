@@ -62,7 +62,10 @@ export const CV: Cv = {
       ],
     },
     // GlobalLogic Poland: two titles, two entries (newest first), as applicant tracking systems read a promotion.
-    // The bullets have no dates, so all stay with the Senior role until Karolina places them.
+    // Each title keeps a full set of bullets (Karolina, 2026-10-31): multi-tenant platforms, audits, research and
+    // end-to-end design ran through both roles, so the earlier one says them in its own words. Strategy, AI and
+    // workshops stay with the Senior role only. The earlier role's bullets are short because the PDF is full: with
+    // them, page 2 has about 11px to spare, so one more line anywhere on the CV makes a third page.
     {
       id: "globallogic",
       title: "Senior UX/UI Designer",
@@ -106,7 +109,24 @@ export const CV: Cv = {
       org: ["GlobalLogic Poland", "Full-time", "Remote"],
       start: "2019-09",
       end: "2023-12",
-      bullets: [],
+      bullets: [
+        {
+          lead: "End-to-End UX/UI Design",
+          text: "Took features from requirements and user flows to high-fidelity UI and handoff, documenting edge cases and interaction states.",
+        },
+        {
+          lead: "Multi-Tenant Enterprise Platforms",
+          text: "Designed role-based access (RBAC), dense data tables and self-service white-label theming for tenant admins.",
+        },
+        {
+          lead: "User Research",
+          text: "Ran user interviews and usability tests.",
+        },
+        {
+          lead: "WCAG Accessibility Audits",
+          text: "Audited key screens and colour palettes against WCAG 2.1 AA, and set contrast rules for developers.",
+        },
+      ],
     },
     {
       id: "cinkciarz",

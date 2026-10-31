@@ -19,7 +19,7 @@ export interface CvEntryContent {
   start: string;
   /** ISO month or year; null for a current role ("Present"). */
   end: string | null;
-  /** Empty for an earlier title at the same employer whose work the newer entry's bullets cover: no list then. */
+  /** Every job has its own (content-rules.test.ts, CV); an entry left without bullets shows no list. */
   bullets: readonly LeadBullet[];
 }
 
