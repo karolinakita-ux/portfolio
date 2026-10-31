@@ -28,6 +28,13 @@ export const caseCards = (c: AnyCase): ShowcaseCard[] => {
   return [...c.solution, ...c.safety];
 };
 
+/**
+ * Where a case image's sharper copy for the image viewer lives, when there is one: the same file name in a `zoom`
+ * folder beside it ("cases/automotive/zoom/journey-map-light.webp"). The viewer swaps it in when the screen needs more
+ * pixels than the page's file has (LightboxItem.zoomSrc); the page and its preloads keep the lighter file.
+ */
+export const zoomAsset = (asset: string): string => asset.replace(/[^/]+$/, (file) => "zoom/" + file);
+
 /** Every image file a card can show: the default and the Dark-mode version. */
 export const cardAssets = (card: ShowcaseCard): string[] =>
   [card.asset, card.darkAsset, card.detail].filter((asset): asset is string => asset !== undefined);

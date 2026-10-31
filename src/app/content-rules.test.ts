@@ -94,6 +94,9 @@ const caseCards = (c: AnyCase): ShowcaseCard[] => {
   return [...c.solution, ...c.safety];
 };
 
+/** The image viewer's sharper copy of a case image, in a `zoom` folder beside it (independent of gallery.utils.ts). */
+const zoomAsset = (asset: string): string => asset.replace(/[^/]+$/, "zoom/$&");
+
 /**
  * Bullets outside the screenshot cards: feature sections, the impact section, the Data Governance case's reality
  * list, Smart Ticket's personas, comparison reasoning and console decisions.
@@ -865,6 +868,9 @@ describe("confidentiality", () => {
         card.asset,
         card.detail ?? card.asset,
         card.darkAsset ?? card.asset,
+        // The viewer's sharper copies (useCaseGallery): only beside a screenshot it opens.
+        zoomAsset(card.asset),
+        zoomAsset(card.darkAsset ?? card.asset),
       ]),
       ...WORK_CASES.flatMap((item) => [item.asset, item.darkAsset ?? item.asset]),
     ]);

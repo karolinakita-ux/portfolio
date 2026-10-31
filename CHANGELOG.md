@@ -6,6 +6,15 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.15.2 - 2026-10-31
+
+#### Changed
+
+- Image viewer: a screenshot can now have a sharper copy for close looks, the same picture with about twice the pixels under the same name in a `zoom/` folder beside it (`cases/<case>/zoom/<file>`). The viewer still opens on the page's own file and loads the copy only when the screen needs more pixels than that file has: a Retina laptop, a 3x phone, the viewer's zoom or a pinch-zoom. The copy takes over once decoded, at the same size, so nothing moves, and a copy that fails leaves the page's file. The page and its background loading never download the copies, and nothing extra loads with Save-Data or on 2G. No screenshot has a copy yet, so the site looks the same until the larger exports arrive.
+- Why: measured on the live 5.15.0, the 2000 px screenshots are sharp when the viewer opens on a phone, but their text needs a 3.5 - 5x pinch to read, and there each file pixel covers 1.5 - 2.5 screen pixels, so it looks soft. A Retina laptop has too few pixels already at fit (0.83 file pixels per screen pixel) and at 200% (0.41). The 720 px phone screens are short on a 3x phone even at fit (0.82 in Chromium). Chromium and WebKit draw a pinched image again from its file, so the files are the limit, not the browsers.
+- `savesData()` moved from the image preloader to `shared/lib/browser`, so the preloader and the viewer share it.
+- Tests: `LightboxProvider.test.tsx` (the copy loads on a dense screen, under a pinch-zoom or at the viewer's zoom and not before, keeps the page file's size fitted and zoomed, falls back when it fails, ignores a copy that arrives too late, loads nothing with Save-Data), `useCaseGallery.test.tsx` (the copy of the theme shown, never preloaded), `gallery.utils.test.ts` (each copy has its page file's shape and at least 1.5 times its pixels), `content-rules.test.ts` (a copy counts as used), `browser.utils.test.ts`, and `e2e/image-sharpness.e2e.ts` in Chromium, Firefox and WebKit (a 3x phone shows the page's file with nothing that scales it, the viewer's zoom changes the width and never a transform, a pinch-zoom resizes the visual viewport). Docs: architecture (Images) and CLAUDE.md (`public/assets`).
+
 ### 5.15.1 - 2026-10-31
 
 #### Changed

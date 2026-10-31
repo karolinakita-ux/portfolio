@@ -5,10 +5,11 @@ import { LightboxToolbar } from "#features/image-viewer/components/LightboxToolb
 import { LoadingSkeleton } from "#features/image-viewer/components/LoadingSkeleton/LoadingSkeleton.tsx";
 import { usePreloadNeighbours } from "#features/image-viewer/hooks/usePreloadNeighbours.ts";
 import { useRevealedImage } from "#features/image-viewer/hooks/useRevealedImage.ts";
+import { useSharpImage } from "#features/image-viewer/hooks/useSharpImage.ts";
 import { useSwipe } from "#features/image-viewer/hooks/useSwipe.ts";
 import { useZoom } from "#features/image-viewer/hooks/useZoom.ts";
 import { IMAGE_ENTRY } from "#features/image-viewer/lightbox.styles.ts";
-import { zoomStyle } from "#features/image-viewer/lightbox.utils.ts";
+import { fittedStyle, zoomStyle } from "#features/image-viewer/lightbox.utils.ts";
 import { Dialog } from "#shared/ui/Dialog/Dialog.tsx";
 import { ImageOff } from "#shared/ui/icons/icons.tsx";
 import { VisuallyHidden } from "#shared/ui/VisuallyHidden/VisuallyHidden.tsx";
@@ -27,7 +28,8 @@ import type { LightboxDialogProps } from "./LightboxDialog.types.ts";
  *
  * Loading: the neighbouring images load ahead (usePreloadNeighbours). An image
  * that is not in the cache yet shows a skeleton of its own size and shape
- * (item.width / item.height) until it is decoded; zoom waits for it.
+ * (item.width / item.height) until it is decoded; zoom waits for it. An item's sharper copy
+ * (item.zoomSrc) takes over once the screen needs more pixels (useSharpImage).
  */
 export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -41,6 +43,7 @@ export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps)
   const { status, imageRef, setImage, onLoad, onError } = useRevealedImage(item?.src ?? "");
   const loaded = status === "loaded";
   const failed = item !== undefined && status === "error";
+  const { shownSrc, pageWidth, dropCopy } = useSharpImage(item?.src ?? "", item?.zoomSrc, imageRef, loaded);
   const { zoom, zoomStep, zoomLevel, dragging, zoomTo, resetZoom, paneHandlers } = useZoom({
     viewportRef,
     imageRef,
@@ -50,6 +53,9 @@ export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps)
     onZoom: (direction, method) => item?.onZoom?.(direction, method),
   });
   const zoomed = zoom !== null;
+  const imageStyle = zoom ? zoomStyle(zoom, zoomLevel, pageWidth) : fittedStyle(pageWidth);
+  // A copy that fails falls back to the page's file; only the page's file failing leaves the image unavailable.
+  const handleImageError = pageWidth === undefined ? onError : dropCopy;
 
   usePreloadNeighbours(state);
 
@@ -127,15 +133,15 @@ export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps)
                 <img
                   key={item.src}
                   ref={setImage}
-                  src={item.src}
+                  src={shownSrc}
                   alt={item.alt}
                   decoding="async"
                   draggable={false}
                   // A mouse click on it zooms (useZoom): the statistics do not count that click as a dead click.
                   data-mouse-click={loaded ? "" : undefined}
                   onLoad={onLoad}
-                  onError={onError}
-                  style={zoom ? zoomStyle(zoom, zoomLevel) : undefined}
+                  onError={handleImageError}
+                  style={imageStyle}
                   className={styles.image(state.direction, zoomed, loaded, dragging)}
                 />
               </>

@@ -33,9 +33,7 @@ export const styles = {
     clsx(
       "block h-auto select-none",
       IMAGE_ENTRY[direction],
-      zoomed
-        ? "kb-lightbox-image-zoomed m-auto max-w-none shrink-0"
-        : "kb-lightbox-image w-auto max-w-full object-contain",
+      zoomed ? "kb-lightbox-image-zoomed m-auto max-w-none shrink-0" : "kb-lightbox-image w-auto object-contain",
       {
         "md:cursor-zoom-in pointer-fine:cursor-zoom-in": loaded && !zoomed,
         "cursor-zoom-out": zoomed && !dragging,

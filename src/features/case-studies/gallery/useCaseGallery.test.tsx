@@ -8,10 +8,20 @@ import { preloadImages } from "#shared/media/image-preload/image-preload.utils.t
 import { LightboxContext } from "#shared/media/lightbox/lightbox.context.ts";
 import type { OpenLightbox } from "#shared/media/lightbox/lightbox.types.ts";
 
-import { caseCards } from "./gallery.utils.ts";
+import { caseCards, zoomAsset } from "./gallery.utils.ts";
 import { useCaseGallery } from "./useCaseGallery.ts";
 
 vi.mock("#shared/media/image-preload/image-preload.utils.ts", () => ({ preloadImages: vi.fn() }));
+
+/** One screenshot with a sharper copy for the viewer, Light only, as an export would add it to its zoom folder. */
+const ZOOMED = vi.hoisted(() => ({
+  asset: "cases/automotive/journey-map-light.webp",
+  copy: "cases/automotive/zoom/journey-map-light.webp",
+}));
+vi.mock("virtual:asset-sizes", async (importOriginal) => {
+  const { default: sizes } = await importOriginal<{ default: Record<string, readonly [number, number]> }>();
+  return { default: { ...sizes, [ZOOMED.copy]: [4000, 2124] } };
+});
 
 const cards = caseCards(AUTOMOTIVE_CASE);
 const resolveAsset = (name: string) => "/assets/" + name;
@@ -43,6 +53,7 @@ describe("useCaseGallery", () => {
       const card = cards[i];
       expect(item).toEqual({
         src: resolveAsset(card?.asset ?? ""),
+        ...(card?.asset === ZOOMED.asset && { zoomSrc: resolveAsset(ZOOMED.copy) }),
         alt: card?.alt,
         title: card?.title,
         width: ASSET_SIZES[card?.asset ?? ""]?.[0],
@@ -52,5 +63,22 @@ describe("useCaseGallery", () => {
       });
       expect(item.width).toBeGreaterThan(0);
     });
+  });
+
+  it("gives the viewer a screenshot's sharper copy when its zoom folder has one in the theme shown, and never preloads it", () => {
+    expect(zoomAsset(ZOOMED.asset)).toBe(ZOOMED.copy);
+    const { rows, open } = renderGallery();
+    rows[0]?.onExpand(document.createElement("button"));
+    const zoomed = open.mock.calls[0]?.[0].filter((item) => item.zoomSrc !== undefined);
+    expect(zoomed?.map((item) => [item.src, item.zoomSrc])).toEqual([
+      [resolveAsset(ZOOMED.asset), resolveAsset(ZOOMED.copy)],
+    ]);
+    expect(vi.mocked(preloadImages).mock.calls.flat(2)).not.toContain(resolveAsset(ZOOMED.copy));
+
+    // Dark mode shows the Dark file, which has no copy: the Light copy is not mixed in.
+    document.documentElement.classList.add("dark");
+    const { rows: darkRows, open: openDark } = renderGallery();
+    darkRows[0]?.onExpand(document.createElement("button"));
+    expect(openDark.mock.calls[0]?.[0].some((item) => item.zoomSrc !== undefined)).toBe(false);
   });
 });

@@ -1,8 +1,8 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 
 import { UA } from "#test/user-agents.ts";
 
-import { inAppBrowser } from "./browser.utils.ts";
+import { inAppBrowser, savesData } from "./browser.utils.ts";
 
 describe("inAppBrowser", () => {
   it("names the app behind Messenger, Facebook, Instagram and LinkedIn's built-in browsers", () => {
@@ -16,5 +16,27 @@ describe("inAppBrowser", () => {
   it("returns null for ordinary browsers", () => {
     for (const agent of [UA.chromeAndroid, UA.safariIos, UA.chromeDesktop])
       expect(inAppBrowser(agent), agent).toBeNull();
+  });
+});
+
+describe("savesData", () => {
+  const connect = (connection: object) =>
+    Object.defineProperty(navigator, "connection", { value: connection, configurable: true });
+  afterEach(() => Reflect.deleteProperty(navigator, "connection"));
+
+  it("is true when the visitor asks to save data or is on 2G", () => {
+    connect({ saveData: true, effectiveType: "4g" });
+    expect(savesData()).toBe(true);
+    connect({ effectiveType: "slow-2g" });
+    expect(savesData()).toBe(true);
+    connect({ effectiveType: "2g" });
+    expect(savesData()).toBe(true);
+  });
+
+  it("is false on a faster connection and where the browser does not say", () => {
+    connect({ saveData: false, effectiveType: "3g" });
+    expect(savesData()).toBe(false);
+    Reflect.deleteProperty(navigator, "connection");
+    expect(savesData()).toBe(false);
   });
 });

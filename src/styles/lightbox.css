@@ -16,7 +16,10 @@
   height: max(12rem, calc(100vh - 13rem));
   height: max(12rem, calc(100dvh - 13rem));
 }
+/* Fitted image: no wider than the pane, nor than its page file while it shows a sharper copy with more pixels
+   (--kb-natural-width, set inline: useSharpImage), so the copy takes over at the same size. */
 .kb-lightbox-image {
+  max-width: min(100%, var(--kb-natural-width, 100%));
   max-height: max(12rem, calc(100vh - 13rem));
   max-height: max(12rem, calc(100dvh - 13rem));
 }
@@ -30,7 +33,8 @@
 }
 /* Zoomed image: the fitted width (pane width, height limit or natural width,
    whichever is smallest, as .kb-lightbox-image) times the zoom level. In CSS so
-   it follows window resizes. Variables are set inline (lightbox.utils.ts). */
+   it follows window resizes. Variables are set inline (lightbox.utils.ts); the
+   natural width is the page file's, also while a sharper copy shows. */
 .kb-lightbox-image-zoomed {
   width: calc(min(100%, max(12rem, 100dvh - 13rem) * var(--kb-aspect), var(--kb-natural-width)) * var(--kb-zoom));
 }

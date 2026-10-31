@@ -72,9 +72,29 @@ export const neighbourSources = (items: readonly LightboxItem[], index: number):
 export const isSwipe = (dx: number, dy: number): boolean =>
   Math.abs(dx) >= SWIPE_MIN_DISTANCE && Math.abs(dx) >= Math.abs(dy) * 1.5;
 
-/** CSS variables lightbox.css sizes the zoomed image with (.kb-lightbox-image-zoomed). */
-export const zoomStyle = (zoom: ZoomState, level: number): CSSProperties =>
-  ({ "--kb-zoom": level, "--kb-aspect": zoom.aspect, "--kb-natural-width": zoom.naturalWidth + "px" }) as CSSProperties;
+/**
+ * The image covers more device pixels across than its file has: its width on the page, times the screen's density
+ * and the browser's pinch-zoom (the viewer's own zoom is in the width already). Each file pixel is then stretched.
+ */
+export const needsMorePixels = (image: HTMLImageElement): boolean =>
+  image.naturalWidth > 0 &&
+  image.getBoundingClientRect().width * window.devicePixelRatio * (window.visualViewport?.scale ?? 1) >
+    image.naturalWidth;
+
+/**
+ * CSS variables lightbox.css sizes the zoomed image with (.kb-lightbox-image-zoomed). `pageWidth`: the page file's
+ * width while the image shows its sharper copy (useSharpImage), which keeps the size the page file had.
+ */
+export const zoomStyle = (zoom: ZoomState, level: number, pageWidth?: number): CSSProperties =>
+  ({
+    "--kb-zoom": level,
+    "--kb-aspect": zoom.aspect,
+    "--kb-natural-width": (pageWidth ?? zoom.naturalWidth) + "px",
+  }) as CSSProperties;
+
+/** The fitted image's size limit while it shows its sharper copy: the page file's width (.kb-lightbox-image). */
+export const fittedStyle = (pageWidth: number | undefined): CSSProperties | undefined =>
+  pageWidth === undefined ? undefined : ({ "--kb-natural-width": pageWidth + "px" } as CSSProperties);
 
 /** CSS variables for a skeleton of the image's own shape (.kb-lightbox-skeleton), or undefined when the size is unknown. */
 export const skeletonStyle = ({ width, height }: LightboxItem): CSSProperties | undefined =>

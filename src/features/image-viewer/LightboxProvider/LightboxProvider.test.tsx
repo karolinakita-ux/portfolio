@@ -492,3 +492,153 @@ describe("Lightbox zoom statistics", () => {
     ]);
   });
 });
+
+/** Stands in for the `new Image()` that loads a sharper copy: records each one; arrive() and fail() end its load. */
+class FakeCopy {
+  static made: FakeCopy[] = [];
+  onload: (() => void) | null = null;
+  onerror: (() => void) | null = null;
+  naturalWidth = 0;
+  src = "";
+  constructor() {
+    FakeCopy.made.push(this);
+  }
+  decode = () => Promise.resolve();
+  arrive(width: number) {
+    this.naturalWidth = width;
+    this.onload?.();
+  }
+  fail() {
+    this.onerror?.();
+  }
+}
+
+describe("Lightbox sharper copy", () => {
+  const PAGE_FILE = "/assets/board.webp";
+  const COPY = "/assets/zoom/board.webp";
+  const ITEMS_WITH_COPIES: LightboxItem[] = [
+    { src: PAGE_FILE, zoomSrc: COPY, alt: "Journey board", title: "Board", width: 2000, height: 500 },
+    { src: "/assets/next.webp", zoomSrc: "/assets/zoom/next.webp", alt: "Next board", title: "Next" },
+  ];
+  const board = (dialog: HTMLElement) => within(dialog).getByRole<HTMLImageElement>("img", { name: "Journey board" });
+  const requested = () => FakeCopy.made.map((copy) => copy.src);
+  const settle = (run: () => void) =>
+    act(() => {
+      run();
+      return Promise.resolve();
+    });
+
+  beforeEach(() => {
+    FakeCopy.made = [];
+    vi.stubGlobal("Image", FakeCopy);
+    // The page's files are 2000 x 500 px and cached, a copy has twice the pixels; the viewer fits the image 1200 CSS
+    // px wide on a laptop, times its zoom level.
+    const isCopy = (image: HTMLImageElement) => image.getAttribute("src")?.includes("/zoom/") === true;
+    vi.spyOn(HTMLImageElement.prototype, "naturalWidth", "get").mockImplementation(function (this: HTMLImageElement) {
+      return isCopy(this) ? 4000 : 2000;
+    });
+    vi.spyOn(HTMLImageElement.prototype, "naturalHeight", "get").mockImplementation(function (this: HTMLImageElement) {
+      return isCopy(this) ? 1000 : 500;
+    });
+    vi.spyOn(HTMLImageElement.prototype, "complete", "get").mockReturnValue(true);
+    vi.spyOn(HTMLImageElement.prototype, "getBoundingClientRect").mockImplementation(function (this: HTMLImageElement) {
+      const width = 1200 * (Number(this.style.getPropertyValue("--kb-zoom")) || 1);
+      return { width, height: width / 4, top: 0, left: 0, right: width, bottom: width / 4, x: 0, y: 0 } as DOMRect;
+    });
+    vi.stubGlobal("devicePixelRatio", 1);
+  });
+
+  it("keeps the page's file while it has the pixels the screen needs", async () => {
+    const { dialog } = await openViewer(ITEMS_WITH_COPIES); // 1200 device px from a 2000 px file
+    expect(requested()).toEqual([]);
+    expect(board(dialog)).toHaveAttribute("src", PAGE_FILE);
+  });
+
+  it("swaps the copy in on a dense screen once it is decoded, at the page file's size, fitted and zoomed", async () => {
+    vi.stubGlobal("devicePixelRatio", 2); // 2400 device px from a 2000 px file
+    const { user, dialog, zoomIn } = await openViewer(ITEMS_WITH_COPIES);
+    expect(requested()).toEqual([COPY]);
+    expect(board(dialog)).toHaveAttribute("src", PAGE_FILE); // until the copy is ready
+
+    await settle(() => FakeCopy.made[0]?.arrive(4000));
+    expect(board(dialog)).toHaveAttribute("src", COPY);
+    expect(board(dialog)).toHaveClass("kb-lightbox-image");
+    expect(board(dialog).style.getPropertyValue("--kb-natural-width")).toBe("2000px");
+
+    await user.click(zoomIn); // the copy's own 4000 px would make the zoomed image twice as large
+    expect(board(dialog).style.getPropertyValue("--kb-zoom")).toBe("1.5");
+    expect(board(dialog).style.getPropertyValue("--kb-natural-width")).toBe("2000px");
+    expect(requested()).toEqual([COPY]);
+  });
+
+  it("loads the copy once a pinch-zoom or the viewer's zoom needs more pixels than the page's file has", async () => {
+    const viewport = Object.assign(new EventTarget(), { scale: 1 });
+    vi.stubGlobal("visualViewport", viewport);
+    const resized: Array<() => void> = [];
+    vi.stubGlobal(
+      "ResizeObserver",
+      class {
+        constructor(callback: () => void) {
+          resized.push(callback);
+        }
+        observe() {}
+        disconnect() {}
+      },
+    );
+    const { user, dialog, zoomIn } = await openViewer(ITEMS_WITH_COPIES);
+
+    viewport.scale = 1.5; // 1800 device px: still enough
+    act(() => viewport.dispatchEvent(new Event("resize")));
+    expect(requested()).toEqual([]);
+    viewport.scale = 2; // 2400
+    act(() => viewport.dispatchEvent(new Event("resize")));
+    expect(requested()).toEqual([COPY]);
+
+    // The next image, not pinched: its copy waits for the viewer's zoom at 200% (2400 device px).
+    viewport.scale = 1;
+    await user.click(within(dialog).getByRole("button", { name: "Next image" }));
+    await user.click(zoomIn); // 150%: 1800
+    act(() => resized.forEach((callback) => callback()));
+    expect(requested()).toEqual([COPY]);
+    await user.click(zoomIn); // 200%
+    act(() => resized.forEach((callback) => callback()));
+    expect(requested()).toEqual([COPY, "/assets/zoom/next.webp"]);
+  });
+
+  it("keeps the page's file when the copy fails, without trying again, and for a visitor who saves data", async () => {
+    vi.stubGlobal("devicePixelRatio", 2);
+    const viewport = Object.assign(new EventTarget(), { scale: 1 });
+    vi.stubGlobal("visualViewport", viewport);
+    const { user, dialog } = await openViewer(ITEMS_WITH_COPIES);
+    await settle(() => FakeCopy.made[0]?.fail());
+    expect(board(dialog)).toHaveAttribute("src", PAGE_FILE);
+    expect(within(dialog).queryByText("Image unavailable")).not.toBeInTheDocument();
+    act(() => viewport.dispatchEvent(new Event("resize")));
+    expect(requested()).toEqual([COPY]);
+
+    Object.defineProperty(navigator, "connection", { value: { saveData: true }, configurable: true });
+    try {
+      await user.click(within(dialog).getByRole("button", { name: "Next image" }));
+      expect(requested()).toEqual([COPY]);
+    } finally {
+      Reflect.deleteProperty(navigator, "connection");
+    }
+  });
+
+  it("goes back to the page's file when the shown copy fails, and ignores a copy that arrives too late", async () => {
+    vi.stubGlobal("devicePixelRatio", 2);
+    const { user, dialog } = await openViewer(ITEMS_WITH_COPIES);
+    await settle(() => FakeCopy.made[0]?.arrive(4000));
+    fireEvent.error(board(dialog));
+    expect(board(dialog)).toHaveAttribute("src", PAGE_FILE);
+    expect(board(dialog).style.getPropertyValue("--kb-natural-width")).toBe("");
+    expect(within(dialog).queryByText("Image unavailable")).not.toBeInTheDocument();
+
+    // The next image's copy arrives after the visitor moved back: the board keeps its page file.
+    await user.click(within(dialog).getByRole("button", { name: "Next image" }));
+    expect(requested()).toEqual([COPY, "/assets/zoom/next.webp"]);
+    await user.click(within(dialog).getByRole("button", { name: "Previous image" }));
+    await settle(() => FakeCopy.made[1]?.arrive(4000));
+    expect(board(dialog)).toHaveAttribute("src", PAGE_FILE);
+  });
+});

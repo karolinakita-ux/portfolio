@@ -6,6 +6,12 @@ export type ZoomMethod = "click" | "button" | "key";
 
 export interface LightboxItem {
   src: string;
+  /**
+   * Optional copy of `src` with more pixels (the same picture, about twice as wide). The viewer opens on `src` and
+   * swaps this in only when the screen needs more pixels than `src` has: a dense screen, the viewer's zoom or a
+   * pinch-zoom (image-viewer, useSharpImage). The page and the preloads keep the lighter `src`.
+   */
+  zoomSrc?: string;
   alt: string;
   title: string;
   /** Pixel size, when known: the viewer shows a placeholder of this shape while the image loads. */
