@@ -1,11 +1,12 @@
 import { VIEW } from "#shared/lib/routes/routes.constants.ts";
+import { CASE_NAMES } from "#shared/lib/routes/routes.content.ts";
 import type { View } from "#shared/lib/routes/routes.types.ts";
 
 /**
  * Search and link-preview copy per page: the meta description (shown under the title in
  * Google) and the og/twitter description. Same copy rules as the site (checked in
  * content-rules.test.ts): plain English, short hyphens, at most 160 characters.
- * Page titles live in src/shared/lib/routes/routes.constants.ts (VIEW_TITLES): the tab, og:title and twitter:title.
+ * Page titles live in src/shared/lib/routes/routes.content.ts (VIEW_TITLES): the tab, og:title and twitter:title.
  */
 export const PAGE_DESCRIPTIONS: Readonly<Record<View, string>> = {
   [VIEW.work]:
@@ -32,8 +33,8 @@ export const PAGE_DESCRIPTIONS: Readonly<Record<View, string>> = {
 
 /**
  * Each page's name in llms.txt and, for a case study, the name of the work in its structured data (CreativeWork):
- * the title of its card on the Work page. The structured-data breadcrumb uses the labels visitors see instead
- * (seo.utils.ts): a case study's shortTitle, and these names for the other pages.
+ * the title of its card on the Work page (CASE_NAMES). The structured-data breadcrumb uses the labels visitors see
+ * instead (seo.utils.ts): a case study's shortTitle, and these names for the other pages.
  */
 export const PAGE_NAMES: Readonly<Record<View, string>> = {
   [VIEW.work]: "Work",
@@ -42,10 +43,10 @@ export const PAGE_NAMES: Readonly<Record<View, string>> = {
   [VIEW.cv]: "CV",
   [VIEW.privacy]: "Privacy",
   [VIEW.accessibility]: "Accessibility",
-  [VIEW.caseDataGovernance]: "Enterprise White-Label Theme Generator",
-  [VIEW.caseProjectPlanning]: "Project Planning & Cost Management Platform",
-  [VIEW.caseAutomotive]: "Automotive B2B Marketplace Redesign",
-  [VIEW.caseSmartTicket]: "Smart Ticket: Mobile Ticketing & Transit Operations",
+  [VIEW.caseDataGovernance]: CASE_NAMES[VIEW.caseDataGovernance].cardTitle,
+  [VIEW.caseProjectPlanning]: CASE_NAMES[VIEW.caseProjectPlanning].cardTitle,
+  [VIEW.caseAutomotive]: CASE_NAMES[VIEW.caseAutomotive].cardTitle,
+  [VIEW.caseSmartTicket]: CASE_NAMES[VIEW.caseSmartTicket].cardTitle,
 };
 
 /**

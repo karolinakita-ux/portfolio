@@ -30,6 +30,7 @@ import { expect, test, type Page } from "@playwright/test";
 
 import { WORK_CASES } from "#features/work/work.content.ts";
 import { VIEW, VIEW_PATHS } from "#shared/lib/routes/routes.constants.ts";
+import { CASE_NAMES } from "#shared/lib/routes/routes.content.ts";
 
 import { THEMES, VIEWPORTS } from "./helpers/helpers.constants.ts";
 import type { Theme } from "./helpers/helpers.types.ts";
@@ -483,12 +484,13 @@ test.describe("motion allowed", () => {
     const supported = await supportsScrollTimelines(page);
     const automotive = WORK_CASES.at(-1);
     if (!automotive) throw new Error("no case studies in WORK_CASES");
-    await expect(page.getByRole("article", { name: automotive.title })).toHaveClass(/\breveal-on-scroll\b/);
+    const name = CASE_NAMES[automotive.view].cardTitle;
+    await expect(page.getByRole("article", { name })).toHaveClass(/\breveal-on-scroll\b/);
 
     const atRest = await scrollToY(page, 0);
-    const index = atRest.cards.findIndex((candidate) => candidate.name === automotive.title);
+    const index = atRest.cards.findIndex((candidate) => candidate.name === name);
     const start = atRest.cards[index];
-    if (!start) throw new Error(`no revealing card named "${automotive.title}"`);
+    if (!start) throw new Error(`no revealing card named "${name}"`);
     expect(start.top, "the card starts more than a reveal below the fold").toBeGreaterThan(atRest.viewport + REVEAL_PX);
     if (supported) {
       expect(start.opacity, "waiting below the fold: transparent").toBe(0);
@@ -559,7 +561,8 @@ test.describe("motion allowed", () => {
     const supported = await supportsScrollTimelines(page);
     const lastCase = WORK_CASES.at(-1);
     if (!lastCase) throw new Error("no case studies in WORK_CASES");
-    const index = (await scrollToY(page, 0)).cards.findIndex((candidate) => candidate.name === lastCase.title);
+    const name = CASE_NAMES[lastCase.view].cardTitle;
+    const index = (await scrollToY(page, 0)).cards.findIndex((candidate) => candidate.name === name);
     const inside = EARLY_PX[1] ?? 24;
     const placed = await placeCard(page, index, inside);
     const card = placed?.cards[index];
@@ -568,9 +571,7 @@ test.describe("motion allowed", () => {
     if (supported) expect(isShown(card), `early in its reveal: ${describeCard(card, placed)}`).toBe(false);
 
     // Focus its link where it is: Firefox does not scroll a partly visible focused element further in.
-    const link = page
-      .getByRole("article", { name: lastCase.title })
-      .getByRole("link", { name: lastCase.cta, exact: true });
+    const link = page.getByRole("article", { name }).getByRole("link", { name: lastCase.cta, exact: true });
     await link.evaluate((element: HTMLElement) => {
       element.focus({ preventScroll: true });
     });
@@ -644,11 +645,12 @@ test.describe("motion allowed", () => {
     }) => {
       const first = WORK_CASES[0];
       if (!first) throw new Error("no case studies in WORK_CASES");
+      const name = CASE_NAMES[first.view].cardTitle;
       await page.setViewportSize(viewport);
       const expectFirstCardShown = async (what: string) => {
         const snap = await snapshot(page);
-        const card = snap.cards.find((candidate) => candidate.name === first.title);
-        if (!card) throw new Error(`no revealing card named "${first.title}"`);
+        const card = snap.cards.find((candidate) => candidate.name === name);
+        if (!card) throw new Error(`no revealing card named "${name}"`);
         expect(card.bottom > 0 && card.top < snap.viewport, `${what}: the first case card is in view`).toBe(true);
         expect(card.opacity, `${what}: ${describeCard(card, snap)}`).toBe(1);
         expect(card.translate, `${what}: ${describeCard(card, snap)}`).toBe("none");

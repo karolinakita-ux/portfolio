@@ -1,6 +1,7 @@
 import { CasePager } from "#features/case-studies/components/CasePager/CasePager.tsx";
 import { DesignFileLink } from "#features/case-studies/components/DesignFileLink/DesignFileLink.tsx";
 import { MetaMatrix } from "#features/case-studies/components/MetaMatrix/MetaMatrix.tsx";
+import { CASE_NAMES } from "#shared/lib/routes/routes.content.ts";
 import { WORK_CRUMB } from "#shared/ui/Breadcrumb/Breadcrumb.constants.ts";
 import { Breadcrumb } from "#shared/ui/Breadcrumb/Breadcrumb.tsx";
 import { Callout } from "#shared/ui/Callout/Callout.tsx";
@@ -13,19 +14,20 @@ import type { CaseIntroProps } from "./CaseIntro.types.ts";
 
 /**
  * Shared case-study opening: breadcrumb and previous / next → eyebrow + title → details panel → the Figma file
- * link (when the case has one) → notice.
+ * link (when the case has one) → notice. The breadcrumb and the title are the case's names (CASE_NAMES).
  */
 export function CaseIntro({ c, onNavigate }: CaseIntroProps) {
+  const { title, shortTitle } = CASE_NAMES[c.view];
   return (
     <section aria-labelledby="case-title" className={styles.root}>
       <Container>
         <div className={styles.topRow}>
-          <Breadcrumb onNavigate={onNavigate} items={[WORK_CRUMB, { label: c.shortTitle }]} />{" "}
+          <Breadcrumb onNavigate={onNavigate} items={[WORK_CRUMB, { label: shortTitle }]} />{" "}
           <CasePager from={c.view} prev={c.prev} next={c.next} onNavigate={onNavigate} />
         </div>
         <div className={styles.heading}>
           <Eyebrow parts={c.eyebrow} />
-          <PageTitle id="case-title">{c.title}</PageTitle>
+          <PageTitle id="case-title">{title}</PageTitle>
         </div>
         <MetaMatrix entries={c.meta} />
         {c.designFile && (

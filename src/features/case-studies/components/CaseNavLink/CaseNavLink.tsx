@@ -1,7 +1,7 @@
-import { CASE_TITLES } from "#features/case-studies/content/cases.constants.ts";
 import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import { track } from "#shared/lib/analytics/analytics.utils.ts";
-import { hrefForView } from "#shared/lib/routes/routes.utils.ts";
+import { CASE_NAMES } from "#shared/lib/routes/routes.content.ts";
+import { hrefForView, isCaseView } from "#shared/lib/routes/routes.utils.ts";
 import { ArrowLeft, ArrowRight } from "#shared/ui/icons/icons.tsx";
 import { VisuallyHidden } from "#shared/ui/VisuallyHidden/VisuallyHidden.tsx";
 
@@ -12,7 +12,7 @@ import type { CaseNavLinkProps } from "./CaseNavLink.types.ts";
 /**
  * Previous / next case study link; counted as case-nav with its place. At the top it shows only "Previous" or
  * "Next": the case name is part of its name for screen readers ("Next Case Study: …", as the end link says), so
- * the label they hear starts with the one on screen (WCAG 2.5.3). A case study is named by its title (CASE_TITLES).
+ * the label they hear starts with the one on screen (WCAG 2.5.3). A case study is named by its title (CASE_NAMES).
  */
 export function CaseNavLink({ from, target, direction, place, onNavigate }: CaseNavLinkProps) {
   const isNext = direction === "next";
@@ -20,7 +20,7 @@ export function CaseNavLink({ from, target, direction, place, onNavigate }: Case
   const arrow = <Icon aria-hidden="true" size={16} className={styles.arrow(isNext)} />;
   const top = place === "top";
   const action = (top ? undefined : target.action) ?? CASE_NAV_ACTION[place][direction];
-  const label = CASE_TITLES[target.view];
+  const label = isCaseView(target.view) ? CASE_NAMES[target.view].title : undefined;
   return (
     <a
       href={hrefForView(target.view)}

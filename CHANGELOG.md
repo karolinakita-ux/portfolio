@@ -6,6 +6,15 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.16.2 - 2026-10-31
+
+#### Changed
+
+- Case names: each case study's 3 names are now written once in the code (`CASE_NAMES` in `src/shared/lib/routes/routes.content.ts`): its title (the page heading and the previous / next links), its card title (the Work card, llms.txt and the search data's CreativeWork) and its short title (the breadcrumb, on the page and in the search data, and the browser tab). Every place reads them from there, so a new name reaches them all at once. Nothing visitors see changes: built before and after, every prerendered page differs only in the script's file name, and llms.txt, the sitemap and the CSS are the same.
+- The page titles (`VIEW_TITLES`) moved to `routes.content.ts` with the names; the case-studies slice's `CASE_TITLES` and the search code's own breadcrumb list are gone, and the case and Work card content no longer carry names. `isCaseView()` now narrows to a case view.
+- Tests: `src/app/case-names.test.tsx` renders each case page and the Work page and checks the heading, breadcrumb, browser tab, previous / next links, Work card, search data and llms.txt against `CASE_NAMES`. It fails when a file outside `routes.content.ts` spells a case name itself (checked with a temporary file that did, and one that named a case only in a comment), and keeps the names in the Work page order. `content-rules.test.ts` checks the names with the rest of the copy.
+- Docs: docs/architecture.md (Rendering and SEO, Adding a page).
+
 ### 5.16.1 - 2026-10-31
 
 #### Fixed

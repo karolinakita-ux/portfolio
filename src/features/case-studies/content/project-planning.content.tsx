@@ -18,9 +18,7 @@ const { shot } = caseShots("project-planning");
 export const PROJECT_PLANNING_CASE: CaseStudy = {
   view: VIEW.caseProjectPlanning,
   id: "planning",
-  shortTitle: "Project Planning",
   eyebrow: ["B2B Enterprise SaaS", "Design System & PrimeNG", "Resource Management"],
-  title: "Enterprise Project Planning & Cost Management Platform",
   meta: [
     {
       label: "My Role",

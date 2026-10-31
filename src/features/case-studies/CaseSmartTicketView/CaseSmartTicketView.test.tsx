@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.ts";
 import { caseCards } from "#features/case-studies/gallery/gallery.utils.ts";
+import { CASE_NAMES } from "#shared/lib/routes/routes.content.ts";
 import { styles as screenshot } from "#shared/media/Screenshot/Screenshot.styles.ts";
 import { cardsBefore, REVEAL, revealing, revealsAround } from "#test/reveal.ts";
 
@@ -103,7 +104,9 @@ describe("CaseSmartTicketView", () => {
     }
     // The first one sits in the case intro, before the first section.
     expect(
-      within(screen.getByRole("region", { name: c.title })).getByRole("link", { name: /^Explore the Figma File/ }),
+      within(screen.getByRole("region", { name: CASE_NAMES[c.view].title })).getByRole("link", {
+        name: /^Explore the Figma File/,
+      }),
     ).toBe(links[0]);
   });
 });
@@ -129,7 +132,7 @@ describe("CaseSmartTicketView scroll reveal", () => {
   it("keeps the intro, the headings, the screens outside cards and the closing lessons still", () => {
     renderCase();
     const still = [
-      screen.getByRole("region", { name: c.title }),
+      screen.getByRole("region", { name: CASE_NAMES[c.view].title }),
       screen.getByRole("heading", { level: 1 }),
       ...screen.getAllByRole("heading", { level: 2 }),
       screen.getByRole("region", { name: c.flow.title }),

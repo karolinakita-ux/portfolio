@@ -11,6 +11,7 @@ import {
 import { WORK_CASES } from "#features/work/index.ts";
 import { PROFILE } from "#shared/content/profile.ts";
 import { VIEW, VIEWS } from "#shared/lib/routes/routes.constants.ts";
+import { CASE_NAMES } from "#shared/lib/routes/routes.content.ts";
 import { isCaseView, titleForView } from "#shared/lib/routes/routes.utils.ts";
 
 import { SITE_URL } from "./seo.constants.ts";
@@ -74,7 +75,7 @@ describe("headFor", () => {
       const work = graph(c.view)[1];
       const card = WORK_CASES.find((item) => item.view === c.view);
       // The name and picture of its card on the Work page.
-      expect(work?.name, c.view).toBe(card?.title);
+      expect(work?.name, c.view).toBe(CASE_NAMES[c.view].cardTitle);
       expect(work?.image, c.view).toBe(`${SITE_URL}/assets/${card?.asset ?? "(none)"}`);
       expect(existsSync(join(process.cwd(), "public", "assets", card?.asset ?? "(none)")), c.view).toBe(true);
       // Its period, as the Timeline or Duration line on the page says.
@@ -95,7 +96,7 @@ describe("headFor", () => {
       (graph(view)[0]?.breadcrumb as { itemListElement: Node[] } | undefined)?.itemListElement ?? [];
     const cases = [SMART_TICKET_CASE, AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE, DATA_GOVERNANCE_CASE];
     for (const c of cases) {
-      expect(crumbs(c.view).map((item) => item.name)).toEqual(["Work", c.shortTitle]);
+      expect(crumbs(c.view).map((item) => item.name)).toEqual(["Work", CASE_NAMES[c.view].shortTitle]);
       expect(crumbs(c.view).map((item) => item.item)).toEqual([SITE_URL + "/", absoluteUrl(c.view)]);
     }
     for (const view of [VIEW.about, VIEW.contact, VIEW.cv, VIEW.privacy, VIEW.accessibility]) {

@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { DATA_GOVERNANCE_CASE } from "#features/case-studies/content/data-governance.content.ts";
 import { caseCards } from "#features/case-studies/gallery/gallery.utils.ts";
+import { CASE_NAMES } from "#shared/lib/routes/routes.content.ts";
 import { cards, cardsBefore, REVEAL, revealing, revealsAround } from "#test/reveal.ts";
 
 import { CaseDataGovernanceView } from "./CaseDataGovernanceView.tsx";
@@ -46,7 +47,7 @@ describe("CaseDataGovernanceView scroll reveal", () => {
       <CaseDataGovernanceView c={DATA_GOVERNANCE_CASE} resolveAsset={resolveAsset} onNavigate={() => undefined} />,
     );
     const still = [
-      screen.getByRole("region", { name: DATA_GOVERNANCE_CASE.title }),
+      screen.getByRole("region", { name: CASE_NAMES[DATA_GOVERNANCE_CASE.view].title }),
       screen.getByRole("heading", { level: 2, name: "The Core Problem: Management Assumption vs. Usability Reality" }),
       screen.getByRole("region", { name: "MVP Delivery & Phased Roadmap" }),
       screen.getByRole("region", { name: "Key Takeaways & Retrospective" }),

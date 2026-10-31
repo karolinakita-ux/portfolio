@@ -10,9 +10,7 @@ const { shot } = caseShots("automotive");
 export const AUTOMOTIVE_CASE: CaseStudy = {
   view: VIEW.caseAutomotive,
   id: "auto",
-  shortTitle: "Automotive Marketplace",
   eyebrow: ["European Automotive B2B", "Discovery, Research & Product Strategy"],
-  title: "Automotive B2B Marketplace: From Dealer Research Across Europe to a Validated Redesign",
   meta: [
     { label: "My Role", value: "Senior UX Designer" },
     {

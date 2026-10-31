@@ -17,9 +17,7 @@ const { shot, singleShot } = caseShots("smart-ticket");
 export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
   view: VIEW.caseSmartTicket,
   id: "ticket",
-  shortTitle: "Smart Ticket",
   eyebrow: ["Public Mobility", "B2C Mobile & B2B Operations", "Design System"],
-  title: "Smart Ticket: Mobile Ticketing & Transit Operations",
   meta: [
     { label: "My Role", value: "2022 - 23: UX/UI Designer · 2026: Senior Product Designer" },
     {

@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import { AUTOMOTIVE_CASE } from "#features/case-studies/content/automotive.content.ts";
 import { PROJECT_PLANNING_CASE } from "#features/case-studies/content/project-planning.content.tsx";
 import { caseCards } from "#features/case-studies/gallery/gallery.utils.ts";
+import { CASE_NAMES } from "#shared/lib/routes/routes.content.ts";
 import { cards, cardsBefore, REVEAL, revealing, revealsAround } from "#test/reveal.ts";
 
 import { CaseStudyView } from "./CaseStudyView.tsx";
@@ -49,11 +50,11 @@ describe("CaseStudyView scroll reveal: every card fades in, except after the imp
   });
 });
 
-describe.each([AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE])("CaseStudyView still parts ($shortTitle)", (c) => {
+describe.each([AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE])("CaseStudyView still parts ($view)", (c) => {
   it("keeps the intro, the headings, the notice and the case navigation still", () => {
     render(<CaseStudyView c={c} resolveAsset={resolveAsset} onNavigate={() => undefined} />);
     const still = [
-      screen.getByRole("region", { name: c.title }),
+      screen.getByRole("region", { name: CASE_NAMES[c.view].title }),
       screen.getByRole("heading", { level: 1 }),
       screen.getByRole("heading", { level: 2, name: c.summaryTitle }),
       screen.getByRole("complementary", { name: c.notice?.label ?? "(no notice)" }),
@@ -127,7 +128,7 @@ describe("CaseStudyView feature sections (Project Planning)", () => {
       // jsdom drops NewTabNote's leading space from the name; browsers keep it (plain-text.test.tsx checks the text).
       expect(link).toHaveAccessibleName(new RegExp("^" + file.linkLabel + " ?\\(opens in a new tab\\)$"));
     }
-    const intro = screen.getByRole("region", { name: PROJECT_PLANNING_CASE.title });
+    const intro = screen.getByRole("region", { name: CASE_NAMES[PROJECT_PLANNING_CASE.view].title });
     expect(intro).toContainElement(links[0] ?? null);
   });
 

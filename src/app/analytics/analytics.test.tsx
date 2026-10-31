@@ -14,6 +14,7 @@ import type * as Analytics from "#shared/lib/analytics/analytics.utils.ts";
 import { track, trackPageview } from "#shared/lib/analytics/analytics.utils.ts";
 import { describeClick } from "#shared/lib/analytics/clicks.utils.ts";
 import { SECTION, VIEW_PATHS, VIEWS } from "#shared/lib/routes/routes.constants.ts";
+import { CASE_NAMES } from "#shared/lib/routes/routes.content.ts";
 
 /**
  * Which visits and clicks the app counts (src/shared/lib/analytics/analytics.utils.ts): the helpers are mocked,
@@ -97,7 +98,8 @@ describe("events on the Work page", () => {
     const { user } = renderApp("/");
     const [first] = WORK_CASES;
     if (!first) throw new Error("no case cards");
-    await user.click(within(screen.getByRole("article", { name: first.title })).getByRole("link", { name: first.cta }));
+    const card = within(screen.getByRole("article", { name: CASE_NAMES[first.view].cardTitle }));
+    await user.click(card.getByRole("link", { name: first.cta }));
     expect(events()).toEqual([[EVENT.caseOpen, { case: first.view, from: "card-link" }]]);
 
     await user.click(within(screen.getByRole("navigation", { name: "Primary" })).getByRole("link", { name: "Work" }));
@@ -368,7 +370,8 @@ describe("dead clicks", () => {
     renderApp("/");
     const [first] = WORK_CASES;
     if (!first) throw new Error("no case cards");
-    const card = within(screen.getByRole("article", { name: first.title }));
+    const title = CASE_NAMES[first.view].cardTitle;
+    const card = within(screen.getByRole("article", { name: title }));
     expect(describeClick(screen.getByRole("heading", { level: 1 }))).toMatchObject({
       element: "heading",
       area: "hero",
@@ -376,12 +379,12 @@ describe("dead clicks", () => {
     expect(describeClick(card.getByText(first.summary))).toEqual({
       element: "text",
       area: SECTION.workCases,
-      label: first.title,
+      label: title,
     });
-    expect(describeClick(card.getByRole("heading", { name: first.title }))).toEqual({
+    expect(describeClick(card.getByRole("heading", { name: title }))).toEqual({
       element: "heading",
       area: SECTION.workCases,
-      label: first.title,
+      label: title,
     });
   });
 

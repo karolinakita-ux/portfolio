@@ -2,6 +2,7 @@ import { useId } from "react";
 
 import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import { track } from "#shared/lib/analytics/analytics.utils.ts";
+import { CASE_NAMES } from "#shared/lib/routes/routes.content.ts";
 import { hrefForView } from "#shared/lib/routes/routes.utils.ts";
 import { CaseThumbnail } from "#shared/media/CaseThumbnail/CaseThumbnail.tsx";
 import { Button } from "#shared/ui/Button/Button.tsx";
@@ -14,9 +15,13 @@ import { VisuallyHidden } from "#shared/ui/VisuallyHidden/VisuallyHidden.tsx";
 import { styles } from "./CaseCard.styles.ts";
 import type { CaseCardProps } from "./CaseCard.types.ts";
 
-/** Static container: the CTA link, plus the thumbnail for mouse and touch. Both are counted (case-open). */
+/**
+ * Static container: the CTA link, plus the thumbnail for mouse and touch. Both are counted (case-open). The title is
+ * the case's card title (CASE_NAMES).
+ */
 export function CaseCard({ item, resolveAsset, onNavigate }: CaseCardProps) {
   const titleId = useId();
+  const title = CASE_NAMES[item.view].cardTitle;
   return (
     <Card layout="media" gap="lg" aria-labelledby={titleId} className={styles.root}>
       {/* The thumbnail opens the case study too (mouse and touch). Keyboard and screen reader users get the
@@ -39,13 +44,13 @@ export function CaseCard({ item, resolveAsset, onNavigate }: CaseCardProps) {
           onClick={() => track(EVENT.caseOpen, { case: item.view, from: "thumbnail" })}
           className={styles.thumbnailLink}
         >
-          <VisuallyHidden>{item.title}</VisuallyHidden>
+          <VisuallyHidden>{title}</VisuallyHidden>
         </ViewLink>
       </div>
       <div className={styles.body}>
         <Eyebrow parts={item.eyebrow} />
         <h3 id={titleId} className={styles.title}>
-          {item.title}
+          {title}
         </h3>
         <p className={styles.summary}>{item.summary}</p>
         <Button

@@ -51,7 +51,6 @@ const CASES: readonly WorkCase[] = [
     darkAsset: "cases/smart-ticket/thumbnail-dark.webp",
     alt: "The Smart Ticket operations console with fare revenue and an hourly boarding chart, beside a phone showing an active offline ticket with a QR code.",
     eyebrow: ["Public Mobility", "B2C Mobile & B2B Operations"],
-    title: "Smart Ticket: Mobile Ticketing & Transit Operations",
     summary:
       "Rebuilt a 2022 transit ticketing concept into a token-based system: offline QR passes, buy-now-start-later boarding and a privacy-safe operations console for transit staff, checked against WCAG 2.2 and European transit data standards.",
     cta: "View Case Study",
@@ -63,7 +62,6 @@ const CASES: readonly WorkCase[] = [
     darkAsset: "cases/data-governance/thumbnail-dark.webp",
     alt: "The same data table in a read-only base theme and in a custom tenant theme under a tritanopia simulation, beside contrast guardrails that pick readable text colours automatically.",
     eyebrow: ["Enterprise Systems", "Multi-Tenant Architecture & Accessibility"],
-    title: "Enterprise White-Label Theme Generator",
     summary:
       "Designed a visual theme generator for non-technical users, with raw CSS kept as an advanced option. Text colour is picked by contrast so custom themes stay readable, and developers got clear rules for states like hover.",
     cta: "View Case Study",
@@ -78,7 +76,6 @@ const CASES: readonly WorkCase[] = [
     // without it.
     alt: "Sample project dashboards: a goals and milestones timeline, a budget burn table that marks each project’s status with 1 project over budget, and a card that turns a project orange at 80% and red at 100% of its budget.",
     eyebrow: ["B2B Enterprise SaaS", "Design System & PrimeNG"],
-    title: "Project Planning & Cost Management Platform",
     summary:
       "Designed a desktop platform for time tracking, meeting cost, project budgets and portfolio reporting, built on PrimeNG design tokens in Light and Dark mode. Mentored a UX intern and labelled every new piece of business logic as a proposal for client sign-off.",
     cta: "View Case Study",
@@ -90,7 +87,6 @@ const CASES: readonly WorkCase[] = [
     darkAsset: "cases/automotive/thumbnail-dark.webp",
     alt: "A contrast check of the marketplace status chips, a vehicle basket with mixed funding and a vehicle detail page with Great Deal and Bid & Buy Now tags.",
     eyebrow: ["European Automotive B2B", "Discovery, Research & Product Strategy"],
-    title: "Automotive B2B Marketplace Redesign",
     summary:
       "Researched how dealers in 7 European markets buy used cars, audited the live platform and a coded prototype, and designed the buyer flows from basket to checkout. In testing, 6 UK dealers completed 91.6% of tasks.",
     cta: "View Case Study",
