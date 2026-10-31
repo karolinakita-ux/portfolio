@@ -8,7 +8,8 @@
  * - a drag that pans the zoomed image is not a click;
  * - zoom is instant, with or without reduced motion;
  * - on a touch screen a tap zooms the same way, and at 320px the toolbar holds Previous, the zoom controls and Next
- *   in one row;
+ *   in one row; narrower (200% page zoom or text size on a phone) the zoom controls take a centred row of their own,
+ *   inside the panel and without sideways scrolling;
  * - on an Android phone in Messenger's in-app browser (tag @android: the "android" project, real flings and pinches):
  *   the zoom buttons with 40px touch targets, tap to zoom at once, and a swipe, a pan, a fling and a pinch that do not
  *   zoom the image.
@@ -300,6 +301,63 @@ test("at 320px the toolbar holds Previous, the zoom controls and Next in one row
   await page.touchscreen.tap(point.x, point.y);
   await expect(readout).toHaveText("200%");
   await page.context().close();
+});
+
+/**
+ * Where the one row does not fit (a phone with a larger text size or page zoom), Previous and Next keep the first
+ * row and the zoom controls take a centred row under them: every control stays inside the panel, the dialog does
+ * not scroll sideways (WCAG 1.4.4), and the controls still work.
+ */
+async function expectTwoRows(page: Page) {
+  const { dialog, readout, zoomIn, zoomOut } = await openViewer(page);
+  const previous = dialog.getByRole("button", { name: "Previous image" });
+  const next = dialog.getByRole("button", { name: "Next image" });
+  const boxes = [];
+  for (const control of [previous, next, zoomOut, readout, zoomIn]) {
+    const box = await control.boundingBox();
+    if (!box) throw new Error("a control has no box");
+    boxes.push(box);
+  }
+  const panel = await dialog.getByRole("figure").boundingBox();
+  const [first, last, out, level, into] = boxes;
+  if (!panel || !first || !last || !out || !level || !into) throw new Error("the panel has no box");
+  for (const box of boxes) {
+    expect(box.x, "inside the panel").toBeGreaterThanOrEqual(panel.x);
+    expect(box.x + box.width, "inside the panel").toBeLessThanOrEqual(panel.x + panel.width);
+  }
+  const middle = (box: { y: number; height: number }) => box.y + box.height / 2;
+  expect(Math.abs(middle(last) - middle(first)), "Previous and Next on one row").toBeLessThanOrEqual(1);
+  expect(Math.abs(middle(level) - middle(out)), "the zoom controls on one row").toBeLessThanOrEqual(1);
+  expect(Math.abs(middle(into) - middle(out)), "the zoom controls on one row").toBeLessThanOrEqual(1);
+  expect(out.y, "the zoom controls under Previous and Next").toBeGreaterThanOrEqual(first.y + first.height);
+  const centre = (out.x + into.x + into.width) / 2 - (panel.x + panel.width / 2);
+  expect(Math.abs(centre), "the zoom controls centred").toBeLessThanOrEqual(1);
+  expect(await dialog.evaluate((element) => element.scrollWidth - element.clientWidth), "no sideways scroll").toBe(0);
+
+  await zoomIn.tap();
+  await expect(readout).toHaveText("150%");
+  await zoomOut.tap();
+  await expect(readout).toHaveText("Fit");
+}
+
+test("at 200% page zoom on a phone (195px) the zoom controls take a row of their own", async ({ browser }) => {
+  const page = await touchPage(browser, 195, 422); // a 390px phone at 200%
+  await expectTwoRows(page);
+  await page.context().close();
+});
+
+test("with a 200% text size on a phone the zoom controls take a row of their own", async ({ browser, browserName }) => {
+  test.skip(browserName !== "chromium", "the browser's text size is set through Chromium's DevTools protocol");
+  const context = await browser.newContext({ hasTouch: true, viewport: { width: 390, height: 844 } });
+  const page = await context.newPage();
+  // As the browser's own font-size setting sets it (yarn a11y, checkLargeText: 32px).
+  const devtools = await context.newCDPSession(page);
+  await devtools.send("Page.enable");
+  await devtools.send("Page.setFontSizes", { fontSizes: { standard: 32, fixed: 26 } });
+  await openView(page, CASE);
+  expect(await page.evaluate(() => getComputedStyle(document.documentElement).fontSize)).toBe("32px");
+  await expectTwoRows(page);
+  await context.close();
 });
 
 test.describe("on an Android phone in Messenger", { tag: "@android" }, () => {

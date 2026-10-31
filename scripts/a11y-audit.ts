@@ -7,7 +7,8 @@
  *   - the Tab order, with each stop's focus style, size, position and whether anything hides it
  *     (WCAG 2.4.11), also with the statistics consent box showing
  *   - horizontal overflow at 320 px wide (WCAG 1.4.10 Reflow)
- *   - the browser's default text size at 200%: no sideways scrolling, no text cut off (WCAG 1.4.4)
+ *   - the browser's default text size at 200%: no sideways scrolling, no text cut off (WCAG 1.4.4), in the image
+ *     viewer too
  *   - forced colours (Windows contrast themes): a focus outline on every Tab stop, and a screenshot per view
  * plus the image viewer: opened, zoomed, Tab containment and focus return on Escape.
  * The checks live in scripts/a11y/.

@@ -6,6 +6,18 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.16.3 - 2026-10-31
+
+#### Fixed
+
+- Image viewer: on a phone with a larger text size or page zoom (200% text at 390px, a 390px phone at 200% zoom, any panel narrower than 14rem), the toolbar no longer runs off the panel. Previous and Next keep the first row and the zoom controls take a centred row under them; the dialog no longer scrolls sideways (WCAG 1.4.4, a regression from 5.16.0). Where the one row fits (a 320px phone with the default text size, and anything wider), nothing changes. The Tab order stays Previous, zoom, Next. New layout width `viewer-toolbar` (14rem) in `theme.css`.
+- CV: the UX/UI Designer (2019 - 2023) bullets no longer read as a copy of the Senior role's. "Multi-Tenant White-Labelling" puts the self-service theming first and spells out role-based access control (RBAC). "Colour Contrast (WCAG 2.1 AA)" replaces "WCAG Accessibility Audits", which repeated the Senior lead-in with a word added. The research line names usability benchmarking, as her GlobalLogic Poland research does, instead of usability tests. The PDF is remade and keeps 2 pages.
+
+#### Changed
+
+- Tests: `content-rules.test.ts` fails when a CV lead-in holds another one of the same employer whole (`nestedPhrases` in `src/test/copy-rules.ts`; checked with the old lead-ins, which fail, and the new ones). `e2e/image-zoom.e2e.ts` opens the viewer at 195px and, in Chromium, at 390px with a 32px text size: every control inside the panel, the zoom controls on a centred second row, no sideways scroll, and the controls work. `yarn a11y` opens the viewer in its large-text check too (no sideways scroll, every control inside the panel, no text cut off). Both fail on the one-row toolbar of 5.16.0.
+- Automotive: My Role stays "Senior UX Designer", her role on that project (Karolina, 2026-10-31); a code comment now says so.
+
 ### 5.16.2 - 2026-10-31
 
 #### Changed

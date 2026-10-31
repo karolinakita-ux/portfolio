@@ -41,6 +41,7 @@ import { Strong } from "#shared/ui/Strong/Strong.tsx";
 import {
   currencyMisses,
   frontEndSpellings,
+  nestedPhrases,
   spelledCounts,
   straightQuotes,
   themeWording,
@@ -641,6 +642,11 @@ describe("CV", () => {
     const bullets = entries.flatMap((entry) => entry.bullets);
     expect(new Set(bullets.map((bullet) => bullet.lead)).size).toBe(bullets.length);
     expect(new Set(bullets.map((bullet) => bullet.text)).size).toBe(bullets.length);
+    // One employer's titles do not read as one list twice: no lead-in is another one with a word added.
+    for (const org of new Set(CV.experience.map((job) => job.org[0]))) {
+      const jobs = CV.experience.filter((job) => job.org[0] === org);
+      expect(nestedPhrases(jobs.flatMap((job) => job.bullets.map((bullet) => bullet.lead))), org).toEqual([]);
+    }
     // The earlier title claims no leading, strategy, roadmaps or workshops: those were the Senior role's.
     const earlier = CV.experience.filter((job) => job.title === "UX/UI Designer").flatMap((job) => job.bullets);
     expect(earlier.length).toBeGreaterThan(0);

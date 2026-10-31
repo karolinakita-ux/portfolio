@@ -40,6 +40,34 @@ async function dialogTabStops(page: Page): Promise<TabStop[]> {
   return stops;
 }
 
+/**
+ * The image viewer opened with the large text size (checkLargeText): its toolbar wraps rather than leaving the panel,
+ * so the dialog does not scroll sideways and every control sits inside the panel (WCAG 1.4.4). Returns what breaks.
+ */
+export async function openLightboxMisses(page: Page, base: string): Promise<string[]> {
+  await openView(page, base, LIGHTBOX_VIEW);
+  await page
+    .getByRole("button", { name: /^View full size/ })
+    .first()
+    .click();
+  const dialog = page.locator("dialog[open]");
+  await dialog.waitFor();
+  await page.waitForTimeout(300);
+  return dialog.evaluate((element) => {
+    const misses: string[] = [];
+    const sideways = element.scrollWidth - element.clientWidth;
+    if (sideways > 1) misses.push(`the dialog scrolls ${sideways}px sideways`);
+    const panel = element.querySelector("figure")?.getBoundingClientRect();
+    if (!panel) return [...misses, "no panel"];
+    for (const control of element.querySelectorAll<HTMLElement>("figure button, figure [role='group'] p")) {
+      const box = control.getBoundingClientRect();
+      if (box.width > 0 && (box.left < panel.left - 1 || box.right > panel.right + 1))
+        misses.push(`"${control.getAttribute("aria-label") ?? control.textContent.trim()}" outside the panel`);
+    }
+    return misses;
+  });
+}
+
 /** 4. Image viewer: open, axe, screen reader inside the dialog, Tab containment, zoom, Escape. */
 export async function checkLightbox({ browser, base, vsrBundle, axeRuns, notes }: AuditContext): Promise<void> {
   for (const viewport of Object.keys(VIEWPORTS) as ViewportName[]) {

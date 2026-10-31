@@ -172,6 +172,9 @@
   --container-phone: 17.5rem;
   /* The CV sheet on screen: Figma's A4 frame at 96 dpi, 794px wide. */
   --container-sheet: 49.625rem;
+  /* The image viewer's toolbar in one row (LightboxToolbar): Previous, Zoom out, the zoom level, Zoom in and Next,
+     4 buttons of 2rem, the 3rem level and the gaps. Narrower (a larger text size, page zoom), it takes two rows. */
+  --container-viewer-toolbar: 14rem;
 
   /* Aspect ratios */
   --aspect-thumb: 4 / 3;
