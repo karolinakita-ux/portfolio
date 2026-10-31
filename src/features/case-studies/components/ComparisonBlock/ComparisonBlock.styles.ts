@@ -1,7 +1,8 @@
 import { clsx } from "clsx";
 
 export const styles = {
-  root: clsx("flex flex-col gap-lg"),
+  /** A card in the middle of a case study: it fades up as it scrolls into view, like the screenshot rows. */
+  root: clsx("flex reveal-on-scroll flex-col gap-lg"),
   header: clsx("flex flex-col gap-xs"),
   title: clsx("text-title-lg text-balance text-text-primary"),
   intro: clsx("text-body-lg text-text-secondary"),

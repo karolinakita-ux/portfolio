@@ -48,6 +48,41 @@ describe("useSectionHash", () => {
     expect(window.location.hash).toBe("");
   });
 
+  it("puts a linkable banner inside a section (Behind the Design) in the hash while it is read", async () => {
+    window.history.replaceState({ kbView: "work" }, "", "/");
+    function WorkPage() {
+      useSectionHash(0);
+      return (
+        <main>
+          <section id="enterprise-cases" data-anchor="">
+            <aside id="behind-the-design" data-anchor="" />
+          </section>
+          <section id="testimonials" data-anchor="" />
+        </main>
+      );
+    }
+    render(<WorkPage />);
+    const line = window.innerHeight * 0.3;
+    const place = (tops: Record<string, number>) => {
+      for (const [id, top] of Object.entries(tops)) {
+        const element = document.getElementById(id);
+        if (element) element.getBoundingClientRect = () => ({ top }) as DOMRect;
+      }
+    };
+
+    place({ "enterprise-cases": -2000, "behind-the-design": line + 100, testimonials: line + 600 });
+    await scroll();
+    expect(window.location.hash).toBe("#enterprise-cases");
+
+    place({ "enterprise-cases": -2400, "behind-the-design": line - 10, testimonials: line + 300 });
+    await scroll();
+    expect(window.location.hash).toBe("#behind-the-design");
+
+    place({ "enterprise-cases": -2800, "behind-the-design": -400, testimonials: line - 10 });
+    await scroll();
+    expect(window.location.hash).toBe("#testimonials");
+  });
+
   it("moves the hash past a tracker's wrapper on history.replaceState: reading is not a new page", async () => {
     window.history.replaceState({ kbView: "about" }, "", "/about");
     const wrapper = vi.fn(); // Umami's tracker wraps the method on the history object itself

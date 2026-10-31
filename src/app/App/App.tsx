@@ -14,7 +14,7 @@ import { SiteHeader } from "#shared/layout/SiteHeader/SiteHeader.tsx";
 import { VIEW } from "#shared/lib/routes/routes.constants.ts";
 import { prefersReducedMotion } from "#shared/lib/ui/ui.utils.ts";
 
-import { VIEW_RENDERERS } from "./App.constants.tsx";
+import { ASSET_BASE, VIEW_RENDERERS } from "./App.constants.tsx";
 import { styles } from "./App.styles.ts";
 import type { AppProps } from "./App.types.ts";
 import { usePreloadCaseImages } from "./usePreloadCaseImages.ts";
@@ -35,7 +35,7 @@ import { usePreloadCaseImages } from "./usePreloadCaseImages.ts";
  * remounts and fades in, a jump within the same view only scrolls; Back / Forward restore
  * the scroll position of that entry. useSectionHash keeps the hash on the section in view.
  */
-export function App({ assetBase = "/assets", portraitSrc = assetBase + "/site/portrait.webp" }: AppProps) {
+export function App({ assetBase = ASSET_BASE, portraitSrc = assetBase + "/site/portrait.webp" }: AppProps) {
   const [theme, pickTheme] = useTheme();
   const [route, navigate] = useHistoryRoute(VIEW.work);
   const mainRef = useRef<HTMLElement>(null);
@@ -49,14 +49,14 @@ export function App({ assetBase = "/assets", portraitSrc = assetBase + "/site/po
   useSectionHash(route.key);
   useRouteFocus(route, mainRef);
 
-  /** Logo: home reset. Already home → glide to top without re-mounting the view. */
+  /** Logo: home reset. Already home → glide to top without re-mounting the view; elsewhere Work starts at its top. */
   const goHome = useCallback(() => {
     if (route.view === VIEW.work) {
       window.scrollTo({ top: 0, behavior: prefersReducedMotion() ? "auto" : "smooth" });
       mainRef.current?.focus({ preventScroll: true });
       return;
     }
-    navigate(VIEW.work, null, { smooth: true });
+    navigate(VIEW.work);
   }, [route.view, navigate]);
 
   const backToTop = useCallback(() => {

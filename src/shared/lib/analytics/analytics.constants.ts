@@ -20,6 +20,7 @@ export const EVENT = {
   caseNav: "case-nav",
   imageOpen: "image-open",
   imageNav: "image-nav",
+  imageZoom: "image-zoom",
   figmaClick: "figma-click",
   githubClick: "github-click",
   storybookClick: "storybook-click",
@@ -66,6 +67,19 @@ export const KEPT_PARAMS: readonly string[] = [
   "utm_term",
   "utm_content",
 ];
+
+/**
+ * Link tags (?ref=) the site writes into its own links; link-ref and the session's `ref` show them. The tags
+ * Karolina adds by hand (/cv?ref=acme, ?ref=linkedin-post) are not here. docs/analytics.md (Tagged links) lists
+ * each one (tracking-plan.test.ts).
+ */
+export const LINK_REF = {
+  /**
+   * A section's address copied with the link button beside its heading (HeadingAnchor). A copier who came from a
+   * tagged link passes that tag on instead, with this as utm_medium (sectionLinkQuery in link-tags.utils.ts).
+   */
+  sectionLink: "section-link",
+} as const;
 
 /** Load metrics in the tracker's speed report: they belong to the page the browser loaded (payload.utils.ts). */
 export const LOAD_METRICS = ["ttfb", "fcp", "lcp"] as const;

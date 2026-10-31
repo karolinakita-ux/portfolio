@@ -11,7 +11,7 @@ export function Button(props: ButtonProps) {
     <>
       {IconLeft && <IconLeft aria-hidden="true" size={16} className={styles.iconLeft} />}
       <span>{props.children}</span>
-      {IconRight && <IconRight aria-hidden="true" size={16} className={styles.iconRight} />}
+      {IconRight && <IconRight aria-hidden="true" size={16} className={styles.iconRight(IconRight.displayName)} />}
     </>
   );
 

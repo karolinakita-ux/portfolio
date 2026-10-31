@@ -8,6 +8,7 @@ import {
   readRoute,
   resolveView,
   setHashRouting,
+  sharedSectionUrl,
   titleForView,
   urlForView,
   urlWithAnchor,
@@ -76,9 +77,22 @@ describe("viewForPath", () => {
     expect(viewForPath("/projects")).toBe(VIEW.work);
   });
 
+  it.each([
+    ["/about.html", VIEW.about],
+    ["/about/index.html", VIEW.about],
+    ["/index.html", VIEW.work],
+    ["/work/automotive.html", VIEW.caseAutomotive],
+    ["/work/automotive/index.html", VIEW.caseAutomotive],
+    ["/CV.HTML", VIEW.cv],
+  ])("opens the prerendered file form %s as its page, not Work", (path, view) => {
+    expect(viewForPath(path)).toBe(view);
+  });
+
   it("returns null for unknown paths", () => {
     expect(viewForPath("/blog")).toBeNull();
     expect(viewForPath("/work/unknown")).toBeNull();
+    expect(viewForPath("/blog.html")).toBeNull();
+    expect(viewForPath("/work/unknown/index.html")).toBeNull();
   });
 });
 
@@ -97,8 +111,20 @@ describe("readRoute", () => {
     expect(at(url)).toEqual({ view, anchor: null });
   });
 
+  it("reads a file-form address with its section, so the first load can change it to the page's path", () => {
+    expect(at("/about.html#career")).toEqual({ view: VIEW.about, anchor: "career" });
+  });
+
   it("treats other hashes on the root as section anchors", () => {
     expect(at("/#enterprise-cases")).toEqual({ view: VIEW.work, anchor: "enterprise-cases" });
+    expect(at("/#behind-the-design")).toEqual({ view: VIEW.work, anchor: SECTION.behindTheDesign });
+  });
+
+  it("never gives a section anchor the name of a view or alias, which would open that view instead", () => {
+    for (const anchor of Object.values(SECTION)) {
+      expect(resolveView(anchor), anchor).toBeNull();
+      expect(at("/#" + anchor)).toEqual({ view: VIEW.work, anchor });
+    }
   });
 
   it("no longer knows the removed cover letter page", () => {
@@ -108,6 +134,20 @@ describe("readRoute", () => {
 
   it("survives malformed percent-encoding", () => {
     expect(at("/about#%E0%A4%A")).toEqual({ view: VIEW.about, anchor: null });
+  });
+
+  it.each([
+    ["/about#career?fbclid=IwAR0abc", VIEW.about, "career"],
+    ["/about#career&fbclid=IwAR0abc", VIEW.about, "career"],
+    ["/about?ref=section-link#career?fbclid=IwAR0abc&utm_source=x", VIEW.about, "career"],
+    ["/#enterprise-cases?fbclid=IwAR0abc", VIEW.work, "enterprise-cases"],
+    ["/about#?fbclid=IwAR0abc", VIEW.about, null],
+  ])("reads the section in %s without the tracking tag an app wrote after the hash", (url, view, anchor) => {
+    expect(at(url)).toEqual({ view, anchor });
+  });
+
+  it("still redirects an old hash link with a tracking tag after it", () => {
+    expect(at("/#about?fbclid=IwAR0abc")).toEqual({ view: VIEW.about, anchor: null });
   });
 });
 
@@ -124,6 +164,23 @@ describe("address-bar URLs", () => {
     expect(urlForView(VIEW.about, "career", { pathname: "/", search: "?ref=cv" })).toBe("/about?ref=cv#career");
     expect(urlWithAnchor({ pathname: "/about", search: "", hash: "#faq" }, "career")).toBe("/about#career");
     expect(urlWithAnchor({ pathname: "/about", search: "", hash: "#faq" }, null)).toBe("/about");
+  });
+});
+
+describe("shared section links", () => {
+  it("carry the page's own path, the given query in place of the current one, and the anchor", () => {
+    const here = (pathname: string, search = "") => ({ pathname, search, hash: "#faq" });
+    expect(sharedSectionUrl(here("/about", "?ref=acme&fbclid=IwAR0abc"), "career", "?ref=acme&utm_medium=x")).toBe(
+      "/about?ref=acme&utm_medium=x#career",
+    );
+    expect(sharedSectionUrl(here("/"), "behind-the-design", "?ref=section-link")).toBe(
+      "/?ref=section-link#behind-the-design",
+    );
+    // The file forms and a trailing slash share the page's own path.
+    expect(sharedSectionUrl(here("/work/automotive.html"), "impact", "?ref=section-link")).toBe(
+      "/work/automotive?ref=section-link#impact",
+    );
+    expect(sharedSectionUrl(here("/about/", "?ref=acme"), "faq", "")).toBe("/about#faq");
   });
 });
 
@@ -149,6 +206,10 @@ describe("hash routing (one-page builds, e.g. the claude.ai artifact)", () => {
     });
     expect(readRoute({ pathname: page, hash: "#/about#career" })).toEqual({ view: VIEW.about, anchor: "career" });
     expect(readRoute({ pathname: page, hash: "#about" })).toEqual({ view: VIEW.about, anchor: null }); // old view hash
+    expect(readRoute({ pathname: page, hash: "#/about#career?fbclid=IwAR0abc" })).toEqual({
+      view: VIEW.about,
+      anchor: "career",
+    });
   });
 
   it("keeps the page's own path and query string in addresses", () => {
@@ -156,6 +217,8 @@ describe("hash routing (one-page builds, e.g. the claude.ai artifact)", () => {
     expect(urlForView(VIEW.contact, null, here)).toBe(page + "?ref=cv#/contact");
     expect(urlWithAnchor(here, "career")).toBe(page + "?ref=cv#/about#career");
     expect(urlWithAnchor(here, null)).toBe(page + "?ref=cv#/about");
+    // The statistics never run in a one-page build: a shared section link keeps the page's own address.
+    expect(sharedSectionUrl(here, "career", "?ref=section-link")).toBe(page + "?ref=cv#/about#career");
   });
 });
 

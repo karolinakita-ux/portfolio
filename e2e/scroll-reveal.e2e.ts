@@ -1,12 +1,15 @@
 /**
- * Scroll reveal on cards (`reveal-on-scroll` in src/styles/app.css). The contract:
- * - Where the browser has scroll-driven animations (CSS.supports("animation-timeline: view()"))
- *   and motion is allowed, a card below the viewport waits transparent and 16px low (spacingMd).
- *   It fades up over the first 96px (spacing4xl) of scrolling after its top enters the viewport,
- *   then is exactly its own state again: opacity 1, no translate. It follows the scroll position,
- *   so scrolling back hides it again below the fold.
+ * Scroll reveal on cards (`reveal-on-scroll` in src/styles/utilities.css; which cards: docs/motion.md). The contract:
+ * - Where the browser has scroll-driven animations (CSS.supports("animation-timeline: view()")),
+ *   motion is allowed and the window is at least tablet width (md, 48rem: 768px at the default text
+ *   size), a card below the viewport waits transparent and 16px low. It fades up over the first 96px
+ *   of scrolling after its top enters the viewport, then is exactly its own state again: opacity 1,
+ *   no translate. It follows the scroll position, so scrolling back hides it again below the fold.
+ * - On phones (below md) every card simply shows, with no animation, at any scroll position.
  * - Nothing moves at page load: a card inside the viewport is fully shown from the first frame
  *   (prerendered HTML and the React takeover included).
+ * - A card that holds keyboard focus is fully shown, even part-way into its reveal (Firefox does not
+ *   scroll a partly visible focused element further in), and follows the scroll again once focus leaves.
  * - Jumping to the case studies (link, button) leaves the first case card fully shown.
  * - Reduced motion, print and browsers without scroll-driven animations: every card is fully
  *   shown, with no animation, at any scroll position.
@@ -15,8 +18,8 @@
  *   on that card's text, because it applies the card's opacity and ignores the viewport: the
  *   flagged text is below the fold or cut by the viewport edge. A line of text is fully on screen
  *   only once the card is far enough in to pass; the early-reveal test holds axe to exactly that.
- * Bundled engines (Playwright 1.64): Chromium and WebKit support it; Firefox does not (behind a
- * pref there), so it runs the fallback expectations.
+ * Engines: Chromium and WebKit support it. Firefox 159 turns it on; the Firefox that Playwright 1.64 bundles (157)
+ * has it behind a pref, which playwright.config.ts switches on, so all three run the reveal's expectations.
  */
 import { AxeBuilder } from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
@@ -38,6 +41,8 @@ const OFFSET_PX = 16;
 const HALF_PX = REVEAL_PX / 2;
 /** Early in a reveal: the card's top this far inside the viewport, its text still faint. */
 const EARLY_PX = [12, 24, 36];
+/** --breakpoint-md (48rem) at the default text size: the reveal runs from this window width up. */
+const MD_PX = 768;
 /** Same tags as scripts/a11y-audit.ts (without best-practice hints). */
 const WCAG_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22a", "wcag22aa"];
 
@@ -451,33 +456,76 @@ test.describe("motion allowed", () => {
   });
 
   for (const [viewportName, viewport] of Object.entries(VIEWPORTS)) {
+    const rule =
+      viewport.width >= MD_PX
+        ? "every card where its scroll position says"
+        : "every card simply shows (the reveal starts at tablet width)";
     for (const path of PAGES) {
-      test(`${path} at ${viewportName} width: every card where its scroll position says, top to bottom`, async ({
-        page,
-      }) => {
+      test(`${path} at ${viewportName} width: ${rule}, top to bottom`, async ({ page }) => {
         await page.setViewportSize(viewport);
         await openCards(page, path);
-        const supported = await supportsScrollTimelines(page);
+        const reveals = (await supportsScrollTimelines(page)) && viewport.width >= MD_PX;
 
         const problems: string[] = [];
         let stops = 0;
         await walkToBottom(page, (snap) => {
           expect(snap.cards.length, "revealing cards on the page").toBeGreaterThan(0);
-          problems.push(...(supported ? revealProblems(snap) : shownProblems(snap)));
+          problems.push(...(reveals ? revealProblems(snap) : shownProblems(snap)));
           stops++;
         });
         expect(stops, "scroll stops").toBeGreaterThan(1);
-        expect(problems, supported ? "cards out of step with the scroll" : "cards not fully shown").toEqual([]);
+        expect(problems, reveals ? "cards out of step with the scroll" : "cards not fully shown").toEqual([]);
 
         const halfWay: string[] = [];
         const placed = await eachCardHalfWay(page, (card, snap) => {
-          if (!(supported ? isHalfWay(card) : isShown(card))) halfWay.push(describeCard(card, snap));
+          if (!(reveals ? isHalfWay(card) : isShown(card))) halfWay.push(describeCard(card, snap));
         });
         expect(placed, "cards placed half-way").toBeGreaterThan(0);
-        expect(halfWay, supported ? "half-way cards that are not part-way" : "cards not fully shown").toEqual([]);
+        expect(halfWay, reveals ? "half-way cards that are not part-way" : "cards not fully shown").toEqual([]);
       });
     }
   }
+
+  test("a card holding keyboard focus is shown in full, and follows the scroll again once focus leaves", async ({
+    page,
+  }) => {
+    await openCards(page, VIEW_PATHS[VIEW.work]);
+    const supported = await supportsScrollTimelines(page);
+    const lastCase = WORK_CASES.at(-1);
+    if (!lastCase) throw new Error("no case studies in WORK_CASES");
+    const index = (await scrollToY(page, 0)).cards.findIndex((candidate) => candidate.name === lastCase.title);
+    const inside = EARLY_PX[1] ?? 24;
+    const placed = await placeCard(page, index, inside);
+    const card = placed?.cards[index];
+    if (!placed || !card) throw new Error("the page does not scroll far enough to place the card");
+    expectPlaced(placed, card, inside);
+    if (supported) expect(isShown(card), `early in its reveal: ${describeCard(card, placed)}`).toBe(false);
+
+    // Focus its link where it is: Firefox does not scroll a partly visible focused element further in.
+    const link = page
+      .getByRole("article", { name: lastCase.title })
+      .getByRole("link", { name: lastCase.cta, exact: true });
+    await link.evaluate((element: HTMLElement) => {
+      element.focus({ preventScroll: true });
+    });
+    const focused = await scrollToY(page, placed.scrollY);
+    const focusedCard = focused.cards[index];
+    if (!focusedCard) throw new Error("the card is gone");
+    expect(focused.scrollY, "focusing did not scroll").toBe(placed.scrollY);
+    expect(isShown(focusedCard), `with focus inside: ${describeCard(focusedCard, focused)}`).toBe(true);
+
+    await link.evaluate((element: HTMLElement) => {
+      element.blur();
+    });
+    const left = await scrollToY(page, placed.scrollY);
+    const leftCard = left.cards[index];
+    if (!leftCard) throw new Error("the card is gone");
+    expect(
+      supported ? revealProblems(left) : shownProblems(left),
+      "focus gone: where its scroll position says again",
+    ).toEqual([]);
+    if (supported) expect(isShown(leftCard), `focus gone: part-way again: ${describeCard(leftCard, left)}`).toBe(false);
+  });
 
   for (const [viewportName, viewport] of Object.entries({ desktop: VIEWPORTS.desktop, tall: TALL })) {
     for (const path of PAGES) {

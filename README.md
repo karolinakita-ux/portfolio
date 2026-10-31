@@ -10,7 +10,7 @@ Designed by Karolina in Figma and built with [Claude Code](docs/claude-code.md):
 - **Component library in Storybook.** Every shared component has stories with its Figma variants and real copy, published at [karolina.kita.company/storybook](https://karolina.kita.company/storybook/) with a welcome page on the design system. Each story is also a test: it renders, runs its interaction checks and passes axe. [Storybook](docs/architecture.md#storybook)
 - **Vertical slices.** Each page is a feature folder with its own view, copy, types and tests; ESLint enforces the boundaries between `app`, `features` and `shared`. [Architecture](docs/architecture.md)
 - **Real pages, prerendered.** Every page has its own URL (`/work/project-planning`) and is written to static HTML at build time, so search engines, link previews and AI assistants read the full content without JavaScript. Per-page titles, descriptions, structured data, a sitemap and [`/llms.txt`](https://karolina.kita.company/llms.txt).
-- **Section links.** Each section heading has a link that copies its address (`/about#career`); the address bar follows the section you are reading.
+- **Section links.** Each section heading has a link that copies its address with a tag for the visitor statistics (`/about?ref=section-link#career`); the address bar follows the section you are reading.
 - **Accessible by design.** WCAG 2.2 AA is the minimum: keyboard focus that nothing covers, labelled controls, landmarks, reduced motion, text that follows the browser's text size (sizes in rem), stronger colours when the system asks for more contrast, and Windows contrast themes. `yarn a11y` audits every page in real Chromium (axe, an emulated screen reader, the Tab order with a check that no focused element is hidden, also with the consent box showing, reflow at 320 px and 400% zoom, 200% text size, forced colours).
 - **Readable as plain text.** Search engines and AI assistants read the HTML without CSS, so neighbouring elements always have a space between them; a test renders every page and checks it. Favicons in SVG, PNG and ICO, because Google Search does not read SVG ones.
 - **A CV for people and machines.** `/cv` is the CV as a page (in Light and Dark mode, following the browser's text size), and `yarn cv-pdf` prints that page to a tagged A4 PDF with real text, an outline and clickable links, so its text copies out as clean words. A test fails when the page's text or classes change and the PDF does not.
@@ -35,7 +35,7 @@ yarn dev       # http://localhost:5173
 | `yarn dev`             | Dev server with hot reload                                                             |
 | `yarn verify`          | Typecheck, lint (zero warnings), format check, tests, build and prerender              |
 | `yarn test`            | Vitest in watch mode (`yarn test:run` for a single run)                                |
-| `yarn e2e`             | Playwright tests in Chromium, Firefox and WebKit against the production build          |
+| `yarn e2e`             | Playwright in Chromium, Firefox, WebKit and an Android phone, production build         |
 | `yarn build`           | Typecheck, build to `dist/`, then prerender every page (`yarn prerender`)              |
 | `yarn preview`         | Serve the production build locally                                                     |
 | `yarn lint`            | ESLint, zero warnings allowed                                                          |
@@ -55,7 +55,7 @@ public/                        copied as-is: robots.txt, sitemap.xml, _headers, 
                                Google Search Console's verification file (keep it)
 public/assets/site/            portrait and link-preview image
 public/assets/cases/<case>/    case-study screenshots and thumbnail (WebP)
-src/app/                       shell: App, routing, section hash, SEO, prerender entry, copy tests
+src/app/                       shell: App, routing, section hash, SEO, hydration, prerender entry, copy tests
 src/features/<name>/           one slice per page or capability (image viewer, privacy and the consent box):
                                view, components, copy (*.content.ts), types, tests
 src/shared/                    ui/, layout/, media/, hooks/, lib/ (routes, ui, analytics, motion, clipboard),
@@ -64,7 +64,7 @@ src/styles/                    tokens.css (light/dark), theme.css (Tailwind them
 e2e/                           Playwright specs and their helpers
 scripts/                       prerender.ts (static HTML per page), a11y-audit.ts (checks in a11y/),
                                favicons.ts (PNG and ICO icons from the SVG), cv-pdf.ts (the CV's PDF)
-docs/                          architecture, design source, tracking plan (analytics.md), working with Claude Code
+docs/                          architecture, design source, motion guide (motion.md), tracking plan (analytics.md), working with Claude Code
 .storybook/                    Storybook config and its Welcome page (stories sit next to their component)
 .claude/                       Claude Code skills and review agents (when to use each: CONTRIBUTING.md)
 ```

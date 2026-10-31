@@ -29,7 +29,7 @@ export const PRIVACY: PrivacyContent = {
   eyebrow: "Privacy Policy",
   title: "Privacy",
   intro: "How this website handles your data, in plain words.",
-  updated: { iso: "2026-10-30", label: "30 October 2026" },
+  updated: { iso: "2026-10-31", label: "31 October 2026" },
   sections: [
     {
       id: "in-short",
@@ -70,7 +70,7 @@ export const PRIVACY: PrivacyContent = {
       points: [
         lead(
           "What I count",
-          "The pages you open, the site that sent you here, how long you spend on each page and how far down you scroll. I also count clicks on case studies, screenshots (and moving between them in the image viewer), FAQ questions, section links, the Light and Dark mode switch, links to my CV and to its PDF, and links to LinkedIn, Figma, GitHub, Storybook, email and other websites.",
+          "The pages you open, the site that sent you here, how long you spend on each page and how far down you scroll. I also count clicks on case studies, screenshots (and moving between them or zooming in and out in the image viewer), FAQ questions, section links, the Light and Dark mode switch, links to my CV and to its PDF, and links to LinkedIn, Figma, GitHub, Storybook, email and other websites.",
         ),
         lead(
           "Clicks that do nothing",
@@ -108,7 +108,7 @@ export const PRIVACY: PrivacyContent = {
         lead("How long", "Umami keeps the statistics for 6 months, then deletes them."),
         lead(
           "Tagged links",
-          "Links I share, for example in job applications, may end in ?ref= and a company or channel name, so I can see which link brought you here and which pages you read after it, on that visit or a later one. They never contain a person’s name. Other parts of an address, such as the click IDs that ads and social apps add, are removed before anything is sent; only ?ref= and the campaign tags that start with utm_ stay.",
+          "Links I share, for example in job applications, may end in ?ref= and a company or channel name, so I can see which link brought you here and which pages you read after it, on that visit or a later one. A section link copied with the link button next to a heading ends in ?ref=section-link for the same reason. If a tagged link brought you here, the copied link keeps its tag and adds utm_medium=section-link instead. They never contain a person’s name. Other parts of an address, such as the click IDs that ads and social apps add, are removed before anything is sent; only ?ref= and the campaign tags that start with utm_ stay.",
         ),
       ],
       intro: [

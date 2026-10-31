@@ -25,7 +25,7 @@ export async function prepare(
 }
 
 /**
- * Waits until React has replaced the prerendered HTML (its nodes carry a __reactFiber$ key),
+ * Waits until React has taken over the prerendered HTML (adopted it: its nodes carry a __reactFiber$ key),
  * the web fonts are in (they change the width of every label), and two frames have painted.
  */
 export async function waitForApp(page: Page): Promise<void> {
@@ -39,7 +39,7 @@ export async function waitForApp(page: Page): Promise<void> {
   });
 }
 
-/** True once React has rendered over the page (its nodes carry a __reactFiber$ key). */
+/** True once React has taken over the page (its nodes carry a __reactFiber$ key). */
 export async function appRan(page: Page): Promise<boolean> {
   return page.evaluate(() => {
     const main = document.querySelector("main");

@@ -14,7 +14,7 @@ What this site sends to [Umami Cloud](https://umami.is), why, and the rules for 
 
 **Event names** are kebab-case (`a-z` and hyphens), at most 50 characters (Umami's limit).
 
-- Something the visitor does: `<object>-<verb>`, e.g. `case-open`, `theme-switch`, `section-link-copy`. The verbs in use are **open**, **nav**, **click**, **copy**, **switch**, **print** and **download**. Reuse one of them; add a new verb only when none fits, and add it to this list.
+- Something the visitor does: `<object>-<verb>`, e.g. `case-open`, `theme-switch`, `section-link-copy`. The verbs in use are **open**, **nav**, **click**, **copy**, **switch**, **print**, **download** and **zoom**. Reuse one of them; add a new verb only when none fits, and add it to this list.
 - Something measured, not done: a noun phrase, e.g. `time-on-page`, `dead-click`, `page-not-found`, `js-error`.
 - Links that leave the site: `<destination>-click` for the main destinations (`figma-click`, `github-click`, `storybook-click`, `linkedin-click`, `email-click`); `outbound-click` with `host` for any other.
 - Context goes in properties, not in the name: `figma-click` with `place: "banner"`, not `figma-banner-click`.
@@ -30,7 +30,8 @@ What this site sends to [Umami Cloud](https://umami.is), why, and the rules for 
 | `area`      | the section id around an element, a hero's name, or the landmark                                                                                                                |
 | `element`   | the kind of element (`image`, `icon`, `heading`, `text`, `card`, `page`); the frame around a captioned screenshot is `image`                                                    |
 | `label`     | site copy that names the element (alt text, heading, card title, image caption); for `text-copy`, never one the selection holds; headings and titles in Title Case from 5.14.11 |
-| `direction` | `prev` or `next`                                                                                                                                                                |
+| `direction` | `prev` or `next`; `in` or `out` for a zoom                                                                                                                                      |
+| `method`    | the control the visitor used: `click` (on the image itself), `button` or `key`; `input` says which device                                                                       |
 | `input`     | `mouse`, `touch`, `pen` or `keyboard`; added by `track()`, never by hand                                                                                                        |
 
 Never a property called `id`: `umami.identify()` takes it as a Distinct ID and links visits.
@@ -45,31 +46,32 @@ Addresses are cleaned before anything goes (`payload.utils.ts`, applied to the t
 
 ## Events
 
-| Event               | Sent when                                                                         | Properties                                              | Question it answers                                             |
-| ------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------- | --------------------------------------------------------------- |
-| `link-ref`          | the first page of a visit was opened from a tagged link (`?ref=`, `utm_source`)   | `ref`                                                   | Which application or channel brought the visit?                 |
-| `case-open`         | a case study is opened from the Work page                                         | `case`, `from` (`card-link`, `thumbnail`)               | Which cases draw people in, and from which part of the card?    |
-| `case-nav`          | a previous / next case link, beside the breadcrumb or at the end of a case study  | `from`, `to`, `direction`, `place` (`top`, `end`)       | Do readers go on to the next case, and from where?              |
-| `image-open`        | a screenshot opens in the image viewer                                            | `case`, `image`                                         | Which screenshots do people want to see up close?               |
-| `image-nav`         | the viewer moves to the next or previous screenshot (arrow, key, swipe)           | `case`, `image`, `direction`                            | Do people browse the gallery, and how far?                      |
-| `figma-click`       | a link to the Figma workspace (Work page) or to a case study's Figma file         | `place` (`banner`, `top`, `end`), `case` (case studies) | Do visitors check the design files, and from where?             |
-| `github-click`      | a link to the source code                                                         | `place` (`banner`)                                      | Do visitors check the code?                                     |
-| `storybook-click`   | a link to the Storybook component library                                         | `place` (`banner`)                                      | Do visitors check the component library?                        |
-| `linkedin-click`    | a link to LinkedIn (`place: "cv"`: the CV's header)                               | `target`, `place`                                       | Which LinkedIn links lead somewhere (profile, recommendations)? |
-| `email-click`       | an email link or its Copy button, also on `/cv`, `/privacy` and `/accessibility`  | `action` (`mailto`, `copy`), `place`                    | How many visitors try to get in touch, and how?                 |
-| `outbound-click`    | a link to any other website (`TextLink external`)                                 | `host`                                                  | Which other links are used?                                     |
-| `cv-open`           | a link to the CV page (`/cv`): the Work or About hero, or the Contact page        | `place` (`hero`, `about`, `contact`)                    | Which way to the CV do visitors take?                           |
-| `cv-download`       | a link to the CV's PDF: the Download button on `/cv`, or the Contact page         | `place` (`cv`, `contact`)                               | Do visitors take the CV with them as a PDF, and from where?     |
-| `faq-open`          | a FAQ question opens (not when it closes)                                         | `question`                                              | Which questions matter to visitors?                             |
-| `section-link-copy` | the copy-link button next to a section heading                                    | `section`                                               | Which sections do people share?                                 |
-| `text-copy`         | the visitor selects text and copies it                                            | `element`, `area`, `label`                              | Which content do people take with them?                         |
-| `theme-switch`      | the Light and Dark mode switch changes the theme                                  | `theme`                                                 | Is Dark mode used on purpose?                                   |
-| `page-print`        | the page goes to the printer or to a PDF                                          | none                                                    | Which pages do people print or save?                            |
-| `time-on-page`      | the visitor leaves a page, switches tabs or apps, or closes it                    | `time`, `seconds`, `scroll`, `section`                  | Which pages are read, and how far?                              |
-| `dead-click`        | a click or tap on something that does nothing, once per burst                     | `element`, `area`, `label`                              | What do people expect to be a link or a bigger image?           |
-| `rage-click`        | the same burst reaches three quick clicks on one spot                             | `element`, `area`, `label`                              | Where does the site frustrate people?                           |
-| `page-not-found`    | the visitor opened an address that matches no page (sent with the first pageview) | `path`                                                  | Which links to the site are broken?                             |
-| `js-error`          | an error in the site's own code: at most 3 a page, each message once              | `kind`, `message`, `file`                               | Is the site broken in some browser or in-app browser?           |
+| Event               | Sent when                                                                         | Properties                                                                      | Question it answers                                              |
+| ------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `link-ref`          | the first page of a visit was opened from a tagged link (`?ref=`, `utm_source`)   | `ref`                                                                           | Which application or channel brought the visit?                  |
+| `case-open`         | a case study is opened from the Work page                                         | `case`, `from` (`card-link`, `thumbnail`)                                       | Which cases draw people in, and from which part of the card?     |
+| `case-nav`          | a previous / next case link, beside the breadcrumb or at the end of a case study  | `from`, `to`, `direction`, `place` (`top`, `end`)                               | Do readers go on to the next case, and from where?               |
+| `image-open`        | a screenshot opens in the image viewer                                            | `case`, `image`                                                                 | Which screenshots do people want to see up close?                |
+| `image-nav`         | the viewer moves to the next or previous screenshot (arrow, key, swipe)           | `case`, `image`, `direction`                                                    | Do people browse the gallery, and how far?                       |
+| `image-zoom`        | the visitor zooms a screenshot in or out in the viewer, one event per step        | `case`, `image`, `direction` (`in`, `out`), `method` (`click`, `button`, `key`) | Which screenshots are too small to read, and how do people zoom? |
+| `figma-click`       | a link to the Figma workspace (Work page) or to a case study's Figma file         | `place` (`banner`, `top`, `end`), `case` (case studies)                         | Do visitors check the design files, and from where?              |
+| `github-click`      | a link to the source code                                                         | `place` (`banner`)                                                              | Do visitors check the code?                                      |
+| `storybook-click`   | a link to the Storybook component library                                         | `place` (`banner`)                                                              | Do visitors check the component library?                         |
+| `linkedin-click`    | a link to LinkedIn (`place: "cv"`: the CV's header)                               | `target`, `place`                                                               | Which LinkedIn links lead somewhere (profile, recommendations)?  |
+| `email-click`       | an email link or its Copy button, also on `/cv`, `/privacy` and `/accessibility`  | `action` (`mailto`, `copy`), `place`                                            | How many visitors try to get in touch, and how?                  |
+| `outbound-click`    | a link to any other website (`TextLink external`)                                 | `host`                                                                          | Which other links are used?                                      |
+| `cv-open`           | a link to the CV page (`/cv`): the Work or About hero, or the Contact page        | `place` (`hero`, `about`, `contact`)                                            | Which way to the CV do visitors take?                            |
+| `cv-download`       | a link to the CV's PDF: the Download button on `/cv`, or the Contact page         | `place` (`cv`, `contact`)                                                       | Do visitors take the CV with them as a PDF, and from where?      |
+| `faq-open`          | a FAQ question opens (not when it closes)                                         | `question`                                                                      | Which questions matter to visitors?                              |
+| `section-link-copy` | the copy-link button next to a section heading or the Behind the Design title     | `section`                                                                       | Which sections do people share?                                  |
+| `text-copy`         | the visitor selects text and copies it                                            | `element`, `area`, `label`                                                      | Which content do people take with them?                          |
+| `theme-switch`      | the Light and Dark mode switch changes the theme                                  | `theme`                                                                         | Is Dark mode used on purpose?                                    |
+| `page-print`        | the page goes to the printer or to a PDF                                          | none                                                                            | Which pages do people print or save?                             |
+| `time-on-page`      | the visitor leaves a page, switches tabs or apps, or closes it                    | `time`, `seconds`, `scroll`, `section`                                          | Which pages are read, and how far?                               |
+| `dead-click`        | a click or tap on something that does nothing, once per burst                     | `element`, `area`, `label`                                                      | What do people expect to be a link or a bigger image?            |
+| `rage-click`        | the same burst reaches three quick clicks on one spot                             | `element`, `area`, `label`                                                      | Where does the site frustrate people?                            |
+| `page-not-found`    | the visitor opened an address that matches no page (sent with the first pageview) | `path`                                                                          | Which links to the site are broken?                              |
+| `js-error`          | an error in the site's own code: at most 3 a page, each message once              | `kind`, `message`, `file`                                                       | Is the site broken in some browser or in-app browser?            |
 
 `link-ref`, `time-on-page` and `page-not-found` never carry `input`: no click or key starts them (`PASSIVE_EVENTS`).
 
@@ -91,6 +93,16 @@ Sent once per page load with `umami.identify()` (`session.utils.ts`), never with
 | `ref`            | the tagged link's tag, as `link-ref` sends it; only when the page was opened from one     | What did the visitors from each application or channel read, and did they come back? |
 
 What is left out on purpose, such as accessibility settings, the browser's exact version or the time zone: [Not collected, on purpose](#not-collected-on-purpose).
+
+## Tagged links
+
+A tagged link ends in `?ref=<tag>` (or carries `utm_source`). The first page it opens sends `link-ref` with the tag, and the session data gets it as `ref`. Karolina adds tags by hand to the links she shares: a company in a job application (`/cv?ref=acme`), a channel for a post (`?ref=linkedin-post`). A tag never names a person. The site writes these into its own links (`LINK_REF` in `analytics.constants.ts`; `tracking-plan.test.ts` checks the table):
+
+| Tag            | Link                                                                                                                                                                                                                                                                                                                                                   | Question it answers                                                   |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------- |
+| `section-link` | a section's address copied with the link button beside its heading: the page's own path, the tag and the anchor (`/about?ref=section-link#career`). A copier who came from a tagged link passes its tag on and `section-link` becomes the `utm_medium` (`/about?ref=acme&utm_medium=section-link#career`); click ids never travel (`sectionLinkQuery`) | Do the section links people share bring visitors, and to which pages? |
+
+Umami keeps one `ref` per session ([Session data](#session-data)), so a later tagged visit replaces it. That is why the CV PDF's portfolio link carries `?utm_medium=cv-pdf` instead of a tag: its visits show in the UTM report (medium `cv-pdf`) without a `link-ref`, and a session that came from `/cv?ref=acme` keeps `acme`.
 
 ## Speed reports
 
@@ -137,6 +149,8 @@ The Hobby plan allows 100,000 events a month and keeps data for 6 months, which 
 - **Performance tab**: p75 of LCP, INP and CLS per page and device. Google's limits: LCP 2.5 s, INP 200 ms, CLS 0.1. INP and CLS cover only the first 10 s of each view ([Speed reports](#speed-reports)), so check a slow interaction later on a page by hand.
 - **UTM report** for `utm_*` links; `link-ref` for `?ref=` tags.
 - **Events → Properties**: `dead-click` by `area` and `label`, `time-on-page` by `time` and `scroll`, `cv-open` and `cv-download` by `place`, `page-not-found` by `path`, `js-error` by `message`, `figma-click` by `place` and `case` (the link at the top of a case study or the design files banner at its end).
+- **Screenshots up close**: `image-open` by `image` shows which screenshots people open; `image-zoom` by `image` (with `direction` `in`) shows which ones they still need to zoom into, a hint that their text is too small at fit, and by `method` whether they click the image, use the buttons or the keys.
+- **Shared section links**: `section-link-copy` by `section` counts the copies. The visits they bring: `link-ref` by `ref` (`section-link`) for links copied by visitors who came without a tag, and the UTM report's medium `section-link` for the ones that passed a tag on (`link-ref` and the session's `ref` keep that company or channel). A Segment on `ref` = `section-link` shows what the first group read.
 
 ## Your own visits
 

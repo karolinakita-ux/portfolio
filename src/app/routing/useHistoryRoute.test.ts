@@ -35,6 +35,14 @@ describe("useHistoryRoute", () => {
     expect(window.location.hash).toBe("#career");
   });
 
+  it("drops a tracking tag an app wrote after the hash, and keeps the section and the query", () => {
+    const result = start("/about?ref=section-link#career?fbclid=IwAR0abc");
+    expect(result.current[0]).toMatchObject({ view: VIEW.about, anchor: "career" });
+    expect(window.location.pathname + window.location.search + window.location.hash).toBe(
+      "/about?ref=section-link#career",
+    );
+  });
+
   it("turns old hash links and aliases into paths", () => {
     start("/#case-theming");
     expect(window.location.pathname).toBe("/work/data-governance");
@@ -46,6 +54,15 @@ describe("useHistoryRoute", () => {
     const result = start("/#projects");
     expect(result.current[0].view).toBe(VIEW.work);
     expect(window.location.hash).toBe("");
+  });
+
+  it("turns the file forms the host also serves (/about.html, /about/index.html) into the page's path", () => {
+    const result = start("/about.html?ref=linkedin#career");
+    expect(result.current[0]).toMatchObject({ view: VIEW.about, anchor: "career" });
+    expect(window.location.pathname + window.location.search + window.location.hash).toBe("/about?ref=linkedin#career");
+
+    start("/work/automotive/index.html");
+    expect(window.location.pathname).toBe("/work/automotive");
   });
 
   it("sends unknown paths to Work at /", () => {
@@ -82,6 +99,20 @@ describe("useHistoryRoute", () => {
     expect(window.history.length).toBe(before);
   });
 
+  it("never scrolls a new view smoothly: it starts at its top at once, while it fades in", () => {
+    const result = start("/about");
+
+    act(() => result.current[1](VIEW.work, null, { smooth: true }));
+    expect(result.current[0]).toMatchObject({ view: VIEW.work, viewKey: 1, smooth: false });
+
+    act(() => result.current[1](VIEW.about, "career", { smooth: true }));
+    expect(result.current[0]).toMatchObject({ view: VIEW.about, anchor: "career", viewKey: 2, smooth: false });
+
+    // A jump within the view keeps it.
+    act(() => result.current[1](VIEW.about, "faq", { smooth: true }));
+    expect(result.current[0]).toMatchObject({ view: VIEW.about, anchor: "faq", viewKey: 2, smooth: true });
+  });
+
   it("shows a tracker only new views: the first address and same-view jumps go past its wrapper", () => {
     window.history.replaceState(null, "", "/resume");
     // Umami's tracker wraps the methods on the history object itself; it takes each call as a new page.
@@ -115,6 +146,44 @@ describe("useHistoryRoute", () => {
     });
 
     expect(result.current[0]).toMatchObject({ view: VIEW.caseDataGovernance, restoreY: 640, key: 2, viewKey: 2 });
+  });
+
+  it("lands on the section of a link the browser followed within the open page (an entry the app never wrote)", () => {
+    const result = start("/about");
+    act(() => {
+      // A fragment navigation (a plain #career link, a hash typed in the address bar): a new entry without state.
+      window.history.pushState(null, "", "/about#career?fbclid=IwAR0abc");
+      window.dispatchEvent(new PopStateEvent("popstate", { state: null }));
+    });
+    expect(result.current[0]).toMatchObject({
+      view: VIEW.about,
+      anchor: "career",
+      restoreY: null,
+      afterBrowserJump: true,
+      key: 1,
+      viewKey: 0,
+    });
+    // The entry gets an id, as the first one does, and the address loses the tag after the hash.
+    expect(window.history.state).toMatchObject({ kbView: VIEW.about, scrollY: 0, kbId: expect.any(String) as string });
+    expect(window.location.pathname + window.location.search + window.location.hash).toBe("/about#career");
+
+    // Back to it later brings back where the visitor left it, not the section.
+    const fragmentEntry = window.history.state as unknown;
+    scrollTo(1200);
+    act(() => result.current[1](VIEW.contact));
+    act(() => travelTo(fragmentEntry, "/about#career"));
+    expect(result.current[0]).toMatchObject({ view: VIEW.about, restoreY: 1200, afterBrowserJump: false });
+    scrollTo(0);
+  });
+
+  it("opens the view an old view hash names when the browser follows it within the open page", () => {
+    const result = start("/");
+    act(() => {
+      window.history.pushState(null, "", "/#about");
+      window.dispatchEvent(new PopStateEvent("popstate", { state: null }));
+    });
+    expect(result.current[0]).toMatchObject({ view: VIEW.about, anchor: null, afterBrowserJump: true, viewKey: 1 });
+    expect(window.location.pathname + window.location.hash).toBe("/about");
   });
 
   it("never writes to the history while scrolling (in-app browsers show a loading bar on each write)", async () => {

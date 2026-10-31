@@ -31,7 +31,7 @@
     <meta property="og:title" content="Karolina Kita - Senior Product Designer" />
     <meta
       property="og:description"
-      content="Senior Product Designer with 8+ years, mostly on B2B and enterprise platforms: UX research, complex workflows and token-based design systems."
+      content="Senior Product Designer with 8+ years, mostly on B2B and enterprise platforms: UX research, complex workflows and token-based design systems. MSc in Psychology."
     />
     <meta property="og:image" content="https://karolina.kita.company/assets/site/og-cover.png" />
     <meta property="og:image:type" content="image/png" />
@@ -45,7 +45,7 @@
     <meta name="twitter:title" content="Karolina Kita - Senior Product Designer" />
     <meta
       name="twitter:description"
-      content="Senior Product Designer with 8+ years, mostly on B2B and enterprise platforms: UX research, complex workflows and token-based design systems."
+      content="Senior Product Designer with 8+ years, mostly on B2B and enterprise platforms: UX research, complex workflows and token-based design systems. MSc in Psychology."
     />
     <meta name="twitter:image" content="https://karolina.kita.company/assets/site/og-cover.png" />
     <meta
@@ -77,7 +77,6 @@
             "description": "Senior Product Designer with 8+ years, mostly on B2B and enterprise platforms: UX research, complex workflows and token-based design systems. MSc in Psychology.",
             "email": "mailto:karolina.kita.zg@gmail.com",
             "address": { "@type": "PostalAddress", "addressCountry": "PL" },
-            "knowsLanguage": ["en", "pl"],
             "knowsAbout": [
               "Product Design",
               "UX/UI Design",
@@ -138,6 +137,124 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Links to a section (/about#career): the page opens on the section's heading below the sticky header as soon
+         as its HTML is in, not seconds later when the app's script has loaded, and keeps it there while the page
+         settles (an in-app browser's keyboard, toolbar or sheet resizing the window, fonts, the consent box). The
+         browser's own jump to the hash (to the section, not its heading) is put right, or undone when the visitor
+         has scrolled, and the focus it takes from a visitor who has tabbed into the page is given back. It lets go
+         at the visitor's first touch, wheel, key or click, a Back or Forward, or when the page scrolls away by
+         itself (a screen reader, find in page). data-kb-anchor-held tells the app to only move focus (useRouteFocus). The section is the hash up to "?" or "&", as in readRoute: some apps write their
+         tracking tag after the hash. Pages without the section in their HTML (the dev server) leave it to the app. -->
+    <script>
+      (function () {
+        var hash = location.hash.slice(1);
+        var id = "";
+        var jumpTarget = null; // what the browser itself scrolls to: the element the whole hash names
+        try {
+          id = decodeURIComponent(hash.split(/[?&]/)[0]);
+          jumpTarget = document.getElementById(decodeURIComponent(hash));
+        } catch (e) {}
+        var find = function () {
+          return id ? document.getElementById(id + "-title") || document.getElementById(id) : null;
+        };
+        if (!find()) return;
+        var root = document.documentElement;
+        root.setAttribute("data-kb-anchor-held", "");
+        var holding = true;
+        var placedAt = 0; // the heading's top after the last alignment
+        var lastY = 0; // the scroll position at the latest scroll that was not the browser's jump
+        var watching = 0; // > 0 while the browser may jump to the hash
+        var presses = 0; // pointer presses so far: a click may take focus away by itself
+        var inputs = ["touchstart", "wheel", "keydown", "pointerdown"];
+        var px = function (value) {
+          return parseFloat(value) || 0;
+        };
+        var observer = typeof ResizeObserver === "function" ? new ResizeObserver(align) : null;
+
+        function align() {
+          var target = find();
+          if (!holding || !target) return;
+          // As useHeaderHeight does: the app's own listener runs after this one.
+          var header = document.querySelector(".kb-site-header");
+          var covers = header && getComputedStyle(header).position === "sticky" ? header.offsetHeight : 0;
+          root.style.setProperty("--kb-header-h", covers + "px");
+          target.scrollIntoView({ block: "start" });
+          placedAt = target.getBoundingClientRect().top;
+        }
+        function release() {
+          holding = false;
+          if (observer) observer.disconnect();
+          removeEventListener("resize", align);
+          removeEventListener("popstate", release);
+          removeEventListener("hashchange", release);
+          for (var i = 0; i < inputs.length; i++) removeEventListener(inputs[i], release, true);
+        }
+        // How far the element the hash names sits from the top of the scroll area, where the browser's jump puts it.
+        function offJump() {
+          if (!jumpTarget) return NaN;
+          var top = px(getComputedStyle(root).scrollPaddingTop) + px(getComputedStyle(jumpTarget).scrollMarginTop);
+          return jumpTarget.getBoundingClientRect().top - top;
+        }
+        // The browser's own jump puts that element at the top; a fling still running carries the page on by a frame's
+        // worth. Put it right while holding, else undo it: the page goes where it would be without the jump.
+        function undoJump() {
+          var off = offJump();
+          var size = Math.abs(off);
+          var jumped = size < 1 || (size < 60 && 3 * size < Math.abs(scrollY - lastY));
+          if (!jumped) return false;
+          if (holding) align();
+          else scrollTo(scrollX, lastY - off);
+          lastY = scrollY;
+          return true;
+        }
+        function pressed() {
+          presses++;
+        }
+        // Chromium and WebKit take focus away at their jump, from a visitor who has tabbed into the page meanwhile
+        // (the next Tab would start from the section): give it back, unless they clicked since.
+        function keepFocus(had, pressesBefore) {
+          var now = document.activeElement;
+          var lost = had && had !== document.body && had !== now && (!now || now === document.body);
+          if (lost && pressesBefore === presses && had.isConnected) had.focus({ preventScroll: true });
+        }
+        // Browsers jump to the hash when the HTML is parsed (Firefox), when the page's scripts have run (Chromium:
+        // DOMContentLoaded) and may again at load, even after the visitor has scrolled. Chromium may paint the jump
+        // before it reports the scroll: check in the next two frames, before they are painted, and on each scroll.
+        function expectJump() {
+          var had = document.activeElement;
+          var pressesBefore = presses;
+          watching++;
+          requestAnimationFrame(function () {
+            undoJump();
+            keepFocus(had, pressesBefore);
+            requestAnimationFrame(function () {
+              undoJump();
+              keepFocus(had, pressesBefore);
+              watching--;
+            });
+          });
+        }
+        function onScroll() {
+          if (watching > 0 && undoJump()) return;
+          lastY = scrollY;
+          var target = holding ? find() : null;
+          if (holding && (!target || Math.abs(target.getBoundingClientRect().top - placedAt) > 2)) release();
+        }
+
+        align();
+        lastY = scrollY;
+        if (observer) observer.observe(document.body);
+        addEventListener("resize", align);
+        addEventListener("popstate", release);
+        addEventListener("hashchange", release);
+        for (var i = 0; i < inputs.length; i++) addEventListener(inputs[i], release, { capture: true, passive: true });
+        addEventListener("pointerdown", pressed, { capture: true, passive: true });
+        addEventListener("scroll", onScroll, { passive: true });
+        document.addEventListener("readystatechange", expectJump);
+        addEventListener("DOMContentLoaded", expectJump);
+        addEventListener("load", expectJump);
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

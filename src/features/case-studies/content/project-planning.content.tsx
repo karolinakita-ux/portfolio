@@ -42,7 +42,7 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
   notice: {
     tone: "info",
     label: "About these screens",
-    text: "The screens and design artefacts in this case study are a curated, sanitised and refactored subset of a much larger production system, adapted for this portfolio. Real company names, logos and proprietary financial data have been generalised or removed under NDA, and the screens use realistic enterprise sample data in standard European formats (PLN currency, DD/MM/YYYY dates, 24-hour time).",
+    text: "The screens and design artefacts in this case study are a curated, sanitised and refactored subset of a much larger production system, adapted for this portfolio. Real company names and proprietary financial data have been generalised or removed under NDA, and the screens use realistic enterprise sample data in standard European formats (PLN currency, DD/MM/YYYY dates, 24-hour time).",
   },
   summaryTitle: "Executive Summary",
   summaryLead: "Budgets rarely break in one big mistake. They erode in everyday work.",

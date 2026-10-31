@@ -4,6 +4,167 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Release v5.15.0 - 2026-10-31
+
+- In the image viewer, a click on a screenshot zooms in where you clicked, and another click zooms back out.
+- A link to a section now opens right at its heading, also in the Messenger and LinkedIn apps and on slow connections, and pages on phones no longer shift after you stop scrolling.
+- Pages show their images as soon as they appear and keep their layout while images load, and the gentle card animations now run only on tablets and computers.
+- The menu underlines the page you are on, and the Behind the Design section has a link of its own that you can copy.
+- Search engines and shared links get more accurate details about each page.
+
+Versions: 5.14.17 - 5.15.0.
+
+### 5.15.0 - 2026-10-31
+
+#### Changed
+
+- Image viewer: a click on a screenshot zooms it to 200% where you clicked, and another click goes back to fit. The cursor shows what a click will do (zoom in, zoom out, or grab while you drag the zoomed image), and a zoomed image smaller than the viewer stays centred. Dragging to move around the zoomed image is not a click, and on touch screens a tap does nothing, as before. The zoom level, the zoom buttons and the + / - / 0 keys stay in step with clicks. Zooming is instant.
+- Statistics count zooming in the viewer (`image-zoom`: the case, the screenshot, `in` or `out`, and whether a click, a button or a key did it). The privacy policy's list of what is counted now mentions zooming. It is one more click in the image viewer, which the policy and the consent box already cover, so earlier yeses are not asked again. A mouse click on the viewer's image no longer counts as a dead click; a tap on it still does.
+- Tests and docs: the tracking plan lists `image-zoom`; docs/motion.md lists the viewer zoom as instant and says "cursor effects" where it lists what is left out; unit tests cover the click, the cursor, drag versus click, taps and the event; `e2e/image-zoom.e2e.ts` checks zooming, centring, panning, reduced motion and touch in Chromium, Firefox and WebKit, and `e2e/analytics.e2e.ts` checks the event.
+
+### 5.14.32 - 2026-10-31
+
+#### Changed
+
+- CV PDF: its portfolio link goes back to `?utm_medium=cv-pdf` (5.14.23 had made it `?ref=cv`). Mateusz chose the UTM tag once he knew why it was there: a visit from the PDF then shows in the UTM report and does not replace the company tag of a recruiter who first came from `/cv?ref=acme`. The PDF is the one from before 5.14.23. Copied section links keep their `?ref=section-link` tag.
+
+### 5.14.31 - 2026-10-31
+
+#### Fixed
+
+- A keyboard visitor who opens a section link (`/about#career`) on a slow connection and presses Tab before the site's script has loaded now keeps their place (WCAG 2.4.3 Focus Order). Focus used to jump to the section's heading when the script arrived, so the next Tab went on from the section, not from where they were. Two things moved it: the browser's own jump to the section, which in Chrome and Safari also takes focus away, and the site, which then put it on the heading.
+- How: the section-link script in `index.html` gives focus back after the browser's jump, unless the visitor clicked since, and on the first load `useRouteFocus` moves focus to the heading only while nothing has focus. A visitor who has not touched the page, or uses a screen reader, still starts on the heading. The architecture doc (Routing) describes it.
+- Tests: `section-link-script.test.ts` (focus given back; not after a click), `App.test.tsx`, and `e2e/section-links.e2e.ts` in Chromium, Firefox and WebKit, which presses Tab while the site's script is held back. It fails on 5.14.30 in all three.
+
+### 5.14.30 - 2026-10-31
+
+#### Fixed
+
+- A link to a section of the page that is already open now lands on that section's heading. When the browser follows it without loading the page again (an in-app browser reusing the open page, a hash typed in the address bar), the page used to end at its top: the site took the new address for a Back to an entry it did not know. It now lands on the heading below the header, after the browser's own jump to the section, moves focus there and keeps the section in the address bar.
+- How: `useHistoryRoute` treats a `popstate` for an entry the app never wrote as a link to a section (`afterBrowserJump`); `useRouteFocus` lands in the next frame, before it is painted. The entry gets its id and clean address, as the first one does, so Back to it later brings back where the visitor was. The architecture doc (Routing) describes it.
+- Tests: `useHistoryRoute` (the section, the entry's id and address, Back to it, an old view hash), `App.test.tsx` (lands after the browser's jump, never at the top), and `e2e/section-links.e2e.ts` in Chromium, Firefox and WebKit and on an Android phone in Messenger's in-app browser. The new e2e tests fail on 5.14.29 (the page ended at its top).
+
+### 5.14.29 - 2026-10-31
+
+#### Changed
+
+- A section link copied by a visitor who came from a tagged link now passes that tag on, so the colleague they share it with still counts for the same company or channel. A recruiter on `/cv?ref=acme` who copies Experience shares `/cv?ref=acme&utm_medium=section-link#experience`: `link-ref` and the session's `ref` say `acme`, and the UTM report counts it as a section link (medium `section-link`). Since 5.14.24 the copy replaced the tag with `?ref=section-link`, and the company was lost. A visitor who came without a tag still copies `?ref=section-link`. Click ids and anything else in the address bar still stay out of the copy (`sectionLinkQuery`).
+- The privacy policy's Tagged links line says so (updated 31 October 2026). The tag and `utm_medium` are already listed there, so this is not a new kind of data: earlier yeses are not asked again (`STORED_CHOICE` unchanged).
+- The tracking plan (Tagged links, Using the dashboard), the architecture doc and CLAUDE.md describe it. Tests: `sectionLinkQuery`, `sharedSectionUrl`, `HeadingAnchor` and the app's copy on About, with and without a tag.
+
+### 5.14.28 - 2026-10-31
+
+#### Changed
+
+- Tests: `e2e/touch-scroll.e2e.ts`, on an Android phone in Messenger's in-app browser, checks that a case study's images hold their height before they load, so the page is as tall before the screenshots arrive as after, and that images arriving after a fling has stopped do not move the page. Up to 5.14.16 the screenshots were 0px tall until they loaded, and on a phone the Smart Ticket page grew from 16,213 to 23,014px while it was read, which moved it after a fling had stopped. Both tests fail on 5.14.16 and pass since 5.14.19.
+
+### 5.14.27 - 2026-10-31
+
+#### Fixed
+
+- A visitor who flings the page while it is still loading (a section link on a slow phone) is no longer thrown back to the section when the site's script arrives. The browser's own jump to the section came while the fling was still moving the page, so the page did not recognise it as a jump and showed it (up to 2,000px in a test). It is now undone in the same frame, before it is painted, and the fling carries on.
+
+#### Changed
+
+- Tests: a new Playwright project, `android`, runs the tests tagged `@android` as a Pixel 7 in Messenger's in-app browser, in the full Chromium build, which keeps flinging after a swipe as a phone does (the default headless shell stops with the finger). `e2e/section-links.e2e.ts` uses it, with a test that lets the app's script in mid-fling and checks that no painted frame jumps. CLAUDE.md, CONTRIBUTING.md, the README and the architecture doc mention it.
+
+### 5.14.26 - 2026-10-30
+
+#### Fixed
+
+- A link to a section (`/about#career`) now opens on that section as soon as the page arrives. On a slow phone the page used to show its top until the site's script had loaded and only then jump, so on a first open from Messenger the link looked broken. In a test with a slow 4G connection and a slow phone, the heading now shows below the header at 2.3 s instead of 5.0 s.
+- The heading stays in place while the page settles. When an in-app browser's keyboard closed or its sheet was pulled up after the page had opened, the heading ended up under the header, or above the screen when the statistics box showed.
+- A visitor who starts scrolling while the page loads keeps their place: neither the browser's own jump to the section nor the site's script pulls them back. Nothing moves the page after the visitor's first touch, scroll, key or click.
+- How: a small script in `index.html`, after the prerendered page, lands and holds the heading; on the first load the app then only moves focus there (`useRouteFocus`, `data-kb-anchor-held`). The architecture doc (Routing), the motion doc (Smooth scrolling) and CLAUDE.md describe it.
+- Tests: `src/app/routing/section-link-script.test.ts` runs the script in jsdom, `App.test.tsx` checks that the app does not scroll again, and `e2e/section-links.e2e.ts` opens section links with the app's script held back in Chromium, Firefox and WebKit, and on an Android phone in Messenger's in-app browser (a touch scroll while the page loads, the window growing after the app has started, the first touch letting go).
+
+### 5.14.25 - 2026-10-30
+
+#### Fixed
+
+- A link to a section still opens that section when an app adds its tracking tag after the `#` instead of before it (`/about#career?fbclid=...` or `#career&fbclid=...`). The page used to stay at the top. The address bar then shows only the section (`/about#career`).
+- Tests: `readRoute` and `useHistoryRoute` cases for tags after the hash, and a new `e2e/section-links.e2e.ts` that opens section links on an Android phone in Messenger's in-app browser (Chromium). The Messenger user agents for e2e now live in `e2e/helpers/helpers.constants.ts`.
+
+### 5.14.24 - 2026-10-30
+
+#### Changed
+
+- A link copied with the button next to a section heading now ends in `?ref=section-link` (`/about?ref=section-link#career`), so the statistics can tell visits from shared section links (`link-ref` with `ref` `section-link`). It takes the page's own address and drops any other tag in the copier's address bar, so a copier's own `?ref=` or `utm_` tags never travel to someone else. The address bar itself, the `section-link-copy` event and the "Link copied" message stay as they were.
+- The privacy policy's Tagged links line says that copied section links carry `?ref=section-link`. Tagged links are already listed there, so this is not a new kind of data: earlier yeses are not asked again and the consent box stays as it is (`STORED_CHOICE` unchanged).
+- The tracking plan lists `section-link` in its Tagged links table and how to read shared section links on the dashboard; CLAUDE.md, the architecture doc and the README describe the tagged copy. Tests: `sharedSectionUrl` (the page's path, file forms, the copier's query left out, one-page builds), `HeadingAnchor` and the app's copy on About.
+
+### 5.14.23 - 2026-10-30
+
+#### Changed
+
+- The portfolio link in the CV's PDF now ends in `?ref=cv`, like the site's other tagged links (`?ref=linkedin-post`), so visits from the PDF count as the tagged link `cv` (`link-ref`). It used `?utm_medium=cv-pdf` since 5.14.2. The PDF was made again (still 2 pages).
+- Umami keeps one `ref` per session, so a visitor who came from `/cv?ref=<company>` and later opens the PDF's link shows `cv` in the session data from then on; the `link-ref` events of both visits stay. The tracking plan says so in a new Tagged links section, and a test keeps that section's table in step with `LINK_REF`, the tags the site writes into its own links.
+- The privacy policy already covers tags like this one ("a company or channel name"), so it is unchanged and earlier yeses are not asked again (`STORED_CHOICE` unchanged).
+
+### 5.14.22 - 2026-10-30
+
+#### Changed
+
+- The Behind the Design banner on the Work page has its own link, /#behind-the-design: it opens Work at the banner with its title focused. A copy-link icon sits beside the title, as on every section heading, and the address follows the banner while it is read. Its place and look do not change.
+- `Callout` takes an optional `id` that makes a titled banner linkable; the anchor is `SECTION.behindTheDesign`.
+- Tests: /#behind-the-design lands on the banner (App), the section hash follows a banner inside a section, a routes check keeps section anchors from taking a view's name, and a Callout test and story cover the linkable banner. CLAUDE.md, the architecture doc and the tracking plan describe it.
+
+### 5.14.21 - 2026-10-30
+
+#### Changed
+
+- Cards fade in on scroll only from tablet width up; on phones they simply show. On every case page all cards up to the impact stats fade in (Smart Ticket's 2022 vs 2026 comparisons now too), and the closing sections after the impact stay still.
+- The logo from another page opens Work at its top at once instead of sweeping it up; smooth scrolling stays for jumps within a page. A button's trailing arrow now nudges the way it points (down, right, up and right).
+
+#### Fixed
+
+- A card that holds keyboard focus is fully shown, so its focus ring never sits in a half-faded card (Firefox 159 and later). Page fades no longer leave a transform on the page once they end.
+- Tests and docs: Tailwind's looping animations are reset and a test bans any other animate-* utility and anything infinite; the Firefox e2e project runs the scroll reveal; docs/motion.md lists every motion on the site with its test.
+
+### 5.14.20 - 2026-10-30
+
+#### Changed
+
+- Pages open faster and stay still when the site's script starts: the browser keeps the page it already received instead of drawing it again, so the largest paint is recorded once (About on a slow phone: about 4.0 s to 1.3 s).
+- The About portrait and the Work thumbnails show as soon as they load, also without JavaScript, with no fade on the first screen. Images that appear later still fade in; on a dark page the thumbnails wait for their Dark versions.
+
+#### Fixed
+
+- The footer's copyright year comes from the build, so the first HTML and the app always show the same year.
+- Tests: every page is hydrated in Light and Dark and fails on any mismatch warning (`src/app/hydration/hydration.test.tsx`); `e2e/hydration.e2e.ts` checks the kept page, old hash links and the images in three browsers; `docs/architecture.md` and `CLAUDE.md` describe the hydration rules.
+
+### 5.14.19 - 2026-10-30
+
+#### Fixed
+
+- Case-study screenshots, Work thumbnails and the portrait keep their space while they load: the first HTML gives each image its width and height, so text below a screenshot no longer jumps down and links to a section further down land in place.
+
+#### Changed
+
+- `assetSize()` (`shared/media/asset-size`) reads an image's size from `virtual:asset-sizes` by its URL. The asset-sizes plugin now works in Storybook too, which turns `publicDir` off.
+- New test `src/app/image-sizes.test.tsx`: every `<img>` on every prerendered page must carry its file's width and height. Plus unit tests for `assetSize` and `Screenshot`. docs/architecture.md updated.
+
+### 5.14.18 - 2026-10-30
+
+#### Fixed
+
+- Addresses like /about.html or /about/index.html, which the host also serves, now open their page instead of Work, and the address becomes /about.
+- After moving to another page, the link-preview title and description (Open Graph, X) now match that page, not the one before. The search breadcrumbs use the labels on the page (Work, then the case's short name), and the home page no longer has a one-step breadcrumb.
+
+#### Changed
+
+- Search data: Work is a collection page about Karolina, and only About and the CV are profile pages. Each case study gets its Work card picture and its period. The site is marked as British English, and the unshown languages entry is gone. llms.txt and the sitemap list the cases in Work page order, with Privacy and Accessibility last in llms.txt under Optional. The old og-image.png address redirects to the new cover. The consent box is kept out of search snippets. The About portrait no longer asks for high fetch priority.
+- Headings: the Smart Ticket "Inspect the design files" banner is now an H2 instead of sitting under the lessons section, and its "Strategic shift" title is an H4 like the other comparison's reasoning (new `headingLevel` on Callout).
+- Tests and docs: new checks that the head follows navigation, that breadcrumb data matches the page, that a `$` in copy stays as text, that titles and descriptions are unique, that index.html shows the Work page's data, the sitemap order and the old image redirect. architecture.md and design.md are updated.
+
+### 5.14.17 - 2026-10-30
+
+#### Fixed
+
+- Header: the current page in the menu is underlined as well as marked by the gold pill. The gold alone is 1.54:1 on the white header in Light mode, under the 3:1 a state needs (WCAG 1.4.11); the accessibility audit before the v5.14.16 release found it.
+- Project Planning: the notice no longer says logos were removed, because the app's wordmark is shown with Karolina's approval since 5.14.15.
+- Docs: CLAUDE.md no longer says llms.txt and the sitemap follow the case order; they do once the engineering branch lands.
+
 ## Release v5.14.16 - 2026-10-30
 
 - A new case study, Smart Ticket, shows a mobile ticketing app and its operations console, and every case study now has a clearer layout with Light and Dark screenshots.

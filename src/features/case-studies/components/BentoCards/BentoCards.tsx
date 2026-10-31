@@ -9,7 +9,8 @@ import type { BentoCardsProps } from "./BentoCards.types.ts";
  * Numbered bento cards (01, 02 ...): Card surfaces in a grid, each with a status badge (Shipped · MVP: success,
  * Phase 2 · Roadmap: warning), a title, a short body and an optional small visual. Wide cards span two columns.
  * Every colour is a token, so Light and Dark mode come free; sample brand colours inside a visual are content.
- * They close a case study, so they stay still (no scroll reveal), like the closing lists they replaced.
+ * They close a case study (the roadmap and the handoff), so they stay still: no scroll reveal after the impact
+ * (docs/motion.md, Scroll reveal).
  *
  * A list that continues the numbering (start 5: 05, 06) carries `start`, and its numbers stay readable for
  * screen readers, which count every list from 1 ("1 of 2"). In a list from 01 the number only repeats the

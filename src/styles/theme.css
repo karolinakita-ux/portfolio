@@ -191,7 +191,13 @@
   --ease-standard: var(--motion-easing-standard);
   --default-transition-duration: var(--motion-duration-fast);
   --default-transition-timing-function: var(--motion-easing-standard);
-  --animate-view-in: view-in var(--motion-duration-medium) var(--motion-easing-standard) both;
+
+  /* Named animations (docs/motion.md). Tailwind's own are reset: spin, ping and pulse loop forever, bounce for as
+     long as it applies. Each one here ends within 5 s (animations.test.ts). Entrances fill backwards only: they
+     start from their first keyframe and, once ended, leave the element exactly its own state (fill both would keep
+     a 0px transform on it: a new stacking context, and a containing block for anything fixed inside). */
+  --animate-*: initial;
+  --animate-view-in: view-in var(--motion-duration-medium) var(--motion-easing-standard) backwards;
   @keyframes view-in {
     from {
       opacity: 0;
@@ -203,8 +209,8 @@
     }
   }
   /* Image viewer: the next image comes in from the right, the previous from the left. */
-  --animate-slide-in-next: slide-in-next var(--motion-duration-medium) var(--motion-easing-standard) both;
-  --animate-slide-in-prev: slide-in-prev var(--motion-duration-medium) var(--motion-easing-standard) both;
+  --animate-slide-in-next: slide-in-next var(--motion-duration-medium) var(--motion-easing-standard) backwards;
+  --animate-slide-in-prev: slide-in-prev var(--motion-duration-medium) var(--motion-easing-standard) backwards;
   @keyframes slide-in-next {
     from {
       opacity: 0;
@@ -215,6 +221,15 @@
     from {
       opacity: 0;
       transform: translateX(-24px);
+    }
+  }
+  /* Loading skeleton (ThumbnailScaffold): a slow breath down to half opacity and back, twice (2 x 2s), then it
+     holds still. 2s is longer than any motion token on purpose: it is a "still loading" signal, not a transition
+     (allowed in motion-tokens.test.ts). */
+  --animate-skeleton-pulse: skeleton-pulse 2s var(--motion-easing-standard) 2;
+  @keyframes skeleton-pulse {
+    50% {
+      opacity: 0.5;
     }
   }
 }

@@ -13,6 +13,13 @@ import { afterEach } from "vitest";
 window.scrollTo = () => {};
 Element.prototype.scrollIntoView = () => {};
 
+// No pointer capture (the image viewer captures the mouse while a drag pans the zoomed image).
+if (typeof Element.prototype.setPointerCapture !== "function") {
+  Element.prototype.setPointerCapture = () => {};
+  Element.prototype.releasePointerCapture = () => {};
+  Element.prototype.hasPointerCapture = () => false;
+}
+
 // <dialog>: showModal / close with the `close` event the app listens for.
 if (typeof HTMLDialogElement !== "undefined") {
   const proto = HTMLDialogElement.prototype;

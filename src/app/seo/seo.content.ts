@@ -5,7 +5,7 @@ import type { View } from "#shared/lib/routes/routes.types.ts";
  * Search and link-preview copy per page: the meta description (shown under the title in
  * Google) and the og/twitter description. Same copy rules as the site (checked in
  * content-rules.test.ts): plain English, short hyphens, at most 160 characters.
- * Page titles live in routes.ts (titleForView).
+ * Page titles live in src/shared/lib/routes/routes.constants.ts (VIEW_TITLES): the tab, og:title and twitter:title.
  */
 export const PAGE_DESCRIPTIONS: Readonly<Record<View, string>> = {
   [VIEW.work]:
@@ -30,10 +30,11 @@ export const PAGE_DESCRIPTIONS: Readonly<Record<View, string>> = {
     "Case study: research-backed redesign of a B2B vehicle marketplace across 7 European markets, from interviews and benchmarking to the checkout flow.",
 };
 
-/** The home page's name in the breadcrumb of pages outside Work (About, Contact, CV, Privacy ...), as on the page. */
-export const HOME_NAME = "Home";
-
-/** Short page names for breadcrumbs in structured data. */
+/**
+ * Each page's name in llms.txt and, for a case study, the name of the work in its structured data (CreativeWork):
+ * the title of its card on the Work page. The structured-data breadcrumb uses the labels visitors see instead
+ * (seo.utils.ts): a case study's shortTitle, and these names for the other pages.
+ */
 export const PAGE_NAMES: Readonly<Record<View, string>> = {
   [VIEW.work]: "Work",
   [VIEW.about]: "About",
@@ -45,4 +46,15 @@ export const PAGE_NAMES: Readonly<Record<View, string>> = {
   [VIEW.caseProjectPlanning]: "Project Planning & Cost Management Platform",
   [VIEW.caseAutomotive]: "Automotive B2B Marketplace Redesign",
   [VIEW.caseSmartTicket]: "Smart Ticket: Mobile Ticketing & Transit Operations",
+};
+
+/**
+ * When the work of each case study happened, as its Timeline or Duration line says, in ISO 8601 for schema.org's
+ * temporalCoverage: "2023/.." is open-ended ("2023 - present"). seo.utils.test.ts checks them against the page.
+ */
+export const CASE_PERIODS: Readonly<Partial<Record<View, string>>> = {
+  [VIEW.caseSmartTicket]: "2022-10/2026",
+  [VIEW.caseAutomotive]: "2025-06/2026-09",
+  [VIEW.caseProjectPlanning]: "2023/..",
+  [VIEW.caseDataGovernance]: "2020-10/2022-12",
 };

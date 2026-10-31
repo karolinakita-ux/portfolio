@@ -26,18 +26,30 @@ export const resolveView = (value: string): View | null => {
 
 const trimSlash = (path: string): string => (path.length > 1 ? path.replace(/\/+$/, "") : path);
 
+/**
+ * A page's address without its file form: the host also serves every prerendered page as /about.html and
+ * /about/index.html (and Work as /index.html), and those must open the page, not Work.
+ */
+const withoutHtmlFile = (path: string): string => path.replace(/(?:\/index)?\.html$/, "") || "/";
+
 /** The view at a URL path, or null for an unknown path. */
 export const viewForPath = (pathname: string): View | null => {
-  const path = trimSlash(pathname).toLowerCase();
+  const path = withoutHtmlFile(trimSlash(pathname).toLowerCase());
   const match = VIEWS.find((view) => VIEW_PATHS[view] === path);
   if (match) return match;
   const segment = path.replace(/^\//, "");
   return segment.includes("/") ? null : resolveView(segment);
 };
 
+/**
+ * The section id in a hash. A tracking tag that an app's link wrapper writes after the hash instead of before it
+ * (#career?fbclid=..., #career&fbclid=...) is not part of it: section ids never hold "?" or "&". The first load
+ * then writes the address without it (useHistoryRoute).
+ */
 const decodeHash = (hash: string): string => {
+  const fragment = hash.replace(/^#/, "").split(/[?&]/, 1)[0] ?? "";
   try {
-    return decodeURIComponent(hash.replace(/^#/, ""));
+    return decodeURIComponent(fragment);
   } catch {
     return ""; // malformed percent-encoding
   }
@@ -90,6 +102,21 @@ export const urlWithAnchor = (
   const { pathname, search } = location;
   if (!hashRouting) return pathname + search + (anchor ? "#" + anchor : "");
   return pathname + search + "#" + routedLocation(location).pathname + (anchor ? "#" + anchor : "");
+};
+
+/**
+ * The address a section link is shared with: the page's own path, `query` in place of the current one (the link
+ * tags it carries: sectionLinkQuery in shared/lib/analytics) and the anchor (/about?ref=section-link#career).
+ * A one-page build (hash routing: the statistics never run there) keeps its address.
+ */
+export const sharedSectionUrl = (
+  location: Pick<Location, "pathname" | "search" | "hash">,
+  anchor: string,
+  query: string,
+): string => {
+  if (hashRouting) return urlWithAnchor(location, anchor);
+  const view = viewForPath(location.pathname);
+  return (view ? VIEW_PATHS[view] : location.pathname) + query + "#" + anchor;
 };
 
 /** True for a case-study view (case-automotive, ...). */

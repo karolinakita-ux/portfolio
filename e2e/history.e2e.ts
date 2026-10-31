@@ -7,10 +7,8 @@
  */
 import { expect, test, type Page } from "@playwright/test";
 
+import { MESSENGER_UA } from "./helpers/helpers.constants.ts";
 import { waitForApp } from "./helpers/page.utils.ts";
-
-const MESSENGER_IOS =
-  "Mozilla/5.0 (iPhone; CPU iPhone OS 18_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 [FBAN/MessengerForiOS;FBAV/512.0.0.47.106;FBBV/731562344;FBDV/iPhone15,3;FBMD/iPhone;FBSN/iOS;FBSV/18.6;FBSS/3;FBCR/;FBID/phone;FBLC/pl_PL;FBOP/5]";
 
 interface HistoryWrite {
   method: string;
@@ -81,7 +79,7 @@ test("Back and Forward bring each page back to where the visitor left it", async
 });
 
 test.describe("in an in-app browser (Messenger)", () => {
-  test.use({ userAgent: MESSENGER_IOS });
+  test.use({ userAgent: MESSENGER_UA.ios });
 
   test("scrolling never writes to the history, so no loading bar appears", async ({ page }) => {
     await recordHistoryWrites(page);

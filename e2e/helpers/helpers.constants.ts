@@ -10,6 +10,17 @@ export const VIEWPORTS = {
   desktop: { width: 1280, height: 800 },
 } as const;
 
+/**
+ * User agents of Messenger's in-app browser, as the app sends them: FBAN/MessengerForiOS on iPhone (WebKit),
+ * FB_IAB/Orca-Android on Android (a Chromium WebView: the "android" project in playwright.config.ts).
+ * `inAppBrowser()` (src/shared/lib/browser) reads both as Messenger.
+ */
+export const MESSENGER_UA = {
+  ios: "Mozilla/5.0 (iPhone; CPU iPhone OS 18_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 [FBAN/MessengerForiOS;FBAV/512.0.0.47.106;FBBV/731562344;FBDV/iPhone15,3;FBMD/iPhone;FBSN/iOS;FBSV/18.6;FBSS/3;FBCR/;FBID/phone;FBLC/pl_PL;FBOP/5]",
+  android:
+    "Mozilla/5.0 (Linux; Android 14; Pixel 7 Build/AP2A.240905.003; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/130.0.6723.58 Mobile Safari/537.36 [FB_IAB/Orca-Android;FBAV/480.0.0.47.109;]",
+} as const;
+
 /** bgCanvas in src/styles/tokens.css. */
 export const CANVAS: Readonly<Record<Theme, string>> = { light: "#ffffff", dark: "#1a1a1a" };
 

@@ -19,11 +19,16 @@ export const styles = {
   nav: clsx("order-last w-full md:order-none md:w-auto"),
   /** isolate: every pill (-z-10) stays below every label while one slides past the others. */
   list: clsx("isolate flex flex-wrap items-center justify-center gap-2xs"),
-  /** The label colour changes with the pill (medium), so it is never dark on dark for long. */
+  /**
+   * The label colour changes with the pill (medium), so it is never dark on dark for long. The current page is also
+   * underlined: the gold pill alone is 1.54:1 on the white header, under the 3:1 a state needs (WCAG 1.4.11).
+   */
   link: (active: boolean) =>
     clsx(
       "relative block rounded-md px-sm py-xs text-label-lg transition-[color,background-color] duration-medium ease-standard",
-      active ? "text-text-on-accent" : "text-text-primary hover:bg-bg-surface-default",
+      active
+        ? "text-text-on-accent underline decoration-2 underline-offset-4"
+        : "text-text-primary hover:bg-bg-surface-default",
       FOCUS_RING,
     ),
   pill: (active: boolean) => clsx(PILL, "rounded-md", pillVisibility(active)),

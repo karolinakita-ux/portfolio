@@ -1,9 +1,10 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { act, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
+import { ANCHOR_HELD_ATTRIBUTE } from "#app/routing/anchor.constants.ts";
 import { AUTOMOTIVE_CASE } from "#features/case-studies/content/automotive.content.ts";
 import { DATA_GOVERNANCE_CASE } from "#features/case-studies/content/data-governance.content.ts";
 import { PROJECT_PLANNING_CASE } from "#features/case-studies/content/project-planning.content.tsx";
@@ -121,6 +122,67 @@ describe("App", () => {
     );
   });
 
+  it("lands on the Behind the Design banner from /#behind-the-design, on Work, with a copyable link", async () => {
+    const scrollIntoView = vi.spyOn(Element.prototype, "scrollIntoView");
+    renderApp("/#behind-the-design");
+    expect(h1()).toHaveTextContent("Clarity for Complex Enterprise Software");
+    const banner = within(screen.getByRole("complementary", { name: "How this portfolio was built" }));
+    const heading = banner.getByRole("heading", { level: 3, name: "Behind the Design" });
+    await waitFor(() => expect(heading).toHaveFocus());
+    expect(scrollIntoView.mock.contexts).toEqual([heading]);
+    expect(window.location.pathname + window.location.hash).toBe("/#behind-the-design");
+    expect(banner.getByRole("link", { name: "Copy link to section: Behind the Design" })).toHaveAttribute(
+      "href",
+      "#behind-the-design",
+    );
+  });
+
+  it("lands on the heading of a section link the browser follows within the open page, after its own jump", async () => {
+    renderApp("/about");
+    const scrollIntoView = vi.spyOn(Element.prototype, "scrollIntoView");
+    const scrollTo = vi.spyOn(window, "scrollTo");
+    act(() => {
+      // A fragment navigation: an entry the app never wrote, popstate, then the browser's own jump to the section.
+      window.history.pushState(null, "", "/about#career");
+      window.dispatchEvent(new PopStateEvent("popstate", { state: null }));
+    });
+    expect(scrollIntoView).not.toHaveBeenCalled(); // not before the browser's jump: in the next frame
+    const heading = screen.getByRole("heading", { level: 2, name: "Career Progression" });
+    await waitFor(() => expect(heading).toHaveFocus());
+    expect(scrollIntoView.mock.contexts).toEqual([heading]);
+    expect(scrollTo).not.toHaveBeenCalled(); // never to the top of the page
+  });
+
+  it("only moves focus to the section when the page's own script has landed it (index.html): it never scrolls again", async () => {
+    document.documentElement.setAttribute(ANCHOR_HELD_ATTRIBUTE, "");
+    try {
+      const scrollIntoView = vi.spyOn(Element.prototype, "scrollIntoView");
+      const scrollTo = vi.spyOn(window, "scrollTo");
+      renderApp("/about#career");
+      const heading = screen.getByRole("heading", { level: 2, name: "Career Progression" });
+      await waitFor(() => expect(heading).toHaveFocus());
+      expect(scrollIntoView).not.toHaveBeenCalled();
+      expect(scrollTo).not.toHaveBeenCalled();
+    } finally {
+      document.documentElement.removeAttribute(ANCHOR_HELD_ATTRIBUTE);
+    }
+  });
+
+  it("leaves focus where a keyboard visitor put it before the app started, on a section link", async () => {
+    document.documentElement.setAttribute(ANCHOR_HELD_ATTRIBUTE, "");
+    try {
+      renderApp("/about#career");
+      // On the site the prerendered page is there before the app: the visitor tabs to a header link meanwhile.
+      const work = within(primaryNav()).getByRole("link", { name: "Work" });
+      work.focus();
+      await act(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+      expect(work).toHaveFocus();
+      expect(screen.getByRole("heading", { level: 2, name: "Career Progression" })).not.toHaveFocus();
+    } finally {
+      document.documentElement.removeAttribute(ANCHOR_HELD_ATTRIBUTE);
+    }
+  });
+
   it("navigates with the primary nav and updates URL, title and active pill", async () => {
     const { user } = renderApp();
 
@@ -130,6 +192,25 @@ describe("App", () => {
     expect(window.location.pathname).toBe("/about");
     expect(document.title).toBe("About - Karolina Kita");
     expect(within(primaryNav()).getByRole("link", { name: "About" })).toHaveAttribute("aria-current", "page");
+  });
+
+  it("takes the logo home from another page at once: Work starts at its top, without a smooth scroll", async () => {
+    const { user } = renderApp("/about");
+    const scrollTo = vi.spyOn(window, "scrollTo");
+    try {
+      await user.click(screen.getByRole("link", { name: /home page$/ }));
+      expect(window.location.pathname).toBe("/");
+      expect(h1()).toHaveTextContent("Clarity for Complex Enterprise Software");
+      expect(scrollTo).toHaveBeenCalledWith({ top: 0, behavior: "auto" });
+      expect(scrollTo).not.toHaveBeenCalledWith(expect.objectContaining({ behavior: "smooth" }));
+
+      // Already home: the logo glides to the top, as Back to top does.
+      scrollTo.mockClear();
+      await user.click(screen.getByRole("link", { name: /home page$/ }));
+      expect(scrollTo).toHaveBeenCalledWith({ top: 0, behavior: "smooth" });
+    } finally {
+      scrollTo.mockRestore();
+    }
   });
 
   it("opens a case study from its thumbnail, without an extra Tab stop or screen reader link", async () => {

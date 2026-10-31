@@ -48,4 +48,15 @@ describe("link-preview image", () => {
     expect(disallowed.filter((prefix) => path.startsWith(prefix))).toEqual([]);
     expect(headersFor(path).filter((header) => /^X-Robots-Tag:/i.test(header))).toEqual([]);
   });
+
+  it("is where old shares of the earlier image's address lead (a 301 in _redirects)", () => {
+    const OLD = "/assets/site/og-image.png"; // until 5.14.5
+    const rules = readFileSync(join(ROOT, "public", "_redirects"), "utf8")
+      .split("\n")
+      .filter((line) => line.trim() && !line.startsWith("#"))
+      .map((line) => line.trim().split(/\s+/));
+    expect(rules).toContainEqual([OLD, path, "301"]);
+    // Netlify serves a file that exists before it reads a rule without "!".
+    expect(existsSync(join(ROOT, "public", OLD))).toBe(false);
+  });
 });

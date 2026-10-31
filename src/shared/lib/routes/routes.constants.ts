@@ -32,7 +32,10 @@ export const VIEW = {
   accessibility: "accessibility",
 } as const;
 
-/** Every view, in page order (sitemap, prerendering, audits). */
+/**
+ * Every view (prerendering, audits), Work first. Not the case studies' order on the Work page, which the sitemap and
+ * llms.txt follow: WORK_CASES in features/work.
+ */
 export const VIEWS: readonly View[] = Object.values(VIEW);
 
 /**
@@ -53,9 +56,14 @@ export const VIEW_PATHS = {
   [VIEW.caseSmartTicket]: "/work/smart-ticket",
 } as const satisfies Record<View, string>;
 
-/** Section anchors that other views link to (the section's element id). */
+/**
+ * Section anchors that other views or shared links point to: the element's id and the URL hash (/#enterprise-cases).
+ * Keep them stable, and never the name of a view or alias: /#about opens About (an old hash link).
+ */
 export const SECTION = {
   workCases: "enterprise-cases",
+  /** The Behind the Design banner below the Work page's case studies (ProcessBanner). */
+  behindTheDesign: "behind-the-design",
 } as const;
 
 /**

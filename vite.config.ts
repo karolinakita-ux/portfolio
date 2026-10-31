@@ -28,8 +28,10 @@ function imageSize(header: Buffer): readonly [number, number] | null {
 /**
  * `virtual:asset-sizes`: the pixel size of every image in public/assets (subfolders
  * included), keyed by its path under /assets ("cases/automotive/thumbnail.webp"), read
- * from the file header at build time. The image viewer uses it to draw a placeholder of
- * the right shape before an image arrives. Restart `yarn dev` after adding an image.
+ * from the file header at build time. Images on the page take it as width and height
+ * attributes (`shared/media/asset-size`), so the prerendered HTML holds their height before
+ * they load, and the image viewer draws a placeholder of the right shape. Restart `yarn dev`
+ * after adding an image.
  */
 function assetSizes(): Plugin {
   const id = "virtual:asset-sizes";
@@ -37,7 +39,8 @@ function assetSizes(): Plugin {
   return {
     name: "asset-sizes",
     configResolved(config) {
-      dir = join(config.publicDir, "assets");
+      // Storybook turns publicDir off (it serves only the images its stories show); the sizes still come from public/.
+      dir = join(config.publicDir || join(config.root, "public"), "assets");
     },
     resolveId: (source) => (source === id ? "\0" + id : undefined),
     load(resolved) {
@@ -61,10 +64,19 @@ function assetSizes(): Plugin {
 /** The site's version: shown in the footer, sent to Umami as the tag (src/main.tsx) and in the session data. */
 const { version } = JSON.parse(readFileSync(new URL("package.json", import.meta.url), "utf8")) as { version: string };
 
+/**
+ * The year of the build: the footer's copyright year. Fixed at build time, so the prerendered HTML and the app
+ * that adopts it (hydrateRoot, src/main.tsx) agree, also after New Year until the next release.
+ */
+const buildYear = new Date().getFullYear();
+
 // https://vite.dev/config/
 export default defineConfig(({ isSsrBuild }) => ({
   plugins: [react(), tailwindcss(), assetSizes()],
-  define: { "import.meta.env.APP_VERSION": JSON.stringify(version) },
+  define: {
+    "import.meta.env.APP_VERSION": JSON.stringify(version),
+    "import.meta.env.APP_BUILD_YEAR": JSON.stringify(buildYear),
+  },
   build: {
     // Hashed bundles go to /static/*, which public/_headers caches for a year.
     // Content images stay in /assets under their own names.

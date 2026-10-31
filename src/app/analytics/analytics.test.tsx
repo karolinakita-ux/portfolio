@@ -74,11 +74,21 @@ describe("pageviews", () => {
   });
 
   it("does not count copying a section link (the hash changes, the page does not)", async () => {
-    const { user } = renderApp("/about");
+    const { user } = renderApp("/about?ref=acme");
     await user.click(screen.getByRole("link", { name: "Copy link to section: " + FAQ.title }));
-    expect(window.location.hash).toBe("#faq");
+    expect(window.location.search + window.location.hash).toBe("?ref=acme#faq");
     expect(pageviews()).toBe(1);
     expect(events()).toEqual([[EVENT.sectionLinkCopy, { section: "faq" }]]);
+    // Whoever opens the copied link still counts for acme (link-ref), and the UTM report counts it as a section link.
+    expect(await navigator.clipboard.readText()).toBe(
+      window.location.origin + "/about?ref=acme&utm_medium=section-link#faq",
+    );
+  });
+
+  it("tags a section link copied by a visitor who came without a tag as ?ref=section-link", async () => {
+    const { user } = renderApp("/about");
+    await user.click(screen.getByRole("link", { name: "Copy link to section: " + FAQ.title }));
+    expect(await navigator.clipboard.readText()).toBe(window.location.origin + "/about?ref=section-link#faq");
   });
 });
 
@@ -227,6 +237,31 @@ describe("events on case studies", () => {
       [EVENT.imageOpen, { case: "case-automotive", image: caseCards(AUTOMOTIVE_CASE)[0]?.id }],
       [EVENT.imageNav, { case: "case-automotive", image: caseCards(AUTOMOTIVE_CASE)[1]?.id, direction: "next" }],
       [EVENT.caseNav, { from: "case-automotive", to: "case-project-planning", direction: "next", place: "end" }],
+    ]);
+  });
+
+  it("counts zooming a screenshot in and out in the viewer, with how it was done", async () => {
+    vi.spyOn(HTMLImageElement.prototype, "naturalWidth", "get").mockReturnValue(2880);
+    vi.spyOn(HTMLImageElement.prototype, "naturalHeight", "get").mockReturnValue(1800);
+    vi.spyOn(HTMLImageElement.prototype, "complete", "get").mockReturnValue(true); // as if cached
+    const { user } = renderApp("/work/automotive");
+    const [firstScreenshot] = screen.getAllByRole("button", { name: /View full size/ });
+    if (!firstScreenshot) throw new Error("no screenshots rendered");
+    await user.click(firstScreenshot);
+    const viewer = within(screen.getByRole("dialog"));
+    const shot = { case: "case-automotive", image: caseCards(AUTOMOTIVE_CASE)[0]?.id };
+
+    await user.click(viewer.getByRole("img"));
+    await user.keyboard("0");
+    await user.click(viewer.getByRole("button", { name: "Zoom in" }));
+    await user.click(viewer.getByRole("button", { name: "Zoom out" }));
+
+    expect(events()).toEqual([
+      [EVENT.imageOpen, shot],
+      [EVENT.imageZoom, { ...shot, direction: "in", method: "click" }],
+      [EVENT.imageZoom, { ...shot, direction: "out", method: "key" }],
+      [EVENT.imageZoom, { ...shot, direction: "in", method: "button" }],
+      [EVENT.imageZoom, { ...shot, direction: "out", method: "button" }],
     ]);
   });
 

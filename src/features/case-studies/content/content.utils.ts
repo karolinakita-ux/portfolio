@@ -2,7 +2,7 @@ import type { ShowcaseCard } from "#features/case-studies/case-studies.types.ts"
 
 /**
  * Screenshot cards of one case, from its folder public/assets/cases/<folder>/. A card's id is its image's base
- * name: it keys the card and is the `image` value of the image-open and image-nav statistics events.
+ * name: it keys the card and is the `image` value of the image-open, image-nav and image-zoom statistics events.
  */
 export function caseShots(folder: string) {
   const path = "cases/" + folder + "/";
