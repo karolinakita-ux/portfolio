@@ -18,7 +18,8 @@ export const styles = {
     }),
   /** A phone screen keeps its phone width; other screenshots fill the column. */
   screen: (phone: boolean) => clsx("w-full", { "max-w-phone": phone }),
-  title: clsx("text-title-lg text-balance text-text-primary"),
+  /** Focused by the image viewer's Go to Description, never by Tab: no ring, as a section's heading. */
+  title: clsx("text-title-lg text-balance text-text-primary focus:outline-none"),
   intro: clsx("text-body-lg text-text-secondary"),
   block: clsx("flex flex-col gap-2xs pt-xs"),
   blockTitle: clsx("text-title-md text-balance text-text-primary"),

@@ -8,7 +8,7 @@ import { clsx } from "clsx";
  * other to slide from); a CSS transition would only add stray ones, such as the near-zero
  * transitions the reduced-motion reset in motion.css gives every changed property. Its own text
  * colour (it has no text) keeps it from inheriting the label's colour transition, which WebKit
- * otherwise copies onto it even with transition-property: none.
+ * otherwise copies onto it even with transition-property: none; the nav pill's underline is drawn in it.
  */
 export const PILL = clsx(
   "pointer-events-none absolute inset-0 -z-10 border border-transparent bg-bg-accent-brand text-text-on-accent transition-none",

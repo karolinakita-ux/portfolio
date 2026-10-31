@@ -20,7 +20,7 @@ export const CV_PDF_URL = SITE_URL + "/karolina-kita-cv.pdf";
 
 /**
  * Pages llms.txt lists last, under "## Optional": llmstxt.org's heading for links a reader with little room can
- * skip. Every other page outside Work and the case studies is listed under "About Karolina" (llmsTxt()).
+ * skip. Every other page outside Work and its case studies is listed under "About Karolina" (llmsTxt()).
  */
 export const LLMS_OPTIONAL: readonly View[] = [VIEW.privacy, VIEW.accessibility];
 

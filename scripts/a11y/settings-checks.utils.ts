@@ -5,15 +5,18 @@ import { VIEWS } from "#shared/lib/routes/routes.constants.ts";
 
 import { LARGE_TEXT_PX, OUT, VIEWPORTS } from "./a11y.constants.ts";
 import type { AuditContext } from "./a11y.types.ts";
+import { openLightboxMisses } from "./lightbox-checks.utils.ts";
 import { newPage, openView } from "./pages.utils.ts";
 import { reflow } from "./reflow.utils.ts";
 import { formatTab, tabOrder } from "./tab-order.utils.ts";
 
-/** Elements whose text overflow: hidden or clip cuts off; visually hidden text (1 x 1 px) is skipped. */
-async function clippedText(page: Page): Promise<string[]> {
-  return page.evaluate(() => {
+/**
+ * Elements under `root` whose text overflow: hidden or clip cuts off; visually hidden text (1 x 1 px) is skipped.
+ */
+async function clippedText(page: Page, root = "body"): Promise<string[]> {
+  return page.evaluate((selector) => {
     const out: string[] = [];
-    for (const el of Array.from(document.body.querySelectorAll<HTMLElement>("*"))) {
+    for (const el of Array.from(document.querySelector(selector)?.querySelectorAll<HTMLElement>("*") ?? [])) {
       const style = getComputedStyle(el);
       if (!/hidden|clip/.test(style.overflowX + style.overflowY) || el.clientWidth <= 2 || el.clientHeight <= 2)
         continue;
@@ -22,13 +25,13 @@ async function clippedText(page: Page): Promise<string[]> {
       if (cut && text) out.push(`<${el.tagName.toLowerCase()}> "${text.slice(0, 40)}"`);
     }
     return out;
-  });
+  }, root);
 }
 
 /**
  * 4. A larger default text size, set the way the browser's own font-size setting sets it (DevTools
  * Page.setFontSizes; WCAG 1.4.4 Resize Text). Text, spacing and layout are in rem, so the page grows as it
- * does with zoom: at phone and desktop width nothing may scroll sideways or be cut off.
+ * does with zoom: at phone and desktop width nothing may scroll sideways or be cut off, the image viewer included.
  */
 export async function checkLargeText({ browser, base, notes }: AuditContext): Promise<void> {
   for (const viewport of ["phone", "desktop"] as const) {
@@ -54,6 +57,12 @@ export async function checkLargeText({ browser, base, notes }: AuditContext): Pr
       if (cut.length) notes.push(`Large text ${view} (${viewport}): text cut off in ${cut.join("; ")} (1.4.4)`);
       process.stdout.write("t");
     }
+    // The image viewer is a dialog that scrolls on its own, so the page's reflow check above cannot see into it.
+    const misses = await openLightboxMisses(page, base);
+    const cut = await clippedText(page, "dialog[open]");
+    if (cut.length) misses.push(`text cut off in ${cut.join("; ")}`);
+    if (misses.length) notes.push(`Large text image viewer (${viewport}): ${misses.join("; ")} (1.4.4)`);
+    process.stdout.write("t");
     await page.context().close();
   }
 }

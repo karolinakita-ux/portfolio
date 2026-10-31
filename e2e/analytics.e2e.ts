@@ -1,15 +1,13 @@
 /**
- * Visitor statistics (src/shared/lib/analytics/) in real browsers.
- *
- * The production build is served as https://karolina.kita.company: page.route answers those requests
- * from the local preview server. The real Umami script loads from cloud.umami.is (this spec needs the
- * internet), and every call to Umami's collector is caught here, so nothing reaches the Umami account.
+ * Visitor statistics (src/shared/lib/analytics/) in real browsers: the local build served as the live site, with
+ * the real Umami script and every call to its collector caught (helpers/umami.utils.ts).
  * Checks: nothing loads before consent (the consent box), what is sent and when after it, no hash in
  * addresses, no cookies, no error reports of the tracker's own, only the choice and the theme stored, and
  * no box and no script on any other host or for a visitor with Global Privacy Control.
+ * Tagged links (?ref=, UTM) from landing to consent: analytics-links.e2e.ts.
  */
 import { AxeBuilder } from "@axe-core/playwright";
-import { expect, test, type Page, type Request } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 import {
   EVENT,
@@ -18,88 +16,20 @@ import {
   VIEWPORT_HEIGHT_BUCKET_LAST,
   VIEWPORT_HEIGHT_BUCKETS,
 } from "#shared/lib/analytics/analytics.constants.ts";
-import type { UmamiSendType } from "#shared/lib/analytics/analytics.types.ts";
 
-import { THEME_STORAGE_KEY } from "./helpers/helpers.constants.ts";
+import { LIVE_SITE as SITE, THEME_STORAGE_KEY } from "./helpers/helpers.constants.ts";
 import { themeButton, waitForApp } from "./helpers/page.utils.ts";
+import {
+  allowStatistics,
+  consentBox,
+  eventsNamed,
+  named,
+  ofType,
+  openAsLiveSite,
+  pageviews,
+  umamiRequests,
+} from "./helpers/umami.utils.ts";
 
-const SITE = "https://" + UMAMI.host;
-const COLLECTOR = "https://gateway.umami.is/**";
-const CONSENT_BOX = "Can I Count Your Visit?";
-
-/**
- * One call to Umami's collector, as the tracker posts it: an event or pageview, session data, a speed report,
- * or one of its own error reports (never expected).
- */
-interface Sent {
-  type: UmamiSendType;
-  payload: {
-    website: string;
-    hostname: string;
-    url: string;
-    title: string;
-    referrer?: string;
-    /** The site's version (data-tag). */
-    tag?: string;
-    name?: string;
-    data?: Record<string, string>;
-    ttfb?: number;
-    lcp?: number;
-    duration?: number;
-  };
-}
-
-/** The collector answers cross-origin calls, including the browser's preflight. */
-const CORS = {
-  "access-control-allow-origin": "*",
-  "access-control-allow-methods": "POST, OPTIONS",
-  "access-control-allow-headers": "*",
-};
-
-/** Umami requests the page makes from now on, by URL. */
-function umamiRequests(page: Page): string[] {
-  const urls: string[] = [];
-  page.on("request", (request: Request) => {
-    if (request.url().includes("umami.is")) urls.push(request.url());
-  });
-  return urls;
-}
-
-/** Serves the local build as the live site; returns what the tracker sends and every Umami request. */
-async function openAsLiveSite(page: Page, baseURL: string | undefined, path: string) {
-  if (!baseURL) throw new Error("baseURL is not set (playwright.config.ts)");
-  await page.route(SITE + "/**", async (route) => {
-    const { pathname, search } = new URL(route.request().url());
-    const response = await page.context().request.get(baseURL + pathname + search);
-    // A reload can drop a request still in flight (a background image preload): nothing left to answer.
-    await route.fulfill({ response }).catch((error: unknown) => {
-      if (!String(error).includes("disposed")) throw error;
-    });
-  });
-  const sent: Sent[] = [];
-  await page.route(COLLECTOR, async (route) => {
-    if (route.request().method() === "POST") sent.push(route.request().postDataJSON() as Sent);
-    await route.fulfill({ status: 200, headers: CORS, contentType: "application/json", body: "{}" });
-  });
-  const requests = umamiRequests(page);
-  await page.goto(SITE + path);
-  await waitForApp(page);
-  return { sent, requests };
-}
-
-const consentBox = (page: Page) => page.getByRole("region", { name: CONSENT_BOX });
-
-/** Answers "Allow statistics" in the consent box and waits for the real script. */
-async function allowStatistics(page: Page): Promise<void> {
-  const script = page.waitForResponse(UMAMI.script);
-  await consentBox(page).getByRole("button", { name: "Allow statistics" }).click();
-  expect((await script).ok(), "the Umami script loads from cloud.umami.is (needs the internet)").toBe(true);
-}
-
-const pageviews = (sent: readonly Sent[]) =>
-  sent.filter((call) => call.type === "event" && call.payload.name === undefined);
-const named = (sent: readonly Sent[]) => sent.flatMap((call) => (call.payload.name ? [call.payload] : []));
-const ofType = (sent: readonly Sent[], type: Sent["type"]) => sent.filter((call) => call.type === type);
 const storage = (page: Page) =>
   page.evaluate(() => ({ local: Object.keys(localStorage).sort(), session: Object.keys(sessionStorage) }));
 
@@ -282,10 +212,6 @@ test("neither asks nor loads for a visitor with Global Privacy Control", async (
   await expect(page.locator(`script[src="${UMAMI.script}"]`)).toHaveCount(0);
 });
 
-/** The data of the named events sent so far, by name. */
-const eventsNamed = (sent: readonly Sent[], name: string) =>
-  named(sent).flatMap((payload) => (payload.name === name ? [payload] : []));
-
 test("measures time on page and clicks on things that do nothing, as a mouse", async ({ page, baseURL }) => {
   const { sent } = await openAsLiveSite(page, baseURL, "/about");
   await allowStatistics(page);
@@ -369,6 +295,38 @@ test("tells a tap on a touch screen from a mouse click", async ({ browser, baseU
 
   await page.locator("#faq").getByRole("button").first().tap();
   await expect.poll(() => eventsNamed(sent, EVENT.faqOpen).map((payload) => payload.data?.input)).toEqual(["touch"]);
+  await context.close();
+});
+
+test("counts a tap that zooms a screenshot on a phone as a click from a touch screen, not a dead click", async ({
+  browser,
+  baseURL,
+}) => {
+  const context = await browser.newContext({ hasTouch: true, viewport: { width: 390, height: 844 } });
+  const page = await context.newPage();
+  const { sent } = await openAsLiveSite(page, baseURL, "/work/automotive");
+  await allowStatistics(page);
+  await expect.poll(() => pageviews(sent).length).toBe(1);
+
+  await page
+    .getByRole("button", { name: /^View full size/ })
+    .first()
+    .tap();
+  await expect.poll(() => eventsNamed(sent, EVENT.imageOpen).length).toBe(1);
+  const opened = eventsNamed(sent, EVENT.imageOpen)[0]?.data;
+  const shot = { case: opened?.case, image: opened?.image };
+
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.locator("img")).not.toHaveClass(/opacity-0/);
+  await dialog.locator("img").tap(); // zooms in
+  await dialog.getByRole("button", { name: "Zoom out" }).tap();
+  await expect
+    .poll(() => eventsNamed(sent, EVENT.imageZoom).map((payload) => payload.data))
+    .toEqual([
+      { ...shot, direction: "in", method: "click", input: "touch" },
+      { ...shot, direction: "out", method: "button", input: "touch" },
+    ]);
+  expect(eventsNamed(sent, EVENT.deadClick)).toEqual([]);
   await context.close();
 });
 

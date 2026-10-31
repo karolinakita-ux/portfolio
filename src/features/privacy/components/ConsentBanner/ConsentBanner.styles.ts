@@ -7,11 +7,13 @@ export const styles = {
    * A small card above the bottom edge (z-consent: over the back-to-top button, under the header and
    * dialogs). It never blocks the page and never moves: it appears as it is (no motion at load). On short
    * viewports (landscape phones, 400% zoom) it would be taller than the window, so it sits at the top of
-   * the page instead, where all of it can be scrolled to (WCAG 1.4.10), like the header (short:static).
+   * the page instead, where all of it can be scrolled to (WCAG 1.4.10), like the header (short:static). So it
+   * does on phones up to 640px tall (`cramped`), where it and the header left too little of the window for a
+   * focused element to show (WCAG 2.4.11).
    */
   root: clsx(
     "fixed inset-x-md bottom-md z-consent mx-auto flex max-w-reading flex-col gap-sm rounded-lg border border-border-subtle bg-bg-surface-raised p-lg shadow-xl md:bottom-lg print:hidden",
-    "short:static short:my-md short:w-reading-inset",
+    "cramped:static cramped:my-md cramped:w-reading-inset",
   ),
   title: clsx("text-title-md text-text-primary"),
   text: clsx("text-body-md text-text-secondary"),

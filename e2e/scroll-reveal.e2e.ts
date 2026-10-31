@@ -11,6 +11,10 @@
  * - A card that holds keyboard focus is fully shown, even part-way into its reveal (Firefox does not
  *   scroll a partly visible focused element further in), and follows the scroll again once focus leaves.
  * - Jumping to the case studies (link, button) leaves the first case card fully shown.
+ * - While the statistics consent box shows (a first visit on the live site), the reveal still runs from the window's
+ *   bottom edge: the scroll padding the box adds (--kb-consent-h, base.css) holds no card back, beside the box or
+ *   behind it. Answering it mid-page moves neither the page nor a card in the window. At the bottom of the page at
+ *   rest every card is in its own state, before and after the answer.
  * - Reduced motion, print and browsers without scroll-driven animations: every card is fully
  *   shown, with no animation, at any scroll position.
  * - axe finds no WCAG 2.2 A/AA violations at several scroll positions, half-revealed cards included.
@@ -26,10 +30,12 @@ import { expect, test, type Page } from "@playwright/test";
 
 import { WORK_CASES } from "#features/work/work.content.ts";
 import { VIEW, VIEW_PATHS } from "#shared/lib/routes/routes.constants.ts";
+import { CASE_NAMES } from "#shared/lib/routes/routes.content.ts";
 
 import { THEMES, VIEWPORTS } from "./helpers/helpers.constants.ts";
 import type { Theme } from "./helpers/helpers.types.ts";
 import { openView } from "./helpers/page.utils.ts";
+import { consentBox, declineStatistics, openAsLiveSite } from "./helpers/umami.utils.ts";
 
 /** The cards that reveal (the utility's class: the Vitest component tests pin which elements get it). */
 const CARD = ".reveal-on-scroll";
@@ -39,6 +45,8 @@ const REVEAL_PX = 96;
 const OFFSET_PX = 16;
 /** Where a card is half-way: its top this far inside the viewport. */
 const HALF_PX = REVEAL_PX / 2;
+/** Past a reveal: the card's top this far inside the viewport, well within the strip the consent box keeps clear. */
+const PAST_REVEAL_PX = REVEAL_PX + 2 * OFFSET_PX;
 /** Early in a reveal: the card's top this far inside the viewport, its text still faint. */
 const EARLY_PX = [12, 24, 36];
 /** --breakpoint-md (48rem) at the default text size: the reveal runs from this window width up. */
@@ -81,6 +89,8 @@ interface Snapshot {
   viewport: number;
   /** The page's scroll padding under the sticky header (base.css), in px. */
   scrollPaddingTop: number;
+  /** The page's scroll padding above the consent box while it shows (--kb-consent-h, base.css), in px. */
+  scrollPaddingBottom: number;
   cards: CardState[];
 }
 
@@ -91,6 +101,8 @@ interface FrameRecord extends Snapshot {
 
 interface RevealProbe {
   snapshot: () => Snapshot;
+  /** The cards once the layout holds still, without scrolling (see stableSnapshot). */
+  stable: () => Promise<Snapshot>;
   /** Jumps there and returns the cards once the layout holds still (see stableSnapshot). */
   scrollTo: (y: number) => Promise<Snapshot>;
   /**
@@ -147,11 +159,13 @@ function installRevealProbe({ selector, record }: ProbeOptions): void {
   };
   const snapshot = (): Snapshot => {
     const root = document.documentElement;
+    const rootStyle = getComputedStyle(root);
     return {
       scrollY: window.scrollY,
       maxScrollY: root.scrollHeight - root.clientHeight,
       viewport: root.clientHeight,
-      scrollPaddingTop: Number.parseFloat(getComputedStyle(root).scrollPaddingTop) || 0,
+      scrollPaddingTop: Number.parseFloat(rootStyle.scrollPaddingTop) || 0,
+      scrollPaddingBottom: Number.parseFloat(rootStyle.scrollPaddingBottom) || 0,
       cards: Array.from(document.querySelectorAll(selector), read),
     };
   };
@@ -193,6 +207,7 @@ function installRevealProbe({ selector, record }: ProbeOptions): void {
 
   window.__reveal = {
     snapshot,
+    stable: stableSnapshot,
     scrollTo: async (y) => {
       window.scrollTo({ top: y, behavior: "instant" });
       return stableSnapshot();
@@ -256,6 +271,13 @@ async function snapshot(page: Page): Promise<Snapshot> {
   });
 }
 
+async function stableSnapshot(page: Page): Promise<Snapshot> {
+  return page.evaluate(async () => {
+    if (!window.__reveal) throw new Error("reveal probe missing: open the page with openCards()");
+    return window.__reveal.stable();
+  });
+}
+
 async function scrollToY(page: Page, y: number): Promise<Snapshot> {
   return page.evaluate(async (top) => {
     if (!window.__reveal) throw new Error("reveal probe missing: open the page with openCards()");
@@ -301,9 +323,20 @@ const isShown = (card: CardState): boolean => card.opacity === 1 && card.transla
 const isHalfWay = (card: CardState): boolean =>
   card.opacity > 0 && card.opacity < 1 && card.translateY > 0 && card.translateY < OFFSET_PX;
 
+/**
+ * In its own state, whether an animation is attached or not: fully opaque, not moved (translate none, or WebKit's
+ * 0px at the end of a timeline, see revealProblems).
+ */
+const isAtRest = (card: CardState): boolean => card.opacity === 1 && card.translateY === 0;
+
 /** Cards not fully shown. */
 function shownProblems(snap: Snapshot): string[] {
   return snap.cards.filter((card) => !isShown(card)).map((card) => describeCard(card, snap));
+}
+
+/** Cards not in their own state. */
+function restProblems(snap: Snapshot): string[] {
+  return snap.cards.filter((card) => !isAtRest(card)).map((card) => describeCard(card, snap));
 }
 
 /**
@@ -340,6 +373,16 @@ async function walkToBottom(page: Page, visit: (snap: Snapshot) => Promise<void>
   throw new Error("never reached the bottom of the page");
 }
 
+/** Scrolls to the bottom of the page and returns the cards there, at rest (read again: lazy screenshots grow the page). */
+async function scrollToBottom(page: Page): Promise<Snapshot> {
+  let snap = await snapshot(page);
+  for (let attempt = 0; attempt < 20; attempt++) {
+    snap = await scrollToY(page, snap.maxScrollY);
+    if (snap.scrollY >= snap.maxScrollY) return snap;
+  }
+  throw new Error("never reached the bottom of the page");
+}
+
 /** The card's top sits `inside` px inside the viewport, give or take a pixel (sub-pixel layout, whole-pixel scrolling). */
 function expectPlaced(snap: Snapshot, card: CardState, inside: number): void {
   const actual = snap.viewport - card.top;
@@ -349,19 +392,43 @@ function expectPlaced(snap: Snapshot, card: CardState, inside: number): void {
   ).toBeLessThanOrEqual(1);
 }
 
-/** Places each card in turn half-way through its reveal (top 48px inside); cards the page cannot scroll there are skipped. */
-async function eachCardHalfWay(page: Page, visit: (card: CardState, snap: Snapshot) => void): Promise<number> {
+/**
+ * Places each card in turn with its top `inside` px inside the viewport (half-way through its reveal: HALF_PX); cards
+ * the page cannot scroll there are skipped.
+ */
+async function eachCardPlaced(
+  page: Page,
+  inside: number,
+  visit: (card: CardState, snap: Snapshot) => void,
+): Promise<number> {
   const count = (await snapshot(page)).cards.length;
   let placed = 0;
   for (let index = 0; index < count; index++) {
-    const snap = await placeCard(page, index, HALF_PX);
+    const snap = await placeCard(page, index, inside);
     const card = snap?.cards[index];
     if (!snap || !card) continue;
-    expectPlaced(snap, card, HALF_PX);
+    expectPlaced(snap, card, inside);
     visit(card, snap);
     placed++;
   }
   return placed;
+}
+
+/**
+ * A scroll stop in the middle of the page: the card nearest the middle of the page's list that the page can scroll to
+ * the middle of the window, its top there, with page above the stop and below it, also without the space the consent
+ * box adds at the end of the page while it shows (base.css), which goes with the box. Returns the card's index and
+ * the stop.
+ */
+async function placeMidPage(page: Page): Promise<{ index: number; snap: Snapshot }> {
+  const { cards, viewport } = await snapshot(page);
+  const middle = Math.floor(cards.length / 2);
+  const nearestFirst = cards.map((_, index) => index).sort((a, b) => Math.abs(a - middle) - Math.abs(b - middle));
+  for (const index of nearestFirst) {
+    const snap = await placeCard(page, index, Math.round(viewport / 2));
+    if (snap && snap.scrollY > 0 && snap.scrollY + snap.scrollPaddingBottom < snap.maxScrollY) return { index, snap };
+  }
+  throw new Error("no card can sit in the middle of the window at a scroll stop mid-page");
 }
 
 interface Violation {
@@ -417,12 +484,13 @@ test.describe("motion allowed", () => {
     const supported = await supportsScrollTimelines(page);
     const automotive = WORK_CASES.at(-1);
     if (!automotive) throw new Error("no case studies in WORK_CASES");
-    await expect(page.getByRole("article", { name: automotive.title })).toHaveClass(/\breveal-on-scroll\b/);
+    const name = CASE_NAMES[automotive.view].cardTitle;
+    await expect(page.getByRole("article", { name })).toHaveClass(/\breveal-on-scroll\b/);
 
     const atRest = await scrollToY(page, 0);
-    const index = atRest.cards.findIndex((candidate) => candidate.name === automotive.title);
+    const index = atRest.cards.findIndex((candidate) => candidate.name === name);
     const start = atRest.cards[index];
-    if (!start) throw new Error(`no revealing card named "${automotive.title}"`);
+    if (!start) throw new Error(`no revealing card named "${name}"`);
     expect(start.top, "the card starts more than a reveal below the fold").toBeGreaterThan(atRest.viewport + REVEAL_PX);
     if (supported) {
       expect(start.opacity, "waiting below the fold: transparent").toBe(0);
@@ -477,7 +545,7 @@ test.describe("motion allowed", () => {
         expect(problems, reveals ? "cards out of step with the scroll" : "cards not fully shown").toEqual([]);
 
         const halfWay: string[] = [];
-        const placed = await eachCardHalfWay(page, (card, snap) => {
+        const placed = await eachCardPlaced(page, HALF_PX, (card, snap) => {
           if (!(reveals ? isHalfWay(card) : isShown(card))) halfWay.push(describeCard(card, snap));
         });
         expect(placed, "cards placed half-way").toBeGreaterThan(0);
@@ -493,7 +561,8 @@ test.describe("motion allowed", () => {
     const supported = await supportsScrollTimelines(page);
     const lastCase = WORK_CASES.at(-1);
     if (!lastCase) throw new Error("no case studies in WORK_CASES");
-    const index = (await scrollToY(page, 0)).cards.findIndex((candidate) => candidate.name === lastCase.title);
+    const name = CASE_NAMES[lastCase.view].cardTitle;
+    const index = (await scrollToY(page, 0)).cards.findIndex((candidate) => candidate.name === name);
     const inside = EARLY_PX[1] ?? 24;
     const placed = await placeCard(page, index, inside);
     const card = placed?.cards[index];
@@ -502,9 +571,7 @@ test.describe("motion allowed", () => {
     if (supported) expect(isShown(card), `early in its reveal: ${describeCard(card, placed)}`).toBe(false);
 
     // Focus its link where it is: Firefox does not scroll a partly visible focused element further in.
-    const link = page
-      .getByRole("article", { name: lastCase.title })
-      .getByRole("link", { name: lastCase.cta, exact: true });
+    const link = page.getByRole("article", { name }).getByRole("link", { name: lastCase.cta, exact: true });
     await link.evaluate((element: HTMLElement) => {
       element.focus({ preventScroll: true });
     });
@@ -578,11 +645,12 @@ test.describe("motion allowed", () => {
     }) => {
       const first = WORK_CASES[0];
       if (!first) throw new Error("no case studies in WORK_CASES");
+      const name = CASE_NAMES[first.view].cardTitle;
       await page.setViewportSize(viewport);
       const expectFirstCardShown = async (what: string) => {
         const snap = await snapshot(page);
-        const card = snap.cards.find((candidate) => candidate.name === first.title);
-        if (!card) throw new Error(`no revealing card named "${first.title}"`);
+        const card = snap.cards.find((candidate) => candidate.name === name);
+        if (!card) throw new Error(`no revealing card named "${name}"`);
         expect(card.bottom > 0 && card.top < snap.viewport, `${what}: the first case card is in view`).toBe(true);
         expect(card.opacity, `${what}: ${describeCard(card, snap)}`).toBe(1);
         expect(card.translate, `${what}: ${describeCard(card, snap)}`).toBe("none");
@@ -664,6 +732,81 @@ test.describe("motion allowed", () => {
   }
 });
 
+/**
+ * A first visit on the live site: the consent box shows until the visitor answers, and its strip at the bottom of
+ * the window (--kb-consent-h: 279px at desktop size, about 400px on a phone) becomes the page's bottom scroll padding.
+ * A view timeline's default inset is that padding, so on 5.15.6 every card in the strip, beside the narrower box
+ * included, stayed transparent until the answer. "No, thanks" answers offline; "Allow statistics" takes the box away
+ * the same way (StatisticsConsent). The answer is given at a scroll stop mid-page, where the page could still move:
+ * the scroll position and a card's top in the window stay as they were.
+ */
+test.describe("with the statistics consent box", () => {
+  test.use({ reducedMotion: "no-preference" });
+
+  for (const [viewportName, viewport] of Object.entries(VIEWPORTS)) {
+    for (const path of PAGES) {
+      test(`${path} at ${viewportName} width: the box holds no card back, the answer moves nothing mid-page, and every card rests in its own state at the bottom, before and after it`, async ({
+        page,
+        baseURL,
+      }) => {
+        await page.setViewportSize(viewport);
+        await page.addInitScript(installRevealProbe, { selector: CARD, record: false });
+        await openAsLiveSite(page, baseURL, path);
+        await expect(consentBox(page)).toBeVisible();
+        const reveals = (await supportsScrollTimelines(page)) && viewport.width >= MD_PX;
+        await expect
+          .poll(async () => (await snapshot(page)).scrollPaddingBottom, {
+            message: "the strip the box keeps clear is deeper than a card just past its reveal",
+          })
+          .toBeGreaterThan(PAST_REVEAL_PX);
+
+        await test.step("top to bottom: every card where its scroll position says, measured from the window's edge", async () => {
+          const problems: string[] = [];
+          await walkToBottom(page, (snap) => {
+            problems.push(...(reveals ? revealProblems(snap) : shownProblems(snap)));
+          });
+          // Each card just past its reveal, inside the box's strip: the walk's half-screen steps can miss that band.
+          const placed = await eachCardPlaced(page, PAST_REVEAL_PX, (card, snap) => {
+            if (!isAtRest(card)) problems.push(describeCard(card, snap));
+          });
+          expect(placed, "cards placed just past their reveal").toBeGreaterThan(0);
+          expect(problems, "cards out of step with the scroll while the box shows").toEqual([]);
+        });
+
+        await test.step("at the bottom, at rest, with the box", async () => {
+          const bottom = await scrollToBottom(page);
+          expect(bottom.scrollPaddingBottom, "the box still keeps its strip clear").toBeGreaterThan(PAST_REVEAL_PX);
+          expect(restProblems(bottom), "cards at the bottom with the box").toEqual([]);
+        });
+
+        await test.step("mid-page, the answer moves neither the page nor a card in the window", async () => {
+          // The box's strip goes with it, and focus moves on from its button (Chromium and Firefox focus a clicked
+          // button, StatisticsConsent): neither may scroll the page or shift what the visitor is reading.
+          const { index, snap: before } = await placeMidPage(page);
+          const card = before.cards[index];
+          if (!card) throw new Error(`no card ${String(index)} at the mid-page stop`);
+          expect(card.top, `"${card.name}" in the window`).toBeGreaterThan(0);
+          expect(card.top, `"${card.name}" in the window`).toBeLessThan(before.viewport);
+          expect(before.scrollPaddingBottom, "the box keeps its strip clear before the answer").toBeGreaterThan(0);
+          await declineStatistics(page);
+          await expect
+            .poll(async () => (await snapshot(page)).scrollPaddingBottom, { message: "the box's strip is gone" })
+            .toBe(0);
+          const after = await stableSnapshot(page);
+          expect(after.scrollY, `the page's scroll position (was ${String(before.scrollY)})`).toBe(before.scrollY);
+          expect(after.cards[index]?.top, `"${card.name}"'s top in the window`).toBe(card.top);
+        });
+
+        await test.step("at the bottom, at rest, after the answer", async () => {
+          const bottom = await scrollToBottom(page);
+          expect(bottom.scrollPaddingBottom, "the box's strip is gone").toBe(0);
+          expect(restProblems(bottom), "cards at the bottom after the answer").toEqual([]);
+        });
+      });
+    }
+  }
+});
+
 test.describe("reduced motion", () => {
   test.use({ reducedMotion: "reduce" });
 
@@ -675,7 +818,7 @@ test.describe("reduced motion", () => {
         expect(snap.cards.length, "revealing cards on the page").toBeGreaterThan(0);
         problems.push(...shownProblems(snap));
       });
-      await eachCardHalfWay(page, (card, snap) => {
+      await eachCardPlaced(page, HALF_PX, (card, snap) => {
         if (!isShown(card)) problems.push(describeCard(card, snap));
       });
       expect(problems, "cards not fully shown").toEqual([]);

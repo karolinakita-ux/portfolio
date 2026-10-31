@@ -253,8 +253,8 @@ describe("App", () => {
     expect(within(primaryNav()).getByRole("link", { name: "Work" })).toHaveAttribute("aria-current", "true");
 
     const endNav = within(screen.getByRole("navigation", { name: "Case study navigation" }));
-    await user.click(endNav.getByRole("link", { name: /^Next Case Study.*Enterprise Project Planning/ }));
-    expect(h1()).toHaveTextContent("Enterprise Project Planning & Cost Management Platform");
+    await user.click(endNav.getByRole("link", { name: /^Next Case Study.*Project Planning/ }));
+    expect(h1()).toHaveTextContent(/^Project Planning & Cost Management Platform$/);
 
     await user.click(
       within(screen.getByRole("navigation", { name: "Breadcrumb" })).getByRole("link", { name: "Work" }),
@@ -284,10 +284,12 @@ describe("App", () => {
     expect(window.localStorage.getItem("kb-theme")).toBe("dark");
   });
 
-  it("opens screenshots in the image viewer and browses with the arrow keys", async () => {
+  it("opens screenshots in the image viewer, browses with the arrow keys and closes on the screenshot shown", async () => {
     const { user } = renderApp("/work/automotive");
-    const [firstScreenshot] = screen.getAllByRole("button", { name: /View full size/ });
-    if (!firstScreenshot) throw new Error("no screenshots rendered");
+    const [firstScreenshot, secondScreenshot, thirdScreenshot] = screen.getAllByRole("button", {
+      name: /View full size/,
+    });
+    if (!firstScreenshot || !secondScreenshot || !thirdScreenshot) throw new Error("no screenshots rendered");
 
     await user.click(firstScreenshot);
     const dialog = screen.getByRole("dialog");
@@ -297,9 +299,18 @@ describe("App", () => {
     await user.keyboard("{ArrowRight}");
     expect(within(dialog).getByRole("heading", { name: "1:1 Interviews in Polish" })).toBeInTheDocument();
 
+    // Closing lands on the screenshot the viewer shows, beside its description: the second one, not the opener.
     await user.click(within(dialog).getByRole("button", { name: "Close image viewer" }));
     expect(dialog).not.toHaveAttribute("open");
-    expect(firstScreenshot).toHaveFocus();
+    expect(secondScreenshot).toHaveFocus();
+
+    // Go to Description lands on the third one's description: focus on its row's title, where the text starts.
+    await user.click(firstScreenshot);
+    await user.keyboard("{ArrowRight}{ArrowRight}");
+    await user.click(within(dialog).getByRole("button", { name: "Go to Description" }));
+    expect(dialog).not.toHaveAttribute("open");
+    expect(screen.getByRole("heading", { level: 3, name: "Personas Built from Survey Data" })).toHaveFocus();
+    expect(thirdScreenshot.closest("article")).toHaveAccessibleName("Personas Built from Survey Data");
   });
 
   it("loads a case study's screenshots only once the visitor points at or focuses a link to it", async () => {

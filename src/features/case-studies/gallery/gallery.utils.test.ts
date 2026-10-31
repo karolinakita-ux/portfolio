@@ -6,7 +6,7 @@ import { DATA_GOVERNANCE_CASE } from "#features/case-studies/content/data-govern
 import { PROJECT_PLANNING_CASE } from "#features/case-studies/content/project-planning.content.tsx";
 import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.ts";
 
-import { cardAssets, caseCards, featureStarts, sectionStarts } from "./gallery.utils.ts";
+import { cardAssets, caseCards, featureStarts, sectionStarts, zoomAsset } from "./gallery.utils.ts";
 
 describe("caseCards", () => {
   it("lists a case study's screenshots in page order: feature sections first, then screenshot sections", () => {
@@ -52,7 +52,9 @@ describe("caseCards", () => {
     (c) => {
       for (const card of caseCards(c)) {
         const file = card.asset.split("/").pop() ?? "";
-        expect(card.id, card.asset).toBe(file.replace(card.darkAsset ? /-light\.webp$/ : /\.webp$/, ""));
+        // A changed Light and Dark pair's files carry a version (`-v2`) that the card id leaves out (caseShots).
+        const id = file.replace(card.darkAsset ? /(?:-v\d+)?-light\.webp$/ : /\.webp$/, "");
+        expect(card.id, card.asset).toBe(id);
         const darkPair = card.darkAsset === undefined ? undefined : card.asset.replace(/-light\.webp$/, "-dark.webp");
         expect(card.darkAsset, card.id).toBe(darkPair);
       }
@@ -85,4 +87,46 @@ describe("virtual:asset-sizes", () => {
       }
     },
   );
+});
+
+type Sizes = Readonly<Record<string, readonly [number, number]>>;
+
+/**
+ * What is wrong with the image viewer's sharper copies in `sizes` (paths under /assets): each must be its page
+ * file's picture with more pixels. The viewer swaps it in at the page file's size, so a copy of another shape would
+ * jump or stretch, and one without at least 1.5 times the pixels is not worth the download.
+ */
+function zoomCopyProblems(sizes: Sizes): string[] {
+  return Object.entries(sizes).flatMap(([copy, [width, height]]) => {
+    if (!copy.includes("/zoom/")) return [];
+    const page = sizes[copy.replace("/zoom/", "/")];
+    if (!page) return [`${copy}: no page file beside its zoom folder`];
+    const [pageWidth, pageHeight] = page;
+    const problems: string[] = [];
+    if (width < pageWidth * 1.5)
+      problems.push(`${copy}: ${width} px wide, under 1.5 times the page file's ${pageWidth}`);
+    // Within a pixel of the page file's shape: export rounding, never a different crop.
+    if (Math.abs(height - (width * pageHeight) / pageWidth) > 1)
+      problems.push(`${copy}: ${width}x${height}, not the shape of the page file's ${pageWidth}x${pageHeight}`);
+    return problems;
+  });
+}
+
+describe("zoom copies", () => {
+  it("keeps a case image's sharper copy in a zoom folder beside it, under the same name", () => {
+    expect(zoomAsset("cases/automotive/journey-map-light.webp")).toBe("cases/automotive/zoom/journey-map-light.webp");
+  });
+
+  it("makes every zoom copy its page file's picture with at least 1.5 times the pixels", () => {
+    expect(zoomCopyProblems(ASSET_SIZES)).toEqual([]);
+  });
+
+  it("finds a copy without a page file, one too small and one of another shape", () => {
+    const page = "cases/x/shot-light.webp";
+    expect(zoomCopyProblems({ [page]: [2000, 1062], [zoomAsset(page)]: [4000, 2124] })).toEqual([]);
+    expect(zoomCopyProblems({ [page]: [720, 1564], [zoomAsset(page)]: [1080, 2346] })).toEqual([]); // 3x of 2x
+    expect(zoomCopyProblems({ [zoomAsset(page)]: [4000, 2124] })).toHaveLength(1);
+    expect(zoomCopyProblems({ [page]: [2000, 1062], [zoomAsset(page)]: [2400, 1274] })).toHaveLength(1);
+    expect(zoomCopyProblems({ [page]: [2000, 1062], [zoomAsset(page)]: [4000, 2200] })).toHaveLength(1);
+  });
 });

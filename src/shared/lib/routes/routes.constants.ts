@@ -2,10 +2,10 @@ import type { NavItem, View } from "./routes.types.ts";
 
 /**
  * Information architecture
- *   Work            /  ─┬─ /work/smart-ticket  (Smart Ticket: mobile ticketing and transit operations)
- *                       ├─ /work/data-governance  (Data Governance: Enterprise White-Label Theme Generator)
+ *   Work            /  ─┬─ /work/smart-ticket
+ *                       ├─ /work/automotive
  *                       ├─ /work/project-planning
- *                       └─ /work/automotive
+ *                       └─ /work/data-governance  (the Theme Generator case: the address keeps its code name)
  *   About /about · Contact /contact
  *   CV /cv (linked from the Work and About heroes and Contact; not in the primary nav)
  *   Privacy /privacy · Accessibility /accessibility (linked from the footer)
@@ -14,7 +14,7 @@ import type { NavItem, View } from "./routes.types.ts";
  * swipe-back on phones) move between views. The URL hash is a section anchor
  * (/about#career); it follows the section in view while scrolling.
  * Before 3.0.0 views lived in the hash (/#about): those links still resolve.
- * Reading and building URLs: routes.utils.ts.
+ * Reading and building URLs: routes.utils.ts. Page titles and the case studies' names: routes.content.ts.
  */
 
 /** View ids, used everywhere in code instead of string literals. */
@@ -84,23 +84,3 @@ export const NAV_ITEMS: readonly NavItem[] = [
   { view: VIEW.about, label: "About" },
   { view: VIEW.contact, label: "Contact" },
 ];
-
-export const SITE_NAME = "Karolina Kita";
-
-/**
- * Document title per view (shown in the tab and in the history menu).
- * The CV's title leads with the name: it is the PDF's title (scripts/cv-pdf.ts) and the file name browsers
- * suggest when the page is saved as a PDF.
- */
-export const VIEW_TITLES: Readonly<Record<View, string>> = {
-  [VIEW.work]: SITE_NAME + " - Senior Product Designer",
-  [VIEW.about]: "About - " + SITE_NAME,
-  [VIEW.contact]: "Contact - " + SITE_NAME,
-  [VIEW.cv]: SITE_NAME + " - CV",
-  [VIEW.privacy]: "Privacy - " + SITE_NAME,
-  [VIEW.accessibility]: "Accessibility - " + SITE_NAME,
-  [VIEW.caseDataGovernance]: "Theme Generator Case Study - " + SITE_NAME,
-  [VIEW.caseProjectPlanning]: "Project Planning Case Study - " + SITE_NAME,
-  [VIEW.caseAutomotive]: "Automotive Marketplace Case Study - " + SITE_NAME,
-  [VIEW.caseSmartTicket]: "Smart Ticket Case Study - " + SITE_NAME,
-};

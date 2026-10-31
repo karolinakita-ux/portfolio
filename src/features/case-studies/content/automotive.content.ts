@@ -10,10 +10,10 @@ const { shot } = caseShots("automotive");
 export const AUTOMOTIVE_CASE: CaseStudy = {
   view: VIEW.caseAutomotive,
   id: "auto",
-  shortTitle: "Automotive Marketplace",
   eyebrow: ["European Automotive B2B", "Discovery, Research & Product Strategy"],
-  title: "Automotive B2B Marketplace: From Dealer Research Across Europe to a Validated Redesign",
   meta: [
+    // Her role on this project, as the Team line names the 2 designers; her title at GlobalLogic Poland then was
+    // Senior UX/UI Designer (the CV). Kept on purpose (Karolina, 2026-10-31).
     { label: "My Role", value: "Senior UX Designer" },
     {
       label: "Team",

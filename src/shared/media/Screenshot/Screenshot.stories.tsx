@@ -11,8 +11,8 @@ const meta = {
   title: "Media/Screenshot",
   component: Screenshot,
   args: {
-    src: "/assets/cases/project-planning/calendar-week-view-light.webp",
-    darkSrc: "/assets/cases/project-planning/calendar-week-view-dark.webp",
+    src: "/assets/cases/project-planning/calendar-week-view-v2-light.webp",
+    darkSrc: "/assets/cases/project-planning/calendar-week-view-v2-dark.webp",
     alt: "Month overview in week view: a Participant and Organizer switch, a project filter, a mini calendar with meeting counts, the selected day’s meetings and a weekly grid of meetings with a current-time line.",
   },
 } satisfies Meta<typeof Screenshot>;

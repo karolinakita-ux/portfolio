@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { TESTIMONIALS, WORK_CASES } from "#features/work/work.content.ts";
 import { VIEW } from "#shared/lib/routes/routes.constants.ts";
+import { CASE_NAMES } from "#shared/lib/routes/routes.content.ts";
 import { REVEAL } from "#test/reveal.ts";
 
 import { WorkView } from "./WorkView.tsx";
@@ -56,7 +57,7 @@ describe("WorkView", () => {
 describe("WorkView scroll reveal", () => {
   it("fades up each case card and each testimonial, and nothing else", () => {
     renderWork();
-    const cases = WORK_CASES.map((item) => screen.getByRole("article", { name: item.title }));
+    const cases = WORK_CASES.map((item) => screen.getByRole("article", { name: CASE_NAMES[item.view].cardTitle }));
     const testimonials = within(
       screen.getByRole("region", { name: "Trusted by the Leaders I Worked For" }),
     ).getAllByRole("figure");

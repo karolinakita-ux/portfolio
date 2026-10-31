@@ -1,4 +1,4 @@
-import type { View } from "#shared/lib/routes/routes.types.ts";
+import type { CaseView } from "#shared/lib/routes/routes.types.ts";
 
 /** Content model of the Work page (copy in work.content.ts). */
 
@@ -9,10 +9,10 @@ export interface WorkCase {
   darkAsset?: string;
   alt: string;
   eyebrow: readonly string[];
-  title: string;
   summary: string;
   cta: string;
-  view: View;
+  /** The case study it opens, and its title: the case's card title (CASE_NAMES in shared/lib/routes). */
+  view: CaseView;
 }
 
 /** A LinkedIn recommendation quoted on the Work page. */

@@ -21,6 +21,7 @@ export const EVENT = {
   imageOpen: "image-open",
   imageNav: "image-nav",
   imageZoom: "image-zoom",
+  imageDescriptionOpen: "image-description-open",
   figmaClick: "figma-click",
   githubClick: "github-click",
   storybookClick: "storybook-click",
@@ -168,7 +169,10 @@ export const RAGE_CLICKS = 3;
 /** Longest label (alt text, image caption, heading, card title) sent with a dead click. */
 export const MAX_LABEL_LENGTH = 100;
 
-/** Elements that react to a click: a click on or inside them is not a dead click (clicks.utils.ts). */
+/**
+ * Elements that react to a click: a click on or inside them is not a dead click (clicks.utils.ts). data-clickable marks
+ * one that is not a control but reacts to a click or tap all the same: the image viewer's image zooms (useZoom).
+ */
 export const INTERACTIVE = [
   "a[href]",
   "button",
@@ -184,6 +188,7 @@ export const INTERACTIVE = [
   '[role="checkbox"]',
   '[contenteditable="true"]',
   '[tabindex]:not([tabindex="-1"])',
+  "[data-clickable]",
 ].join(", ");
 
 /** Text elements: a dead click on them reads "text". */

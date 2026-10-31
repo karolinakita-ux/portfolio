@@ -35,7 +35,10 @@ import { sessionData } from "./session.utils.ts";
  *   Performance tab). It takes every history.replaceState as a new page, so address changes that are
  *   not one go past it (replaceAddress in shared/lib/routes).
  * - The tracker keeps its own idea of the current page, so every call passes the page itself: address
- *   without the hash, title and referrer. beforeSend does the same for the tracker's own requests (speed
+ *   without the hash, title and referrer. Every call on a page has its pageview's referrer: on the first page
+ *   document.referrer ("" when there is none, as the tracker sends it), then the page before. The tracker's own
+ *   never goes: once the address changes it names the page just left, so the time spent on the first page
+ *   would say it came from itself. beforeSend does the same for the tracker's own requests (speed
  *   reports, session data), keeps only the link tag and UTM parameters in addresses, and cancels
  *   everything once statistics are off. Umami's own error reports (stack traces) never go.
  * - Calls made before the script has loaded wait in a queue; if the script is blocked, they are dropped.
@@ -98,11 +101,14 @@ const send = (build: BuildPayload) => {
 export const beforeSend: BeforeSend = (type, payload) =>
   state.on && type !== "error" ? cleanPayload(type, payload, state.page) : null;
 
-/** The current page, read when the call is made (not when a queued call goes out). */
+/**
+ * The current page, read when the call is made (not when a queued call goes out). Until the app counts a second
+ * page, the referrer is the one the browser loaded this document with: the page that linked here, or none ("").
+ */
 const currentPage = (): PageSnapshot => ({
   url: cleanUrl(window.location.href),
   title: document.title,
-  ...(state.referrer !== null && { referrer: state.referrer }),
+  referrer: state.referrer ?? cleanReferrer(document.referrer),
 });
 
 const withPage =

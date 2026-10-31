@@ -7,13 +7,11 @@ import { caseShots } from "./content.utils.ts";
 /** Every Data Governance screenshot has a Light and a Dark version. */
 const { shot } = caseShots("data-governance");
 
-/* Case study - Enterprise White-Label Theme Generator. One product name everywhere: Work card, H1, SEO name, previous / next links, and "Theme Generator" in the breadcrumb and the browser tab; only the address and the view id keep the code name Data Governance. Screenshot fields: see ShowcaseCard in case-studies.types.ts. */
+/* Case study - Enterprise White-Label Theme Generator. One product name everywhere (CASE_NAMES in shared/lib/routes): Work card, H1, SEO name, previous / next links, and "Theme Generator" in the breadcrumb and the browser tab; only the address and the view id keep the code name Data Governance. Screenshot fields: see ShowcaseCard in case-studies.types.ts. */
 export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
   view: VIEW.caseDataGovernance,
   id: "case",
-  shortTitle: "Theme Generator",
   eyebrow: ["Enterprise Systems", "Multi-Tenant Architecture & Accessibility"],
-  title: "Enterprise White-Label Theme Generator: Balancing Custom Branding with Strict WCAG 2.1 AA Accessibility",
   meta: [
     { label: "My Role", value: "UX/UI Designer" },
     {

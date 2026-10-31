@@ -1,19 +1,25 @@
 /**
- * Click to zoom in the image viewer (features/image-viewer, useZoom) in real browsers:
+ * Click or tap to zoom in the image viewer (features/image-viewer, useZoom) in real browsers:
  * - the cursor says what a click does: zoom in on the fitted image, zoom out once zoomed, grabbing while a drag pans;
  * - a click zooms to 200% with the clicked point kept under the pointer, another goes back to fit, and the toolbar's
  *   readout and buttons and the keys stay in step;
  * - a wide screenshot still shorter than the pane at 200% stays centred in it, as when fitted, so a click on its
  *   middle line keeps the clicked point under the pointer there too;
  * - a drag that pans the zoomed image is not a click;
- * - zoom is instant, with or without reduced motion;
- * - a tap on a touch screen leaves the zoom alone (tablet width, where the zoom buttons show).
+ * - zoom is instant, with or without reduced motion, and nothing on the image starts a transition;
+ * - on a touch screen a tap zooms the same way, and at 320px the toolbar holds Previous, the zoom controls and Next
+ *   in one row; narrower (200% page zoom or text size on a phone) the zoom controls take a centred row of their own,
+ *   inside the panel and without sideways scrolling;
+ * - on an Android phone in Messenger's in-app browser (tag @android: the "android" project, real flings and pinches):
+ *   the zoom buttons with 40px touch targets, tap to zoom at once, and a swipe, a pan, a fling and a pinch that do not
+ *   zoom the image.
  */
 import { expect, test, type Browser, type Locator, type Page } from "@playwright/test";
 
 import { VIEW, VIEW_PATHS } from "#shared/lib/routes/routes.constants.ts";
 
 import { nextFrames, openView } from "./helpers/page.utils.ts";
+import { straightPath, touchPath, touchPinch } from "./helpers/touch.utils.ts";
 
 const CASE = VIEW_PATHS[VIEW.caseAutomotive];
 /** A case with a wide screenshot (about 3.4 : 1): at 200% it is still shorter than the pane on a tall window. */
@@ -22,23 +28,27 @@ const WIDE_SHOT = /^View full size: Cost distribution/;
 const ZOOM_LEVEL = /^(Fit|\d+%)$/;
 
 /**
- * Opens a screenshot (the case's first by default) in the viewer and waits until the image shows (decoded) and stands
- * still: the panel and the image fade in with an 8px rise, which would move the points the tests measure.
+ * Waits until the viewer's image shows (decoded) and stands still: the panel and the image fade in with an 8px rise,
+ * and a new image slides in from the side, which would move the points the tests measure.
  */
-async function openViewer(page: Page, name = /^View full size/) {
-  await page.getByRole("button", { name }).first().click();
-  const dialog = page.getByRole("dialog");
-  const image = dialog.locator("img");
-  await expect(image).not.toHaveClass(/opacity-0/);
+async function settle(page: Page, dialog: Locator) {
+  await expect(dialog.locator("img")).not.toHaveClass(/opacity-0/);
   await dialog.evaluate(async (element) => {
     const running = [element, ...element.querySelectorAll("*")].flatMap((node) => node.getAnimations());
     await Promise.allSettled(running.map((animation) => animation.finished));
   });
   await nextFrames(page, 2);
+}
+
+/** Opens a screenshot (the case's first by default) in the viewer, once it shows and stands still (settle). */
+async function openViewer(page: Page, name = /^View full size/) {
+  await page.getByRole("button", { name }).first().click();
+  const dialog = page.getByRole("dialog");
+  await settle(page, dialog);
   const zoom = dialog.getByRole("group", { name: "Zoom" });
   return {
     dialog,
-    image,
+    image: dialog.locator("img"),
     pane: dialog.locator(".kb-lightbox-pane"),
     readout: zoom.getByText(ZOOM_LEVEL),
     zoomIn: zoom.getByRole("button", { name: "Zoom in" }),
@@ -166,12 +176,22 @@ test.describe("with a mouse", () => {
       await page.emulateMedia({ reducedMotion });
       const { image, readout } = await openViewer(page);
       const fitted = (await image.boundingBox())?.width ?? 0;
+      // Reduced motion gives every property of every element a 0.01ms transition (motion.css). Zooming changes the
+      // image's flex-shrink (1 to 0), and that transition once showed it at its file's width for a frame: nothing on
+      // the image may start one. Caught as it starts, so the check does not depend on which frame a measurement hits.
+      await image.evaluate((element) => {
+        element.addEventListener("transitionrun", (event) => {
+          const { propertyName } = event as TransitionEvent;
+          element.dataset.transitioned = (element.dataset.transitioned ?? "") + propertyName + " ";
+        });
+      });
       const point = await pointOn(image, 0.5, 0.5);
       await page.mouse.click(point.x, point.y);
       await expect(readout).toHaveText("200%");
       // The first frame after the click has the final size, and nothing runs on the image.
       const first = (await image.boundingBox())?.width ?? 0;
       await page.waitForTimeout(400);
+      expect(await image.getAttribute("data-transitioned"), "no transition on the image").toBeNull();
       expect(first).toBeCloseTo(fitted * 2, 0);
       expect((await image.boundingBox())?.width).toBeCloseTo(first, 0);
       expect(await image.evaluate((element) => element.getAnimations().length)).toBe(0);
@@ -227,27 +247,254 @@ async function touchPage(browser: Browser, width: number, height: number) {
   return page;
 }
 
-test("a tap on a touch screen leaves the zoom alone; the zoom buttons still work there", async ({ browser }) => {
-  const page = await touchPage(browser, 1024, 768); // a tablet: md and up, so the zoom buttons show
-  const { dialog, image, readout, zoomIn } = await openViewer(page);
-  await image.tap();
+/** How far the point at fractions (fx, fy) of the image is from `point` now, in px across and down. */
+async function driftFrom(image: Locator, point: { x: number; y: number }, fx: number, fy: number) {
+  const now = await pointOn(image, fx, fy);
+  return { x: Math.abs(now.x - point.x), y: Math.abs(now.y - point.y) };
+}
+
+test("a tap zooms in where it lands and another goes back to fit, as a click does", async ({ browser }) => {
+  const page = await touchPage(browser, 1024, 768); // a tablet
+  const { dialog, image, readout, zoomIn, zoomOut } = await openViewer(page);
+  // On the middle line down: a wide screenshot shorter than the pane stays centred that way.
+  const point = await pointOn(image, 0.25, 0.5);
+  await page.touchscreen.tap(point.x, point.y);
+  await expect(readout).toHaveText("200%");
+  await expect(dialog.getByRole("region", { name: "Zoomed image, scroll to pan" })).toBeFocused();
+  const drift = await driftFrom(image, point, 0.25, 0.5);
+  expect(drift.x).toBeLessThanOrEqual(2);
+  expect(drift.y).toBeLessThanOrEqual(2);
+
+  await page.touchscreen.tap(point.x, point.y);
   await expect(readout).toHaveText("Fit");
-  await expect(dialog.locator(".kb-lightbox-image-zoomed")).toHaveCount(0);
+  await expect(zoomIn).toBeFocused();
 
   await zoomIn.tap();
   await expect(readout).toHaveText("150%");
-  await image.tap();
-  await page.waitForTimeout(300);
-  await expect(readout).toHaveText("150%");
+  await zoomOut.tap();
+  await expect(readout).toHaveText("Fit");
   await page.context().close();
 });
 
-test("a tap on a phone leaves the image fitted", async ({ browser }) => {
-  const page = await touchPage(browser, 390, 844);
-  const { dialog, image } = await openViewer(page);
-  await image.tap();
-  await page.waitForTimeout(300);
-  await expect(dialog.locator(".kb-lightbox-image-zoomed")).toHaveCount(0);
-  await expect(dialog.getByRole("region", { name: "Zoomed image, scroll to pan" })).toHaveCount(0);
+test("at 320px the toolbar holds Previous, the zoom controls and Next in one row, and they work", async ({
+  browser,
+}) => {
+  const page = await touchPage(browser, 320, 640);
+  const { dialog, image, readout, zoomIn, zoomOut } = await openViewer(page);
+  await expect(dialog.getByText(/^1 \/ \d+$/)).toBeVisible(); // the counter above the image
+  const row = [dialog.getByRole("button", { name: "Previous image" }), zoomOut, readout, zoomIn];
+  row.push(dialog.getByRole("button", { name: "Next image" }));
+  const boxes = [];
+  for (const control of row) {
+    await expect(control).toBeVisible();
+    const box = await control.boundingBox();
+    if (!box) throw new Error("a control has no box");
+    boxes.push(box);
+  }
+  const panel = await dialog.getByRole("figure").boundingBox();
+  if (!panel) throw new Error("the panel has no box");
+  const middle = (box: { y: number; height: number }) => box.y + box.height / 2;
+  for (const [i, box] of boxes.entries()) {
+    expect(box.x, "inside the panel").toBeGreaterThanOrEqual(panel.x);
+    expect(box.x + box.width, "inside the panel").toBeLessThanOrEqual(panel.x + panel.width);
+    expect(Math.abs(middle(box) - middle(boxes[0] ?? box)), "on one row").toBeLessThanOrEqual(1);
+    const next = boxes[i + 1];
+    if (next) expect(box.x + box.width, "no overlap").toBeLessThanOrEqual(next.x);
+  }
+  expect(await dialog.evaluate((element) => element.scrollWidth - element.clientWidth), "no sideways scroll").toBe(0);
+
+  await zoomIn.tap();
+  await expect(readout).toHaveText("150%");
+  const point = await pointOn(image, 0.5, 0.5);
+  await page.touchscreen.tap(point.x, point.y); // from any zoom level back to fit
+  await expect(readout).toHaveText("Fit");
+  await page.touchscreen.tap(point.x, point.y);
+  await expect(readout).toHaveText("200%");
   await page.context().close();
+});
+
+/**
+ * Where the one row does not fit (a phone with a larger text size or page zoom), Previous and Next keep the first
+ * row and the zoom controls take a centred row under them: every control stays inside the panel, the dialog does
+ * not scroll sideways (WCAG 1.4.4), and the controls still work.
+ */
+async function expectTwoRows(page: Page) {
+  const { dialog, readout, zoomIn, zoomOut } = await openViewer(page);
+  const previous = dialog.getByRole("button", { name: "Previous image" });
+  const next = dialog.getByRole("button", { name: "Next image" });
+  const boxes = [];
+  for (const control of [previous, next, zoomOut, readout, zoomIn]) {
+    const box = await control.boundingBox();
+    if (!box) throw new Error("a control has no box");
+    boxes.push(box);
+  }
+  const panel = await dialog.getByRole("figure").boundingBox();
+  const [first, last, out, level, into] = boxes;
+  if (!panel || !first || !last || !out || !level || !into) throw new Error("the panel has no box");
+  for (const box of boxes) {
+    expect(box.x, "inside the panel").toBeGreaterThanOrEqual(panel.x);
+    expect(box.x + box.width, "inside the panel").toBeLessThanOrEqual(panel.x + panel.width);
+  }
+  const middle = (box: { y: number; height: number }) => box.y + box.height / 2;
+  expect(Math.abs(middle(last) - middle(first)), "Previous and Next on one row").toBeLessThanOrEqual(1);
+  expect(Math.abs(middle(level) - middle(out)), "the zoom controls on one row").toBeLessThanOrEqual(1);
+  expect(Math.abs(middle(into) - middle(out)), "the zoom controls on one row").toBeLessThanOrEqual(1);
+  expect(out.y, "the zoom controls under Previous and Next").toBeGreaterThanOrEqual(first.y + first.height);
+  const centre = (out.x + into.x + into.width) / 2 - (panel.x + panel.width / 2);
+  expect(Math.abs(centre), "the zoom controls centred").toBeLessThanOrEqual(1);
+  expect(await dialog.evaluate((element) => element.scrollWidth - element.clientWidth), "no sideways scroll").toBe(0);
+
+  await zoomIn.tap();
+  await expect(readout).toHaveText("150%");
+  await zoomOut.tap();
+  await expect(readout).toHaveText("Fit");
+}
+
+test("at 200% page zoom on a phone (195px) the zoom controls take a row of their own", async ({ browser }) => {
+  const page = await touchPage(browser, 195, 422); // a 390px phone at 200%
+  await expectTwoRows(page);
+  await page.context().close();
+});
+
+test("with a 200% text size on a phone the zoom controls take a row of their own", async ({ browser, browserName }) => {
+  test.skip(browserName !== "chromium", "the browser's text size is set through Chromium's DevTools protocol");
+  const context = await browser.newContext({ hasTouch: true, viewport: { width: 390, height: 844 } });
+  const page = await context.newPage();
+  // As the browser's own font-size setting sets it (yarn a11y, checkLargeText: 32px).
+  const devtools = await context.newCDPSession(page);
+  await devtools.send("Page.enable");
+  await devtools.send("Page.setFontSizes", { fontSizes: { standard: 32, fixed: 26 } });
+  await openView(page, CASE);
+  expect(await page.evaluate(() => getComputedStyle(document.documentElement).fontSize)).toBe("32px");
+  await expectTwoRows(page);
+  await context.close();
+});
+
+test.describe("on an Android phone in Messenger", { tag: "@android" }, () => {
+  test.beforeEach(async ({ page }) => {
+    await openView(page, CASE);
+  });
+
+  test("the zoom buttons show beside Previous and Next, each with a 40px touch target", async ({ page }) => {
+    const { dialog, readout, zoomIn, zoomOut } = await openViewer(page);
+    expect(await page.evaluate(() => matchMedia("(pointer: coarse)").matches)).toBe(true);
+    // The swipe hint has no room beside the zoom controls on a phone held upright; the buttons say it all.
+    await expect(dialog.getByText("Swipe to browse")).toBeHidden();
+    const names = ["Close image viewer", "Previous image", "Zoom out", "Zoom in", "Next image"];
+    for (const name of names) {
+      const button = dialog.getByRole("button", { name });
+      await expect(button).toBeVisible();
+      // 19px from the middle each way, outside the 32px button it draws, still reaches it.
+      const reached = await button.evaluate((element) => {
+        const box = element.getBoundingClientRect();
+        const x = box.left + box.width / 2;
+        const y = box.top + box.height / 2;
+        const spots = [
+          [x - 19, y],
+          [x + 19, y],
+          [x, y - 19],
+          [x, y + 19],
+        ] as const;
+        return {
+          width: box.width,
+          spots: spots.map(([px, py]) => element.contains(document.elementFromPoint(px, py))),
+        };
+      });
+      expect(reached.width, name).toBeLessThan(38);
+      expect(reached.spots, name).toEqual([true, true, true, true]);
+    }
+
+    await zoomIn.tap();
+    await expect(readout).toHaveText("150%");
+    await zoomIn.tap();
+    await expect(readout).toHaveText("200%");
+    await zoomOut.tap();
+    await expect(readout).toHaveText("150%");
+  });
+
+  for (const reducedMotion of ["no-preference", "reduce"] as const) {
+    test(`a tap zooms in at once where it lands, and another goes back to fit (${reducedMotion} motion)`, async ({
+      page,
+    }) => {
+      await page.emulateMedia({ reducedMotion });
+      const { image, readout, zoomIn } = await openViewer(page);
+      const fitted = (await image.boundingBox())?.width ?? 0;
+      const point = await pointOn(image, 0.25, 0.5);
+      await page.touchscreen.tap(point.x, point.y);
+      await expect(readout).toHaveText("200%");
+      // The first frame after the tap has the final size, with the tapped point still under the finger.
+      expect((await image.boundingBox())?.width).toBeCloseTo(fitted * 2, 0);
+      expect(await image.evaluate((element) => element.getAnimations().length)).toBe(0);
+      const drift = await driftFrom(image, point, 0.25, 0.5);
+      expect(drift.x).toBeLessThanOrEqual(2);
+      expect(drift.y).toBeLessThanOrEqual(2);
+
+      await page.touchscreen.tap(point.x, point.y);
+      await expect(readout).toHaveText("Fit");
+      await expect(zoomIn).toBeFocused();
+    });
+  }
+
+  test("a swipe browses, a pan and a fling move the zoomed image, a pinch zooms the page: none zooms the image", async ({
+    page,
+  }) => {
+    const { dialog, image, pane, readout } = await openViewer(page);
+    const counter = dialog.getByText(/^\d+ \/ \d+$/);
+    await expect(counter).toHaveText(/^1 \//);
+
+    // A swipe to the left on the fitted image, lifted while moving: the next screenshot, still fitted.
+    const start = await pointOn(image, 0.5, 0.5);
+    await touchPath(page, straightPath({ x: start.x + 120, y: start.y }, { x: start.x - 120, y: start.y }));
+    await expect(counter).toHaveText(/^2 \//);
+    await settle(page, dialog);
+    await page.waitForTimeout(300);
+    await expect(readout).toHaveText("Fit");
+
+    // Zoomed with a tap, a finger pans the image; held still before it lifts, so nothing flings on.
+    const centre = await pointOn(image, 0.5, 0.5);
+    await page.touchscreen.tap(centre.x, centre.y);
+    await expect(readout).toHaveText("200%");
+    const scrolled = () => pane.evaluate((element) => element.scrollLeft);
+    const before = await scrolled();
+    const left = { x: centre.x - 80, y: centre.y };
+    const right = { x: centre.x + 80, y: centre.y };
+    await touchPath(page, straightPath(right, left, 12), { stepMs: 16, holdMs: 200 });
+    const panned = await scrolled();
+    expect(panned - before).toBeGreaterThan(100);
+    await expect(readout).toHaveText("200%");
+    await expect(counter).toHaveText(/^2 \//); // zoomed, a swipe pans instead of browsing
+
+    // A quick swipe that lifts while moving: the image flings on, and a tap while it does stops it without zooming out.
+    await pane.evaluate((element) => {
+      const scrolls: number[] = [];
+      Object.assign(window, { __kbPaneScrolls: scrolls });
+      element.addEventListener("scroll", () => scrolls.push(performance.now()));
+    });
+    const now = () => page.evaluate(() => performance.now());
+    await touchPath(page, straightPath(left, right));
+    const lifted = await now();
+    await page.touchscreen.tap(centre.x, centre.y);
+    const tapped = await now();
+    await page.waitForTimeout(400);
+    const scrolls = await page.evaluate(() => (window as unknown as { __kbPaneScrolls: number[] }).__kbPaneScrolls);
+    expect(
+      scrolls.some((at) => at > lifted && at < tapped),
+      "still flinging when the tap lands",
+    ).toBe(true);
+    expect(
+      scrolls.filter((at) => at > tapped + 50),
+      "the tap stopped the fling",
+    ).toEqual([]);
+    expect(await scrolled()).toBeLessThan(panned - 100);
+    await expect(readout).toHaveText("200%");
+
+    // A tap once it has stopped goes back to fit; a pinch then zooms the page, not the image.
+    await page.touchscreen.tap(centre.x, centre.y);
+    await expect(readout).toHaveText("Fit");
+    await touchPinch(page, centre, 60, 240);
+    await page.waitForTimeout(300);
+    expect(await page.evaluate(() => window.visualViewport?.scale ?? 1)).toBeGreaterThan(1.2);
+    await expect(readout).toHaveText("Fit");
+    await expect(dialog.locator(".kb-lightbox-image-zoomed")).toHaveCount(0);
+  });
 });

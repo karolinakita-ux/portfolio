@@ -161,17 +161,17 @@ describe("Lightbox zoom", () => {
     expect(image.parentElement).not.toHaveClass("justify-center");
   });
 
-  it("returns to fit when the window narrows below md, and does not zoom there", async () => {
-    const media = mockMatchMedia(true);
+  it("zooms on a phone too (below md, no mouse), and keeps the zoom when the window narrows to one", async () => {
+    const media = mockMatchMedia(false);
     const { user, zoomIn, readout } = await openViewer();
     await user.click(zoomIn);
     expect(readout()).toHaveTextContent("150%");
-
-    act(() => media.change(false));
-    expect(readout()).toHaveTextContent("Fit");
-
     await user.keyboard("+");
-    expect(readout()).toHaveTextContent("Fit");
+    expect(readout()).toHaveTextContent("200%");
+
+    act(() => media.change(true));
+    act(() => media.change(false));
+    expect(readout()).toHaveTextContent("200%");
   });
 
   it("starts at fit and steps in and out with the buttons", async () => {
@@ -231,16 +231,6 @@ describe("Lightbox zoom", () => {
 
     await user.keyboard("+"); // keys still reach the viewer
     expect(readout()).toHaveTextContent("150%");
-  });
-
-  it("moves focus from the zoomed pane to Close when the window narrows below md", async () => {
-    const media = mockMatchMedia(true);
-    const { user, dialog, zoomIn } = await openViewer();
-    await user.click(zoomIn);
-    act(() => within(dialog).getByRole("region", { name: "Zoomed image, scroll to pan" }).focus());
-
-    act(() => media.change(false));
-    expect(within(dialog).getByRole("button", { name: "Close image viewer" })).toHaveFocus();
   });
 
   it("resets to fit when browsing to another image and after closing", async () => {
@@ -359,7 +349,7 @@ describe("Lightbox steps", () => {
   });
 });
 
-describe("Lightbox click to zoom", () => {
+describe("Lightbox click or tap to zoom", () => {
   beforeEach(() => {
     vi.spyOn(HTMLImageElement.prototype, "naturalWidth", "get").mockReturnValue(4000);
     vi.spyOn(HTMLImageElement.prototype, "naturalHeight", "get").mockReturnValue(1000);
@@ -369,21 +359,33 @@ describe("Lightbox click to zoom", () => {
   const image = (dialog: HTMLElement) => within(dialog).getByRole("img", { name: "Wide screen" });
   const zoomedPane = (dialog: HTMLElement) =>
     within(dialog).getByRole("region", { name: "Zoomed image, scroll to pan" });
-  /** A mouse press on the image that moves by `path` before its release, then the click the browser sends. */
-  const press = (dialog: HTMLElement, path: Array<[number, number]>, pointerType = "mouse") => {
+  type Point = [number, number];
+  /** A pointer event's details; pointer 1 is the primary one (the first finger), 2 a second finger. */
+  const pointer = (pointerType: string, [clientX, clientY]: Point, pointerId = 1) => ({
+    pointerType,
+    pointerId,
+    isPrimary: pointerId === 1,
+    button: 0,
+    clientX,
+    clientY,
+  });
+  /** A press on the image (mouse, finger or pen) that moves along `path` before its release, then its click. */
+  const press = (dialog: HTMLElement, path: Point[], pointerType = "mouse") => {
     const target = image(dialog);
-    const at = ([clientX, clientY]: [number, number]) => ({ pointerType, pointerId: 1, button: 0, clientX, clientY });
-    const [start = [100, 100] as [number, number]] = path;
+    const [start = [100, 100] as Point] = path;
     const end = path.at(-1) ?? start;
-    fireEvent.pointerDown(target, at(start));
-    for (const point of path.slice(1)) fireEvent.pointerMove(target, at(point));
-    fireEvent.pointerUp(target, at(end));
+    fireEvent.pointerDown(target, pointer(pointerType, start));
+    for (const point of path.slice(1)) fireEvent.pointerMove(target, pointer(pointerType, point));
+    fireEvent.pointerUp(target, pointer(pointerType, end));
     fireEvent.click(target, { detail: 1, clientX: end[0], clientY: end[1] });
+  };
+  const tap = (dialog: HTMLElement, at: Point = [100, 100]) => {
+    press(dialog, [at], "touch");
   };
 
   it("zooms in to 200% with a click on the image, and back to fit with another, the cursor saying which", async () => {
     const { user, dialog, zoomIn, zoomOut, readout } = await openViewer();
-    expect(image(dialog)).toHaveClass("md:cursor-zoom-in", "pointer-fine:cursor-zoom-in");
+    expect(image(dialog)).toHaveClass("cursor-zoom-in");
 
     await user.click(image(dialog));
     expect(readout()).toHaveTextContent("200%");
@@ -391,17 +393,32 @@ describe("Lightbox click to zoom", () => {
     expect(zoomOut).toHaveAttribute("aria-disabled", "false");
     expect(zoomedPane(dialog)).toHaveFocus(); // + / - / 0 and the arrow keys work next
     expect(image(dialog)).toHaveClass("cursor-zoom-out");
-    expect(image(dialog)).not.toHaveClass("md:cursor-zoom-in");
+    expect(image(dialog)).not.toHaveClass("cursor-zoom-in");
 
     await user.click(image(dialog));
     expect(readout()).toHaveTextContent("Fit");
     expect(zoomOut).toHaveAttribute("aria-disabled", "true");
     expect(zoomIn).toHaveFocus(); // the pane is no longer focusable (WCAG 2.4.3)
-    expect(image(dialog)).toHaveClass("md:cursor-zoom-in");
+    expect(image(dialog)).toHaveClass("cursor-zoom-in");
     expect(image(dialog)).not.toHaveClass("cursor-zoom-out");
   });
 
-  it("goes back to fit with a click from any zoom level", async () => {
+  it("zooms the same way with a tap or a pen on a phone (below md, no mouse)", async () => {
+    mockMatchMedia(false);
+    const { dialog, zoomIn, readout } = await openViewer();
+
+    tap(dialog);
+    expect(readout()).toHaveTextContent("200%");
+    expect(zoomedPane(dialog)).toHaveFocus();
+    tap(dialog);
+    expect(readout()).toHaveTextContent("Fit");
+    expect(zoomIn).toHaveFocus();
+
+    press(dialog, [[100, 100]], "pen");
+    expect(readout()).toHaveTextContent("200%");
+  });
+
+  it("goes back to fit with a click or tap from any zoom level", async () => {
     const { user, dialog, zoomIn, readout } = await openViewer();
     await user.click(zoomIn);
     await user.click(zoomIn);
@@ -410,6 +427,10 @@ describe("Lightbox click to zoom", () => {
 
     await user.click(image(dialog));
     expect(readout()).toHaveTextContent("Fit");
+
+    await user.click(zoomIn);
+    tap(dialog);
+    expect(readout()).toHaveTextContent("Fit");
   });
 
   it("takes a drag that pans the zoomed image for a drag, not a click, also when it ends where it started", async () => {
@@ -417,11 +438,11 @@ describe("Lightbox click to zoom", () => {
     await user.click(image(dialog));
 
     const target = image(dialog);
-    fireEvent.pointerDown(target, { pointerType: "mouse", pointerId: 1, button: 0, clientX: 100, clientY: 100 });
-    fireEvent.pointerMove(target, { pointerType: "mouse", pointerId: 1, clientX: 160, clientY: 130 });
+    fireEvent.pointerDown(target, pointer("mouse", [100, 100]));
+    fireEvent.pointerMove(target, pointer("mouse", [160, 130]));
     expect(target).toHaveClass("cursor-grabbing");
     expect(zoomedPane(dialog)).toHaveClass("cursor-grabbing");
-    fireEvent.pointerUp(target, { pointerType: "mouse", pointerId: 1, clientX: 160, clientY: 130 });
+    fireEvent.pointerUp(target, pointer("mouse", [160, 130]));
     fireEvent.click(target, { detail: 1, clientX: 160, clientY: 130 });
     expect(readout()).toHaveTextContent("200%");
     expect(target).toHaveClass("cursor-zoom-out");
@@ -441,18 +462,68 @@ describe("Lightbox click to zoom", () => {
     expect(readout()).toHaveTextContent("Fit");
   });
 
-  it("leaves the zoom alone on a tap, a pen, a click beside the image and before the image has loaded", async () => {
+  it("does not take a finger that pans, swipes or pinches for a tap", async () => {
     const { user, dialog, readout } = await openViewer();
-    press(dialog, [[100, 100]], "touch");
-    press(dialog, [[100, 100]], "pen");
+    const target = image(dialog);
+
+    // A finger that moves, and one the browser takes over for its own panning: neither is a tap.
+    press(
+      dialog,
+      [
+        [200, 100],
+        [140, 100],
+        [200, 100],
+      ],
+      "touch",
+    );
+    fireEvent.pointerDown(target, pointer("touch", [100, 100]));
+    fireEvent.pointerCancel(target, pointer("touch", [100, 100]));
+    fireEvent.click(target, { detail: 1, clientX: 100, clientY: 100 });
+    expect(readout()).toHaveTextContent("Fit");
+
+    // A pinch: the second finger voids the first one's tap and makes none of its own.
+    fireEvent.pointerDown(target, pointer("touch", [100, 100]));
+    fireEvent.pointerDown(target, pointer("touch", [140, 120], 2));
+    fireEvent.pointerUp(target, pointer("touch", [100, 100]));
+    fireEvent.pointerUp(target, pointer("touch", [140, 120], 2));
+    fireEvent.click(target, { detail: 1, clientX: 140, clientY: 120 });
+    expect(readout()).toHaveTextContent("Fit");
+
+    // Zoomed, a finger pans the pane natively: no drag of the viewer's own, and no tap.
+    await user.click(within(dialog).getByRole("button", { name: "Zoom in" }));
+    fireEvent.pointerDown(target, pointer("touch", [100, 100]));
+    fireEvent.pointerMove(target, pointer("touch", [60, 40]));
+    expect(zoomedPane(dialog)).not.toHaveClass("cursor-grabbing");
+    fireEvent.pointerCancel(target, pointer("touch", [60, 40]));
+    fireEvent.click(target, { detail: 1, clientX: 60, clientY: 40 });
+    expect(readout()).toHaveTextContent("150%");
+  });
+
+  it("browses with a swipe and does not zoom", async () => {
+    const { dialog, readout } = await openViewer();
+    const target = image(dialog);
+    // As a phone sends it: the press, the browser taking the move over, then the swipe's touch events.
+    fireEvent.pointerDown(target, pointer("touch", [300, 200]));
+    fireEvent.pointerMove(target, pointer("touch", [280, 200]));
+    fireEvent.pointerCancel(target, pointer("touch", [280, 200]));
+    swipe(dialog, [300, 200], [100, 200]);
+    expect(title(dialog)).toHaveTextContent("Tall");
+    expect(readout()).toHaveTextContent("Fit");
+  });
+
+  it("leaves the zoom alone on another button, a click beside the image and before the image has loaded", async () => {
+    const { user, dialog, readout } = await openViewer();
+    fireEvent.pointerDown(image(dialog), { ...pointer("mouse", [100, 100]), button: 2 });
+    fireEvent.click(image(dialog), { detail: 1, clientX: 100, clientY: 100 });
     await user.click(image(dialog).parentElement ?? dialog); // the empty pane around the fitted image
     expect(readout()).toHaveTextContent("Fit");
 
     await user.click(within(dialog).getByRole("button", { name: "Next image" }));
     vi.spyOn(HTMLImageElement.prototype, "complete", "get").mockReturnValue(false);
     await user.click(within(dialog).getByRole("button", { name: "Previous image" }));
-    expect(image(dialog)).not.toHaveClass("md:cursor-zoom-in");
+    expect(image(dialog)).not.toHaveClass("cursor-zoom-in");
     await user.click(image(dialog));
+    tap(dialog);
     expect(readout()).toHaveTextContent("Fit");
   });
 });
@@ -480,6 +551,12 @@ describe("Lightbox zoom statistics", () => {
     await user.keyboard("0"); // fit
     await user.keyboard("0"); // already at fit: nothing to count
     await user.click(zoomIn);
+    const image = within(dialog).getByRole("img", { name: "Wide screen" });
+    // A tap on the image counts as a click: the statistics' input tells the two apart.
+    fireEvent.pointerDown(image, { pointerType: "touch", pointerId: 1, isPrimary: true, button: 0 });
+    fireEvent.pointerUp(image, { pointerType: "touch", pointerId: 1, isPrimary: true, button: 0 });
+    fireEvent.click(image, { detail: 1 });
+    await user.click(zoomIn);
     await user.click(within(dialog).getByRole("button", { name: "Next image" })); // back to fit by itself
     await user.click(within(dialog).getByRole("button", { name: "Close image viewer" }));
 
@@ -489,6 +566,392 @@ describe("Lightbox zoom statistics", () => {
       ["Wide", "in", "button"],
       ["Wide", "out", "key"],
       ["Wide", "in", "button"],
+      ["Wide", "out", "click"],
+      ["Wide", "in", "button"],
     ]);
+  });
+});
+
+describe("Lightbox closing", () => {
+  /** The page's sticky header ends 80px down (its scroll padding); jsdom's window is 768px tall. */
+  const HEADER = 80;
+  const box = (top: number, height: number) => DOMRect.fromRect({ x: 0, y: top, width: 600, height });
+  /** Boxes on the screen by image title: its row's and its button's [top, height]. */
+  type Boxes = Readonly<Record<string, { row: readonly [number, number]; button: readonly [number, number] }>>;
+  const openButton = (title: string) => screen.getByRole("button", { name: "View " + title });
+  const row = (title: string) => screen.getByRole("article", { name: title });
+
+  /** A row's title: where its description starts. */
+  const titleOf = (title: string) => within(row(title)).getByRole("heading", { name: title });
+  /** The heading above all the rows (the operations console's section heading, with its text below it). */
+  const pageHeading = () => screen.getByRole("heading", { name: "Screens" });
+
+  /**
+   * Each image's place on a page: its own open button in a row that holds its description, which its title starts
+   * (or `descriptionOf`).
+   */
+  const placed = (items: readonly LightboxItem[] = ITEMS, descriptionOf = titleOf): LightboxItem[] =>
+    items.map((item) => ({
+      ...item,
+      place: () => {
+        const target = screen.queryByRole("button", { name: "View " + item.title });
+        return target && { target, area: row(item.title), description: descriptionOf(item.title) };
+      },
+    }));
+
+  /** A case page in short: one row per image, each with its title and the button that opens the viewer at it. */
+  function GalleryPage({ items }: { items: readonly LightboxItem[] }) {
+    const open = useLightbox();
+    return (
+      <>
+        <h2 tabIndex={-1}>Screens</h2>
+        {items.map((item, index) => (
+          <article key={item.src} aria-label={item.title}>
+            <h3 tabIndex={-1}>{item.title}</h3> <p>{item.alt}</p>{" "}
+            <button type="button" onClick={(event) => open(items, index, event.currentTarget)}>
+              {"View " + item.title}
+            </button>
+          </article>
+        ))}
+      </>
+    );
+  }
+
+  /**
+   * Renders the page, gives each row and button a box on the screen (top, height), and opens the viewer at `index`.
+   * `consent`: the height the statistics consent box keeps clear at the bottom (scroll-padding-bottom).
+   */
+  const openFromPage = async (items: readonly LightboxItem[], index: number, boxes: Boxes = {}, consent = 0) => {
+    const user = userEvent.setup();
+    render(
+      <LightboxProvider>
+        <GalleryPage items={items} />
+      </LightboxProvider>,
+    );
+    for (const [title, { row: rowBox, button }] of Object.entries(boxes)) {
+      vi.spyOn(row(title), "getBoundingClientRect").mockReturnValue(box(...rowBox));
+      vi.spyOn(openButton(title), "getBoundingClientRect").mockReturnValue(box(...button));
+    }
+    const getStyle = window.getComputedStyle.bind(window);
+    vi.spyOn(window, "getComputedStyle").mockImplementation((element, pseudo) => {
+      if (element === document.documentElement)
+        return {
+          scrollPaddingTop: HEADER + "px",
+          scrollPaddingBottom: consent + "px",
+        } as unknown as CSSStyleDeclaration;
+      const style = getStyle(element, pseudo);
+      // The section heading keeps 24px above it for its eyebrow (scroll-mt-lg), as Section's does. Found by its
+      // tag: a role query would ask getComputedStyle again. Everything else is the real style, which role queries read.
+      if (element.tagName !== "H2" || element.textContent !== "Screens") return style;
+      return new Proxy(style, {
+        get: (target, key) => {
+          if (key === "scrollMarginTop") return "24px";
+          const value: unknown = Reflect.get(target, key, target);
+          return typeof value === "function" ? (value as (...args: unknown[]) => unknown).bind(target) : value;
+        },
+      });
+    });
+    const scrollTo = vi.spyOn(window, "scrollTo");
+    await user.click(openButton(items[index]?.title ?? ""));
+    const dialog = screen.getByRole("dialog");
+    return { user, dialog, scrollTo };
+  };
+
+  /** The third image's row sits further down the page, below the window: it takes a scroll to show. */
+  const BELOW = { Square: { row: [1500, 500], button: [1600, 300] } } as const;
+
+  it.each([
+    ["the close button", "Close image viewer", () => openButton("Square")],
+    ["Go to Description", "Go to Description", () => titleOf("Square")],
+  ])(
+    "lands on the screenshot shown after %s: its row below the header, focus on its button, or its title for the description",
+    async (_way, control, focused) => {
+      const { user, dialog, scrollTo } = await openFromPage(placed(), 0, BELOW);
+      await user.keyboard("{ArrowRight}{ArrowRight}");
+      expect(within(dialog).getByRole("heading", { name: "Square" })).toBeInTheDocument();
+
+      await user.click(within(dialog).getByRole("button", { name: control }));
+      expect(dialog).not.toHaveAttribute("open");
+      expect(focused()).toHaveFocus();
+      expect(scrollTo).toHaveBeenCalledExactlyOnceWith({ top: 1500 - HEADER, behavior: "smooth" });
+    },
+  );
+
+  it("starts the description below the header with Go to Description, where closing shows the whole screenshot", async () => {
+    // A feature section on a phone, 1300px tall, scrolled to its second screenshot (650..950): the text starts 150px
+    // above the window. From the section's top the screenshot would start 880px down, below the 768px window.
+    const tall = { Square: { row: [-150, 1300], button: [650, 300] } } as const;
+    const { user, dialog, scrollTo } = await openFromPage(placed(), 0, tall);
+    await user.keyboard("{ArrowLeft}");
+    await user.click(within(dialog).getByRole("button", { name: "Close image viewer" }));
+    expect(openButton("Square")).toHaveFocus();
+    expect(scrollTo).toHaveBeenLastCalledWith({ top: 650 + 300 - 768, behavior: "smooth" });
+
+    await user.click(openButton("Wide"));
+    await user.keyboard("{ArrowLeft}");
+    await user.click(within(dialog).getByRole("button", { name: "Go to Description" }));
+    expect(titleOf("Square")).toHaveFocus();
+    expect(scrollTo).toHaveBeenLastCalledWith({ top: -150 - HEADER, behavior: "smooth" });
+  });
+
+  it("lands on a description outside the screenshot's row at its heading, with the room its scroll margin keeps", async () => {
+    // The operations console: the section's heading and text far above the screen, whose figure holds only a caption.
+    const { user, dialog, scrollTo } = await openFromPage(placed(ITEMS, pageHeading), 0, BELOW);
+    vi.spyOn(pageHeading(), "getBoundingClientRect").mockReturnValue(box(-400, 40));
+    await user.keyboard("{ArrowLeft}");
+    await user.click(within(dialog).getByRole("button", { name: "Go to Description" }));
+    expect(pageHeading()).toHaveFocus();
+    expect(scrollTo).toHaveBeenCalledExactlyOnceWith({ top: -400 - 24 - HEADER, behavior: "smooth" });
+  });
+
+  it("keeps the landing clear of the statistics consent box at the bottom of the window", async () => {
+    // The row (300..600) shows in the 768px window, but the box covers its bottom 300px: the row moves up.
+    const underBox = { Square: { row: [300, 300], button: [350, 200] } } as const;
+    const { user, dialog, scrollTo } = await openFromPage(placed(), 0, underBox, 300);
+    await user.keyboard("{ArrowLeft}");
+    await user.click(within(dialog).getByRole("button", { name: "Close image viewer" }));
+    expect(scrollTo).toHaveBeenCalledExactlyOnceWith({ top: 300 - HEADER, behavior: "smooth" });
+  });
+
+  it("lands the same way when Escape or a click on the backdrop closes it", async () => {
+    const { user, dialog, scrollTo } = await openFromPage(placed(), 0, BELOW);
+    await user.keyboard("{ArrowRight}{ArrowRight}");
+    // Escape: the browser closes the dialog itself (jsdom has no Escape handling).
+    act(() => (dialog as HTMLDialogElement).close());
+    expect(openButton("Square")).toHaveFocus();
+    expect(scrollTo).toHaveBeenCalledTimes(1);
+
+    await user.click(openButton("Wide"));
+    await user.keyboard("{ArrowLeft}");
+    fireEvent.pointerDown(dialog);
+    fireEvent.click(dialog);
+    expect(dialog).not.toHaveAttribute("open");
+    expect(openButton("Square")).toHaveFocus();
+    expect(scrollTo).toHaveBeenCalledTimes(2);
+  });
+
+  it("scrolls at once with reduced motion", async () => {
+    mockMatchMedia(false, { "(prefers-reduced-motion: reduce)": true });
+    const { user, dialog, scrollTo } = await openFromPage(placed(), 0, BELOW);
+    await user.keyboard("{ArrowLeft}");
+    await user.click(within(dialog).getByRole("button", { name: "Close image viewer" }));
+    expect(scrollTo).toHaveBeenCalledExactlyOnceWith({ top: 1500 - HEADER, behavior: "auto" });
+  });
+
+  it("moves nothing when the row shown is in view already, nor for the opener still in view", async () => {
+    const inView: Boxes = {
+      Wide: { row: [100, 300], button: [150, 200] },
+      Tall: { row: [420, 300], button: [450, 200] },
+    };
+    const { user, dialog, scrollTo } = await openFromPage(placed(), 0, inView);
+    await user.click(within(dialog).getByRole("button", { name: "Close image viewer" }));
+    expect(openButton("Wide")).toHaveFocus();
+
+    await user.click(openButton("Wide"));
+    await user.keyboard("{ArrowRight}");
+    await user.click(within(dialog).getByRole("button", { name: "Close image viewer" }));
+    expect(openButton("Tall")).toHaveFocus();
+    expect(scrollTo).not.toHaveBeenCalled();
+  });
+
+  it("keeps the opener in place when closed, and shows its description with Go to Description", async () => {
+    // The visitor scrolled down to the screenshot: the top of its row, where the description starts, is above the header.
+    const opener = { Wide: { row: [-200, 700], button: [100, 300] } } as const;
+    const { user, dialog, scrollTo } = await openFromPage(placed(), 0, opener);
+    await user.click(within(dialog).getByRole("button", { name: "Close image viewer" }));
+    expect(openButton("Wide")).toHaveFocus();
+    expect(scrollTo).not.toHaveBeenCalled();
+
+    await user.click(openButton("Wide"));
+    await user.click(within(dialog).getByRole("button", { name: "Go to Description" }));
+    expect(titleOf("Wide")).toHaveFocus();
+    expect(scrollTo).toHaveBeenCalledExactlyOnceWith({ top: -200 - HEADER, behavior: "smooth" });
+  });
+
+  it("falls back to the opener, without Go to Description, for images with no place on the page", async () => {
+    const { user, dialog, scrollTo } = await openFromPage(ITEMS, 0);
+    expect(within(dialog).queryByRole("button", { name: "Go to Description" })).not.toBeInTheDocument();
+    await user.keyboard("{ArrowRight}");
+    await user.click(within(dialog).getByRole("button", { name: "Close image viewer" }));
+    expect(openButton("Wide")).toHaveFocus();
+    expect(scrollTo).not.toHaveBeenCalled();
+  });
+
+  it("falls back to the opener when the shown image's place is gone from the page", async () => {
+    const items = placed().map((item) => (item.title === "Tall" ? { ...item, place: () => null } : item));
+    const { user, dialog, scrollTo } = await openFromPage(items, 0);
+    await user.keyboard("{ArrowRight}");
+    await user.click(within(dialog).getByRole("button", { name: "Go to Description" }));
+    expect(openButton("Wide")).toHaveFocus();
+    expect(scrollTo).not.toHaveBeenCalled();
+  });
+
+  it("names Go to Description by its label, keeps Close first for the focus on open, and tells the image's owner", async () => {
+    const described = vi.fn<(title: string) => void>();
+    const items = placed().map((item) => ({ ...item, onGoToDescription: () => described(item.title) }));
+    const { user, dialog } = await openFromPage(items, 1);
+    const close = within(dialog).getByRole("button", { name: "Close image viewer" });
+    expect(close).toHaveFocus();
+    await user.tab();
+    expect(within(dialog).getByRole("button", { name: "Go to Description" })).toHaveFocus();
+
+    await user.keyboard("{ArrowRight}");
+    await user.click(within(dialog).getByRole("button", { name: "Go to Description" }));
+    expect(described.mock.calls).toEqual([["Square"]]);
+
+    // Closing is not going to the description.
+    await user.click(openButton("Tall"));
+    await user.click(within(dialog).getByRole("button", { name: "Close image viewer" }));
+    expect(described).toHaveBeenCalledTimes(1);
+  });
+});
+
+/** Stands in for the `new Image()` that loads a sharper copy: records each one; arrive() and fail() end its load. */
+class FakeCopy {
+  static made: FakeCopy[] = [];
+  onload: (() => void) | null = null;
+  onerror: (() => void) | null = null;
+  naturalWidth = 0;
+  src = "";
+  constructor() {
+    FakeCopy.made.push(this);
+  }
+  decode = () => Promise.resolve();
+  arrive(width: number) {
+    this.naturalWidth = width;
+    this.onload?.();
+  }
+  fail() {
+    this.onerror?.();
+  }
+}
+
+describe("Lightbox sharper copy", () => {
+  const PAGE_FILE = "/assets/board.webp";
+  const COPY = "/assets/zoom/board.webp";
+  const ITEMS_WITH_COPIES: LightboxItem[] = [
+    { src: PAGE_FILE, zoomSrc: COPY, alt: "Journey board", title: "Board", width: 2000, height: 500 },
+    { src: "/assets/next.webp", zoomSrc: "/assets/zoom/next.webp", alt: "Next board", title: "Next" },
+  ];
+  const board = (dialog: HTMLElement) => within(dialog).getByRole<HTMLImageElement>("img", { name: "Journey board" });
+  const requested = () => FakeCopy.made.map((copy) => copy.src);
+  const settle = (run: () => void) =>
+    act(() => {
+      run();
+      return Promise.resolve();
+    });
+
+  beforeEach(() => {
+    FakeCopy.made = [];
+    vi.stubGlobal("Image", FakeCopy);
+    // The page's files are 2000 x 500 px and cached, a copy has twice the pixels; the viewer fits the image 1200 CSS
+    // px wide on a laptop, times its zoom level.
+    const isCopy = (image: HTMLImageElement) => image.getAttribute("src")?.includes("/zoom/") === true;
+    vi.spyOn(HTMLImageElement.prototype, "naturalWidth", "get").mockImplementation(function (this: HTMLImageElement) {
+      return isCopy(this) ? 4000 : 2000;
+    });
+    vi.spyOn(HTMLImageElement.prototype, "naturalHeight", "get").mockImplementation(function (this: HTMLImageElement) {
+      return isCopy(this) ? 1000 : 500;
+    });
+    vi.spyOn(HTMLImageElement.prototype, "complete", "get").mockReturnValue(true);
+    vi.spyOn(HTMLImageElement.prototype, "getBoundingClientRect").mockImplementation(function (this: HTMLImageElement) {
+      const width = 1200 * (Number(this.style.getPropertyValue("--kb-zoom")) || 1);
+      return { width, height: width / 4, top: 0, left: 0, right: width, bottom: width / 4, x: 0, y: 0 } as DOMRect;
+    });
+    vi.stubGlobal("devicePixelRatio", 1);
+  });
+
+  it("keeps the page's file while it has the pixels the screen needs", async () => {
+    const { dialog } = await openViewer(ITEMS_WITH_COPIES); // 1200 device px from a 2000 px file
+    expect(requested()).toEqual([]);
+    expect(board(dialog)).toHaveAttribute("src", PAGE_FILE);
+  });
+
+  it("swaps the copy in on a dense screen once it is decoded, at the page file's size, fitted and zoomed", async () => {
+    vi.stubGlobal("devicePixelRatio", 2); // 2400 device px from a 2000 px file
+    const { user, dialog, zoomIn } = await openViewer(ITEMS_WITH_COPIES);
+    expect(requested()).toEqual([COPY]);
+    expect(board(dialog)).toHaveAttribute("src", PAGE_FILE); // until the copy is ready
+
+    await settle(() => FakeCopy.made[0]?.arrive(4000));
+    expect(board(dialog)).toHaveAttribute("src", COPY);
+    expect(board(dialog)).toHaveClass("kb-lightbox-image");
+    expect(board(dialog).style.getPropertyValue("--kb-natural-width")).toBe("2000px");
+
+    await user.click(zoomIn); // the copy's own 4000 px would make the zoomed image twice as large
+    expect(board(dialog).style.getPropertyValue("--kb-zoom")).toBe("1.5");
+    expect(board(dialog).style.getPropertyValue("--kb-natural-width")).toBe("2000px");
+    expect(requested()).toEqual([COPY]);
+  });
+
+  it("loads the copy once a pinch-zoom or the viewer's zoom needs more pixels than the page's file has", async () => {
+    const viewport = Object.assign(new EventTarget(), { scale: 1 });
+    vi.stubGlobal("visualViewport", viewport);
+    const resized: Array<() => void> = [];
+    vi.stubGlobal(
+      "ResizeObserver",
+      class {
+        constructor(callback: () => void) {
+          resized.push(callback);
+        }
+        observe() {}
+        disconnect() {}
+      },
+    );
+    const { user, dialog, zoomIn } = await openViewer(ITEMS_WITH_COPIES);
+
+    viewport.scale = 1.5; // 1800 device px: still enough
+    act(() => viewport.dispatchEvent(new Event("resize")));
+    expect(requested()).toEqual([]);
+    viewport.scale = 2; // 2400
+    act(() => viewport.dispatchEvent(new Event("resize")));
+    expect(requested()).toEqual([COPY]);
+
+    // The next image, not pinched: its copy waits for the viewer's zoom at 200% (2400 device px).
+    viewport.scale = 1;
+    await user.click(within(dialog).getByRole("button", { name: "Next image" }));
+    await user.click(zoomIn); // 150%: 1800
+    act(() => resized.forEach((callback) => callback()));
+    expect(requested()).toEqual([COPY]);
+    await user.click(zoomIn); // 200%
+    act(() => resized.forEach((callback) => callback()));
+    expect(requested()).toEqual([COPY, "/assets/zoom/next.webp"]);
+  });
+
+  it("keeps the page's file when the copy fails, without trying again, and for a visitor who saves data", async () => {
+    vi.stubGlobal("devicePixelRatio", 2);
+    const viewport = Object.assign(new EventTarget(), { scale: 1 });
+    vi.stubGlobal("visualViewport", viewport);
+    const { user, dialog } = await openViewer(ITEMS_WITH_COPIES);
+    await settle(() => FakeCopy.made[0]?.fail());
+    expect(board(dialog)).toHaveAttribute("src", PAGE_FILE);
+    expect(within(dialog).queryByText("Image unavailable")).not.toBeInTheDocument();
+    act(() => viewport.dispatchEvent(new Event("resize")));
+    expect(requested()).toEqual([COPY]);
+
+    Object.defineProperty(navigator, "connection", { value: { saveData: true }, configurable: true });
+    try {
+      await user.click(within(dialog).getByRole("button", { name: "Next image" }));
+      expect(requested()).toEqual([COPY]);
+    } finally {
+      Reflect.deleteProperty(navigator, "connection");
+    }
+  });
+
+  it("goes back to the page's file when the shown copy fails, and ignores a copy that arrives too late", async () => {
+    vi.stubGlobal("devicePixelRatio", 2);
+    const { user, dialog } = await openViewer(ITEMS_WITH_COPIES);
+    await settle(() => FakeCopy.made[0]?.arrive(4000));
+    fireEvent.error(board(dialog));
+    expect(board(dialog)).toHaveAttribute("src", PAGE_FILE);
+    expect(board(dialog).style.getPropertyValue("--kb-natural-width")).toBe("");
+    expect(within(dialog).queryByText("Image unavailable")).not.toBeInTheDocument();
+
+    // The next image's copy arrives after the visitor moved back: the board keeps its page file.
+    await user.click(within(dialog).getByRole("button", { name: "Next image" }));
+    expect(requested()).toEqual([COPY, "/assets/zoom/next.webp"]);
+    await user.click(within(dialog).getByRole("button", { name: "Previous image" }));
+    await settle(() => FakeCopy.made[1]?.arrive(4000));
+    expect(board(dialog)).toHaveAttribute("src", PAGE_FILE);
   });
 });

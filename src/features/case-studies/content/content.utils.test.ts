@@ -13,6 +13,14 @@ describe("caseShots", () => {
     });
   });
 
+  it("gives a changed screen's files new names and keeps its card id, so the statistics count the same screen", () => {
+    expect(shot("user-flow", 2)).toEqual({
+      id: "user-flow",
+      asset: "cases/smart-ticket/user-flow-v2-light.webp",
+      darkAsset: "cases/smart-ticket/user-flow-v2-dark.webp",
+    });
+  });
+
   it("names a one-version screen's file and card id after it, with no Dark file", () => {
     expect(singleShot("legacy-security")).toEqual({
       id: "legacy-security",

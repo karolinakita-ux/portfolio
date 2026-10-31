@@ -1,12 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent } from "storybook/test";
 
+import { VIEW } from "#shared/lib/routes/routes.constants.ts";
+import { CASE_NAMES } from "#shared/lib/routes/routes.content.ts";
+
 import { HOME_CRUMB, WORK_CRUMB } from "./Breadcrumb.constants.ts";
 import { Breadcrumb } from "./Breadcrumb.tsx";
 
 /**
  * Figma: Breadcrumbs. Pages outside Work start at Home (the house icon, the home page); case studies start at
- * Work, which opens the list of case studies on that page.
+ * Work, which opens the list of case studies on that page. As in Figma: Body Small, 16px icons, and 8px between
+ * a crumb and the chevron on each side.
  */
 const meta = {
   title: "UI/Breadcrumb",
@@ -26,7 +30,7 @@ export const Default: Story = {
 };
 
 export const CaseStudy: Story = {
-  args: { items: [WORK_CRUMB, { label: "Project Planning" }] },
+  args: { items: [WORK_CRUMB, { label: CASE_NAMES[VIEW.caseProjectPlanning].shortTitle }] },
   play: async ({ canvas, args }) => {
     const work = canvas.getByRole("link", { name: "Work" });
     await expect(work).toHaveAttribute("href", "/#enterprise-cases");

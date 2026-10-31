@@ -1,13 +1,8 @@
-import {
-  AUTOMOTIVE_CASE,
-  DATA_GOVERNANCE_CASE,
-  PROJECT_PLANNING_CASE,
-  SMART_TICKET_CASE,
-} from "#features/case-studies/index.ts";
 import { WORK_CASES } from "#features/work/index.ts";
 import { PROFILE } from "#shared/content/profile.ts";
 import { pageCount } from "#shared/content/profile.utils.ts";
 import { VIEW, VIEW_PATHS, VIEWS } from "#shared/lib/routes/routes.constants.ts";
+import { CASE_NAMES } from "#shared/lib/routes/routes.content.ts";
 import type { View } from "#shared/lib/routes/routes.types.ts";
 import { isCaseView, titleForView } from "#shared/lib/routes/routes.utils.ts";
 import { HOME_CRUMB, WORK_CRUMB } from "#shared/ui/Breadcrumb/Breadcrumb.constants.ts";
@@ -27,21 +22,16 @@ export const absoluteUrl = (view: View): string => SITE_URL + VIEW_PATHS[view];
 /** The CSS selector of a head tag (meta[property="og:title"]). */
 export const headTagSelector = ({ tag, key: [name, value] }: HeadTag): string => `${tag}[${name}="${value}"]`;
 
-/** Each case study's name in its visible breadcrumb (CaseIntro): its shortTitle. */
-const CASE_CRUMBS: Partial<Readonly<Record<View, string>>> = Object.fromEntries(
-  [SMART_TICKET_CASE, AUTOMOTIVE_CASE, PROJECT_PLANNING_CASE, DATA_GOVERNANCE_CASE].map((c) => [c.view, c.shortTitle]),
-);
-
 /**
  * The page's breadcrumb with the labels visitors see on it (Google: ListItem.name is "the title of the breadcrumb
- * displayed for the user"): Work and a case study's shortTitle, or Home and the page's name. None on Work, the
- * home page, which shows none: Google asks for at least two items.
+ * displayed for the user"): Work and a case study's shortTitle (CASE_NAMES), or Home and the page's name. None on
+ * Work, the home page, which shows none: Google asks for at least two items.
  */
 function breadcrumb(view: View): Record<string, unknown> | null {
   if (view === VIEW.work) return null;
   const steps = [
     { name: isCaseView(view) ? WORK_CRUMB.label : HOME_CRUMB.label, item: absoluteUrl(VIEW.work) },
-    { name: CASE_CRUMBS[view] ?? PAGE_NAMES[view], item: absoluteUrl(view) },
+    { name: isCaseView(view) ? CASE_NAMES[view].shortTitle : PAGE_NAMES[view], item: absoluteUrl(view) },
   ];
   return {
     "@type": "BreadcrumbList",
@@ -98,11 +88,14 @@ export function headFor(view: View): PageHead {
   return { title, description, url, jsonLd: { "@context": "https://schema.org", "@graph": graph } };
 }
 
-/** /llms.txt (llmstxt.org): a plain-text map of the site for AI assistants and agents. */
+/**
+ * /llms.txt (llmstxt.org): a plain-text map of the site for AI assistants and agents. Work holds the Work page and
+ * its case studies in the page's order, as the menu and the breadcrumbs do; About Karolina the pages about her.
+ */
 export function llmsTxt(): string {
   const line = (view: View) => `- [${PAGE_NAMES[view]}](${absoluteUrl(view)}): ${PAGE_DESCRIPTIONS[view]}`;
-  const cases = WORK_CASES.map((item) => item.view); // the Work page's order
-  const pages = VIEWS.filter((view) => view !== VIEW.work && !isCaseView(view) && !LLMS_OPTIONAL.includes(view));
+  const work: readonly View[] = [VIEW.work, ...WORK_CASES.map((item) => item.view)];
+  const pages = VIEWS.filter((view) => !work.includes(view) && !LLMS_OPTIONAL.includes(view));
   return [
     `# ${PROFILE.name} - ${PROFILE.role}`,
     "",
@@ -110,13 +103,12 @@ export function llmsTxt(): string {
     "",
     "Every page below is plain HTML: no login, no JavaScript needed to read it.",
     "",
-    "## Case Studies",
+    "## Work",
     "",
-    ...cases.map(line),
+    ...work.map(line),
     "",
     "## About Karolina",
     "",
-    line(VIEW.work),
     ...pages.map(line),
     "",
     "## Contact",

@@ -21,7 +21,7 @@ export function AccessibilityView({ onNavigate }: AccessibilityViewProps) {
             <PageTitle id="accessibility-title">{ACCESSIBILITY.title}</PageTitle>
             <p className={styles.intro}>{ACCESSIBILITY.intro}</p>
             <p className={styles.updated}>
-              Last reviewed: <time dateTime={ACCESSIBILITY.updated.iso}>{ACCESSIBILITY.updated.label}</time>
+              Last updated: <time dateTime={ACCESSIBILITY.updated.iso}>{ACCESSIBILITY.updated.label}</time>
             </p>
           </div>
         </Container>

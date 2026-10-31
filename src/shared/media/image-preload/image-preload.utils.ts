@@ -1,5 +1,7 @@
+import { savesData } from "#shared/lib/browser/browser.utils.ts";
+
 import { MAX_PARALLEL } from "./image-preload.constants.ts";
-import type { NetworkInformation, PreloadOptions } from "./image-preload.types.ts";
+import type { PreloadOptions } from "./image-preload.types.ts";
 
 /**
  * Background image preloading, so the image viewer opens on a picture that is
@@ -22,11 +24,6 @@ const queue: string[] = [];
  */
 const kept: HTMLImageElement[] = [];
 let active = 0;
-
-const savesData = () => {
-  const connection = (navigator as Navigator & { connection?: NetworkInformation }).connection;
-  return Boolean(connection?.saveData) || (connection?.effectiveType ?? "").includes("2g");
-};
 
 function pump() {
   while (active < MAX_PARALLEL) {

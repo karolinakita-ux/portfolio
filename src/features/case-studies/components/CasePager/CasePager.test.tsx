@@ -7,6 +7,7 @@ import { DATA_GOVERNANCE_CASE } from "#features/case-studies/content/data-govern
 import { PROJECT_PLANNING_CASE } from "#features/case-studies/content/project-planning.content.tsx";
 import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.ts";
 import { VIEW } from "#shared/lib/routes/routes.constants.ts";
+import { CASE_NAMES } from "#shared/lib/routes/routes.content.ts";
 
 import { CasePager } from "./CasePager.tsx";
 
@@ -23,8 +24,8 @@ describe("CasePager", () => {
     const previous = pager("Previous and next case studies").getByRole("link", { name: /^Previous/ });
     const next = pager("Previous and next case studies").getByRole("link", { name: /^Next/ });
     // The text says "Previous" / "Next"; the case name follows for screen readers only.
-    expect(previous).toHaveTextContent("Previous Case Study: " + AUTOMOTIVE_CASE.title);
-    expect(next).toHaveTextContent("Next Case Study: " + DATA_GOVERNANCE_CASE.title);
+    expect(previous).toHaveTextContent("Previous Case Study: " + CASE_NAMES[AUTOMOTIVE_CASE.view].title);
+    expect(next).toHaveTextContent("Next Case Study: " + CASE_NAMES[DATA_GOVERNANCE_CASE.view].title);
     expect(previous).toHaveAttribute("href", "/work/automotive");
     expect(next).toHaveAttribute("href", "/work/data-governance");
 
@@ -43,7 +44,7 @@ describe("CasePager", () => {
         const to = cases.find((other) => other.view === target?.view);
         if (!to) continue;
         const link = screen.getByRole("link", { name: new RegExp("^" + direction) });
-        expect(link, c.view).toHaveTextContent(direction + " Case Study: " + to.title);
+        expect(link, c.view).toHaveTextContent(direction + " Case Study: " + CASE_NAMES[to.view].title);
       }
       unmount();
     }

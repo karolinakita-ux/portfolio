@@ -1,6 +1,30 @@
+import type { UmamiSendType } from "#shared/lib/analytics/analytics.types.ts";
+
 import type { VIEWPORTS } from "./helpers.constants.ts";
 
 export type Theme = "light" | "dark";
+
+/**
+ * One call to Umami's collector, as the tracker posts it (umami.utils.ts catches them): an event or pageview,
+ * session data, a speed report, or one of its own error reports (never expected).
+ */
+export interface UmamiCall {
+  type: UmamiSendType;
+  payload: {
+    website: string;
+    hostname: string;
+    url: string;
+    title: string;
+    referrer?: string;
+    /** The site's version (data-tag). */
+    tag?: string;
+    name?: string;
+    data?: Record<string, string>;
+    ttfb?: number;
+    lcp?: number;
+    duration?: number;
+  };
+}
 
 export type ViewportName = keyof typeof VIEWPORTS;
 
@@ -39,6 +63,8 @@ export interface AnimationSample {
 
 export interface AnimatedState extends Box {
   opacity: number;
+  /** The box of the underline inside the element ([data-pill-underline]: the nav pills), or null. */
+  underline: Box | null;
 }
 
 export interface AnimationPoints {
@@ -56,6 +82,8 @@ export interface ItemSample extends Box {
   control: Box | null;
   /** Computed opacity, mid-animation values included. */
   opacity: number;
+  /** The box of the underline inside the element ([data-pill-underline]: the nav pills), or null. */
+  underline: Box | null;
   animations: AnimationSample[];
 }
 
@@ -102,6 +130,11 @@ export interface ToolkitOptions {
   removeViewTransitions: boolean;
 }
 
+export interface LiveSiteOptions {
+  /** The page that linked here, as the browser sends it with the first request (document.referrer). */
+  referer?: string;
+}
+
 export interface PrepareOptions {
   /** Stored as the visitor's pick before the app starts (default "light"); null stores nothing. */
   theme?: Theme | null;
@@ -132,4 +165,32 @@ export interface FadeExpectation {
   /** The control whose pill fades. */
   key: string;
   direction: "in" | "out";
+}
+
+/** Where the menu's underline sits in its pill: in from the pill's left, right and bottom edge, and its height. */
+export interface UnderlinePlacement {
+  left: number;
+  right: number;
+  bottom: number;
+  height: number;
+}
+
+/** The current page's menu link and the underline in its pill, at rest (readUnderline). */
+export interface UnderlineAtRest {
+  label: string;
+  link: Box;
+  /** The label's text box: the link's content box. */
+  text: Box;
+  /** The label's baseline (viewport y). */
+  baseline: number;
+  underline: Box;
+  pillOpacity: number;
+  /** The underline's bottom border, computed. */
+  border: { width: string; style: string; color: string };
+  /** The link's computed text colour. */
+  labelColor: string;
+  /** The header's computed background colour (a system colour in forced colours). */
+  background: string;
+  /** text-decoration-line of every menu link. */
+  textDecorations: string[];
 }

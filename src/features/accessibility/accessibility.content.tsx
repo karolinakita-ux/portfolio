@@ -17,7 +17,7 @@ export const ACCESSIBILITY: AccessibilityContent = {
   title: "Accessibility",
   intro:
     "How this website works for people who use it in different ways, and what to do if something does not work for you.",
-  updated: { iso: "2026-10-30", label: "30 October 2026" },
+  updated: { iso: "2026-10-31", label: "31 October 2026" },
   sections: [
     {
       id: "in-short",
@@ -56,7 +56,7 @@ export const ACCESSIBILITY: AccessibilityContent = {
         ),
         lead(
           "Screenshots",
-          "the image viewer opens each one full size. You can zoom in, and move between screenshots with the arrow keys or a swipe.",
+          "the image viewer opens each one full size. You can zoom in, and move between screenshots with the arrow keys or a swipe. Closing the viewer takes you to the screenshot it was showing, with keyboard focus on it. Its Go to Description button takes you to the text that describes that screenshot, with keyboard focus where that text starts.",
         ),
         lead(
           "CV",

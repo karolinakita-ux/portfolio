@@ -31,7 +31,8 @@ import {
 } from "#features/work/work.content.ts";
 import { PROFILE } from "#shared/content/profile.ts";
 import { linkRef } from "#shared/lib/analytics/payload.utils.ts";
-import { SECTION, VIEW, VIEW_PATHS, VIEW_TITLES, VIEWS } from "#shared/lib/routes/routes.constants.ts";
+import { SECTION, VIEW, VIEW_PATHS, VIEWS } from "#shared/lib/routes/routes.constants.ts";
+import { CASE_NAMES, VIEW_TITLES } from "#shared/lib/routes/routes.content.ts";
 import type { View } from "#shared/lib/routes/routes.types.ts";
 import { hrefForView, isCaseView, isView } from "#shared/lib/routes/routes.utils.ts";
 import { HOME_CRUMB } from "#shared/ui/Breadcrumb/Breadcrumb.constants.ts";
@@ -40,6 +41,7 @@ import { Strong } from "#shared/ui/Strong/Strong.tsx";
 import {
   currencyMisses,
   frontEndSpellings,
+  nestedPhrases,
   spelledCounts,
   straightQuotes,
   themeWording,
@@ -94,6 +96,9 @@ const caseCards = (c: AnyCase): ShowcaseCard[] => {
   return [...c.solution, ...c.safety];
 };
 
+/** The image viewer's sharper copy of a case image, in a `zoom` folder beside it (independent of gallery.utils.ts). */
+const zoomAsset = (asset: string): string => asset.replace(/[^/]+$/, "zoom/$&");
+
 /**
  * Bullets outside the screenshot cards: feature sections, the impact section, the Data Governance case's reality
  * list, Smart Ticket's personas, comparison reasoning and console decisions.
@@ -129,6 +134,7 @@ const ALL_CONTENT = {
   WORK_CASES,
   WORK_INTRO,
   CASES,
+  CASE_NAMES,
 };
 
 /** All the site's copy as data: the pages' content, the buttons, the search copy and the page names. */
@@ -155,7 +161,13 @@ describe("copy style", () => {
   });
 
   it("never ends an H1 with a period", () => {
-    const h1s = [...CASES.map((c) => c.title), CONTACT.title, PRIVACY.title, ACCESSIBILITY.title, CV.header.name];
+    const h1s = [
+      ...CASES.map((c) => CASE_NAMES[c.view].title),
+      CONTACT.title,
+      PRIVACY.title,
+      ACCESSIBILITY.title,
+      CV.header.name,
+    ];
     for (const title of h1s) expect(title.trimEnd()).not.toMatch(/\.$/);
   });
 });
@@ -330,6 +342,7 @@ describe("one style across the site", () => {
     const comparisons = SMART_TICKET_CASE.rebuild.comparisons;
     const titles = [
       ...valuesUnder(SITE_COPY, TITLE_KEYS),
+      ...Object.values(CASE_NAMES).flatMap(({ title, cardTitle, shortTitle }) => [title, cardTitle, shortTitle]),
       ...CASES.flatMap((c) => [
         ...c.meta.map((entry) => entry.label),
         ...c.summary.flatMap((column) => column.title ?? []),
@@ -366,15 +379,23 @@ describe("one style across the site", () => {
   });
 });
 
-/** The texts of one case study: the case, its Work card and its search description. */
+/** The texts of one case study: its names, the case, its Work card and its search description. */
 const caseTexts = (c: AnyCase): string[] =>
-  collectCopy({ c, card: WORK_CASES.filter((card) => card.view === c.view), page: PAGE_DESCRIPTIONS[c.view] });
+  collectCopy({
+    names: CASE_NAMES[c.view],
+    c,
+    card: WORK_CASES.filter((card) => card.view === c.view),
+    page: PAGE_DESCRIPTIONS[c.view],
+  });
 
 describe("case facts, one version per case", () => {
-  it("Project Planning claims only what it shows: no budget guardrails, no work from discovery", () => {
-    expect(
-      hitsIn(caseTexts(PROJECT_PLANNING_CASE), (text) => text.match(/guardrails?|from discovery/gi) ?? []),
-    ).toEqual([]);
+  it("Project Planning claims only what it shows: no budget guardrails, no discovery, design from requirements to delivery", () => {
+    const texts = caseTexts(PROJECT_PLANNING_CASE);
+    expect(hitsIn(texts, (text) => text.match(/guardrails?|\bdiscovery\b|problem definition/gi) ?? [])).toEqual([]);
+    expect(texts.filter((text) => text.includes("from requirements to delivery"))).toHaveLength(1);
+    // Her title there is the CV's for that contract (Programado): Senior Product Designer (Karolina, 2026-10-31).
+    const role = PROJECT_PLANNING_CASE.meta.find((item) => item.label === "My Role")?.value;
+    expect(role).toMatch(/^Senior Product Designer - /);
   });
 
   it("Smart Ticket calls its console the operations console, as its section heading does", () => {
@@ -494,7 +515,7 @@ describe("rendered pages", () => {
   });
 });
 
-const CASE_TABLE = CASES.map((c): [string, AnyCase] => [c.shortTitle, c]);
+const CASE_TABLE = CASES.map((c): [string, AnyCase] => [CASE_NAMES[c.view].shortTitle, c]);
 
 describe.each(CASE_TABLE)("case study: %s", (_name, c) => {
   const cards = caseCards(c);
@@ -576,8 +597,9 @@ describe("work page", () => {
 
   it("names each case one way: its browser tab says the breadcrumb name, and the H1 contains every word of it", () => {
     for (const c of CASES) {
-      expect(VIEW_TITLES[c.view], c.view).toBe(`${c.shortTitle} Case Study - ${PROFILE.name}`);
-      for (const word of c.shortTitle.split(" ")) expect(c.title, c.view).toContain(word);
+      const { title, shortTitle } = CASE_NAMES[c.view];
+      expect(VIEW_TITLES[c.view], c.view).toBe(`${shortTitle} Case Study - ${PROFILE.name}`);
+      for (const word of shortTitle.split(" ")) expect(title, c.view).toContain(word);
     }
   });
 
@@ -612,6 +634,24 @@ describe("CV", () => {
   it("writes lead-ins without their own colon (lead() adds it) and gives each entry its own id", () => {
     for (const bullet of entries.flatMap((entry) => entry.bullets)) expect(bullet.lead).not.toMatch(/:\s*$/);
     expect(new Set(entries.map((entry) => entry.id)).size).toBe(entries.length);
+  });
+
+  it("gives every job a full set of its own bullets, none copied from another entry", () => {
+    // Both GlobalLogic titles keep a full set (Karolina, 2026-10-31): the work ran through both roles.
+    for (const job of CV.experience) expect(job.bullets.length, job.id).toBeGreaterThanOrEqual(3);
+    const bullets = entries.flatMap((entry) => entry.bullets);
+    expect(new Set(bullets.map((bullet) => bullet.lead)).size).toBe(bullets.length);
+    expect(new Set(bullets.map((bullet) => bullet.text)).size).toBe(bullets.length);
+    // One employer's titles do not read as one list twice: no lead-in is another one with a word added.
+    for (const org of new Set(CV.experience.map((job) => job.org[0]))) {
+      const jobs = CV.experience.filter((job) => job.org[0] === org);
+      expect(nestedPhrases(jobs.flatMap((job) => job.bullets.map((bullet) => bullet.lead))), org).toEqual([]);
+    }
+    // The earlier title claims no leading, strategy, roadmaps or workshops: those were the Senior role's.
+    const earlier = CV.experience.filter((job) => job.title === "UX/UI Designer").flatMap((job) => job.bullets);
+    expect(earlier.length).toBeGreaterThan(0);
+    const claims = collectText(earlier).filter((text) => /\blead|\bled\b|strateg|roadmap|workshop/i.test(text));
+    expect(claims).toEqual([]);
   });
 
   it("shares the contact details with the profile, and marks the PDF's portfolio link for the UTM report only", () => {
@@ -854,7 +894,15 @@ describe("confidentiality", () => {
   });
 
   it("keeps every client out of the case studies, their Work cards and their search copy", () => {
-    const text = collectText({ CASES, WORK_CASES, PAGE_DESCRIPTIONS, PAGE_NAMES, VIEW_TITLES, VIEW_PATHS }).join("\n");
+    const text = collectText({
+      CASES,
+      CASE_NAMES,
+      WORK_CASES,
+      PAGE_DESCRIPTIONS,
+      PAGE_NAMES,
+      VIEW_TITLES,
+      VIEW_PATHS,
+    }).join("\n");
     expect(hiddenWords(text, HIDDEN_IN_CASES)).toEqual([]);
   });
 
@@ -865,6 +913,9 @@ describe("confidentiality", () => {
         card.asset,
         card.detail ?? card.asset,
         card.darkAsset ?? card.asset,
+        // The viewer's sharper copies (useCaseGallery): only beside a screenshot it opens.
+        zoomAsset(card.asset),
+        zoomAsset(card.darkAsset ?? card.asset),
       ]),
       ...WORK_CASES.flatMap((item) => [item.asset, item.darkAsset ?? item.asset]),
     ]);

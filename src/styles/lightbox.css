@@ -6,31 +6,37 @@
   scrollbar-width: thin;
   scrollbar-color: var(--border-interactive-hover) transparent;
 }
-/* Image pane: the window height minus the panel chrome (13rem: title row, controls
-   and paddings, in rem like the text and spacing they hold), fixed rather than following each image, so the panel and its
-   Previous / Next buttons stay in place from image to image and when zooming.
-   The fitted image stays inside it. Never below 12rem: on short screens or at
-   400% browser zoom the dialog scrolls instead of shrinking the image away
-   (WCAG 1.4.10; the panel is centred with auto margins so nothing is clipped). */
+/* Image pane: the height the panel has left once its title rows and toolbar took theirs. The panel is at least as
+   tall as the window (LightboxDialog.styles.ts) and the pane takes the rest (flex), so a title that wraps, Go to
+   Description's row on a phone and a toolbar in two rows at a large text size all fit: the browser measures them,
+   where a fixed budget (13rem until 5.17.0) ran out on a 320px phone with a 3-line title. The pane does not follow
+   each image, so the panel and its Previous / Next buttons stay in place from image to image and when zooming.
+   A size container: the image, the skeleton and the zoomed width below read its height (100cqh).
+   Never below 4rem: where even that does not fit (a short window at 400% browser zoom) the dialog scrolls instead of
+   shrinking the image away (WCAG 1.4.10; the panel is centred with auto margins, so nothing is clipped). A 390px
+   phone at 200% zoom or text size fits the case studies' longest titles above the floor (e2e image-viewer-fit). */
 .kb-lightbox-pane {
-  height: max(12rem, calc(100vh - 13rem));
-  height: max(12rem, calc(100dvh - 13rem));
+  flex: 1 1 0;
+  min-height: 4rem;
+  container-type: size;
 }
+/* Fitted image: no larger than the pane, nor wider than its page file while it shows a sharper copy with more pixels
+   (--kb-natural-width, set inline: useSharpImage), so the copy takes over at the same size. */
 .kb-lightbox-image {
-  max-height: max(12rem, calc(100vh - 13rem));
-  max-height: max(12rem, calc(100dvh - 13rem));
+  max-width: min(100%, var(--kb-natural-width, 100%));
+  max-height: 100cqh;
 }
 /* Loading skeleton: the size the fitted image will have (as .kb-lightbox-image:
-   pane width, height limit or natural width, whichever is smallest), from the
+   pane width, pane height or natural width, whichever is smallest), from the
    image's known size. Variables are set inline (lightbox.utils.ts). */
 .kb-lightbox-skeleton {
-  width: min(100%, max(12rem, 100vh - 13rem) * var(--kb-aspect), var(--kb-natural-width));
-  width: min(100%, max(12rem, 100dvh - 13rem) * var(--kb-aspect), var(--kb-natural-width));
+  width: min(100%, 100cqh * var(--kb-aspect), var(--kb-natural-width));
   aspect-ratio: var(--kb-aspect);
 }
-/* Zoomed image: the fitted width (pane width, height limit or natural width,
+/* Zoomed image: the fitted width (pane width, pane height or natural width,
    whichever is smallest, as .kb-lightbox-image) times the zoom level. In CSS so
-   it follows window resizes. Variables are set inline (lightbox.utils.ts). */
+   it follows window resizes. Variables are set inline (lightbox.utils.ts); the
+   natural width is the page file's, also while a sharper copy shows. */
 .kb-lightbox-image-zoomed {
-  width: calc(min(100%, max(12rem, 100dvh - 13rem) * var(--kb-aspect), var(--kb-natural-width)) * var(--kb-zoom));
+  width: calc(min(100%, 100cqh * var(--kb-aspect), var(--kb-natural-width)) * var(--kb-zoom));
 }

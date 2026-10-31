@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { Navigate, View } from "#shared/lib/routes/routes.types.ts";
+import type { CaseView, Navigate, View } from "#shared/lib/routes/routes.types.ts";
 import type { CalloutTone } from "#shared/ui/Callout/Callout.types.ts";
 
 import type { BentoCard } from "./bento.types.ts";
@@ -70,8 +70,8 @@ export interface DetailItem {
 }
 
 /**
- * A previous / next link's target. A case study is named by its title (CASE_TITLES in content/cases.constants.ts),
- * never by a copy typed here, so the link and the page it opens use one name.
+ * A previous / next link's target. A case study is named by its title (CASE_NAMES in shared/lib/routes), never by a
+ * copy typed here, so the link and the page it opens use one name.
  */
 export interface CaseNavTarget {
   view: View;
@@ -128,14 +128,14 @@ export interface ImpactSection {
 }
 
 interface CaseBase {
-  /** The view that shows this case study (its URL, the screenshot folder, analytics). */
-  view: View;
+  /**
+   * The view that shows this case study (its URL, the screenshot folder, analytics) and its names: the H1, the
+   * breadcrumb and the rest come from CASE_NAMES (shared/lib/routes/routes.content.ts), which no case repeats.
+   */
+  view: CaseView;
   /** Prefix for section ids. */
   id: string;
-  shortTitle: string;
   eyebrow: readonly string[];
-  /** H1. No trailing period. */
-  title: string;
   meta: readonly MetaEntry[];
   notice?: Notice;
   summaryTitle: string;

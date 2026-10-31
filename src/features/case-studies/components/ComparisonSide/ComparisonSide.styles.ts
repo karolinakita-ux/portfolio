@@ -10,8 +10,11 @@ export const styles = {
     "md:row-span-2 md:grid md:grid-rows-subgrid md:p-lg",
   ),
   header: clsx("flex flex-col gap-md"),
-  /** The same title on both sides (body colour, bold); the side reads from its words and the chips' tone. */
-  label: clsx("text-label-md font-bold text-text-primary uppercase"),
+  /**
+   * The same title on both sides (body colour, bold); the side reads from its words and the chips' tone. Focused by
+   * the image viewer's Go to Description, never by Tab: no ring, as a section's heading.
+   */
+  label: clsx("text-label-md font-bold text-text-primary uppercase focus:outline-none"),
   text: clsx("text-body-md text-text-primary"),
   metrics: clsx("flex list-none flex-wrap gap-xs"),
   screens: clsx("grid list-none grid-cols-2 items-start gap-md"),

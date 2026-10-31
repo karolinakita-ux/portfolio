@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from "#shared/ui/icons/ico
 import { styles } from "./LightboxToolbar.styles.ts";
 import type { LightboxToolbarProps } from "./LightboxToolbar.types.ts";
 
-/** Previous / Next (with more than one image), zoom out / level / zoom in (md up or a fine pointer), browse hints. */
+/** Previous / Next (with more than one image), zoom out / level / zoom in (every screen), browse hints. */
 export function LightboxToolbar({
   count,
   zoomStep,

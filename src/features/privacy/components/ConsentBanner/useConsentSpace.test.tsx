@@ -34,7 +34,7 @@ describe("useConsentSpace", () => {
     expect(space()).toBe("");
   });
 
-  it("publishes nothing while the box sits in the page (short viewports: short:static)", () => {
+  it("publishes nothing while the box sits in the page (short viewports and small phones: cramped:static)", () => {
     window.innerHeight = 256;
     vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(() => DOMRect.fromRect({ y: 16 }));
     vi.spyOn(window, "getComputedStyle").mockReturnValue({ position: "static" } as CSSStyleDeclaration);

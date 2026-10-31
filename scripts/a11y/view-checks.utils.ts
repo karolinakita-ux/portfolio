@@ -55,11 +55,12 @@ export async function checkScreenReaderAndTab({ browser, base, vsrBundle, notes 
 /**
  * 2b. Tab order with the statistics consent box showing (WCAG 2.4.11 Focus Not Obscured): the box stays at
  * the bottom of every page until the visitor answers, so no focused element may end up entirely behind it.
- * Phone and desktop width, and a 1280 x 1024 screen at 400% zoom, where the box is taller than the window
- * and must sit in the page instead, all of it within reach of scrolling (WCAG 1.4.10 Reflow).
+ * Phone and desktop width, a 320 x 568 phone, where a fixed box would reach under the header, and a 1280 x 1024
+ * screen at 400% zoom, where the box is taller than the window; on both it sits in the page instead, all of it
+ * within reach of scrolling (WCAG 1.4.10 Reflow).
  */
 export async function checkFocusWithConsent({ browser, base, notes }: AuditContext): Promise<void> {
-  for (const viewport of [...VIEWPORT_NAMES, "zoom"] as const) {
+  for (const viewport of [...VIEWPORT_NAMES, "small", "zoom"] as const) {
     const page = await newPage(browser, viewport, "light");
     await showConsentBox(page);
     for (const view of CONSENT_VIEWS) {
@@ -69,8 +70,8 @@ export async function checkFocusWithConsent({ browser, base, notes }: AuditConte
         notes.push(`Consent box did not show on ${view} (${viewport}): the 2.4.11 check did not run`);
         continue;
       }
-      if (viewport === "zoom" && !(await inReach(box)))
-        notes.push(`${view} (400% zoom): part of the consent box cannot be scrolled to (1.4.10)`);
+      if ((viewport === "zoom" || viewport === "small") && !(await inReach(box)))
+        notes.push(`${view} (${viewport}): part of the consent box cannot be scrolled to (1.4.10)`);
       const stops = await tabOrder(page);
       await writeFile(`${OUT}/tab/${view}-${viewport}-consent.txt`, formatTab(stops) + "\n");
       const hidden = stops.filter((s) => s.shown === 0);

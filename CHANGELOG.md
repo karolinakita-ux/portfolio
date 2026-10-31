@@ -4,6 +4,208 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Release v5.17.6 - 2026-10-31
+
+- In the image viewer, a new Go to Description button takes you to the text about the screenshot you are looking at, and closing the viewer now brings you back to that screenshot.
+- On phones, the image viewer has zoom buttons, and a tap on a screenshot zooms in where you tapped. The viewer also fits small screens and large text without scrolling.
+- Case study cards no longer stay hidden beside the statistics box on tablets and computers.
+- The CV gives the earlier GlobalLogic role its own bullets, and the About page, the Project Planning case and the Theme Generator card have clearer wording.
+- Badges, breadcrumbs and card titles now match the design files, the menu's underline slides with its highlight, and the Project Planning calendar screenshot shows all its hour lines.
+
+Versions: 5.15.1 - 5.17.6.
+
+### 5.17.6 - 2026-10-31
+
+#### Changed
+
+- CV: three bullets of the earlier GlobalLogic role (UX/UI Designer, 2019 - 2023) are reworded so they no longer repeat the Senior role's lines and claim only what her case studies show: white-label theming with state colours, surveys and interviews that led to personas, and brand palette audits with contrast rules for developers. The PDF is remade and still has 2 pages.
+
+### 5.17.5 - 2026-10-31
+
+#### Changed
+
+- Project Planning: the case page heading is now "Project Planning & Cost Management Platform", the same name as its Work card. The Next link on the Automotive page and the Previous link on the Theme Generator page use the new name too. The browser tab and the breadcrumb still say "Project Planning".
+
+### 5.17.4 - 2026-10-31
+
+#### Changed
+
+- CV: the UX/UI Designer (2019 - 2023) research line now names surveys too: "Ran user interviews, surveys and usability benchmarking." The PDF is remade and still has 2 pages.
+- CV: the recruitment consent keeps its text size. The only smaller text style, Label Small (11px), has the same line height, so in the PDF the consent would still take 5 lines and free no room.
+
+### 5.17.3 - 2026-10-31
+
+#### Fixed
+
+- Image viewer: Go to Description now always shows the start of the screenshot's description, just below the header. On a phone, a Project Planning section is taller than the screen, and for 3 of its 6 screenshots the button left the section's heading and lead above the header: it kept the screenshot in view instead, as closing does. Closing (Close, Escape or a click outside) still does that.
+- Image viewer: Go to Description puts keyboard focus where the description starts (a row's title, a before / after column's label or the section's heading), not on the screenshot, so a screen reader reads on from the text instead of the image again (WCAG 2.4.3). Closing still focuses the screenshot.
+- Image viewer: in the Smart Ticket operations console, whose screens have only a caption that repeats their title, Go to Description now lands on the section's heading and the text above the screens.
+- Image viewer: with a larger text size, Go to Description's label wraps to 2 lines; they now keep to the end, under Close, instead of centring in the middle of the panel like a second title.
+- Statistics consent box: on phones up to 640px tall (and short windows, as before) it sits at the top of the page instead of floating. At 320 x 568 the floating box reached under the sticky header, so every focused element sat behind it (WCAG 2.4.11); at 375 x 548 about 20px of the window stayed free. New `cramped` variant in `utilities.css`.
+
+#### Changed
+
+- Image viewer: each image's place on the page names where its description starts (`data-image-description` on a row's title and a comparison column's label, else the section's heading); `landOnPage` lands Go to Description there (`descriptionOffset` in `lightbox.utils.ts`). The accessibility statement, README, architecture.md and motion.md say so, and the Storybook story "Patterns/Image Viewer · Go To Description" checks the focus on the heading.
+- Tests: `e2e/image-viewer-landing.e2e.ts` now covers Project Planning's feature sections at 390px and desktop (Go to Description shows the heading; Close keeps the whole screenshot in view), the operations console, a before / after column, and landing while the consent box keeps space at the bottom (checked with the space ignored, which fails), and on an Android phone in Messenger the Project Planning case. `e2e/image-viewer-fit.e2e.ts` checks the wrapped label at a 32px text size (fails when it is centred). Unit tests cover `descriptionOffset`, `freeBand` and `landingOffset` with the consent box's space. `yarn a11y` tabs through with the consent box at 320 x 568 too.
+- Figma: the Image Viewer · Go to Description annotation says where each control lands and how the label wraps at a larger text size; the ConsentBanner component's description names the phones where the box sits in the page.
+
+### 5.17.2 - 2026-10-31
+
+#### Fixed
+
+- Image viewer: with reduced motion, zooming in showed the image at its file's width for one frame before its zoomed size. Reduced motion gives every property a 0.01ms transition (`motion.css`), and the one on the image's flex-shrink (1 to 0 when zooming) let it shrink for that frame. Nothing on the image transitions now (`transition-none`), so zoom is instant with or without reduced motion. This was also why `zoom is instant (reduce motion)` in `e2e/image-zoom.e2e.ts` failed now and then in Chromium and WebKit.
+
+#### Changed
+
+- Tests: that e2e test now catches any transition that starts on the image while it zooms (`transitionrun`), so it no longer depends on which frame it measures. Before the fix it failed 9 of 9 runs with reduced motion in Chromium, Firefox and WebKit; after it, it passed 30 of 30. docs/motion.md says so.
+
+### 5.17.1 - 2026-10-31
+
+#### Fixed
+
+- The calendar week view screenshot in the Project Planning case study shows the hour lines on Wednesday again. In Light mode that day's column was plain, so the grid looked cut off. The Dark mode image was already right.
+
+#### Changed
+
+- The changed screenshot has new file names, `calendar-week-view-v2-light.webp` and `-dark.webp` (images are cached for a week): `shot()` in `content.utils.ts` takes an optional file version, and the card id stays `calendar-week-view`, so the statistics go on counting the same screen. The Screenshot and Image Viewer stories in Storybook use the new files.
+
+### 5.17.0 - 2026-10-31
+
+#### Added
+
+- Image viewer: a Go to Description button in the title row closes the viewer and takes you to the description of the screenshot you are looking at. From 768px up it sits next to Close. On phones it has its own row under Close, so long titles keep their width.
+
+#### Changed
+
+- Image viewer: closing it (Close, Escape or a click outside) now takes you to the screenshot it was showing, not the one you opened it from. The page scrolls so that screenshot's row sits just below the header, with its description in view, and keyboard focus goes to the screenshot. If you close it on the screenshot you opened and that screenshot is still on screen, the page stays where it is. The scroll is smooth, or instant if your device asks for reduced motion.
+- Image viewer: the image takes the height that the title rows and the buttons leave, measured by the browser instead of a fixed allowance, so the whole panel fits the window with the case studies' longest titles. That includes a 320px phone, where a 3-line title made the dialog scroll, and a 390px phone at 200% zoom or text size, where the title row now puts the counter beside Close and the title under them at full width. Previous and Next stay in place from screenshot to screenshot. Below the 4rem minimum, at 400% zoom on a short window, the dialog scrolls as before. `e2e/image-viewer-fit.e2e.ts` checks it in three browsers (checked against the old allowance, which fails at 320px, 195px and with a 32px text size). The Storybook story "Patterns/Image Viewer" shows the narrow layout as "Phone At 200 Percent".
+- Statistics: using Go to Description is counted (`image-description-open`, with the case and the screenshot). The privacy policy mentions it. It is one more click of a kind the policy already lists, so nobody is asked for consent again.
+- Accessibility statement: it now says where closing the viewer, or Go to Description, takes you and where keyboard focus goes.
+
+### 5.16.3 - 2026-10-31
+
+#### Fixed
+
+- Image viewer: on a phone with a larger text size or page zoom (200% text at 390px, a 390px phone at 200% zoom, any panel narrower than 14rem), the toolbar no longer runs off the panel. Previous and Next keep the first row and the zoom controls take a centred row under them; the dialog no longer scrolls sideways (WCAG 1.4.4, a regression from 5.16.0). Where the one row fits (a 320px phone with the default text size, and anything wider), nothing changes. The Tab order stays Previous, zoom, Next. New layout width `viewer-toolbar` (14rem) in `theme.css`.
+- CV: the UX/UI Designer (2019 - 2023) bullets no longer read as a copy of the Senior role's. "Multi-Tenant White-Labelling" puts the self-service theming first and spells out role-based access control (RBAC). "Colour Contrast (WCAG 2.1 AA)" replaces "WCAG Accessibility Audits", which repeated the Senior lead-in with a word added. The research line names usability benchmarking, as her GlobalLogic Poland research does, instead of usability tests. The PDF is remade and keeps 2 pages.
+
+#### Changed
+
+- Tests: `content-rules.test.ts` fails when a CV lead-in holds another one of the same employer whole (`nestedPhrases` in `src/test/copy-rules.ts`; checked with the old lead-ins, which fail, and the new ones). `e2e/image-zoom.e2e.ts` opens the viewer at 195px and, in Chromium, at 390px with a 32px text size: every control inside the panel, the zoom controls on a centred second row, no sideways scroll, and the controls work. `yarn a11y` opens the viewer in its large-text check too (no sideways scroll, every control inside the panel, no text cut off). Both fail on the one-row toolbar of 5.16.0.
+- Automotive: My Role stays "Senior UX Designer", her role on that project (Karolina, 2026-10-31); a code comment now says so.
+
+### 5.16.2 - 2026-10-31
+
+#### Changed
+
+- Case names: each case study's 3 names are now written once in the code (`CASE_NAMES` in `src/shared/lib/routes/routes.content.ts`): its title (the page heading and the previous / next links), its card title (the Work card, llms.txt and the search data's CreativeWork) and its short title (the breadcrumb, on the page and in the search data, and the browser tab). Every place reads them from there, so a new name reaches them all at once. Nothing visitors see changes: built before and after, every prerendered page differs only in the script's file name, and llms.txt, the sitemap and the CSS are the same.
+- The page titles (`VIEW_TITLES`) moved to `routes.content.ts` with the names; the case-studies slice's `CASE_TITLES` and the search code's own breadcrumb list are gone, and the case and Work card content no longer carry names. `isCaseView()` now narrows to a case view.
+- Tests: `src/app/case-names.test.tsx` renders each case page and the Work page and checks the heading, breadcrumb, browser tab, previous / next links, Work card, search data and llms.txt against `CASE_NAMES`. It fails when a file outside `routes.content.ts` spells a case name itself (checked with a temporary file that did, and one that named a case only in a comment), and keeps the names in the Work page order. `content-rules.test.ts` checks the names with the rest of the copy.
+- Docs: docs/architecture.md (Rendering and SEO, Adding a page).
+
+### 5.16.1 - 2026-10-31
+
+#### Fixed
+
+- Accessibility: the statement now says "Last updated" like the privacy policy (it said "Last reviewed"), dated 31 October 2026.
+- Screen readers: the email address in the text of the Privacy and Accessibility pages now says it opens your email app, like the address on the Contact page and in the footer (new `EmailAppNote`, used by `EmailLink` and `CopyEmail`). The CV's email links stay plain: the CV is the PDF's source.
+- llms.txt: the Work page now leads a Work section with the case studies in the Work page order; About Karolina lists only About, Contact and the CV.
+
+#### Changed
+
+- Tests: `src/app/page-structure.test.tsx` checks every page's heading outline (`src/test/heading-outline.ts`: one H1 first, no skipped level, each heading deeper than the part it sits in and inside the part its parent heading titles) and the email app note on every mail link outside the CV. It fails on Smart Ticket with its 5.14.17 heading levels put back and on every page without the note. The llms.txt test checks the pages in each section.
+- Tests: `e2e/scroll-reveal.e2e.ts` answers the consent box at a scroll stop mid-page and checks that the scroll position and a card's top in the window stay the same, at phone and desktop width in Chromium, Firefox and WebKit. It fails when the answer scrolls the page or shifts the content above the card.
+- Checked and already done since 5.14.18: the sitemap and llms.txt follow the Work page order, the Smart Ticket heading levels, og:locale en_GB.
+- Docs: docs/architecture.md (llms.txt sections, the screen reader notes).
+
+### 5.16.0 - 2026-10-31
+
+#### Added
+
+- Image viewer on phones: the zoom buttons and the zoom level now show on every screen, and a tap on the image zooms to 200% where it lands, with another tap going back to fit, as a click does with a mouse (Karolina's answer to a28). Until now a phone showed a wide screenshot no larger than the page does (about 330px wide, its text about 3px tall), so reading it took a 3.5 - 5x pinch. Pinch-zoom, moving the zoomed image with a finger, swiping to the next screenshot and the fling after a swipe work as before, and none of them zooms: a finger that moves, a second finger (a pinch) and the tap that stops a fling are not taps. Zoom stays instant, also with reduced motion, and keyboard and screen reader use is unchanged.
+- At 320px the toolbar keeps one row: Previous, Zoom out, the zoom level, Zoom in and Next. The "Swipe to browse" hint shows from 480px up, where it fits beside the zoom controls; on a phone held upright the buttons are there instead. The viewer's icon buttons still look 32px but take taps up to 40px on touch screens. The image pane has `touch-action: manipulation`, so two quick taps zoom in and back out instead of zooming the page. The phone-only limit on zoom (`ZOOM_QUERY`, `canZoom()`, the reset below 768px) is gone.
+- Statistics: a tap that zooms is sent as `image-zoom` with `method: "click"`, like a mouse click on the image, and `input: "touch"` tells them apart (the tracking plan defines `method` as the control and `input` as the device). Not a new kind of data: the privacy policy already covers zooming in the viewer and the input, so it and `STORED_CHOICE` stay as they are. A tap on the viewer's image is no longer a dead click, since it now zooms (`data-clickable`, in `INTERACTIVE`).
+- Tests: `LightboxProvider.test.tsx` (a tap and a pen zoom on a phone-sized screen; a moving finger, a cancelled press, a pinch and a swipe do not; a tap counts as a click), `clicks.utils.test.ts`, `e2e/image-zoom.e2e.ts` (in Chromium, Firefox and WebKit: a tap on a tablet keeps the tapped point under the finger, and at 320px the toolbar is one row inside the panel and works; on an Android phone in Messenger: a 40px touch target on every viewer button, tap to zoom at once with and without reduced motion, and a swipe, a pan, a fling stopped by a tap and a pinch that zoom nothing), `e2e/analytics.e2e.ts` (a tap that zooms is `click` from `touch`, with no dead click). `yarn a11y` now also zooms the viewer at phone width.
+- Docs: README (image viewer), docs/analytics.md (`method`, Screenshots up close), docs/architecture.md (dead clicks), docs/motion.md (image viewer zoom).
+
+### 5.15.9 - 2026-10-31
+
+#### Changed
+
+- Badges are now 22px tall in every tone, as in Figma's Badge. The tags on About (career), Smart Ticket (personas) and Theme Generator (bento cards) were 20px; the status badges (Smart Ticket's before and after, Theme Generator's Shipped and Roadmap) were already 22px. Figma's fixed 22px frame holds Label Small's 16px line inside its 4px padding and inside stroke; the site gets the same box and text position from 2px padding and a 1px border, transparent on tags, so in forced colours (Windows contrast themes) tags now show their outline like status badges.
+- Breadcrumbs follow Figma: a 16px chevron (was 14px) with 8px on each side (was 4px), on About, Contact, CV, Privacy, Accessibility and the 4 case studies. Home's house icon is 16px too, like Figma's icon/home, 4px from its label as before. On phones the case pages' previous / next links wrap as before.
+- Bento card titles (Theme Generator's delivery and engineering cards) are Title Medium in its own medium weight, as in Figma, instead of semibold.
+- The menu's current-page underline stays as it is (Karolina, 2026-10-31); Figma's SiteNav shows it too.
+- Tests: `e2e/figma-sizes.e2e.ts` measures in Chromium, Firefox and WebKit that every badge tone is 22px tall, that the breadcrumb's chevron and house are 16px with 8px on each side (About and Theme Generator), and that a bento title is 16/24px at weight 500. On the code of 5.15.7 it fails: neutral badge 20px, chevron 14px, title weight 600.
+- Docs: the comments in the Badge, Breadcrumb and BentoCards styles, and the Badge and Breadcrumb stories' descriptions.
+
+### 5.15.8 - 2026-10-31
+
+#### Changed
+
+- CV: the UX/UI Designer role at GlobalLogic Poland (Sep 2019 - Dec 2023) now has its own 4 bullets: end-to-end UX/UI design, multi-tenant enterprise platforms (RBAC, data tables, white-label theming), user research and WCAG 2.1 AA audits. The Senior UX/UI Designer role keeps its 7 bullets. The PDF is remade from the page and stays at 2 pages; the research bullet is one line because page 2 had no more room.
+- About: the intro now says "I connect how people behave with a consistent design and what the team can build", and the GlobalLogic Poland card says "Designed complex data tables" instead of "Owned".
+- Project Planning: My Role reads "Senior Product Designer", and My Part says "from requirements to delivery" instead of "from problem definition to delivery".
+- Work: the Theme Generator card has a new summary: a visual theme generator for non-technical users, with raw CSS kept as an advanced option.
+- Tests: `content-rules.test.ts` checks that every job on the CV has at least 3 bullets of its own (no lead-in or text repeated, and no leading, strategy, roadmap or workshop claims for the earlier GlobalLogic title). It also checks that Project Planning claims no discovery or problem definition, says "from requirements to delivery" and gives her role as Senior Product Designer. `CvView.test.tsx` renders an entry without bullets on its own.
+
+### 5.15.7 - 2026-10-31
+
+#### Fixed
+
+- Scroll reveal: while the statistics consent box shows (a first visit to the live site, until the visitor answers), cards near the bottom of the window no longer stay hidden. The reveal's view timeline took the page's scroll padding as its bottom edge, and the box adds its height there (279px at desktop size) so keyboard focus stays clear of it (WCAG 2.4.11). Every card in that strip, beside the narrower box too, waited transparent and 16px low at every scroll position, and appeared at once after "Allow statistics" or "No, thanks". It hit the 6 pages with revealing cards (Work, About and the 4 case studies) from tablet width up, in Chromium, Firefox and WebKit, on the live site (5.15.0) as well. The timeline now ends at the window's own bottom edge (`view(block auto 0px)`), so a card reveals as it does without the box, behind the box where the box covers it. Phones have no reveal and are unchanged, and at the bottom of a page every card was and stays fully shown.
+- Tests: `e2e/scroll-reveal.e2e.ts` opens each of those pages as a first visit on the live site, with the consent box, at phone and desktop width in all three browsers. It checks every card at each scroll stop and with its top just past the reveal (128px inside the window), then every card at the bottom of the page at rest, before and after "No, thanks". On the code of 5.15.6 (run in a copy of the tree) it fails on all 6 pages at desktop width in every browser (18 of 36 runs; the phone runs pass): cards from 103 to 278px inside the window at opacity 0 and 16px low, and still fading up to 370px. `reveal-on-scroll.test.ts` pins the new timeline.
+- Docs: docs/motion.md (Scroll reveal, the consent box), CLAUDE.md (Pitfalls), the comments in `utilities.css` and `base.css`.
+
+### 5.15.6 - 2026-10-31
+
+#### Changed
+
+- README: the image viewer (a click zooms to 200% where you clicked, a sharper copy loads only when the screen needs more pixels) and how to add that copy in a `zoom/` folder; section links (the copier's tag passes on, the landing before the site's script, in-app browsers); real pages (hydration, image sizes in the HTML); a new Calm motion bullet with a link to the motion guide; statistics (tagged links, zooms, Playwright with the real tracker); 1,200+ tests; `lib/browser` and the `zoom/` folder in Where things live.
+- CLAUDE.md: the case studies' order now holds in the sitemap and llms.txt too, with the tests that check it; `lib/browser/` (`inAppBrowser()`, `savesData()`); a section link's focus stays where a visitor who tabbed in first put it; the menu's underline is a border inside the pill; the e2e helpers and the hourly copy of the Umami tracker (never fetch it per test); the tracker's referrer in the Pitfalls.
+- CONTRIBUTING.md: release step 1 fetches and compares against `origin/main`.
+- docs/analytics.md: `link-ref` goes with the first pageview of each page load whose address carries a tag, once statistics are allowed. docs/architecture.md: a mouse click on the viewer's image is not a dead click, a tap still is. docs/motion.md: `image-zoom` and `section-links` in the browser tests. docs/claude-code.md: what the Playwright tests cover and where they run.
+- Review agents: docs-seo-reviewer reads docs/motion.md, ui-reviewer checks against it, a11y-reviewer checks focus after a section link and lists `image-zoom` among the reduced-motion specs. `public/_headers`: the Storybook comment names the Behind the Design banner.
+
+### 5.15.5 - 2026-10-31
+
+#### Fixed
+
+- Statistics: every call on the visitor's first page now has the same referrer as that page's pageview: the page that linked to the site (LinkedIn's without its query), or none. The first page used to leave the referrer to Umami's tracker, which names the page just left once the address changes, so the time spent on the first page, sent when the visitor moves on, said it came from that page itself. Seen live on 5.15.4: time on `/?ref=qa-check-oct31` with the referrer `/?ref=qa-check-oct31`, while its pageview had the real one. Later pages already had the page before. The session data and speed report about the first page carry its referrer too.
+- Tests: `analytics.utils.test.ts` checks that the pageview, `link-ref`, an event, the tracker's session data and speed report, and time on page after the address changed all carry the landing referrer, from LinkedIn and with none, while the fake tracker's own says something else. `e2e/analytics-links.e2e.ts` checks with the real tracker in Chromium, Firefox and WebKit that every call about the first page, time on it included, has its pageview's referrer, for the LinkedIn link and the six links without one. Both fail on the code of 5.15.4 (run in a copy of the tree): in the e2e spec, time on the first page names that page as its referrer in every landing.
+- Docs: docs/analytics.md (What Umami records by itself, Tagged links), docs/architecture.md.
+
+### 5.15.4 - 2026-10-31
+
+#### Changed
+
+- Tests: `e2e/analytics-links.e2e.ts` follows tagged links into Umami in Chromium, Firefox and WebKit, with the real tracker and every request it makes caught (none reaches the Umami account). Before consent, landing on `/?ref=linkedin-profile`, `/cv?ref=acme` or `/?utm_medium=cv-pdf` and browsing (views from the menu, a FAQ question, scrolling, Back, a hidden tab): no script and no request, and the tag stays in the address. After "No, thanks" (also after a reload), and with Do Not Track or Global Privacy Control: no script and no request, and with a browser signal nobody is asked and /privacy says why. Allowed on the first page, for a LinkedIn link, the CV PDF's link, a UTM link with a source, both kinds of copied section link, a link with click ids and the old `/resume` address: the pageview keeps `ref` and the UTM parameters, `link-ref` and the session data's `ref` go once (neither for the CV PDF's UTM-only link), the next view keeps the tag, click ids and the hash never go, and LinkedIn's referrer arrives without its query. Allowed later, in the consent box on About or with the switch on /privacy after landing on `/cv?ref=acme`: that page counts with the tag, and nothing is sent about the pages before. A visitor who allowed on `/cv?ref=acme` and then opens the PDF's portfolio link (read from the CV page's `data-pdf-href`) is counted with `utm_medium=cv-pdf` and sends no `link-ref` and no session `ref`, so Umami keeps `acme`. A reload sends a new first pageview with the tag, and `link-ref` once in each page load.
+- Nothing in the statistics code needed fixing. Mutation checks in a copy of the tree each failed the tests they should: the tracker loaded before consent, Do Not Track ignored, internal links dropping the query, `link-ref` with every pageview, session data without `ref`, click ids kept, an external referrer's query kept, `utm_source` not read as the tag.
+- `e2e/helpers/umami.utils.ts` now holds the live-site setup and the request capture that both statistics specs use (moved from `e2e/analytics.e2e.ts`). It serves the live tracker from a copy fetched at most once an hour (`node_modules/.tmp/e2e-umami-script.js`, the last copy when a new fetch is refused): one script request per test made cloud.umami.is answer 403 with a Vercel bot challenge for about ten minutes, to the test browsers and to Node.
+- Docs: docs/analytics.md (Tagged links: when a tag counts, and the new spec), docs/architecture.md, CLAUDE.md (`e2e/`), the add-tracking skill.
+
+### 5.15.3 - 2026-10-31
+
+#### Changed
+
+- The menu's current-page underline now rides with the gold pill. It is a 2px bar inside the pill, under the label, instead of a text underline on the link, so when the page changes it slides from the previous menu item together with the pill (same time and easing), fades with the pill where there is no previous item (/privacy), and appears at once with reduced motion. At rest it looks as before: as wide as the label, 2px, about 4px under the text, in the label's colour (the same pixels as the text underline in Chromium, 1px higher in Firefox and half a pixel in WebKit). It is a border, not a background, so it stays visible in forced colours (Windows contrast themes). The underline itself stays: the gold pill alone is 1.54:1 on the white header, under the 3:1 a state needs (WCAG 1.4.11).
+- Tests: `SiteHeader.test.tsx` and the SiteHeader stories check that every pill holds the bar and only the current page's shows it (About, Work on a case study, none on /privacy), that it is a border in the pill's colour, and that no menu link has a text underline. `e2e/header-motion.e2e.ts` checks in Chromium, Firefox and WebKit that the underline stays in the moving pill in every frame and on the animation's own clock (on the old item's underline at the start, between the two half-way), sits under the label at rest on every page and after a click, stays in place while it fades or jumps with the pill, and keeps a 2px border in forced colours (Chromium, Firefox); the e2e sampler now reports each pill's underline. Removing the bar, putting it back on the link or drawing it as a background fails these checks. Docs: docs/design.md (states rule) and docs/motion.md (nav pill row; underlines that animate on their own stay out). Figma and the KitaBranding design system on claude.ai follow separately.
+
+### 5.15.2 - 2026-10-31
+
+#### Changed
+
+- Image viewer: a screenshot can now have a sharper copy for close looks, the same picture with about twice the pixels under the same name in a `zoom/` folder beside it (`cases/<case>/zoom/<file>`). The viewer still opens on the page's own file and loads the copy only when the screen needs more pixels than that file has: a Retina laptop, a 3x phone, the viewer's zoom or a pinch-zoom. The copy takes over once decoded, at the same size, so nothing moves, and a copy that fails leaves the page's file. The page and its background loading never download the copies, and nothing extra loads with Save-Data or on 2G. No screenshot has a copy yet, so the site looks the same until the larger exports arrive.
+- Why: measured on the live 5.15.0, the 2000 px screenshots are sharp when the viewer opens on a phone, but their text needs a 3.5 - 5x pinch to read, and there each file pixel covers 1.5 - 2.5 screen pixels, so it looks soft. A Retina laptop has too few pixels already at fit (0.83 file pixels per screen pixel) and at 200% (0.41). The 720 px phone screens are short on a 3x phone even at fit (0.82 in Chromium). Chromium and WebKit draw a pinched image again from its file, so the files are the limit, not the browsers.
+- `savesData()` moved from the image preloader to `shared/lib/browser`, so the preloader and the viewer share it.
+- Tests: `LightboxProvider.test.tsx` (the copy loads on a dense screen, under a pinch-zoom or at the viewer's zoom and not before, keeps the page file's size fitted and zoomed, falls back when it fails, ignores a copy that arrives too late, loads nothing with Save-Data), `useCaseGallery.test.tsx` (the copy of the theme shown, never preloaded), `gallery.utils.test.ts` (each copy has its page file's shape and at least 1.5 times its pixels), `content-rules.test.ts` (a copy counts as used), `browser.utils.test.ts`, and `e2e/image-sharpness.e2e.ts` in Chromium, Firefox and WebKit (a 3x phone shows the page's file with nothing that scales it, the viewer's zoom changes the width and never a transform, a pinch-zoom resizes the visual viewport). Docs: architecture (Images) and CLAUDE.md (`public/assets`).
+
+### 5.15.1 - 2026-10-31
+
+#### Changed
+
+- Tests and docs pin the menu's current-page underline (since 5.14.17), which stays: the gold pill alone is 1.54:1 on the white header, under the 3:1 a state needs (WCAG 1.4.11). The SiteHeader stories check that only the current page's link is underlined (About with `aria-current="page"`, Work on a case study), `SiteHeader.test.tsx` checks it on a page, a case study and /privacy (none), and all three checks fail without the underline. docs/design.md (Design rules in code) says the menu underlines the current page as well as showing the pill, as the theme switch fills its icon. Figma and the KitaBranding design system on claude.ai follow separately.
+
 ## Release v5.15.0 - 2026-10-31
 
 - In the image viewer, a click on a screenshot zooms in where you clicked, and another click zooms back out.

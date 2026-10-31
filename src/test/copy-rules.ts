@@ -65,6 +65,19 @@ const THEME_WORDING = [
 
 export const themeWording = (text: string): string[] => THEME_WORDING.flatMap((pattern) => text.match(pattern) ?? []);
 
+/**
+ * Phrases that hold another one of the list whole, ignoring case ("WCAG Accessibility Audits" holds "Accessibility
+ * Audits"): one list read twice with a word added. The CV gives each title at one employer its own lead-ins.
+ */
+export function nestedPhrases(phrases: readonly string[]): string[] {
+  const key = (phrase: string) => phrase.toLowerCase().replace(/\s+/g, " ").trim();
+  return phrases.flatMap((outer, i) =>
+    phrases
+      .filter((inner, j) => i !== j && key(outer).includes(key(inner)))
+      .map((inner) => `"${outer}" holds "${inner}"`),
+  );
+}
+
 /** "front-end" or "front end": the site writes "frontend", as noun and adjective. */
 export const frontEndSpellings = (text: string): string[] => text.match(/\bfront[- ]end\b/gi) ?? [];
 

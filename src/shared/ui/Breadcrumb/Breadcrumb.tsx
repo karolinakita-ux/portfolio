@@ -1,6 +1,7 @@
 import { ChevronRight } from "#shared/ui/icons/icons.tsx";
 import { ViewLink } from "#shared/ui/ViewLink/ViewLink.tsx";
 
+import { BREADCRUMB_ICON_SIZE } from "./Breadcrumb.constants.ts";
 import { styles } from "./Breadcrumb.styles.ts";
 import type { BreadcrumbProps } from "./Breadcrumb.types.ts";
 
@@ -13,14 +14,14 @@ export function Breadcrumb({ items, onNavigate }: BreadcrumbProps) {
           const Icon = item.icon;
           return (
             <li key={item.label} className={styles.item}>
-              {index > 0 && <ChevronRight aria-hidden="true" size={14} />}
+              {index > 0 && <ChevronRight aria-hidden="true" size={BREADCRUMB_ICON_SIZE} />}
               {isCurrent || item.view === undefined ? (
                 <span aria-current="page" className={styles.current}>
                   {item.label}
                 </span>
               ) : (
                 <ViewLink view={item.view} anchor={item.anchor} onNavigate={onNavigate} className={styles.link}>
-                  {Icon && <Icon aria-hidden="true" size={14} />}
+                  {Icon && <Icon aria-hidden="true" size={BREADCRUMB_ICON_SIZE} />}
                   {item.label}
                 </ViewLink>
               )}

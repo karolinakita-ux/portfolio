@@ -42,7 +42,7 @@ Reviewers that run in their own context and only report:
 
 - **Figma** (MCP): reads the design and the KitaBranding variables; token changes start in Figma (see [design.md](design.md)).
 - **Netlify** (MCP): checks that a release deployed.
-- **Playwright**: real-browser checks of layout, focus and scrolling that jsdom cannot see.
+- **Playwright**: real-browser checks that jsdom cannot see: layout, focus, scrolling, motion frame by frame, the image viewer's zoom and sharpness, and the statistics with the real tracker. They run in Chromium, Firefox, WebKit and an Android phone in Messenger's in-app browser.
 
 ## Guard rails
 

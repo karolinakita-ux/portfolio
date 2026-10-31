@@ -4,6 +4,28 @@ import type {
   ShowcaseCard,
   SmartTicketCaseStudy,
 } from "#features/case-studies/case-studies.types.ts";
+import type { LightboxPlace } from "#shared/media/lightbox/lightbox.types.ts";
+
+/** A screenshot's button on the page, named by its card id (Screenshot's `imageId`). */
+const IMAGE = "[data-image]";
+/**
+ * What shows a screenshot with its description: a screenshot row (ShowcaseRow), a feature section's columns, a
+ * comparison column, a captioned figure. A screenshot outside one (Smart Ticket's user flow) takes its section.
+ */
+const IMAGE_AREA = "[data-image-area]";
+/**
+ * The heading or label that starts a screenshot's description inside its area: a row's title (ShowcaseRow), a
+ * comparison column's label (ComparisonSide). Elsewhere the description is the section's own text, which its heading
+ * starts: a feature section, the operations console, whose figures hold only a caption that repeats the image's title
+ * (ScreenGrid), and the user flow.
+ */
+const DESCRIPTION = "[data-image-description]";
+
+/** The heading that names a section (its aria-labelledby): Section and FeatureSection make it focusable. */
+const sectionHeading = (section: Element | null): HTMLElement | null => {
+  const id = section?.getAttribute("aria-labelledby");
+  return id ? document.getElementById(id) : null;
+};
 
 /**
  * The Smart Ticket case's images in page order: user flow, design system rows, each comparison
@@ -26,6 +48,27 @@ export const caseCards = (c: AnyCase): ShowcaseCard[] => {
     return [...(c.features ?? []).flatMap((feature) => feature.media), ...c.sections.flatMap((s) => s.cards)];
   if ("personas" in c) return smartTicketCards(c);
   return [...c.solution, ...c.safety];
+};
+
+/**
+ * Where a case image's sharper copy for the image viewer lives, when there is one: the same file name in a `zoom`
+ * folder beside it ("cases/automotive/zoom/journey-map-light.webp"). The viewer swaps it in when the screen needs more
+ * pixels than the page's file has (LightboxItem.zoomSrc); the page and its preloads keep the lighter file.
+ */
+export const zoomAsset = (asset: string): string => asset.replace(/[^/]+$/, (file) => "zoom/" + file);
+
+/**
+ * A screenshot card's place on the page, where the image viewer lands when it closes on that card: its button, the
+ * area that shows it with its description (IMAGE_AREA), and the heading that starts the description, where Go to
+ * Description lands (DESCRIPTION, else the section's heading). Null when the page does not show the card.
+ */
+export const imagePlace = (id: string): LightboxPlace | null => {
+  const target = [...document.querySelectorAll<HTMLElement>(IMAGE)].find((element) => element.dataset.image === id);
+  if (!target) return null;
+  const own = target.closest<HTMLElement>(IMAGE_AREA);
+  const section = target.closest("section");
+  const description = own?.querySelector<HTMLElement>(DESCRIPTION) ?? sectionHeading(section) ?? target;
+  return { target, area: own ?? section ?? target, description };
 };
 
 /** Every image file a card can show: the default and the Dark-mode version. */

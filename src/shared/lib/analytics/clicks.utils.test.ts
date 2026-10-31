@@ -209,12 +209,15 @@ describe("watchDeadClicks", () => {
     expect(report).toHaveBeenCalledOnce();
   });
 
-  it("ignores a mouse click on what reacts to a mouse only, and still reports a tap on it", () => {
-    $("full").setAttribute("data-mouse-click", ""); // the image viewer's image: a click zooms it
-    fireEvent.pointerDown($("full"), { pointerType: "mouse", clientX: 100, clientY: 100 });
-    fireEvent.click($("full"), { detail: 1, clientX: 100, clientY: 100 });
+  it("ignores a click or tap on what reacts to one without being a control, and reports it once it does not", () => {
+    $("full").setAttribute("data-clickable", ""); // the image viewer's image: a click or tap zooms it
+    for (const pointerType of ["mouse", "touch", "pen"]) {
+      fireEvent.pointerDown($("full"), { pointerType, clientX: 100, clientY: 100 });
+      fireEvent.click($("full"), { detail: 1, clientX: 100, clientY: 100 });
+    }
     expect(report).not.toHaveBeenCalled();
 
+    $("full").removeAttribute("data-clickable"); // still loading: a tap does nothing yet
     fireEvent.pointerDown($("full"), { pointerType: "touch", clientX: 300, clientY: 300 });
     fireEvent.click($("full"), { detail: 1, clientX: 300, clientY: 300 });
     expect(report).toHaveBeenCalledExactlyOnceWith({ element: "image", area: "dialog", label: "Full size" }, false);

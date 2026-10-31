@@ -4,7 +4,7 @@ description: Reviews a visible UI change against the design system and common UX
 tools: Bash, Read, Grep, Glob
 ---
 
-You review a UI change in Karolina's portfolio. You do not edit repo files or commit; scratch scripts and screenshots go to `test-results/` or the system temp folder. The rules are in CLAUDE.md ("Design tokens (strict)", "Code conventions") and `docs/design.md`.
+You review a UI change in Karolina's portfolio. You do not edit repo files or commit; scratch scripts and screenshots go to `test-results/` or the system temp folder. The rules are in CLAUDE.md ("Design tokens (strict)", "Code conventions"), `docs/design.md` and `docs/motion.md` (every motion on the site and the test that guards it).
 
 1. **Scope.** Run `git diff --stat origin/main...HEAD` and `git status --short`, or take the files the caller names. Read each changed component with its `*.styles.ts`, story and test.
 2. **Design system fit**, file by file:

@@ -9,7 +9,11 @@
  *   page cross-fades through it (the toggle keeps its own live layer), except in in-app browsers
  *   (Messenger); elsewhere the theme switches in one frame, with CSS transitions off while it does.
  *   On the first load with Dark stored, the Dark pill shows and nothing moves either.
- * - Forced colours: the visible pill keeps a 1px border.
+ * - Underline: the current page's label is underlined by a 2px bar inside its pill (the gold pill alone is
+ *   1.54:1 on white, WCAG 1.4.11), so it travels, fades and jumps with the pill. At rest it sits under the
+ *   label like a text underline (as wide, about 4px under the baseline, in the label's colour); no link
+ *   has a text underline.
+ * - Forced colours: the visible pill keeps a 1px border, and its underline its 2px one.
  */
 import { expect, test, type Page } from "@playwright/test";
 
@@ -33,6 +37,13 @@ import {
   viewTransitionFinished,
   waitIdle,
 } from "./helpers/sampling.utils.ts";
+import {
+  expectUnderlineInPill,
+  expectUnderlineRides,
+  expectUnderlineStill,
+  expectUnderlineUnderLabel,
+  readUnderline,
+} from "./helpers/underline.utils.ts";
 
 const labelOf = (view: View): string => {
   const item = NAV_ITEMS.find((candidate) => candidate.view === view);
@@ -67,6 +78,8 @@ test.describe("nav pill at rest", () => {
       expect(await pillLog(page), "pill animations since the document started").toEqual([]);
       expectResting(await sampleNow(page, SELECTOR.navPills), NAV_KEYS, active);
       expectResting(await sampleNow(page, SELECTOR.themePills), THEME_KEYS, THEME_LABEL.light);
+      if (active !== null) expectUnderlineUnderLabel(await readUnderline(page), active);
+      else expect(await readUnderline(page), "no current link, no underline").toBeNull();
     });
   }
 
@@ -140,6 +153,8 @@ for (const viewport of ["phone", "desktop"] as const) {
         await navLink(page, CONTACT).click();
         const frames = await finishSampling(page, SELECTOR.navPills, { active: CONTACT });
         expectTravel(frames, { from: ABOUT, to: CONTACT, motion });
+        expectUnderlineRides(frames, { from: ABOUT, to: CONTACT });
+        expectUnderlineUnderLabel(await readUnderline(page), CONTACT);
       });
 
       test("a second click mid-way: the pill turns from where it is", async ({ page }) => {
@@ -166,8 +181,9 @@ for (const viewport of ["phone", "desktop"] as const) {
         );
         // ...the second click cancelled it (not finished: no jump to the end)...
         expect(run.firstAfter, `the first animation after the second click`).toEqual(["idle"]);
-        // ...and the new animation starts where the pill was on screen.
+        // ...and the new animation starts where the pill was on screen, with the underline in it.
         expectTravel(run.frames, { from: run.interruptedAt, to: CONTACT, motion });
+        expectUnderlineInPill(run.frames, CONTACT);
       });
     });
   }
@@ -186,6 +202,7 @@ test.describe("nav pill follows every way to change page", () => {
       await footerLink.click();
       const frames = await finishSampling(page, SELECTOR.navPills, { active: CONTACT });
       expectTravel(frames, { from: ABOUT, to: CONTACT, motion });
+      expectUnderlineRides(frames, { from: ABOUT, to: CONTACT });
     });
   });
 
@@ -200,6 +217,7 @@ test.describe("nav pill follows every way to change page", () => {
       await page.getByRole("link", { name: "Explore Case Studies" }).first().click();
       const frames = await finishSampling(page, SELECTOR.navPills, { active: WORK });
       expectTravel(frames, { from: ABOUT, to: WORK, motion });
+      expectUnderlineRides(frames, { from: ABOUT, to: WORK });
     });
   });
 
@@ -213,6 +231,7 @@ test.describe("nav pill follows every way to change page", () => {
       await page.getByRole("navigation", { name: "Breadcrumb" }).getByRole("link", { name: "Home" }).click();
       const frames = await finishSampling(page, SELECTOR.navPills, { active: WORK });
       expectTravel(frames, { from: CONTACT, to: WORK, motion });
+      expectUnderlineRides(frames, { from: CONTACT, to: WORK });
     });
 
     test(`same item (case study to ${WORK}): the pill stays still`, async ({ page }) => {
@@ -245,12 +264,14 @@ test.describe("nav pill follows every way to change page", () => {
         await page.goBack();
         const frames = await finishSampling(page, SELECTOR.navPills, { active: ABOUT });
         expectTravel(frames, { from: CONTACT, to: ABOUT, motion });
+        expectUnderlineRides(frames, { from: CONTACT, to: ABOUT });
       });
       await test.step(`Forward: ${ABOUT} to ${CONTACT}`, async () => {
         await startSampling(page, SELECTOR.navPills);
         await page.goForward();
         const frames = await finishSampling(page, SELECTOR.navPills, { active: CONTACT });
         expectTravel(frames, { from: ABOUT, to: CONTACT, motion });
+        expectUnderlineRides(frames, { from: ABOUT, to: CONTACT });
       });
     });
   });
@@ -263,6 +284,7 @@ test.describe("nav pill with no item on one side (/privacy is not in the nav)", 
     await navLink(page, ABOUT).click();
     const frames = await finishSampling(page, SELECTOR.navPills, { active: ABOUT });
     expectFade(frames, { key: ABOUT, direction: "in" });
+    expectUnderlineStill(frames, ABOUT, ABOUT); // fades in with the pill, in place
   });
 
   test(`Back from ${ABOUT} to /privacy: the pill fades out`, async ({ page }) => {
@@ -274,17 +296,21 @@ test.describe("nav pill with no item on one side (/privacy is not in the nav)", 
     await page.goBack();
     const frames = await finishSampling(page, SELECTOR.navPills, { active: null });
     expectFade(frames, { key: ABOUT, direction: "out" });
+    expectUnderlineStill(frames, ABOUT, null); // fades out with the pill, in place
   });
 });
 
 test.describe("reduced motion", () => {
   test.use({ reducedMotion: "reduce" });
 
-  test("nav: the pill appears on the new item, nothing animates", async ({ page }) => {
+  test("nav: the pill and its underline appear on the new item, nothing animates", async ({ page }) => {
     await openView(page, VIEW_PATHS[VIEW.about]);
     await startSampling(page, SELECTOR.navPills);
     await navLink(page, CONTACT).click();
-    expectJump(await finishSampling(page, SELECTOR.navPills, { active: CONTACT }), CONTACT);
+    const frames = await finishSampling(page, SELECTOR.navPills, { active: CONTACT });
+    expectJump(frames, CONTACT);
+    expectUnderlineStill(frames, CONTACT, CONTACT);
+    expectUnderlineUnderLabel(await readUnderline(page), CONTACT);
     expect(await pillLog(page), "pill animations since the document started").toEqual([]);
   });
 
@@ -391,6 +417,20 @@ test.describe("forced colours", () => {
     expect(border.widths, "border widths").toEqual(["1px", "1px", "1px", "1px"]);
     expect(border.styles, "border styles").toEqual(["solid", "solid", "solid", "solid"]);
     expect(border.colors.some(isTransparent), `border colours ${border.colors.join(", ")}`).toBe(false);
+  });
+
+  test("the current page's underline keeps its 2px border in a system colour", async ({ page, browserName }) => {
+    test.skip(browserName === "webkit", "WebKit matches (forced-colors: active) but does not force any colours");
+    await openView(page, VIEW_PATHS[VIEW.about]);
+    const rest = await readUnderline(page);
+    if (!rest) throw new Error("no current link with a pill underline");
+    expect(rest.pillOpacity, "the About pill shows").toBe(1);
+    expect(rest.underline.height, "2px tall").toBeCloseTo(2, 1);
+    expect(rest.border.width, "border width").toBe("2px");
+    expect(rest.border.style, "border style").toBe("solid");
+    const { color } = rest.border;
+    expect(isTransparent(color), `border colour ${color}`).toBe(false);
+    expect(color, `border colour against the header's ${rest.background}`).not.toBe(rest.background);
   });
 });
 

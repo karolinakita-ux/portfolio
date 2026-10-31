@@ -9,11 +9,13 @@ import { AccessibilityView } from "./AccessibilityView.tsx";
 const renderStatement = () => render(<AccessibilityView onNavigate={() => undefined} />);
 
 describe("AccessibilityView", () => {
-  it("names the page, the standard and the date of the last review", () => {
+  it("names the page, the standard and the date of the last update, in the privacy policy's words", () => {
     renderStatement();
     expect(screen.getByRole("heading", { level: 1, name: "Accessibility" })).toBeInTheDocument();
     expect(screen.getByText(/WCAG\) 2\.2 at level AA/)).toBeInTheDocument();
-    expect(screen.getByText(ACCESSIBILITY.updated.label)).toHaveAttribute("datetime", ACCESSIBILITY.updated.iso);
+    const date = screen.getByText(ACCESSIBILITY.updated.label);
+    expect(date).toHaveAttribute("datetime", ACCESSIBILITY.updated.iso);
+    expect(date.parentElement).toHaveTextContent(/^Last updated: \d{1,2} [A-Z][a-z]+ \d{4}$/);
   });
 
   it("shows every part of the statement as a section with a link to copy, in order", () => {
@@ -28,10 +30,12 @@ describe("AccessibilityView", () => {
     }
   });
 
-  it("says how to report a problem: the contact address as a mail link", () => {
+  it("says how to report a problem: the contact address as a mail link that says it opens the email app", () => {
     renderStatement();
     const feedback = within(screen.getByRole("region", { name: "Feedback" }));
-    expect(feedback.getByRole("link", { name: PROFILE.email })).toHaveAttribute("href", "mailto:" + PROFILE.email);
+    const link = feedback.getByRole("link", { name: /opens your email app/ });
+    expect(link).toHaveAttribute("href", "mailto:" + PROFILE.email);
+    expect(link).toHaveTextContent(PROFILE.email + " (opens your email app)");
   });
 
   it("names its known limits", () => {

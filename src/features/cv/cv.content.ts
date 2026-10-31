@@ -62,7 +62,16 @@ export const CV: Cv = {
       ],
     },
     // GlobalLogic Poland: two titles, two entries (newest first), as applicant tracking systems read a promotion.
-    // The bullets have no dates, so all stay with the Senior role until Karolina places them.
+    // Each title keeps a full set of bullets (Karolina, 2026-10-31): multi-tenant platforms, audits, research and
+    // end-to-end design ran through both roles, so the earlier one says them in its own words. Its lead-ins name what
+    // that role's work shows, never a Senior lead-in with a word added (content-rules.test.ts), and its bullets claim
+    // only what her case studies show for those years and never repeat a Senior line (RBAC, data tables and
+    // benchmarking stay there): self-service theming with state colours, brand palette audits and the contrast rule
+    // set (Theme Generator, 2020 - 2022); surveys and interviews that led to personas (Smart Ticket, 2022 - 2023).
+    // Strategy, AI and workshops stay with the Senior role only. Each earlier bullet keeps its line count because the
+    // PDF is full: page 2 has 11px to spare and a line is 16px, so one more line anywhere on the CV makes a third page.
+    // A smaller consent font frees nothing (2026-10-31): Label Small, the only smaller type token, keeps the 16px line
+    // height and the clause its 5 lines.
     {
       id: "globallogic",
       title: "Senior UX/UI Designer",
@@ -106,7 +115,24 @@ export const CV: Cv = {
       org: ["GlobalLogic Poland", "Full-time", "Remote"],
       start: "2019-09",
       end: "2023-12",
-      bullets: [],
+      bullets: [
+        {
+          lead: "End-to-End UX/UI Design",
+          text: "Took features from requirements and user flows to high-fidelity UI and handoff, documenting edge cases and interaction states.",
+        },
+        {
+          lead: "Multi-Tenant White-Labelling",
+          text: "Designed self-service theming for tenant admins, with state colours for buttons, navigation and tables.",
+        },
+        {
+          lead: "User Research",
+          text: "Ran surveys and user interviews, and built personas.",
+        },
+        {
+          lead: "Colour Contrast (WCAG 2.1 AA)",
+          text: "Audited brand palettes, then wrote contrast rules for developers.",
+        },
+      ],
     },
     {
       id: "cinkciarz",

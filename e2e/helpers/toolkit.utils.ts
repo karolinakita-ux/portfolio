@@ -4,7 +4,8 @@
  *
  * `prepare(page)` installs a small in-page toolkit (window.__kb) before any page script runs:
  * it logs every Web Animation that ever runs on a [data-pill] element, counts
- * document.startViewTransition calls, and samples element boxes once per animation frame.
+ * document.startViewTransition calls, and samples element boxes (and a nav pill's underline) once
+ * per animation frame.
  * Sampling inside the page sees every frame; reading from the test side would skip most of them.
  *
  * Animation lists leave CSS transitions and CSS animations out: the motion contract is about Web
@@ -52,6 +53,11 @@ export function installToolkit({ removeViewTransitions }: ToolkitOptions): void 
     const { x, y, width, height } = element.getBoundingClientRect();
     return { x, y, width, height };
   };
+  /** The nav pill's underline, which moves with it (the box includes the pill's animated transform and width). */
+  const underlineBox = (element: Element): Box | null => {
+    const underline = element.querySelector("[data-pill-underline]");
+    return underline ? plainBox(underline) : null;
+  };
   /** Started from script (element.animate(), new Animation()), not a CSS transition or CSS animation. */
   const isWebAnimation = (animation: Animation): boolean =>
     !(typeof CSSTransition === "function" && animation instanceof CSSTransition) &&
@@ -81,7 +87,11 @@ export function installToolkit({ removeViewTransitions }: ToolkitOptions): void 
     const saved = animation.currentTime;
     const at = (time: number): AnimatedState => {
       animation.currentTime = time;
-      return { ...plainBox(element), opacity: Number(getComputedStyle(element).opacity) };
+      return {
+        ...plainBox(element),
+        opacity: Number(getComputedStyle(element).opacity),
+        underline: underlineBox(element),
+      };
     };
     const points = { start: at(0), middle: at(duration / 2) };
     animation.currentTime = saved;
@@ -124,6 +134,7 @@ export function installToolkit({ removeViewTransitions }: ToolkitOptions): void 
           active: isActive(element),
           control: control ? plainBox(control) : null,
           opacity: Number(getComputedStyle(element).opacity),
+          underline: underlineBox(element),
           animations: element
             .getAnimations()
             .filter(isWebAnimation)

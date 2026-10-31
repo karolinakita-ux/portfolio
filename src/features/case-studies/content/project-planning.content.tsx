@@ -18,13 +18,11 @@ const { shot } = caseShots("project-planning");
 export const PROJECT_PLANNING_CASE: CaseStudy = {
   view: VIEW.caseProjectPlanning,
   id: "planning",
-  shortTitle: "Project Planning",
   eyebrow: ["B2B Enterprise SaaS", "Design System & PrimeNG", "Resource Management"],
-  title: "Enterprise Project Planning & Cost Management Platform",
   meta: [
     {
       label: "My Role",
-      value: "Senior UX / Product Designer - end-to-end UX, design system architecture and engineering alignment",
+      value: "Senior Product Designer - end-to-end UX, design system architecture and engineering alignment",
     },
     {
       label: "Team",
@@ -53,7 +51,7 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
     },
     {
       title: "My Part",
-      body: "I led product design from problem definition to delivery. With the product owners, the business analyst and the developers, I turned complex resource workflows into one desktop app: a time tracker that stays visible, a calendar with day-level time entries, a meetings page that shows what each meeting costs, budget burn on every project and a portfolio view for the PMO - all on one PrimeNG token system. Screens that need new business logic are marked as proposals for the client to sign off.",
+      body: "I led product design from requirements to delivery. With the product owners, the business analyst and the developers, I turned complex resource workflows into one desktop app: a time tracker that stays visible, a calendar with day-level time entries, a meetings page that shows what each meeting costs, budget burn on every project and a portfolio view for the PMO - all on one PrimeNG token system. Screens that need new business logic are marked as proposals for the client to sign off.",
     },
   ],
   features: [
@@ -129,7 +127,7 @@ export const PROJECT_PLANNING_CASE: CaseStudy = {
       ],
       media: [
         {
-          ...shot("calendar-week-view"),
+          ...shot("calendar-week-view", 2),
           alt: "Month overview in week view: a Participant and Organizer switch, a project filter, a mini calendar with meeting counts, the selected day’s meetings and a weekly grid of meetings with a current-time line.",
           title: "Month overview - week view",
         },

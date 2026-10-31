@@ -11,3 +11,6 @@ export const WORK_CRUMB: BreadcrumbItem = { label: "Work", view: VIEW.work, anch
 
 /** Breadcrumb root of the pages outside Work (About, Contact, CV, Privacy, Accessibility): the home page. */
 export const HOME_CRUMB: BreadcrumbItem = { label: "Home", view: VIEW.work, icon: House };
+
+/** The chevron and Home's house in px, as Figma's icon/chevron-right and icon/home (Karolina, 2026-10-31). */
+export const BREADCRUMB_ICON_SIZE = 16;

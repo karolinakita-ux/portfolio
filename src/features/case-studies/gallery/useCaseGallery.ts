@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import ASSET_SIZES from "virtual:asset-sizes";
 
 import type { GalleryRow, ShowcaseCard } from "#features/case-studies/case-studies.types.ts";
+import { imagePlace, zoomAsset } from "#features/case-studies/gallery/gallery.utils.ts";
 import { useDocumentTheme } from "#shared/hooks/theme/useDocumentTheme.ts";
 import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import { track } from "#shared/lib/analytics/analytics.utils.ts";
@@ -17,8 +18,11 @@ import { pickThemedSrc } from "#shared/media/themed-image/themed-image.utils.ts"
  * Returns one row per card, in the same order as `cards`. Once the page is
  * idle, the full screenshots load in the background, so the viewer opens at once.
  * Opening a screenshot is counted (image-open) with the case's view and the card id, and so are moving
- * to the next or previous one (image-nav) and zooming one in or out (image-zoom) in the viewer.
- * In Dark mode the viewer shows (and preloads) each card's dark version when it has one.
+ * to the next or previous one (image-nav), zooming one in or out (image-zoom) and going from the viewer to its
+ * description (image-description-open). Each item finds its card on the page (imagePlace), so closing the viewer
+ * lands on the screenshot it shows, next to its description.
+ * In Dark mode the viewer shows (and preloads) each card's dark version when it has one. A screenshot with a
+ * sharper copy in its folder's `zoom` folder (zoomAsset) gives the viewer that copy for close looks; it never preloads.
  */
 export function useCaseGallery(
   cards: readonly ShowcaseCard[],
@@ -33,8 +37,10 @@ export function useCaseGallery(
       cards.map((card): LightboxItem => {
         const asset = pickThemedSrc(theme, card.asset, card.darkAsset);
         const size = ASSET_SIZES[asset] ?? ASSET_SIZES[card.asset];
+        const zoom = zoomAsset(asset);
         return {
           src: resolveAsset(asset),
+          ...(ASSET_SIZES[zoom] && { zoomSrc: resolveAsset(zoom) }),
           alt: card.alt,
           title: card.title,
           ...(size && { width: size[0], height: size[1] }),
@@ -43,6 +49,10 @@ export function useCaseGallery(
           },
           onZoom: (direction, method) => {
             track(EVENT.imageZoom, { case: caseView, image: card.id, direction, method });
+          },
+          place: () => imagePlace(card.id),
+          onGoToDescription: () => {
+            track(EVENT.imageDescriptionOpen, { case: caseView, image: card.id });
           },
         };
       }),

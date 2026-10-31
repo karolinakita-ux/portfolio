@@ -14,6 +14,7 @@ import type * as Analytics from "#shared/lib/analytics/analytics.utils.ts";
 import { track, trackPageview } from "#shared/lib/analytics/analytics.utils.ts";
 import { describeClick } from "#shared/lib/analytics/clicks.utils.ts";
 import { SECTION, VIEW_PATHS, VIEWS } from "#shared/lib/routes/routes.constants.ts";
+import { CASE_NAMES } from "#shared/lib/routes/routes.content.ts";
 
 /**
  * Which visits and clicks the app counts (src/shared/lib/analytics/analytics.utils.ts): the helpers are mocked,
@@ -97,7 +98,8 @@ describe("events on the Work page", () => {
     const { user } = renderApp("/");
     const [first] = WORK_CASES;
     if (!first) throw new Error("no case cards");
-    await user.click(within(screen.getByRole("article", { name: first.title })).getByRole("link", { name: first.cta }));
+    const card = within(screen.getByRole("article", { name: CASE_NAMES[first.view].cardTitle }));
+    await user.click(card.getByRole("link", { name: first.cta }));
     expect(events()).toEqual([[EVENT.caseOpen, { case: first.view, from: "card-link" }]]);
 
     await user.click(within(screen.getByRole("navigation", { name: "Primary" })).getByRole("link", { name: "Work" }));
@@ -194,8 +196,9 @@ describe("events on the privacy and accessibility pages", () => {
     ["/accessibility", "accessibility", 2],
   ] as const)("counts the email links in the text of %s", (url, place, count) => {
     renderApp(url);
-    const links = within(screen.getByRole("main")).getAllByRole("link", { name: PROFILE.email });
+    const links = within(screen.getByRole("main")).getAllByRole("link", { name: /opens your email app/ });
     expect(links).toHaveLength(count);
+    for (const link of links) expect(link).toHaveAttribute("href", "mailto:" + PROFILE.email);
     for (const link of links) clickLink(link);
     expect(events()).toEqual(links.map(() => [EVENT.emailClick, { action: "mailto", place }]));
   });
@@ -237,6 +240,25 @@ describe("events on case studies", () => {
       [EVENT.imageOpen, { case: "case-automotive", image: caseCards(AUTOMOTIVE_CASE)[0]?.id }],
       [EVENT.imageNav, { case: "case-automotive", image: caseCards(AUTOMOTIVE_CASE)[1]?.id, direction: "next" }],
       [EVENT.caseNav, { from: "case-automotive", to: "case-project-planning", direction: "next", place: "end" }],
+    ]);
+  });
+
+  it("counts going from the viewer to a screenshot's description, not closing it", async () => {
+    const { user } = renderApp("/work/automotive");
+    const [firstScreenshot] = screen.getAllByRole("button", { name: /View full size/ });
+    if (!firstScreenshot) throw new Error("no screenshots rendered");
+    const cards = caseCards(AUTOMOTIVE_CASE);
+    await user.click(firstScreenshot);
+    await user.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Close image viewer" }));
+    await user.click(firstScreenshot);
+    await user.keyboard("{ArrowRight}");
+    await user.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Go to Description" }));
+
+    expect(events()).toEqual([
+      [EVENT.imageOpen, { case: "case-automotive", image: cards[0]?.id }],
+      [EVENT.imageOpen, { case: "case-automotive", image: cards[0]?.id }],
+      [EVENT.imageNav, { case: "case-automotive", image: cards[1]?.id, direction: "next" }],
+      [EVENT.imageDescriptionOpen, { case: "case-automotive", image: cards[1]?.id }],
     ]);
   });
 
@@ -367,7 +389,8 @@ describe("dead clicks", () => {
     renderApp("/");
     const [first] = WORK_CASES;
     if (!first) throw new Error("no case cards");
-    const card = within(screen.getByRole("article", { name: first.title }));
+    const title = CASE_NAMES[first.view].cardTitle;
+    const card = within(screen.getByRole("article", { name: title }));
     expect(describeClick(screen.getByRole("heading", { level: 1 }))).toMatchObject({
       element: "heading",
       area: "hero",
@@ -375,12 +398,12 @@ describe("dead clicks", () => {
     expect(describeClick(card.getByText(first.summary))).toEqual({
       element: "text",
       area: SECTION.workCases,
-      label: first.title,
+      label: title,
     });
-    expect(describeClick(card.getByRole("heading", { name: first.title }))).toEqual({
+    expect(describeClick(card.getByRole("heading", { name: title }))).toEqual({
       element: "heading",
       area: SECTION.workCases,
-      label: first.title,
+      label: title,
     });
   });
 

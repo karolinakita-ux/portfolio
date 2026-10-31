@@ -5,10 +5,11 @@ import { LightboxToolbar } from "#features/image-viewer/components/LightboxToolb
 import { LoadingSkeleton } from "#features/image-viewer/components/LoadingSkeleton/LoadingSkeleton.tsx";
 import { usePreloadNeighbours } from "#features/image-viewer/hooks/usePreloadNeighbours.ts";
 import { useRevealedImage } from "#features/image-viewer/hooks/useRevealedImage.ts";
+import { useSharpImage } from "#features/image-viewer/hooks/useSharpImage.ts";
 import { useSwipe } from "#features/image-viewer/hooks/useSwipe.ts";
 import { useZoom } from "#features/image-viewer/hooks/useZoom.ts";
 import { IMAGE_ENTRY } from "#features/image-viewer/lightbox.styles.ts";
-import { zoomStyle } from "#features/image-viewer/lightbox.utils.ts";
+import { fittedStyle, zoomStyle } from "#features/image-viewer/lightbox.utils.ts";
 import { Dialog } from "#shared/ui/Dialog/Dialog.tsx";
 import { ImageOff } from "#shared/ui/icons/icons.tsx";
 import { VisuallyHidden } from "#shared/ui/VisuallyHidden/VisuallyHidden.tsx";
@@ -20,20 +21,24 @@ import type { LightboxDialogProps } from "./LightboxDialog.types.ts";
  * The viewer itself, in a modal Dialog (shared/ui/Dialog: the page behind becomes inert,
  * Escape and a backdrop click close it, focus stays inside, page scroll is locked).
  *
- * Controls: close button, Escape, click on the dimmed backdrop; with more than
+ * Controls: close button, Escape, click on the dimmed backdrop, and Go to Description for an image with a place on
+ * the page (item.place; it closes too, and the item's onGoToDescription hears it); with more than
  * one image, Previous / Next buttons, the ← / → keys and, on touch screens,
- * a swipe left / right (all wrapping around). Zoom: + / - / 0, the toolbar and a mouse
- * click on the image (useZoom); the item's onZoom hears each one.
+ * a swipe left / right (all wrapping around). Zoom: + / - / 0, the toolbar and a click
+ * or tap on the image (useZoom), on every screen; the item's onZoom hears each one.
+ * Every way of closing reports the image shown (onClosed): the page lands on it.
  *
  * Loading: the neighbouring images load ahead (usePreloadNeighbours). An image
  * that is not in the cache yet shows a skeleton of its own size and shape
- * (item.width / item.height) until it is decoded; zoom waits for it.
+ * (item.width / item.height) until it is decoded; zoom waits for it. An item's sharper copy
+ * (item.zoomSrc) takes over once the screen needs more pixels (useSharpImage).
  */
 export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
-  const closeRef = useRef<HTMLButtonElement>(null);
   const zoomInRef = useRef<HTMLButtonElement>(null);
+  // Set by Go to Description just before it closes the dialog; every other way of closing leaves it false.
+  const toDescriptionRef = useRef(false);
   const titleId = useId();
   const item = state ? state.items[state.index] : undefined;
   const count = state ? state.items.length : 0;
@@ -41,15 +46,18 @@ export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps)
   const { status, imageRef, setImage, onLoad, onError } = useRevealedImage(item?.src ?? "");
   const loaded = status === "loaded";
   const failed = item !== undefined && status === "error";
+  const { shownSrc, pageWidth, dropCopy } = useSharpImage(item?.src ?? "", item?.zoomSrc, imageRef, loaded);
   const { zoom, zoomStep, zoomLevel, dragging, zoomTo, resetZoom, paneHandlers } = useZoom({
     viewportRef,
     imageRef,
-    closeRef,
     zoomInRef,
     loaded,
     onZoom: (direction, method) => item?.onZoom?.(direction, method),
   });
   const zoomed = zoom !== null;
+  const imageStyle = zoom ? zoomStyle(zoom, zoomLevel, pageWidth) : fittedStyle(pageWidth);
+  // A copy that fails falls back to the page's file; only the page's file failing leaves the image unavailable.
+  const handleImageError = pageWidth === undefined ? onError : dropCopy;
 
   usePreloadNeighbours(state);
 
@@ -57,9 +65,17 @@ export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps)
     if (dialogRef.current?.open) dialogRef.current.close();
   };
 
+  const goToDescription = () => {
+    item?.onGoToDescription?.();
+    toDescriptionRef.current = true;
+    close();
+  };
+
   const handleClose = () => {
+    const toDescription = toDescriptionRef.current;
+    toDescriptionRef.current = false;
     resetZoom();
-    onClosed();
+    onClosed(item, toDescription);
   };
 
   const step = (delta: number) => {
@@ -100,8 +116,8 @@ export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps)
             count={count}
             title={item.title}
             titleId={titleId}
-            closeRef={closeRef}
             onClose={close}
+            onGoToDescription={item.place ? goToDescription : undefined}
           />
 
           <div
@@ -127,15 +143,15 @@ export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps)
                 <img
                   key={item.src}
                   ref={setImage}
-                  src={item.src}
+                  src={shownSrc}
                   alt={item.alt}
                   decoding="async"
                   draggable={false}
-                  // A mouse click on it zooms (useZoom): the statistics do not count that click as a dead click.
-                  data-mouse-click={loaded ? "" : undefined}
+                  // A click or tap on it zooms (useZoom): the statistics do not count it as a dead click.
+                  data-clickable={loaded ? "" : undefined}
                   onLoad={onLoad}
-                  onError={onError}
-                  style={zoom ? zoomStyle(zoom, zoomLevel) : undefined}
+                  onError={handleImageError}
+                  style={imageStyle}
                   className={styles.image(state.direction, zoomed, loaded, dragging)}
                 />
               </>

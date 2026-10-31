@@ -1,5 +1,6 @@
-import { VIEW, VIEW_ALIASES, VIEW_PATHS, VIEW_TITLES, VIEWS } from "./routes.constants.ts";
-import type { LocationRoute, PathAndHash, View } from "./routes.types.ts";
+import { VIEW, VIEW_ALIASES, VIEW_PATHS, VIEWS } from "./routes.constants.ts";
+import { VIEW_TITLES } from "./routes.content.ts";
+import type { CaseView, LocationRoute, PathAndHash, View } from "./routes.types.ts";
 
 /**
  * Reading and building URLs for views (paths and section hashes: routes.constants.ts).
@@ -120,7 +121,7 @@ export const sharedSectionUrl = (
 };
 
 /** True for a case-study view (case-automotive, ...). */
-export const isCaseView = (view: View): boolean => view.startsWith("case-");
+export const isCaseView = (view: View): view is CaseView => view.startsWith("case-");
 
 /** Case studies live under Work, so the Work pill stays active there. */
 export const navSectionFor = (view: View): View => (isCaseView(view) ? VIEW.work : view);

@@ -5,8 +5,8 @@ import { useEffect, type RefObject } from "react";
  * (from its top edge down, plus a 16px gap) as --kb-consent-h on <html>. base.css turns it into
  * scroll-padding-bottom, so the browser scrolls a newly focused element above the box, and into the same
  * space at the end of the page, so the last links can scroll clear of it too (WCAG 2.4.11 Focus Not
- * Obscured). On short viewports the box sits in the page instead (short:static, WCAG 1.4.10) and covers
- * nothing. Removed with the box.
+ * Obscured). On short viewports and phones up to 640px tall the box sits in the page instead (cramped:static,
+ * WCAG 1.4.10 and 2.4.11) and covers nothing. Removed with the box.
  */
 export function useConsentSpace(boxRef: RefObject<HTMLElement | null>): void {
   useEffect(() => {
