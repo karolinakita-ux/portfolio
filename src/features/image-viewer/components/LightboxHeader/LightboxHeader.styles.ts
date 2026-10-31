@@ -25,4 +25,10 @@ export const styles = {
   /** Alone on its row (a single image has no counter), Close keeps to the right. */
   close: clsx("@max-viewer-toolbar:ml-auto"),
   description: clsx("flex basis-full justify-end md:basis-auto @max-viewer-toolbar:order-2"),
+  /**
+   * With a large text size the label wraps ("Go to / Description") and the button takes the row's width: its lines keep
+   * to the end, under Close, where the one-line label sits. Centred, as Button centres a label, they floated in the
+   * middle of the panel like a second title. Its own block inside Button's label, so no class competes with Button's.
+   */
+  descriptionLabel: clsx("block text-end"),
 };

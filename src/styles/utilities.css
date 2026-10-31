@@ -61,6 +61,15 @@
 /* Short viewports: landscape phones, or 200-400% browser zoom on a laptop.
    The sticky header lets go there so it never covers a large share of the screen. */
 @custom-variant short (@media (max-height: 30rem));
+/* Too small for the statistics consent box to float: short viewports, and phones (below sm) up to 40rem tall. There
+   the fixed box and the sticky header left little or nothing of the window between them (the box is about 460px tall
+   at 320px wide and 370px at 360 - 375px): at 320 x 568 it reached under the header, and every focused element sat
+   behind it (WCAG 2.4.11); at 375 x 548 about 20px stayed free. The box sits in the page instead (ConsentBanner). */
+@custom-variant cramped {
+  @media (max-height: 30rem), (width < 30rem) and (max-height: 40rem) {
+    @slot;
+  }
+}
 /* Accordion: animating grid rows 0fr → 1fr gives a smooth auto-height expand */
 @utility grid-rows-collapsed {
   grid-template-rows: 0fr;

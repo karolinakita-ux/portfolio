@@ -56,7 +56,7 @@ export const ACCESSIBILITY: AccessibilityContent = {
         ),
         lead(
           "Screenshots",
-          "the image viewer opens each one full size. You can zoom in, and move between screenshots with the arrow keys or a swipe. Closing the viewer, or its Go to Description button, takes you to the screenshot it was showing, next to its description, with keyboard focus on it.",
+          "the image viewer opens each one full size. You can zoom in, and move between screenshots with the arrow keys or a swipe. Closing the viewer takes you to the screenshot it was showing, with keyboard focus on it. Its Go to Description button takes you to the text that describes that screenshot, with keyboard focus where that text starts.",
         ),
         lead(
           "CV",

@@ -15,8 +15,10 @@ import { nextFrames, openView } from "./helpers/page.utils.ts";
 const PATH = VIEW_PATHS[VIEW.about];
 const SCROLLED = 1500;
 /**
- * The smallest phone, and the space the consent box keeps there while it shows: --kb-consent-h on <html>, set
- * by useConsentSpace (494px in Firefox and WebKit, 514px in Chromium). The e2e pages never show the box itself.
+ * The smallest phone, and the space the consent box keeps at its width while it shows: --kb-consent-h on <html>, set
+ * by useConsentSpace (494px in Firefox and WebKit, 514px in Chromium). The e2e pages never show the box itself. Since
+ * 5.17.3 a window this short puts the box in the page (the cramped variant); it still floats from 641px up, with the
+ * same space, so this is the header's hardest case: the space reaches under it.
  */
 const SMALL_PHONE = { width: 320, height: 568 } as const;
 const SMALL_PHONE_CONSENT_SPACE = "494px";

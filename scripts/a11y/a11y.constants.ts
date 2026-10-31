@@ -13,6 +13,11 @@ export const VIEWPORTS = {
   desktop: { width: 1280, height: 800 },
 } as const;
 export const REFLOW_VIEWPORT = { width: 320, height: 640 } as const;
+/**
+ * A small phone (iPhone SE 1st generation): the fixed consent box once reached under the sticky header here and hid
+ * every focused element (WCAG 2.4.11); it now sits in the page (the cramped variant).
+ */
+export const SMALL_PHONE_VIEWPORT = { width: 320, height: 568 } as const;
 /** A 1280 x 1024 screen at 400% zoom, where the consent box is taller than the window (WCAG 1.4.10). */
 export const ZOOM_VIEWPORT = { width: 320, height: 256 } as const;
 export const THEMES: readonly Theme[] = ["light", "dark"];

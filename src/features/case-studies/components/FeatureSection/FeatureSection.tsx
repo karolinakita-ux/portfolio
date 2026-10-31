@@ -11,7 +11,8 @@ import type { FeatureSectionProps } from "./FeatureSection.types.ts";
  * Figma: case-study feature section. Text column (eyebrow, H2 with its copy-link anchor, lead, bullets) beside
  * a visual column of one or more screenshots, which open the image viewer. From lg the columns sit side by side
  * and every other section is mirrored (`reverse`); below lg they stack, text first.
- * `data-image-area`: closing the image viewer on one of its screenshots brings the columns into view (gallery.utils).
+ * `data-image-area`: closing the image viewer on one of its screenshots brings the columns into view; its Go to
+ * Description shows the columns from their top, where the text starts, with focus on the heading (gallery.utils).
  */
 export function FeatureSection({ section, rows, reverse = false }: FeatureSectionProps) {
   const titleId = section.id + "-title";

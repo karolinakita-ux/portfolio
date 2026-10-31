@@ -3,10 +3,10 @@ import type { Browser, Locator, Page } from "playwright";
 import { VIEW_PATHS } from "#shared/lib/routes/routes.constants.ts";
 import type { View } from "#shared/lib/routes/routes.types.ts";
 
-import { REFLOW_VIEWPORT, VIEWPORTS, ZOOM_VIEWPORT } from "./a11y.constants.ts";
+import { REFLOW_VIEWPORT, SMALL_PHONE_VIEWPORT, VIEWPORTS, ZOOM_VIEWPORT } from "./a11y.constants.ts";
 import type { Theme } from "./a11y.types.ts";
 
-const SIZES = { ...VIEWPORTS, reflow: REFLOW_VIEWPORT, zoom: ZOOM_VIEWPORT };
+const SIZES = { ...VIEWPORTS, reflow: REFLOW_VIEWPORT, small: SMALL_PHONE_VIEWPORT, zoom: ZOOM_VIEWPORT };
 
 /** A view's URL on the dev server. */
 export const urlFor = (base: string, view: View): string => base.replace(/\/$/, "") + VIEW_PATHS[view];

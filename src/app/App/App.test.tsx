@@ -304,12 +304,13 @@ describe("App", () => {
     expect(dialog).not.toHaveAttribute("open");
     expect(secondScreenshot).toHaveFocus();
 
-    // So does Go to Description.
+    // Go to Description lands on the third one's description: focus on its row's title, where the text starts.
     await user.click(firstScreenshot);
     await user.keyboard("{ArrowRight}{ArrowRight}");
     await user.click(within(dialog).getByRole("button", { name: "Go to Description" }));
     expect(dialog).not.toHaveAttribute("open");
-    expect(thirdScreenshot).toHaveFocus();
+    expect(screen.getByRole("heading", { level: 3, name: "Personas Built from Survey Data" })).toHaveFocus();
+    expect(thirdScreenshot.closest("article")).toHaveAccessibleName("Personas Built from Survey Data");
   });
 
   it("loads a case study's screenshots only once the visitor points at or focuses a link to it", async () => {

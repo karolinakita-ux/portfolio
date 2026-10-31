@@ -112,10 +112,10 @@ export const freeBand = (): FreeBand => {
 export const showsIn = (box: DOMRect, band: FreeBand): boolean => box.bottom > band.top && box.top < band.bottom;
 
 /**
- * How far to scroll the page (down; negative is up) to land on an image's place: its area from the top of the free
- * band, so the image shows with its description. When that would leave the image itself below the band (an area taller
- * than the window, such as a feature section's second screenshot on a phone), the whole image at the band's bottom
- * instead, with what fits of the area above it. 0 while the area shows in full.
+ * How far to scroll the page (down; negative is up) to land on an image's place when the viewer closes: its area from
+ * the top of the free band, so the image shows with its description. When that would leave the image itself below the
+ * band (an area taller than the window, such as a feature section's second screenshot on a phone), the whole image at
+ * the band's bottom instead, with what fits of the area above it. 0 while the area shows in full.
  */
 export const landingOffset = (area: DOMRect, target: DOMRect, band: FreeBand): number => {
   if (area.top >= band.top && area.bottom <= band.bottom) return 0;
@@ -125,18 +125,43 @@ export const landingOffset = (area: DOMRect, target: DOMRect, band: FreeBand): n
 };
 
 /**
+ * How far to scroll for Go to Description: the description's start (`start`, px from the window's top) at the top of
+ * the free band, whatever that leaves of the image below it. The visitor asked for the text, so it never gives way to
+ * the image as landingOffset does. 0 while everything from the start to the end of the image's area shows.
+ */
+export const descriptionOffset = (start: number, area: DOMRect, band: FreeBand): number =>
+  start >= band.top && area.bottom <= band.bottom ? 0 : start - band.top;
+
+/**
+ * Where an image's description starts, in px from the window's top: an area that holds it starts with it (a row's
+ * text may sit lower than its image); else the description's heading, with the room its scroll margin keeps above it
+ * for the eyebrow, as a section link lands.
+ */
+const descriptionStart = ({ area, description }: LightboxPlace): number =>
+  area.contains(description)
+    ? area.getBoundingClientRect().top
+    : description.getBoundingClientRect().top - (parseFloat(getComputedStyle(description).scrollMarginTop) || 0);
+
+/**
  * After the viewer closed: focus on the shown image's place on the page, scrolled into view (landingOffset), or else
  * back on the element that opened the viewer. Nothing moves when the shown image is the one that opened the viewer and
- * it still shows, unless the visitor asked for its description. The scroll is a jump within the page: smooth, instant
+ * it still shows. Go to Description (`toDescription`) lands on the image's description instead: its start below the
+ * header (descriptionOffset), focus on its heading or label. The scroll is a jump within the page: smooth, instant
  * with reduced motion (docs/motion.md); focus moves without a scroll of its own.
  */
 export function landOnPage(place: LightboxPlace | null, opener: HTMLElement | null, toDescription: boolean): void {
-  (place?.target ?? opener)?.focus({ preventScroll: true });
-  if (!place) return;
+  if (!place) {
+    opener?.focus({ preventScroll: true });
+    return;
+  }
+  (toDescription ? place.description : place.target).focus({ preventScroll: true });
   const band = freeBand();
   const shown = place.target.getBoundingClientRect();
   if (place.target === opener && !toDescription && showsIn(shown, band)) return;
-  const offset = landingOffset(place.area.getBoundingClientRect(), shown, band);
+  const area = place.area.getBoundingClientRect();
+  const offset = toDescription
+    ? descriptionOffset(descriptionStart(place), area, band)
+    : landingOffset(area, shown, band);
   if (Math.abs(offset) < 1) return;
   window.scrollTo({ top: window.scrollY + offset, behavior: prefersReducedMotion() ? "auto" : "smooth" });
 }

@@ -1,4 +1,4 @@
-import { render, renderHook, screen } from "@testing-library/react";
+import { render, renderHook, screen, within } from "@testing-library/react";
 import type { ReactNode } from "react";
 import ASSET_SIZES from "virtual:asset-sizes";
 import { describe, expect, it, vi } from "vitest";
@@ -85,7 +85,7 @@ describe("useCaseGallery", () => {
     expect(openDark.mock.calls[0]?.[0].some((item) => item.zoomSrc !== undefined)).toBe(false);
   });
 
-  it("finds each screenshot's place on the page for the viewer to land on: its button and the row with its description", () => {
+  it("finds each screenshot's place on the page for the viewer to land on: its button, its row and the row's title", () => {
     const { rows, open } = renderGallery();
     render(
       <ul>
@@ -96,18 +96,32 @@ describe("useCaseGallery", () => {
     const items = open.mock.calls[0]?.[0] ?? [];
     const buttons = screen.getAllByRole("button", { name: /^View full size/ });
     items.forEach((item, i) => {
-      expect(item.place?.()).toEqual({
-        target: buttons[i],
-        area: screen.getByRole("article", { name: cards[i]?.title }),
-      });
+      const row = screen.getByRole("article", { name: cards[i]?.title });
+      const place = item.place?.();
+      expect(place?.target).toBe(buttons[i]);
+      expect(place?.area).toBe(row);
+      // Go to Description lands on the title and focuses it: focusable, never a Tab stop.
+      expect(place?.description).toBe(within(row).getByRole("heading", { level: 3, name: cards[i]?.title }));
+      expect(place?.description).toHaveAttribute("tabindex", "-1");
     });
   });
 });
 
 describe("imagePlace", () => {
-  it("takes the closest area that holds a screenshot's description, else its section, and nothing for a card not shown", () => {
+  it("takes the closest area with the image, its description's start, and nothing for a card not shown", () => {
     render(
-      <section aria-label="User Flow">
+      <section aria-labelledby="console-title">
+        <h2 id="console-title" tabIndex={-1}>
+          Operations Console
+        </h2>{" "}
+        <div data-image-area="">
+          <p tabIndex={-1} data-image-description="">
+            After
+          </p>{" "}
+          <button type="button" data-image="profile-main-hub">
+            Hub
+          </button>
+        </div>{" "}
         <figure data-image-area="">
           <button type="button" data-image="operations-map">
             Map
@@ -119,14 +133,20 @@ describe("imagePlace", () => {
         </button>
       </section>,
     );
-    expect(imagePlace("operations-map")).toEqual({
-      target: screen.getByRole("button", { name: "Map" }),
-      area: screen.getByRole("figure"),
-    });
-    expect(imagePlace("user-flow")).toEqual({
-      target: screen.getByRole("button", { name: "Flow" }),
-      area: screen.getByRole("region", { name: "User Flow" }),
-    });
+    const heading = screen.getByRole("heading", { name: "Operations Console" });
+    // A comparison column: its label starts its description.
+    const hub = imagePlace("profile-main-hub");
+    expect(hub?.target).toBe(screen.getByRole("button", { name: "Hub" }));
+    expect(hub?.description).toBe(screen.getByText("After"));
+    expect(hub?.area).toContainElement(hub?.description ?? null);
+    // A captioned figure: the caption only names the screen, so the section's heading starts the description.
+    const map = imagePlace("operations-map");
+    expect(map?.area).toBe(screen.getByRole("figure"));
+    expect(map?.description).toBe(heading);
+    // Outside an area: the section, from its heading.
+    const flow = imagePlace("user-flow");
+    expect(flow?.area).toBe(screen.getByRole("region", { name: "Operations Console" }));
+    expect(flow?.description).toBe(heading);
     expect(imagePlace("journey-map")).toBeNull();
   });
 });

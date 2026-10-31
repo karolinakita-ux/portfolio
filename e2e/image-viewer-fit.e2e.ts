@@ -5,7 +5,8 @@
  *   and the toolbar show in full, and the dialog does not scroll either way;
  * - on a 390px phone at 200% page zoom (195px) or with a 200% text size, where the toolbar takes two rows, too: the
  *   counter shares Close's row and the title takes the full width under them (LightboxHeader);
- * - Previous / Next stay in place from image to image, whatever the title's length.
+ * - Previous / Next stay in place from image to image, whatever the title's length;
+ * - Go to Description's label, wrapped at a 200% text size, keeps its lines to the end, under Close.
  */
 import { expect, test, type Browser, type Locator, type Page } from "@playwright/test";
 
@@ -81,6 +82,21 @@ async function boxOf(locator: Locator) {
   return box;
 }
 
+/** Where each line of a button's label ends (its right edge), top line first. */
+const labelLines = (button: Locator) =>
+  button.evaluate((element) => {
+    const text = document.createTreeWalker(element, NodeFilter.SHOW_TEXT).nextNode();
+    if (!text) return [];
+    const range = document.createRange();
+    range.selectNodeContents(text);
+    const ends = new Map<number, number>();
+    for (const line of range.getClientRects()) {
+      const top = Math.round(line.top);
+      ends.set(top, Math.max(ends.get(top) ?? 0, line.right));
+    }
+    return [...ends.values()];
+  });
+
 /** Everything inside the panel, the panel inside the window, and no scrolling in the dialog. */
 async function expectFits(dialog: Locator, size: Size) {
   const fit = await dialog.evaluate((element) => {
@@ -117,6 +133,10 @@ async function expectFits(dialog: Locator, size: Size) {
     expect(box.y, "inside the panel").toBeGreaterThanOrEqual(panel.y);
     expect(box.y + box.height, "inside the panel").toBeLessThanOrEqual(panel.y + panel.height + 0.5);
   }
+  // Wrapped at a large text size, Go to Description's lines keep to the end, under Close, not centred in the row.
+  const lines = await labelLines(dialog.getByRole("button", { name: "Go to Description" }));
+  if (size.fontSize) expect(lines.length, "the label wraps at a 200% text size").toBeGreaterThan(1);
+  for (const right of lines) expect(Math.max(...lines) - right, "each line ends at the end").toBeLessThanOrEqual(1);
   if (size.stacked) {
     expect(title.y, "the title under Close").toBeGreaterThanOrEqual(close.y + close.height);
     const counter = await boxOf(dialog.getByText(/^\d+ \/ \d+$/));

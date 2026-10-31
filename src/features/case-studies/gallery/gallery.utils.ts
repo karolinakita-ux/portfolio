@@ -12,7 +12,20 @@ const IMAGE = "[data-image]";
  * What shows a screenshot with its description: a screenshot row (ShowcaseRow), a feature section's columns, a
  * comparison column, a captioned figure. A screenshot outside one (Smart Ticket's user flow) takes its section.
  */
-const IMAGE_AREA = "[data-image-area], section";
+const IMAGE_AREA = "[data-image-area]";
+/**
+ * The heading or label that starts a screenshot's description inside its area: a row's title (ShowcaseRow), a
+ * comparison column's label (ComparisonSide). Elsewhere the description is the section's own text, which its heading
+ * starts: a feature section, the operations console, whose figures hold only a caption that repeats the image's title
+ * (ScreenGrid), and the user flow.
+ */
+const DESCRIPTION = "[data-image-description]";
+
+/** The heading that names a section (its aria-labelledby): Section and FeatureSection make it focusable. */
+const sectionHeading = (section: Element | null): HTMLElement | null => {
+  const id = section?.getAttribute("aria-labelledby");
+  return id ? document.getElementById(id) : null;
+};
 
 /**
  * The Smart Ticket case's images in page order: user flow, design system rows, each comparison
@@ -45,13 +58,17 @@ export const caseCards = (c: AnyCase): ShowcaseCard[] => {
 export const zoomAsset = (asset: string): string => asset.replace(/[^/]+$/, (file) => "zoom/" + file);
 
 /**
- * A screenshot card's place on the page, where the image viewer lands when it closes on that card: its button, and
- * the area that shows it with its description (IMAGE_AREA). Null when the page does not show the card.
+ * A screenshot card's place on the page, where the image viewer lands when it closes on that card: its button, the
+ * area that shows it with its description (IMAGE_AREA), and the heading that starts the description, where Go to
+ * Description lands (DESCRIPTION, else the section's heading). Null when the page does not show the card.
  */
 export const imagePlace = (id: string): LightboxPlace | null => {
   const target = [...document.querySelectorAll<HTMLElement>(IMAGE)].find((element) => element.dataset.image === id);
   if (!target) return null;
-  return { target, area: target.closest<HTMLElement>(IMAGE_AREA) ?? target };
+  const own = target.closest<HTMLElement>(IMAGE_AREA);
+  const section = target.closest("section");
+  const description = own?.querySelector<HTMLElement>(DESCRIPTION) ?? sectionHeading(section) ?? target;
+  return { target, area: own ?? section ?? target, description };
 };
 
 /** Every image file a card can show: the default and the Dark-mode version. */

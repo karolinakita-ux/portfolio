@@ -581,31 +581,47 @@ describe("Lightbox closing", () => {
   const openButton = (title: string) => screen.getByRole("button", { name: "View " + title });
   const row = (title: string) => screen.getByRole("article", { name: title });
 
-  /** Each image's place on a page: its own open button in a row that holds its description. */
-  const placed = (items: readonly LightboxItem[] = ITEMS): LightboxItem[] =>
+  /** A row's title: where its description starts. */
+  const titleOf = (title: string) => within(row(title)).getByRole("heading", { name: title });
+  /** The heading above all the rows (the operations console's section heading, with its text below it). */
+  const pageHeading = () => screen.getByRole("heading", { name: "Screens" });
+
+  /**
+   * Each image's place on a page: its own open button in a row that holds its description, which its title starts
+   * (or `descriptionOf`).
+   */
+  const placed = (items: readonly LightboxItem[] = ITEMS, descriptionOf = titleOf): LightboxItem[] =>
     items.map((item) => ({
       ...item,
       place: () => {
         const target = screen.queryByRole("button", { name: "View " + item.title });
-        return target && { target, area: row(item.title) };
+        return target && { target, area: row(item.title), description: descriptionOf(item.title) };
       },
     }));
 
-  /** A case page in short: one row per image, each with the button that opens the viewer at it. */
+  /** A case page in short: one row per image, each with its title and the button that opens the viewer at it. */
   function GalleryPage({ items }: { items: readonly LightboxItem[] }) {
     const open = useLightbox();
-    return items.map((item, index) => (
-      <article key={item.src} aria-label={item.title}>
-        <p>{item.alt}</p>
-        <button type="button" onClick={(event) => open(items, index, event.currentTarget)}>
-          {"View " + item.title}
-        </button>
-      </article>
-    ));
+    return (
+      <>
+        <h2 tabIndex={-1}>Screens</h2>
+        {items.map((item, index) => (
+          <article key={item.src} aria-label={item.title}>
+            <h3 tabIndex={-1}>{item.title}</h3> <p>{item.alt}</p>{" "}
+            <button type="button" onClick={(event) => open(items, index, event.currentTarget)}>
+              {"View " + item.title}
+            </button>
+          </article>
+        ))}
+      </>
+    );
   }
 
-  /** Renders the page, gives each row and button a box on the screen (top, height), and opens the viewer at `index`. */
-  const openFromPage = async (items: readonly LightboxItem[], index: number, boxes: Boxes = {}) => {
+  /**
+   * Renders the page, gives each row and button a box on the screen (top, height), and opens the viewer at `index`.
+   * `consent`: the height the statistics consent box keeps clear at the bottom (scroll-padding-bottom).
+   */
+  const openFromPage = async (items: readonly LightboxItem[], index: number, boxes: Boxes = {}, consent = 0) => {
     const user = userEvent.setup();
     render(
       <LightboxProvider>
@@ -617,11 +633,24 @@ describe("Lightbox closing", () => {
       vi.spyOn(openButton(title), "getBoundingClientRect").mockReturnValue(box(...button));
     }
     const getStyle = window.getComputedStyle.bind(window);
-    vi.spyOn(window, "getComputedStyle").mockImplementation((element, pseudo) =>
-      element === document.documentElement
-        ? ({ scrollPaddingTop: HEADER + "px", scrollPaddingBottom: "0px" } as unknown as CSSStyleDeclaration)
-        : getStyle(element, pseudo),
-    );
+    vi.spyOn(window, "getComputedStyle").mockImplementation((element, pseudo) => {
+      if (element === document.documentElement)
+        return {
+          scrollPaddingTop: HEADER + "px",
+          scrollPaddingBottom: consent + "px",
+        } as unknown as CSSStyleDeclaration;
+      const style = getStyle(element, pseudo);
+      // The section heading keeps 24px above it for its eyebrow (scroll-mt-lg), as Section's does. Found by its
+      // tag: a role query would ask getComputedStyle again. Everything else is the real style, which role queries read.
+      if (element.tagName !== "H2" || element.textContent !== "Screens") return style;
+      return new Proxy(style, {
+        get: (target, key) => {
+          if (key === "scrollMarginTop") return "24px";
+          const value: unknown = Reflect.get(target, key, target);
+          return typeof value === "function" ? (value as (...args: unknown[]) => unknown).bind(target) : value;
+        },
+      });
+    });
     const scrollTo = vi.spyOn(window, "scrollTo");
     await user.click(openButton(items[index]?.title ?? ""));
     const dialog = screen.getByRole("dialog");
@@ -632,17 +661,56 @@ describe("Lightbox closing", () => {
   const BELOW = { Square: { row: [1500, 500], button: [1600, 300] } } as const;
 
   it.each([
-    ["the close button", (dialog: HTMLElement) => within(dialog).getByRole("button", { name: "Close image viewer" })],
-    ["Go to Description", (dialog: HTMLElement) => within(dialog).getByRole("button", { name: "Go to Description" })],
-  ])("lands on the screenshot shown after %s: its row below the header, focus on its button", async (_way, control) => {
-    const { user, dialog, scrollTo } = await openFromPage(placed(), 0, BELOW);
-    await user.keyboard("{ArrowRight}{ArrowRight}");
-    expect(within(dialog).getByRole("heading", { name: "Square" })).toBeInTheDocument();
+    ["the close button", "Close image viewer", () => openButton("Square")],
+    ["Go to Description", "Go to Description", () => titleOf("Square")],
+  ])(
+    "lands on the screenshot shown after %s: its row below the header, focus on its button, or its title for the description",
+    async (_way, control, focused) => {
+      const { user, dialog, scrollTo } = await openFromPage(placed(), 0, BELOW);
+      await user.keyboard("{ArrowRight}{ArrowRight}");
+      expect(within(dialog).getByRole("heading", { name: "Square" })).toBeInTheDocument();
 
-    await user.click(control(dialog));
-    expect(dialog).not.toHaveAttribute("open");
+      await user.click(within(dialog).getByRole("button", { name: control }));
+      expect(dialog).not.toHaveAttribute("open");
+      expect(focused()).toHaveFocus();
+      expect(scrollTo).toHaveBeenCalledExactlyOnceWith({ top: 1500 - HEADER, behavior: "smooth" });
+    },
+  );
+
+  it("starts the description below the header with Go to Description, where closing shows the whole screenshot", async () => {
+    // A feature section on a phone, 1300px tall, scrolled to its second screenshot (650..950): the text starts 150px
+    // above the window. From the section's top the screenshot would start 880px down, below the 768px window.
+    const tall = { Square: { row: [-150, 1300], button: [650, 300] } } as const;
+    const { user, dialog, scrollTo } = await openFromPage(placed(), 0, tall);
+    await user.keyboard("{ArrowLeft}");
+    await user.click(within(dialog).getByRole("button", { name: "Close image viewer" }));
     expect(openButton("Square")).toHaveFocus();
-    expect(scrollTo).toHaveBeenCalledExactlyOnceWith({ top: 1500 - HEADER, behavior: "smooth" });
+    expect(scrollTo).toHaveBeenLastCalledWith({ top: 650 + 300 - 768, behavior: "smooth" });
+
+    await user.click(openButton("Wide"));
+    await user.keyboard("{ArrowLeft}");
+    await user.click(within(dialog).getByRole("button", { name: "Go to Description" }));
+    expect(titleOf("Square")).toHaveFocus();
+    expect(scrollTo).toHaveBeenLastCalledWith({ top: -150 - HEADER, behavior: "smooth" });
+  });
+
+  it("lands on a description outside the screenshot's row at its heading, with the room its scroll margin keeps", async () => {
+    // The operations console: the section's heading and text far above the screen, whose figure holds only a caption.
+    const { user, dialog, scrollTo } = await openFromPage(placed(ITEMS, pageHeading), 0, BELOW);
+    vi.spyOn(pageHeading(), "getBoundingClientRect").mockReturnValue(box(-400, 40));
+    await user.keyboard("{ArrowLeft}");
+    await user.click(within(dialog).getByRole("button", { name: "Go to Description" }));
+    expect(pageHeading()).toHaveFocus();
+    expect(scrollTo).toHaveBeenCalledExactlyOnceWith({ top: -400 - 24 - HEADER, behavior: "smooth" });
+  });
+
+  it("keeps the landing clear of the statistics consent box at the bottom of the window", async () => {
+    // The row (300..600) shows in the 768px window, but the box covers its bottom 300px: the row moves up.
+    const underBox = { Square: { row: [300, 300], button: [350, 200] } } as const;
+    const { user, dialog, scrollTo } = await openFromPage(placed(), 0, underBox, 300);
+    await user.keyboard("{ArrowLeft}");
+    await user.click(within(dialog).getByRole("button", { name: "Close image viewer" }));
+    expect(scrollTo).toHaveBeenCalledExactlyOnceWith({ top: 300 - HEADER, behavior: "smooth" });
   });
 
   it("lands the same way when Escape or a click on the backdrop closes it", async () => {
@@ -696,7 +764,7 @@ describe("Lightbox closing", () => {
 
     await user.click(openButton("Wide"));
     await user.click(within(dialog).getByRole("button", { name: "Go to Description" }));
-    expect(openButton("Wide")).toHaveFocus();
+    expect(titleOf("Wide")).toHaveFocus();
     expect(scrollTo).toHaveBeenCalledExactlyOnceWith({ top: -200 - HEADER, behavior: "smooth" });
   });
 

@@ -29,7 +29,7 @@ export function LightboxHeader({ index, count, title, titleId, onClose, onGoToDe
         {onGoToDescription && (
           <div className={styles.description}>
             <Button variant="link" onClick={onGoToDescription}>
-              Go to Description
+              <span className={styles.descriptionLabel}>Go to Description</span>
             </Button>
           </div>
         )}

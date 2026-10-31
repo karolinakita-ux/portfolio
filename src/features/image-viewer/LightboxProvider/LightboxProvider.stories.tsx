@@ -40,11 +40,15 @@ const SHOTS = [
 
 const file = (name: string, theme: Theme) => `/assets/cases/project-planning/${name}-${theme}.webp`;
 
-/** As a case study finds it (features/case-studies, imagePlace): the screenshot's button and the section around it. */
+/**
+ * As a case study finds it (features/case-studies, imagePlace): the screenshot's button, the section around it, and the
+ * section's heading, where its description starts.
+ */
 const placeOf = (id: string) => (): LightboxPlace | null => {
   const target = [...document.querySelectorAll<HTMLElement>("[data-image]")].find((el) => el.dataset.image === id);
   const area = target?.closest("section");
-  return target && area ? { target, area } : null;
+  const description = area?.querySelector("h2");
+  return target && area && description ? { target, area, description } : null;
 };
 
 /** A case page in short: each screenshot below its description, all three in one gallery. */
@@ -81,7 +85,8 @@ function ImageViewer() {
 /**
  * The case studies' image viewer (Figma: Image Viewer · Go to Description). The title row holds the counter, the
  * title, Go to Description and Close: one row from md, Go to Description on a row of its own below md. Closing the
- * viewer, or Go to Description, lands on the screenshot shown, below its description, with focus on it.
+ * viewer lands on the screenshot shown, below its description, with focus on it; Go to Description lands on the
+ * description itself, from its heading, with focus on the heading.
  */
 const meta = {
   title: "Patterns/Image Viewer",
@@ -136,7 +141,10 @@ export const PhoneAt200Percent: Story = {
   play: openSecond,
 };
 
-/** Go to Description closes the viewer onto the screenshot it shows: its section in view, focus on the screenshot. */
+/**
+ * Go to Description closes the viewer onto the description of the screenshot it shows: its section from the top, focus
+ * on the section's heading. Closing lands on the screenshot itself, focus on its button.
+ */
 export const GoToDescription: Story = {
   play: async (context) => {
     await openSecond(context);
@@ -144,6 +152,12 @@ export const GoToDescription: Story = {
     await userEvent.keyboard("{ArrowRight}");
     await userEvent.click(canvas.getByRole("button", { name: "Go to Description" }));
     await expect(canvas.getByRole("dialog", { hidden: true })).not.toHaveAttribute("open");
+    await expect(
+      canvas.getByRole("heading", { level: 2, name: "From One Project’s Budget to the Whole Portfolio" }),
+    ).toHaveFocus();
+
+    await userEvent.click(canvas.getByRole("button", { name: /^View full size: ?Cost distribution/ }));
+    await userEvent.click(canvas.getByRole("button", { name: "Close image viewer" }));
     await expect(canvas.getByRole("button", { name: /^View full size: ?Cost distribution/ })).toHaveFocus();
   },
 };

@@ -6,6 +6,22 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.17.3 - 2026-10-31
+
+#### Fixed
+
+- Image viewer: Go to Description now always shows the start of the screenshot's description, just below the header. On a phone, a Project Planning section is taller than the screen, and for 3 of its 6 screenshots the button left the section's heading and lead above the header: it kept the screenshot in view instead, as closing does. Closing (Close, Escape or a click outside) still does that.
+- Image viewer: Go to Description puts keyboard focus where the description starts (a row's title, a before / after column's label or the section's heading), not on the screenshot, so a screen reader reads on from the text instead of the image again (WCAG 2.4.3). Closing still focuses the screenshot.
+- Image viewer: in the Smart Ticket operations console, whose screens have only a caption that repeats their title, Go to Description now lands on the section's heading and the text above the screens.
+- Image viewer: with a larger text size, Go to Description's label wraps to 2 lines; they now keep to the end, under Close, instead of centring in the middle of the panel like a second title.
+- Statistics consent box: on phones up to 640px tall (and short windows, as before) it sits at the top of the page instead of floating. At 320 x 568 the floating box reached under the sticky header, so every focused element sat behind it (WCAG 2.4.11); at 375 x 548 about 20px of the window stayed free. New `cramped` variant in `utilities.css`.
+
+#### Changed
+
+- Image viewer: each image's place on the page names where its description starts (`data-image-description` on a row's title and a comparison column's label, else the section's heading); `landOnPage` lands Go to Description there (`descriptionOffset` in `lightbox.utils.ts`). The accessibility statement, README, architecture.md and motion.md say so, and the Storybook story "Patterns/Image Viewer · Go To Description" checks the focus on the heading.
+- Tests: `e2e/image-viewer-landing.e2e.ts` now covers Project Planning's feature sections at 390px and desktop (Go to Description shows the heading; Close keeps the whole screenshot in view), the operations console, a before / after column, and landing while the consent box keeps space at the bottom (checked with the space ignored, which fails), and on an Android phone in Messenger the Project Planning case. `e2e/image-viewer-fit.e2e.ts` checks the wrapped label at a 32px text size (fails when it is centred). Unit tests cover `descriptionOffset`, `freeBand` and `landingOffset` with the consent box's space. `yarn a11y` tabs through with the consent box at 320 x 568 too.
+- Figma: the Image Viewer · Go to Description annotation says where each control lands and how the label wraps at a larger text size; the ConsentBanner component's description names the phones where the box sits in the page.
+
 ### 5.17.2 - 2026-10-31
 
 #### Fixed
