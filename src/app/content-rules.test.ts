@@ -30,7 +30,6 @@ import {
   WORK_INTRO,
 } from "#features/work/work.content.ts";
 import { PROFILE } from "#shared/content/profile.ts";
-import { LINK_REF } from "#shared/lib/analytics/analytics.constants.ts";
 import { linkRef } from "#shared/lib/analytics/payload.utils.ts";
 import { SECTION, VIEW, VIEW_PATHS, VIEW_TITLES, VIEWS } from "#shared/lib/routes/routes.constants.ts";
 import type { View } from "#shared/lib/routes/routes.types.ts";
@@ -615,17 +614,16 @@ describe("CV", () => {
     expect(new Set(entries.map((entry) => entry.id)).size).toBe(entries.length);
   });
 
-  it("shares the contact details with the profile, and tags the PDF's portfolio link as cv", () => {
+  it("shares the contact details with the profile, and marks the PDF's portfolio link for the UTM report only", () => {
     expect(CV.header.name).toBe(PROFILE.name);
     expect(CV.header.email).toBe(PROFILE.email);
     expect(CV.header.linkedin.href).toBe(PROFILE.linkedinUrl);
     // The visible text is the full address (https:// included), so parsers and printouts read it as a link.
     expect(CV.header.linkedin.label).toBe(PROFILE.linkedinUrl);
     expect(CV.header.site.label).toMatch(/^https:\/\/[^/]+$/);
-    expect(CV.header.site.pdfHref).toBe(CV.header.site.label + "/?ref=cv");
-    // A link tag: a visit from the PDF sends link-ref "cv" and sets the session's ref to "cv", also in a session
-    // that a /cv?ref=acme link brought earlier (docs/analytics.md, Tagged links); both visits' link-ref events stay.
-    expect(linkRef(new URL(CV.header.site.pdfHref).search)).toBe(LINK_REF.cvPdf);
+    expect(CV.header.site.pdfHref).toBe(CV.header.site.label + "/?utm_medium=cv-pdf");
+    // Not a link tag: it would replace the session's ref (the company a /cv?ref=acme link brought) with its own.
+    expect(linkRef(new URL(CV.header.site.pdfHref).search)).toBeNull();
     expect(CV.footer).toBe(PROFILE.name + " · " + PROFILE.role);
   });
 

@@ -331,8 +331,8 @@ describe("events for the CV", () => {
       [EVENT.emailClick, { action: "mailto", place: "cv" }],
       [EVENT.emailClick, { action: "mailto", place: "cv" }],
     ]);
-    // On the site the link has no tag, so a click from the CV page is not a tagged link (link-ref) and keeps the
-    // session's ref. Only the PDF's copy carries ?ref=cv (content-rules.test.ts).
+    // On the site the link has no tag, so a visit from the CV page does not count as a tagged link (link-ref).
+    // The PDF's copy has ?utm_medium=cv-pdf, which keeps the session's ref (content-rules.test.ts).
     expect(contacts.getByRole("link", { name: "https://karolina.kita.company" })).toHaveAttribute("href", "/");
   });
 });

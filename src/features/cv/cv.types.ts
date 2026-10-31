@@ -36,10 +36,9 @@ export interface CvHeaderContent {
   email: string;
   linkedin: { label: string; href: string };
   /**
-   * The portfolio: on the page a link to the Work page; in the PDF the absolute address with the link tag ?ref=cv
-   * (LINK_REF.cvPdf; scripts/cv-pdf.ts swaps it in), so a visit from the PDF sends link-ref "cv". It also sets the
-   * session's `ref` to "cv": a session that came from a CV link shared as /cv?ref=acme shows "cv" from then on,
-   * while the link-ref events of both visits stay (docs/analytics.md, Tagged links).
+   * The portfolio: on the page a link to the Work page; in the PDF the absolute address with ?utm_medium=cv-pdf
+   * (scripts/cv-pdf.ts swaps it in), so visits from the PDF show in Umami's UTM report. Not a link tag (?ref=,
+   * utm_source): that would replace the session's `ref`, the company a CV link shared as /cv?ref=acme brought.
    */
   site: { label: string; pdfHref: string };
 }

@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.14.32 - 2026-10-31
+
+#### Changed
+
+- CV PDF: its portfolio link goes back to `?utm_medium=cv-pdf` (5.14.23 had made it `?ref=cv`). Mateusz chose the UTM tag once he knew why it was there: a visit from the PDF then shows in the UTM report and does not replace the company tag of a recruiter who first came from `/cv?ref=acme`. The PDF is the one from before 5.14.23. Copied section links keep their `?ref=section-link` tag.
+
 ### 5.14.31 - 2026-10-31
 
 #### Fixed
