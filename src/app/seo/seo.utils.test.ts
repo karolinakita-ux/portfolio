@@ -119,17 +119,22 @@ describe("llmsTxt", () => {
     expect(text).toContain("- CV (PDF, 2 pages): https://karolina.kita.company/karolina-kita-cv.pdf");
   });
 
-  it("lists the case studies in the Work page order, and the pages a reader can skip last, under Optional", () => {
-    const text = llmsTxt();
-    const at = (view: (typeof VIEWS)[number]) => text.indexOf(`](${absoluteUrl(view)}): `);
-    const order = WORK_CASES.map((item) => item.view);
-    expect([...order].sort((a, b) => at(a) - at(b))).toEqual(order);
-    const optional = text.indexOf("\n## Optional\n");
-    expect(optional).toBeGreaterThan(text.indexOf("\n## Contact\n"));
-    for (const view of VIEWS) {
-      const skippable = view === VIEW.privacy || view === VIEW.accessibility;
-      expect(at(view) > optional, view).toBe(skippable);
-    }
+  it("lists Work and its case studies in the Work page order, the pages about her, then the ones a reader can skip", () => {
+    // Each "## " section with the pages it links, in order (Contact links no page of the site).
+    const sections = llmsTxt()
+      .split("\n## ")
+      .slice(1)
+      .map((section) => {
+        const [heading = "", ...lines] = section.split("\n");
+        const views = lines.flatMap((text) => VIEWS.filter((view) => text.includes(`](${absoluteUrl(view)}): `)));
+        return [heading, views] as const;
+      });
+    expect(sections).toEqual([
+      ["Work", [VIEW.work, ...WORK_CASES.map((item) => item.view)]],
+      ["About Karolina", [VIEW.about, VIEW.contact, VIEW.cv]],
+      ["Contact", []],
+      ["Optional", [VIEW.privacy, VIEW.accessibility]],
+    ]);
   });
 });
 

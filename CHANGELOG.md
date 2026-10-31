@@ -6,6 +6,21 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.16.1 - 2026-10-31
+
+#### Fixed
+
+- Accessibility: the statement now says "Last updated" like the privacy policy (it said "Last reviewed"), dated 31 October 2026.
+- Screen readers: the email address in the text of the Privacy and Accessibility pages now says it opens your email app, like the address on the Contact page and in the footer (new `EmailAppNote`, used by `EmailLink` and `CopyEmail`). The CV's email links stay plain: the CV is the PDF's source.
+- llms.txt: the Work page now leads a Work section with the case studies in the Work page order; About Karolina lists only About, Contact and the CV.
+
+#### Changed
+
+- Tests: `src/app/page-structure.test.tsx` checks every page's heading outline (`src/test/heading-outline.ts`: one H1 first, no skipped level, each heading deeper than the part it sits in and inside the part its parent heading titles) and the email app note on every mail link outside the CV. It fails on Smart Ticket with its 5.14.17 heading levels put back and on every page without the note. The llms.txt test checks the pages in each section.
+- Tests: `e2e/scroll-reveal.e2e.ts` answers the consent box at a scroll stop mid-page and checks that the scroll position and a card's top in the window stay the same, at phone and desktop width in Chromium, Firefox and WebKit. It fails when the answer scrolls the page or shifts the content above the card.
+- Checked and already done since 5.14.18: the sitemap and llms.txt follow the Work page order, the Smart Ticket heading levels, og:locale en_GB.
+- Docs: docs/architecture.md (llms.txt sections, the screen reader notes).
+
 ### 5.16.0 - 2026-10-31
 
 #### Added

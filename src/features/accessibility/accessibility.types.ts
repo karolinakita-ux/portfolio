@@ -11,7 +11,7 @@ export interface AccessibilityContent {
   eyebrow: string;
   title: string;
   intro: string;
-  /** When the statement was last reviewed. */
+  /** When the statement was last updated ("Last updated", as on the privacy policy). */
   updated: { iso: string; label: string };
   sections: readonly AccessibilitySection[];
 }

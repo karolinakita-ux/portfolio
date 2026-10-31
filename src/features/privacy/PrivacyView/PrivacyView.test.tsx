@@ -9,10 +9,12 @@ import { PrivacyView } from "./PrivacyView.tsx";
 const renderPrivacy = () => render(<PrivacyView onNavigate={() => undefined} />);
 
 describe("PrivacyView", () => {
-  it("names the page and the date of this version", () => {
+  it("names the page and the date of this version, in the accessibility statement's words", () => {
     renderPrivacy();
     expect(screen.getByRole("heading", { level: 1, name: "Privacy" })).toBeInTheDocument();
-    expect(screen.getByText(PRIVACY.updated.label)).toHaveAttribute("datetime", PRIVACY.updated.iso);
+    const date = screen.getByText(PRIVACY.updated.label);
+    expect(date).toHaveAttribute("datetime", PRIVACY.updated.iso);
+    expect(date.parentElement).toHaveTextContent(/^Last updated: \d{1,2} [A-Z][a-z]+ \d{4}$/);
   });
 
   it("shows every part of the policy as a section with a link to copy, in order", () => {
@@ -47,9 +49,14 @@ describe("PrivacyView", () => {
     }
   });
 
-  it("gives the contact address as a mail link and offers the statistics switch", () => {
+  it("gives the contact address as mail links that say they open the email app, and offers the statistics switch", () => {
     renderPrivacy();
-    expect(screen.getAllByRole("link", { name: PROFILE.email })[0]).toHaveAttribute("href", "mailto:" + PROFILE.email);
+    const links = screen.getAllByRole("link", { name: /opens your email app/ });
+    expect(links.length).toBeGreaterThan(0);
+    for (const link of links) {
+      expect(link).toHaveAttribute("href", "mailto:" + PROFILE.email);
+      expect(link).toHaveTextContent(PROFILE.email + " (opens your email app)");
+    }
     expect(screen.getByRole("button", { name: PRIVACY.statisticsSwitch.switchOn })).toBeInTheDocument();
   });
 });

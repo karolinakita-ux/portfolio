@@ -13,7 +13,8 @@
  * - Jumping to the case studies (link, button) leaves the first case card fully shown.
  * - While the statistics consent box shows (a first visit on the live site), the reveal still runs from the window's
  *   bottom edge: the scroll padding the box adds (--kb-consent-h, base.css) holds no card back, beside the box or
- *   behind it. At the bottom of the page at rest every card is in its own state, before and after the answer.
+ *   behind it. Answering it mid-page moves neither the page nor a card in the window. At the bottom of the page at
+ *   rest every card is in its own state, before and after the answer.
  * - Reduced motion, print and browsers without scroll-driven animations: every card is fully
  *   shown, with no animation, at any scroll position.
  * - axe finds no WCAG 2.2 A/AA violations at several scroll positions, half-revealed cards included.
@@ -99,6 +100,8 @@ interface FrameRecord extends Snapshot {
 
 interface RevealProbe {
   snapshot: () => Snapshot;
+  /** The cards once the layout holds still, without scrolling (see stableSnapshot). */
+  stable: () => Promise<Snapshot>;
   /** Jumps there and returns the cards once the layout holds still (see stableSnapshot). */
   scrollTo: (y: number) => Promise<Snapshot>;
   /**
@@ -203,6 +206,7 @@ function installRevealProbe({ selector, record }: ProbeOptions): void {
 
   window.__reveal = {
     snapshot,
+    stable: stableSnapshot,
     scrollTo: async (y) => {
       window.scrollTo({ top: y, behavior: "instant" });
       return stableSnapshot();
@@ -263,6 +267,13 @@ async function snapshot(page: Page): Promise<Snapshot> {
   return page.evaluate(() => {
     if (!window.__reveal) throw new Error("reveal probe missing: open the page with openCards()");
     return window.__reveal.snapshot();
+  });
+}
+
+async function stableSnapshot(page: Page): Promise<Snapshot> {
+  return page.evaluate(async () => {
+    if (!window.__reveal) throw new Error("reveal probe missing: open the page with openCards()");
+    return window.__reveal.stable();
   });
 }
 
@@ -400,6 +411,23 @@ async function eachCardPlaced(
     placed++;
   }
   return placed;
+}
+
+/**
+ * A scroll stop in the middle of the page: the card nearest the middle of the page's list that the page can scroll to
+ * the middle of the window, its top there, with page above the stop and below it, also without the space the consent
+ * box adds at the end of the page while it shows (base.css), which goes with the box. Returns the card's index and
+ * the stop.
+ */
+async function placeMidPage(page: Page): Promise<{ index: number; snap: Snapshot }> {
+  const { cards, viewport } = await snapshot(page);
+  const middle = Math.floor(cards.length / 2);
+  const nearestFirst = cards.map((_, index) => index).sort((a, b) => Math.abs(a - middle) - Math.abs(b - middle));
+  for (const index of nearestFirst) {
+    const snap = await placeCard(page, index, Math.round(viewport / 2));
+    if (snap && snap.scrollY > 0 && snap.scrollY + snap.scrollPaddingBottom < snap.maxScrollY) return { index, snap };
+  }
+  throw new Error("no card can sit in the middle of the window at a scroll stop mid-page");
 }
 
 interface Violation {
@@ -707,14 +735,15 @@ test.describe("motion allowed", () => {
  * the window (--kb-consent-h: 279px at desktop size, about 400px on a phone) becomes the page's bottom scroll padding.
  * A view timeline's default inset is that padding, so on 5.15.6 every card in the strip, beside the narrower box
  * included, stayed transparent until the answer. "No, thanks" answers offline; "Allow statistics" takes the box away
- * the same way (StatisticsConsent).
+ * the same way (StatisticsConsent). The answer is given at a scroll stop mid-page, where the page could still move:
+ * the scroll position and a card's top in the window stay as they were.
  */
 test.describe("with the statistics consent box", () => {
   test.use({ reducedMotion: "no-preference" });
 
   for (const [viewportName, viewport] of Object.entries(VIEWPORTS)) {
     for (const path of PAGES) {
-      test(`${path} at ${viewportName} width: the box holds no card back, and every card rests in its own state at the bottom, before and after the answer`, async ({
+      test(`${path} at ${viewportName} width: the box holds no card back, the answer moves nothing mid-page, and every card rests in its own state at the bottom, before and after it`, async ({
         page,
         baseURL,
       }) => {
@@ -748,8 +777,25 @@ test.describe("with the statistics consent box", () => {
           expect(restProblems(bottom), "cards at the bottom with the box").toEqual([]);
         });
 
-        await test.step("at the bottom, at rest, after the answer", async () => {
+        await test.step("mid-page, the answer moves neither the page nor a card in the window", async () => {
+          // The box's strip goes with it, and focus moves on from its button (Chromium and Firefox focus a clicked
+          // button, StatisticsConsent): neither may scroll the page or shift what the visitor is reading.
+          const { index, snap: before } = await placeMidPage(page);
+          const card = before.cards[index];
+          if (!card) throw new Error(`no card ${String(index)} at the mid-page stop`);
+          expect(card.top, `"${card.name}" in the window`).toBeGreaterThan(0);
+          expect(card.top, `"${card.name}" in the window`).toBeLessThan(before.viewport);
+          expect(before.scrollPaddingBottom, "the box keeps its strip clear before the answer").toBeGreaterThan(0);
           await declineStatistics(page);
+          await expect
+            .poll(async () => (await snapshot(page)).scrollPaddingBottom, { message: "the box's strip is gone" })
+            .toBe(0);
+          const after = await stableSnapshot(page);
+          expect(after.scrollY, `the page's scroll position (was ${String(before.scrollY)})`).toBe(before.scrollY);
+          expect(after.cards[index]?.top, `"${card.name}"'s top in the window`).toBe(card.top);
+        });
+
+        await test.step("at the bottom, at rest, after the answer", async () => {
           const bottom = await scrollToBottom(page);
           expect(bottom.scrollPaddingBottom, "the box's strip is gone").toBe(0);
           expect(restProblems(bottom), "cards at the bottom after the answer").toEqual([]);

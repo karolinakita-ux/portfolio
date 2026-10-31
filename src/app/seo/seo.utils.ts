@@ -98,11 +98,14 @@ export function headFor(view: View): PageHead {
   return { title, description, url, jsonLd: { "@context": "https://schema.org", "@graph": graph } };
 }
 
-/** /llms.txt (llmstxt.org): a plain-text map of the site for AI assistants and agents. */
+/**
+ * /llms.txt (llmstxt.org): a plain-text map of the site for AI assistants and agents. Work holds the Work page and
+ * its case studies in the page's order, as the menu and the breadcrumbs do; About Karolina the pages about her.
+ */
 export function llmsTxt(): string {
   const line = (view: View) => `- [${PAGE_NAMES[view]}](${absoluteUrl(view)}): ${PAGE_DESCRIPTIONS[view]}`;
-  const cases = WORK_CASES.map((item) => item.view); // the Work page's order
-  const pages = VIEWS.filter((view) => view !== VIEW.work && !isCaseView(view) && !LLMS_OPTIONAL.includes(view));
+  const work: readonly View[] = [VIEW.work, ...WORK_CASES.map((item) => item.view)];
+  const pages = VIEWS.filter((view) => !work.includes(view) && !LLMS_OPTIONAL.includes(view));
   return [
     `# ${PROFILE.name} - ${PROFILE.role}`,
     "",
@@ -110,13 +113,12 @@ export function llmsTxt(): string {
     "",
     "Every page below is plain HTML: no login, no JavaScript needed to read it.",
     "",
-    "## Case Studies",
+    "## Work",
     "",
-    ...cases.map(line),
+    ...work.map(line),
     "",
     "## About Karolina",
     "",
-    line(VIEW.work),
     ...pages.map(line),
     "",
     "## Contact",

@@ -34,6 +34,7 @@ const AXE_OPTIONS: axe.RunOptions = {
 /** Shared components whose story lives with a sibling (they only make sense together). */
 const COVERED_ELSEWHERE: Readonly<Record<string, string>> = {
   AccordionItem: "Accordion",
+  EmailAppNote: "EmailLink",
   InfoTableCell: "InfoTable",
   Lang: "Strong",
   NewTabNote: "Strong",

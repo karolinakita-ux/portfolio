@@ -194,8 +194,9 @@ describe("events on the privacy and accessibility pages", () => {
     ["/accessibility", "accessibility", 2],
   ] as const)("counts the email links in the text of %s", (url, place, count) => {
     renderApp(url);
-    const links = within(screen.getByRole("main")).getAllByRole("link", { name: PROFILE.email });
+    const links = within(screen.getByRole("main")).getAllByRole("link", { name: /opens your email app/ });
     expect(links).toHaveLength(count);
+    for (const link of links) expect(link).toHaveAttribute("href", "mailto:" + PROFILE.email);
     for (const link of links) clickLink(link);
     expect(events()).toEqual(links.map(() => [EVENT.emailClick, { action: "mailto", place }]));
   });

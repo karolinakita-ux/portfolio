@@ -3,8 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import { track } from "#shared/lib/analytics/analytics.utils.ts";
 import { writeClipboard } from "#shared/lib/clipboard/clipboard.utils.ts";
+import { EmailAppNote } from "#shared/ui/EmailAppNote/EmailAppNote.tsx";
 import { Check, Copy } from "#shared/ui/icons/icons.tsx";
-import { VisuallyHidden } from "#shared/ui/VisuallyHidden/VisuallyHidden.tsx";
 
 import { FEEDBACK } from "./CopyEmail.constants.ts";
 import { styles } from "./CopyEmail.styles.ts";
@@ -70,7 +70,7 @@ export function CopyEmail({ email, place, textClassName, icon = null }: CopyEmai
         <span ref={emailRef} className={styles.address(textClassName)}>
           {email}
         </span>
-        <VisuallyHidden> (opens your email app)</VisuallyHidden>
+        <EmailAppNote />
       </a>
       <span className={styles.buttonCell}>
         <button

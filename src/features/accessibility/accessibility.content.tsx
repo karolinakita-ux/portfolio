@@ -17,7 +17,7 @@ export const ACCESSIBILITY: AccessibilityContent = {
   title: "Accessibility",
   intro:
     "How this website works for people who use it in different ways, and what to do if something does not work for you.",
-  updated: { iso: "2026-10-30", label: "30 October 2026" },
+  updated: { iso: "2026-10-31", label: "31 October 2026" },
   sections: [
     {
       id: "in-short",
