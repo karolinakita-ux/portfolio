@@ -128,6 +128,10 @@
    replay when React takes the page over, and nothing moves until the visitor scrolls.
    The range starts when the card's top enters the viewport and ends 96px of scrolling later, so
    even a card taller than the screen is fully shown long before it is read.
+   The viewport's bottom edge is the window's own (inset 0px). view()'s default inset is the page's
+   scroll padding, and the statistics consent box adds its height there while it shows (base.css,
+   useConsentSpace): every card in that strip, beside the narrower box too, stayed transparent until
+   the visitor answered (until 5.15.7). The top inset stays auto: only the entry range is used.
    No duration: a scroll timeline sets the pace (duration auto).
    Fill backwards: below the viewport the card waits transparent and 16px low; once the range is
    scrolled past, the animation lets go and the card is exactly its own state again (fill both
@@ -144,7 +148,7 @@
   @media (prefers-reduced-motion: no-preference) and (forced-colors: none) and (prefers-contrast: no-preference) and (width >= 48rem) {
     @supports (animation-timeline: view()) {
       animation: reveal-on-scroll var(--motion-easing-standard) backwards;
-      animation-timeline: view();
+      animation-timeline: view(block auto 0px);
       animation-range: entry 0% entry 96px;
       &:focus-within {
         animation: none;

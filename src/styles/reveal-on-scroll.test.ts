@@ -114,8 +114,9 @@ describe("reveal-on-scroll (app stylesheet)", () => {
     expect(declarations).toEqual([
       // Fill backwards: waits hidden below the viewport, lets go once revealed.
       ["animation", "reveal-on-scroll var(--motion-easing-standard) backwards"],
-      // After the shorthand, which resets it.
-      ["animation-timeline", "view()"],
+      // After the shorthand, which resets it. Bottom inset 0px: the window's own edge, not the scroll padding the
+      // consent box adds while it shows (view()'s default inset, auto, is the scroll padding).
+      ["animation-timeline", "view(block auto 0px)"],
       ["animation-range", "entry 0% entry 96px"],
     ]);
   });

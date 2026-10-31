@@ -9,7 +9,8 @@
     /* In-page anchors and keyboard focus land below the sticky header (height measured at runtime). */
     --kb-scroll-padding-top: calc(env(safe-area-inset-top, 0px) + var(--kb-header-h, 0px) + var(--spacing-md));
     scroll-padding-top: var(--kb-scroll-padding-top);
-    /* While the statistics consent box shows, keyboard focus scrolls clear of it (WCAG 2.4.11; useConsentSpace). */
+    /* While the statistics consent box shows, keyboard focus scrolls clear of it (WCAG 2.4.11; useConsentSpace).
+       The scroll reveal ignores it (view() with a 0px bottom inset, utilities.css). */
     scroll-padding-bottom: var(--kb-consent-h, 0px);
   }
   body {

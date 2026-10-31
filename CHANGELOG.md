@@ -6,6 +6,14 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.15.7 - 2026-10-31
+
+#### Fixed
+
+- Scroll reveal: while the statistics consent box shows (a first visit to the live site, until the visitor answers), cards near the bottom of the window no longer stay hidden. The reveal's view timeline took the page's scroll padding as its bottom edge, and the box adds its height there (279px at desktop size) so keyboard focus stays clear of it (WCAG 2.4.11). Every card in that strip, beside the narrower box too, waited transparent and 16px low at every scroll position, and appeared at once after "Allow statistics" or "No, thanks". It hit the 6 pages with revealing cards (Work, About and the 4 case studies) from tablet width up, in Chromium, Firefox and WebKit, on the live site (5.15.0) as well. The timeline now ends at the window's own bottom edge (`view(block auto 0px)`), so a card reveals as it does without the box, behind the box where the box covers it. Phones have no reveal and are unchanged, and at the bottom of a page every card was and stays fully shown.
+- Tests: `e2e/scroll-reveal.e2e.ts` opens each of those pages as a first visit on the live site, with the consent box, at phone and desktop width in all three browsers. It checks every card at each scroll stop and with its top just past the reveal (128px inside the window), then every card at the bottom of the page at rest, before and after "No, thanks". On the code of 5.15.6 (run in a copy of the tree) it fails on all 6 pages at desktop width in every browser (18 of 36 runs; the phone runs pass): cards from 103 to 278px inside the window at opacity 0 and 16px low, and still fading up to 370px. `reveal-on-scroll.test.ts` pins the new timeline.
+- Docs: docs/motion.md (Scroll reveal, the consent box), CLAUDE.md (Pitfalls), the comments in `utilities.css` and `base.css`.
+
 ### 5.15.6 - 2026-10-31
 
 #### Changed
