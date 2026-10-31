@@ -221,11 +221,14 @@ export interface AnalyticsSite {
   release?: string;
 }
 
-/** The page a call belongs to, read when it is made: address without the hash, title and referrer. */
+/**
+ * The page a call belongs to, read when it is made: address without the hash, title and referrer. The referrer is
+ * always set ("" for none), so the tracker's own, which names the page itself once the address changed, never goes.
+ */
 export interface PageSnapshot {
   url: string;
   title: string;
-  referrer?: string;
+  referrer: string;
 }
 
 /** What the module remembers for the page's lifetime. */
@@ -235,7 +238,7 @@ export interface AnalyticsState {
   queue: Array<(tracker: UmamiTracker) => void>;
   /** The page of the last pageview, or null before the first one. */
   page: PageSnapshot | null;
-  /** Referrer of the current page; null keeps the tracker's own (document.referrer, on the first page). */
+  /** Referrer of the current page from the second pageview on (the page before); null on the first: document.referrer. */
   referrer: string | null;
   /** Removes the input, click, copy, print, error and time-on-page listeners; null while statistics are off. */
   unwatch: (() => void) | null;

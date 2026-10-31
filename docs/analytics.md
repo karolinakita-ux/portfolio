@@ -44,6 +44,8 @@ Every request carries the address (`url`), page title, referrer, screen size (`3
 
 Addresses are cleaned before anything goes (`payload.utils.ts`, applied to the tracker's own requests too): no hash, and no query parameter but `ref` and the UTM parameters (`KEPT_PARAMS`), so click ids such as `fbclid`, `gclid` and `li_fat_id` never reach Umami. A referrer from another site loses its query and hash.
 
+Every call about a page carries the referrer of that page's pageview: its events, time on page, the session data and the speed report. On the first page it is the page that linked to the site (`document.referrer`, empty when there is none, as the tracker sends it), on later pages the page before. The tracker's own referrer never goes: once the address changes it names the page just left, so up to 5.15.4 the time spent on the first page said it came from that page itself.
+
 ## Events
 
 | Event               | Sent when                                                                         | Properties                                                                      | Question it answers                                              |
@@ -104,7 +106,7 @@ A tagged link ends in `?ref=<tag>` (or carries `utm_source`). The first page it 
 
 Umami keeps one `ref` per session ([Session data](#session-data)), so a later tagged visit replaces it. That is why the CV PDF's portfolio link carries `?utm_medium=cv-pdf` instead of a tag: its visits show in the UTM report (medium `cv-pdf`) without a `link-ref`, and a session that came from `/cv?ref=acme` keeps `acme`.
 
-The tag counts once the visitor allows statistics, on whichever page that happens: the site's own links keep the query, so a visitor who landed on `/cv?ref=acme` and allows on About sends About as the first page, with `?ref=acme`, `link-ref` and the session's `ref`. The pages seen before that are never sent. Each page load sends `link-ref` once, with its first pageview, so a reload sends it again. `e2e/analytics-links.e2e.ts` follows each kind of link above in Chromium, Firefox and WebKit with the real tracker and checks every request it makes: nothing before consent, after a no, or with Do Not Track or Global Privacy Control; after consent, the tag in every address, `link-ref` and the session's `ref` once, click ids and the hash dropped, and an external referrer without its query.
+The tag counts once the visitor allows statistics, on whichever page that happens: the site's own links keep the query, so a visitor who landed on `/cv?ref=acme` and allows on About sends About as the first page, with `?ref=acme`, `link-ref` and the session's `ref`. The pages seen before that are never sent. Each page load sends `link-ref` once, with its first pageview, so a reload sends it again. `e2e/analytics-links.e2e.ts` follows each kind of link above in Chromium, Firefox and WebKit with the real tracker and checks every request it makes: nothing before consent, after a no, or with Do Not Track or Global Privacy Control; after consent, the tag in every address, `link-ref` and the session's `ref` once, click ids and the hash dropped, an external referrer without its query, and every call about the first page, time on it included, with its pageview's referrer (LinkedIn's, or none).
 
 ## Speed reports
 

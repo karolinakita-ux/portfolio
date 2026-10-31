@@ -8,7 +8,11 @@ import type * as Analytics from "./analytics.utils.ts";
 /** The live site, as src/main.tsx describes it in a production build there. */
 const LIVE: AnalyticsSite = { production: true, base: "/", hostname: "karolina.kita.company", privacy: {} };
 
-/** What the tracker fills in before our helpers edit the payload (url and title as the tracker last saw them). */
+/**
+ * What the tracker fills in before our helpers edit the payload: url and title as the tracker last saw them, and its
+ * own referrer, which names the page it saw before its last address change (document.referrer before the first).
+ * Every call replaces it with the page's referrer.
+ */
 const TRACKER_PAYLOAD: UmamiPayload = {
   website: "19c960f0-bad6-40f5-b5cb-75dca6dc292f",
   hostname: "karolina.kita.company",
@@ -16,7 +20,7 @@ const TRACKER_PAYLOAD: UmamiPayload = {
   language: "en-GB",
   title: "Landing page title",
   url: "https://karolina.kita.company/",
-  referrer: "https://www.linkedin.com/",
+  referrer: "/cv",
 };
 
 /** The module keeps its state for the page's lifetime: each test gets a fresh copy. */
@@ -35,6 +39,7 @@ afterEach(() => {
   vi.useRealTimers();
   document.body.innerHTML = "";
   Reflect.deleteProperty(document, "visibilityState");
+  Reflect.deleteProperty(document, "referrer");
   for (const script of document.querySelectorAll("script")) script.remove();
   Reflect.deleteProperty(window, "umami");
   Reflect.deleteProperty(window, "kbUmamiBeforeSend");
@@ -57,6 +62,11 @@ const loadTracker = (): UmamiPayload[] => {
 const go = (url: string, title = "Page") => {
   window.history.replaceState(null, "", url);
   document.title = title;
+};
+
+/** The page on another site that linked here (document.referrer, "" by default: a typed address). */
+const arriveFrom = (referrer: string) => {
+  Object.defineProperty(document, "referrer", { value: referrer, configurable: true });
 };
 
 describe("analyticsAllowed", () => {
@@ -160,10 +170,12 @@ describe("trackPageview and track", () => {
       ...TRACKER_PAYLOAD,
       url: window.location.origin + "/about?ref=acme",
       title: "About - Karolina Kita",
+      referrer: "", // a typed address: no referrer, as the tracker sends it
     });
   });
 
   it("keep only the link tag and UTM parameters in addresses: click ids and other parameters go", () => {
+    arriveFrom("https://www.linkedin.com/feed/?trk=public_post");
     analytics.startAnalytics(LIVE);
     const sent = loadTracker();
     go("/about?fbclid=IwAR0abc&ref=acme&utm_medium=social&li_fat_id=1f2e#career");
@@ -172,7 +184,7 @@ describe("trackPageview and track", () => {
     analytics.trackPageview();
     const pageviews = sent.filter((payload) => payload.name === undefined);
     expect(pageviews.map((payload) => [payload.url, payload.referrer])).toEqual([
-      [window.location.origin + "/about?ref=acme&utm_medium=social", TRACKER_PAYLOAD.referrer],
+      [window.location.origin + "/about?ref=acme&utm_medium=social", "https://www.linkedin.com/feed/"],
       [window.location.origin + "/contact", "/about?ref=acme&utm_medium=social"],
     ]);
   });
@@ -218,6 +230,7 @@ describe("trackPageview and track", () => {
   });
 
   it("keep the landing referrer on the first page, then refer each page to the one before it", () => {
+    arriveFrom("https://www.linkedin.com/");
     analytics.startAnalytics(LIVE);
     const sent = loadTracker();
 
@@ -235,6 +248,40 @@ describe("trackPageview and track", () => {
     ]);
   });
 
+  // Seen live on 5.15.4: time on the first page went with that page as its referrer, after its pageview had LinkedIn.
+  it.each([
+    ["from another site", "https://www.linkedin.com/feed/?trk=public_post", "https://www.linkedin.com/feed/"],
+    ["with no referrer", "", ""],
+  ])(
+    "give every call on the first page its pageview's referrer (%s), never the tracker's own",
+    (_, landing, referrer) => {
+      vi.useFakeTimers();
+      Object.defineProperty(document, "visibilityState", { value: "visible", configurable: true });
+      arriveFrom(landing);
+      analytics.startAnalytics(LIVE);
+      const sent = loadTracker();
+      go("/?ref=acme", "Work");
+      analytics.trackPageview();
+      analytics.track(EVENT.themeSwitch, { theme: "dark" });
+      // The tracker's own requests on this page: the session data and a speed report.
+      expect(analytics.beforeSend("identify", TRACKER_PAYLOAD)?.referrer).toBe(referrer);
+      expect(analytics.beforeSend("performance", TRACKER_PAYLOAD)?.referrer).toBe(referrer);
+      vi.advanceTimersByTime(5000);
+      // A new view: the tracker's referrer is now the first page, and time on it goes after the address changed.
+      go("/about?ref=acme", "About");
+      analytics.trackPageview();
+
+      const first = window.location.origin + "/?ref=acme";
+      expect(sent.map((payload) => [payload.name, payload.url, payload.referrer])).toEqual([
+        [undefined, first, referrer],
+        ["link-ref", first, referrer],
+        ["theme-switch", first, referrer],
+        ["time-on-page", first, referrer],
+        [undefined, window.location.origin + "/about?ref=acme", "/?ref=acme"],
+      ]);
+    },
+  );
+
   it("send events with their name and properties", () => {
     analytics.startAnalytics(LIVE);
     const sent = loadTracker();
@@ -250,6 +297,7 @@ describe("trackPageview and track", () => {
         ...TRACKER_PAYLOAD,
         url: window.location.origin + "/work/automotive",
         title: "Automotive",
+        referrer: "",
         name: "case-nav",
         data: { from: "case-automotive", to: "case-project-planning", direction: "next", place: "end" },
       },
@@ -340,6 +388,7 @@ describe("time on page", () => {
       ...TRACKER_PAYLOAD,
       url: window.location.origin + "/about?ref=acme",
       title: "About - Karolina Kita",
+      referrer: "",
       name: "time-on-page",
       data: { time: "under 10 s", seconds: 5, scroll: "100%" }, // jsdom has no layout: the whole page is in view
     });
@@ -481,6 +530,7 @@ describe("beforeSend", () => {
       ...performance,
       url: window.location.origin + "/work/project-planning",
       title: "Project Planning",
+      referrer: "",
     });
   });
 

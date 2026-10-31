@@ -6,6 +6,14 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.15.5 - 2026-10-31
+
+#### Fixed
+
+- Statistics: every call on the visitor's first page now has the same referrer as that page's pageview: the page that linked to the site (LinkedIn's without its query), or none. The first page used to leave the referrer to Umami's tracker, which names the page just left once the address changes, so the time spent on the first page, sent when the visitor moves on, said it came from that page itself. Seen live on 5.15.4: time on `/?ref=qa-check-oct31` with the referrer `/?ref=qa-check-oct31`, while its pageview had the real one. Later pages already had the page before. The session data and speed report about the first page carry its referrer too.
+- Tests: `analytics.utils.test.ts` checks that the pageview, `link-ref`, an event, the tracker's session data and speed report, and time on page after the address changed all carry the landing referrer, from LinkedIn and with none, while the fake tracker's own says something else. `e2e/analytics-links.e2e.ts` checks with the real tracker in Chromium, Firefox and WebKit that every call about the first page, time on it included, has its pageview's referrer, for the LinkedIn link and the six links without one. Both fail on the code of 5.15.4 (run in a copy of the tree): in the e2e spec, time on the first page names that page as its referrer in every landing.
+- Docs: docs/analytics.md (What Umami records by itself, Tagged links), docs/architecture.md.
+
 ### 5.15.4 - 2026-10-31
 
 #### Changed

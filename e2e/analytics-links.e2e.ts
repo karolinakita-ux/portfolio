@@ -3,9 +3,10 @@
  * link with ?ref= or UTM parameters (a job application's /cv?ref=acme, a profile's ?ref=linkedin-profile, the CV
  * PDF's ?utm_medium=cv-pdf, a copied section link) reaches Umami with its tag, and only once the visitor allows
  * statistics, on whichever page that happens. The local build is served as the live site with the real tracker, and
- * every request it makes is caught (helpers/umami.utils.ts): the pageviews' addresses and referrers, link-ref and the
- * session data's ref. Before consent, after a no, and with Do Not Track or Global Privacy Control, the script never
- * loads and nothing goes, also while the visitor browses.
+ * every request it makes is caught (helpers/umami.utils.ts): the pageviews' addresses and referrers, link-ref, the
+ * session data's ref, and the first page's referrer on every call about that page, time on it included. Before
+ * consent, after a no, and with Do Not Track or Global Privacy Control, the script never loads and nothing goes, also
+ * while the visitor browses.
  */
 import { expect, test, type Page } from "@playwright/test";
 
@@ -76,6 +77,16 @@ function expectQueryEverywhere(sent: readonly UmamiCall[], query: string): void 
     const url = new URL(payload.url);
     expect(url.search + url.hash, `${type} ${payload.name ?? ""} at ${payload.url}`).toBe(query);
   }
+}
+
+/**
+ * Every call about this page carries the referrer its pageview had, time on page included: that one goes when the
+ * visitor moves on, after the address changed, when the tracker's own referrer names the page itself.
+ */
+function expectReferrerOnPage(sent: readonly UmamiCall[], url: string, referrer: string): void {
+  const onPage = sent.filter(({ payload }) => payload.url === url);
+  expect(eventsNamed(onPage, EVENT.timeOnPage), `time on ${url}`).toHaveLength(1);
+  for (const { type, payload } of onPage) expect(payload.referrer, `${type} ${payload.name ?? ""}`).toBe(referrer);
 }
 
 /** Hides the tab, as switching to another tab or app does: time on page and the speed report would go now. */
@@ -188,7 +199,7 @@ test.describe("before consent", () => {
 
 test.describe("allowed on the first page", () => {
   for (const { what, link, counted, ref, next, from } of LANDINGS) {
-    test(`${what} (${link}): every call keeps the tag, link-ref and session data go once`, async ({
+    test(`${what} (${link}): every call keeps the tag and the first page's referrer, link-ref and session data go once`, async ({
       page,
       baseURL,
     }) => {
@@ -200,12 +211,14 @@ test.describe("allowed on the first page", () => {
       await expectSent(page, () => sent, landing);
 
       // The next view keeps the query in the address bar, so its pageview has the tag as well; no second link-ref.
+      // expectSent has waited over half a second, so the time on the first page goes (a shorter stretch would not).
       await navLink(page, next).click();
       const { search } = new URL(LIVE_SITE + counted);
       await expectSent(page, () => sent, {
         ...landing,
         pageviews: [...landing.pageviews, { url: LIVE_SITE + NEXT_PATH[next] + search, referrer: counted }],
       });
+      expectReferrerOnPage(sent, LIVE_SITE + counted, from?.referrer ?? "");
       expectQueryEverywhere(sent, search);
       expect(JSON.stringify(sent)).not.toMatch(/fbclid|gclid|#career/);
     });
