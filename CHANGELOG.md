@@ -6,6 +6,13 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.15.3 - 2026-10-31
+
+#### Changed
+
+- The menu's current-page underline now rides with the gold pill. It is a 2px bar inside the pill, under the label, instead of a text underline on the link, so when the page changes it slides from the previous menu item together with the pill (same time and easing), fades with the pill where there is no previous item (/privacy), and appears at once with reduced motion. At rest it looks as before: as wide as the label, 2px, about 4px under the text, in the label's colour (the same pixels as the text underline in Chromium, 1px higher in Firefox and half a pixel in WebKit). It is a border, not a background, so it stays visible in forced colours (Windows contrast themes). The underline itself stays: the gold pill alone is 1.54:1 on the white header, under the 3:1 a state needs (WCAG 1.4.11).
+- Tests: `SiteHeader.test.tsx` and the SiteHeader stories check that every pill holds the bar and only the current page's shows it (About, Work on a case study, none on /privacy), that it is a border in the pill's colour, and that no menu link has a text underline. `e2e/header-motion.e2e.ts` checks in Chromium, Firefox and WebKit that the underline stays in the moving pill in every frame and on the animation's own clock (on the old item's underline at the start, between the two half-way), sits under the label at rest on every page and after a click, stays in place while it fades or jumps with the pill, and keeps a 2px border in forced colours (Chromium, Firefox); the e2e sampler now reports each pill's underline. Removing the bar, putting it back on the link or drawing it as a background fails these checks. Docs: docs/design.md (states rule) and docs/motion.md (nav pill row; underlines that animate on their own stay out). Figma and the KitaBranding design system on claude.ai follow separately.
+
 ### 5.15.2 - 2026-10-31
 
 #### Changed

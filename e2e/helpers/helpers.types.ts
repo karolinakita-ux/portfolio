@@ -39,6 +39,8 @@ export interface AnimationSample {
 
 export interface AnimatedState extends Box {
   opacity: number;
+  /** The box of the underline inside the element ([data-pill-underline]: the nav pills), or null. */
+  underline: Box | null;
 }
 
 export interface AnimationPoints {
@@ -56,6 +58,8 @@ export interface ItemSample extends Box {
   control: Box | null;
   /** Computed opacity, mid-animation values included. */
   opacity: number;
+  /** The box of the underline inside the element ([data-pill-underline]: the nav pills), or null. */
+  underline: Box | null;
   animations: AnimationSample[];
 }
 
@@ -132,4 +136,32 @@ export interface FadeExpectation {
   /** The control whose pill fades. */
   key: string;
   direction: "in" | "out";
+}
+
+/** Where the menu's underline sits in its pill: in from the pill's left, right and bottom edge, and its height. */
+export interface UnderlinePlacement {
+  left: number;
+  right: number;
+  bottom: number;
+  height: number;
+}
+
+/** The current page's menu link and the underline in its pill, at rest (readUnderline). */
+export interface UnderlineAtRest {
+  label: string;
+  link: Box;
+  /** The label's text box: the link's content box. */
+  text: Box;
+  /** The label's baseline (viewport y). */
+  baseline: number;
+  underline: Box;
+  pillOpacity: number;
+  /** The underline's bottom border, computed. */
+  border: { width: string; style: string; color: string };
+  /** The link's computed text colour. */
+  labelColor: string;
+  /** The header's computed background colour (a system colour in forced colours). */
+  background: string;
+  /** text-decoration-line of every menu link. */
+  textDecorations: string[];
 }

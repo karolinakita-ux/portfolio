@@ -21,6 +21,8 @@ const pillOf = (element: HTMLElement) => {
   expect(pills).toHaveLength(1);
   return pills[0]!;
 };
+/** The underline bar inside an item's pill, if there is one. */
+const underlineOf = (element: HTMLElement) => element.querySelector<HTMLElement>("[data-pill-underline]");
 /** data-pill of every visible pill in the element. */
 const visiblePills = (element: HTMLElement) =>
   pillsIn(element)
@@ -54,14 +56,26 @@ describe("SiteHeader nav pill", () => {
     expect(screen.getByRole("link", { name: "About" })).not.toHaveAttribute("aria-current");
   });
 
-  it("underlines the current page's link as well: the gold pill alone is 1.54:1 on white (WCAG 1.4.11)", () => {
+  it("underlines the current page inside its pill, so the underline rides with it (pill alone: 1.54:1 on white, WCAG 1.4.11)", () => {
+    /** The labels whose underline shows: the bar inside the one visible pill. */
     const underlined = () =>
       navLinks()
-        .filter((link) => link.classList.contains("underline"))
+        .filter((link) => pillOf(link).classList.contains("opacity-100"))
+        .filter((link) => underlineOf(link) !== null)
         .map((link) => link.textContent);
     const { rerender } = render(<Header view={VIEW.about} />);
     expect(underlined()).toEqual(["About"]);
-    expect(screen.getByRole("link", { name: "About" })).toHaveClass("decoration-2", "underline-offset-4");
+    for (const link of navLinks()) {
+      // Every pill has the bar, so it fades out with the pill too; a hidden pill hides it.
+      const underline = underlineOf(link);
+      expect(underline?.parentElement).toBe(pillOf(link)); // hidden from assistive tech with it
+      expect(underline).toBeEmptyDOMElement();
+      // A border in the pill's own colour, not a background: forced colours drop backgrounds.
+      expect(underline).toHaveClass("absolute", "inset-x-sm", "bottom-xs", "border-b-2", "border-current");
+      // No text underline any more: one that stays on the link could not travel.
+      expect([...link.classList].filter((name) => /^(underline|decoration-|underline-offset-)/.test(name))).toEqual([]);
+    }
+    expect(pillOf(screen.getByRole("link", { name: "Work" }))).toHaveClass("opacity-0");
 
     rerender(<Header view={VIEW.caseProjectPlanning} />); // a case study: Work, with aria-current="true"
     expect(underlined()).toEqual(["Work"]);
@@ -83,6 +97,8 @@ describe("SiteHeader nav pill", () => {
     rerender(<Header view={VIEW.contact} />); // e.g. a footer link or Back
     expect(animations).toHaveLength(1);
     expect(animations[0]?.target).toBe(pillOf(screen.getByRole("link", { name: "Contact" })));
+    // The underline is inside the moving pill, so it travels with it.
+    expect(underlineOf(screen.getByRole("link", { name: "Contact" }))?.parentElement).toBe(animations[0]?.target);
 
     rerender(<Header view={VIEW.caseDataGovernance} />); // a case study: Work
     expect(animations[1]?.target).toBe(pillOf(screen.getByRole("link", { name: "Work" })));

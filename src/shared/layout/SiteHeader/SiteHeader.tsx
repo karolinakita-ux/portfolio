@@ -23,6 +23,9 @@ import { useHeaderHeight } from "./useHeaderHeight.ts";
  *
  * On short viewports (landscape phones, 200-400% zoom) it stops sticking.
  * Publishes the height it covers as --kb-header-h (useHeaderHeight).
+ *
+ * The current page's link shows the gold pill with an underline inside it (styles.underline), so
+ * the underline slides with the pill (useSlidingPill) from the previous page's link.
  */
 export function SiteHeader({ activeView, onNavigate, onHome, theme, onThemeChange }: SiteHeaderProps) {
   const headerRef = useRef<HTMLElement>(null);
@@ -61,7 +64,9 @@ export function SiteHeader({ activeView, onNavigate, onHome, theme, onThemeChang
                     aria-current={active ? (item.view === activeView ? "page" : "true") : undefined}
                     className={styles.link(active)}
                   >
-                    <span data-pill={item.view} aria-hidden="true" className={styles.pill(active)} />
+                    <span data-pill={item.view} aria-hidden="true" className={styles.pill(active)}>
+                      <span data-pill-underline="" className={styles.underline} />
+                    </span>
                     {item.label}
                   </ViewLink>
                 </li>
