@@ -6,6 +6,15 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.15.4 - 2026-10-31
+
+#### Changed
+
+- Tests: `e2e/analytics-links.e2e.ts` follows tagged links into Umami in Chromium, Firefox and WebKit, with the real tracker and every request it makes caught (none reaches the Umami account). Before consent, landing on `/?ref=linkedin-profile`, `/cv?ref=acme` or `/?utm_medium=cv-pdf` and browsing (views from the menu, a FAQ question, scrolling, Back, a hidden tab): no script and no request, and the tag stays in the address. After "No, thanks" (also after a reload), and with Do Not Track or Global Privacy Control: no script and no request, and with a browser signal nobody is asked and /privacy says why. Allowed on the first page, for a LinkedIn link, the CV PDF's link, a UTM link with a source, both kinds of copied section link, a link with click ids and the old `/resume` address: the pageview keeps `ref` and the UTM parameters, `link-ref` and the session data's `ref` go once (neither for the CV PDF's UTM-only link), the next view keeps the tag, click ids and the hash never go, and LinkedIn's referrer arrives without its query. Allowed later, in the consent box on About or with the switch on /privacy after landing on `/cv?ref=acme`: that page counts with the tag, and nothing is sent about the pages before. A visitor who allowed on `/cv?ref=acme` and then opens the PDF's portfolio link (read from the CV page's `data-pdf-href`) is counted with `utm_medium=cv-pdf` and sends no `link-ref` and no session `ref`, so Umami keeps `acme`. A reload sends a new first pageview with the tag, and `link-ref` once in each page load.
+- Nothing in the statistics code needed fixing. Mutation checks in a copy of the tree each failed the tests they should: the tracker loaded before consent, Do Not Track ignored, internal links dropping the query, `link-ref` with every pageview, session data without `ref`, click ids kept, an external referrer's query kept, `utm_source` not read as the tag.
+- `e2e/helpers/umami.utils.ts` now holds the live-site setup and the request capture that both statistics specs use (moved from `e2e/analytics.e2e.ts`). It serves the live tracker from a copy fetched at most once an hour (`node_modules/.tmp/e2e-umami-script.js`, the last copy when a new fetch is refused): one script request per test made cloud.umami.is answer 403 with a Vercel bot challenge for about ten minutes, to the test browsers and to Node.
+- Docs: docs/analytics.md (Tagged links: when a tag counts, and the new spec), docs/architecture.md, CLAUDE.md (`e2e/`), the add-tracking skill.
+
 ### 5.15.3 - 2026-10-31
 
 #### Changed

@@ -1,6 +1,30 @@
+import type { UmamiSendType } from "#shared/lib/analytics/analytics.types.ts";
+
 import type { VIEWPORTS } from "./helpers.constants.ts";
 
 export type Theme = "light" | "dark";
+
+/**
+ * One call to Umami's collector, as the tracker posts it (umami.utils.ts catches them): an event or pageview,
+ * session data, a speed report, or one of its own error reports (never expected).
+ */
+export interface UmamiCall {
+  type: UmamiSendType;
+  payload: {
+    website: string;
+    hostname: string;
+    url: string;
+    title: string;
+    referrer?: string;
+    /** The site's version (data-tag). */
+    tag?: string;
+    name?: string;
+    data?: Record<string, string>;
+    ttfb?: number;
+    lcp?: number;
+    duration?: number;
+  };
+}
 
 export type ViewportName = keyof typeof VIEWPORTS;
 
@@ -104,6 +128,11 @@ declare global {
 export interface ToolkitOptions {
   /** Simulates a browser without the View Transitions API. */
   removeViewTransitions: boolean;
+}
+
+export interface LiveSiteOptions {
+  /** The page that linked here, as the browser sends it with the first request (document.referrer). */
+  referer?: string;
 }
 
 export interface PrepareOptions {

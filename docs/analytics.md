@@ -104,6 +104,8 @@ A tagged link ends in `?ref=<tag>` (or carries `utm_source`). The first page it 
 
 Umami keeps one `ref` per session ([Session data](#session-data)), so a later tagged visit replaces it. That is why the CV PDF's portfolio link carries `?utm_medium=cv-pdf` instead of a tag: its visits show in the UTM report (medium `cv-pdf`) without a `link-ref`, and a session that came from `/cv?ref=acme` keeps `acme`.
 
+The tag counts once the visitor allows statistics, on whichever page that happens: the site's own links keep the query, so a visitor who landed on `/cv?ref=acme` and allows on About sends About as the first page, with `?ref=acme`, `link-ref` and the session's `ref`. The pages seen before that are never sent. Each page load sends `link-ref` once, with its first pageview, so a reload sends it again. `e2e/analytics-links.e2e.ts` follows each kind of link above in Chromium, Firefox and WebKit with the real tracker and checks every request it makes: nothing before consent, after a no, or with Do Not Track or Global Privacy Control; after consent, the tag in every address, `link-ref` and the session's `ref` once, click ids and the hash dropped, and an external referrer without its query.
+
 ## Speed reports
 
 `data-performance` turns on the tracker's own Core Web Vitals: LCP, INP, CLS, FCP and TTFB, shown in Umami's Performance tab as p50, p75 and p95 by page and by device or browser.
@@ -131,7 +133,7 @@ Umami keeps one `ref` per session ([Session data](#session-data)), so a later ta
 3. Send it with `track()` from the component, or from a watcher in `src/shared/lib/analytics/` for page-wide signals (remove its listener when statistics go off).
 4. Add its line to the privacy policy, update `updated` there and the /privacy `<lastmod>` in `public/sitemap.xml`. A new kind of data, not just one more click of a kind already listed: bump `STORED_CHOICE.on` and update the consent box text.
 5. Add its row to the events table here, and its properties to `EVENT_PROPERTIES` in `tracking-plan.test.ts` (`yarn typecheck` fails until they match).
-6. Test it: the helper's unit test, `src/app/analytics/analytics.test.tsx` for what the app reports, and `e2e/analytics.e2e.ts` when the real tracker is involved.
+6. Test it: the helper's unit test, `src/app/analytics/analytics.test.tsx` for what the app reports, and `e2e/analytics.e2e.ts` when the real tracker is involved (`e2e/analytics-links.e2e.ts` for tagged links).
 7. Add the change to `CHANGELOG.md`.
 
 ## Event budget

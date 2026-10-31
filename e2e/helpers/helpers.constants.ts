@@ -1,7 +1,28 @@
+import { UMAMI } from "#shared/lib/analytics/analytics.constants.ts";
+
 import type { Theme } from "./helpers.types.ts";
 
 /** The app's own localStorage key for the visitor's theme pick (the inline script in index.html reads it too). */
 export { THEME_STORAGE_KEY } from "#shared/hooks/theme/theme.constants.ts";
+
+/** The live site's address: the statistics specs serve the local build under it (openAsLiveSite in umami.utils.ts). */
+export const LIVE_SITE = "https://" + UMAMI.host;
+
+/** Umami's collector: the tracker posts every call to its /api/send (no data-host-url on the script tag). */
+export const UMAMI_COLLECTOR = "https://gateway.umami.is/**";
+
+/** The live tracker as the statistics specs serve it (umami.utils.ts): a copy from cloud.umami.is, at most an hour old. */
+export const TRACKER_COPY = { file: "node_modules/.tmp/e2e-umami-script.js", maxAgeMinutes: 60 } as const;
+
+/** The consent box's name (its title, PRIVACY.consent.title). */
+export const CONSENT_BOX = "Can I Count Your Visit?";
+
+/** The collector's answer allows cross-origin calls, the browser's preflight included. */
+export const COLLECTOR_CORS = {
+  "access-control-allow-origin": "*",
+  "access-control-allow-methods": "POST, OPTIONS",
+  "access-control-allow-headers": "*",
+} as const;
 
 export const THEMES: readonly Theme[] = ["light", "dark"];
 
