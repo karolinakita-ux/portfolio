@@ -240,6 +240,31 @@ describe("events on case studies", () => {
     ]);
   });
 
+  it("counts zooming a screenshot in and out in the viewer, with how it was done", async () => {
+    vi.spyOn(HTMLImageElement.prototype, "naturalWidth", "get").mockReturnValue(2880);
+    vi.spyOn(HTMLImageElement.prototype, "naturalHeight", "get").mockReturnValue(1800);
+    vi.spyOn(HTMLImageElement.prototype, "complete", "get").mockReturnValue(true); // as if cached
+    const { user } = renderApp("/work/automotive");
+    const [firstScreenshot] = screen.getAllByRole("button", { name: /View full size/ });
+    if (!firstScreenshot) throw new Error("no screenshots rendered");
+    await user.click(firstScreenshot);
+    const viewer = within(screen.getByRole("dialog"));
+    const shot = { case: "case-automotive", image: caseCards(AUTOMOTIVE_CASE)[0]?.id };
+
+    await user.click(viewer.getByRole("img"));
+    await user.keyboard("0");
+    await user.click(viewer.getByRole("button", { name: "Zoom in" }));
+    await user.click(viewer.getByRole("button", { name: "Zoom out" }));
+
+    expect(events()).toEqual([
+      [EVENT.imageOpen, shot],
+      [EVENT.imageZoom, { ...shot, direction: "in", method: "click" }],
+      [EVENT.imageZoom, { ...shot, direction: "out", method: "key" }],
+      [EVENT.imageZoom, { ...shot, direction: "in", method: "button" }],
+      [EVENT.imageZoom, { ...shot, direction: "out", method: "button" }],
+    ]);
+  });
+
   it("counts the Figma file link under the details panel as the top, the design files banner's as the end", () => {
     renderApp("/work/smart-ticket");
     const label = SMART_TICKET_CASE.designFile?.linkLabel ?? "";

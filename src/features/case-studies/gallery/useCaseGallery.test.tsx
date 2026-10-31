@@ -48,6 +48,7 @@ describe("useCaseGallery", () => {
         width: ASSET_SIZES[card?.asset ?? ""]?.[0],
         height: ASSET_SIZES[card?.asset ?? ""]?.[1],
         onShow: expect.any(Function) as unknown, // counts a step in the viewer (image-nav: src/app/analytics/analytics.test.tsx)
+        onZoom: expect.any(Function) as unknown, // counts a zoom in the viewer (image-zoom: the same test file)
       });
       expect(item.width).toBeGreaterThan(0);
     });

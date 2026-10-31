@@ -16,7 +16,8 @@ import { pickThemedSrc } from "#shared/media/themed-image/themed-image.utils.ts"
  * Previous / Next in the viewer walk through every screenshot of that case.
  * Returns one row per card, in the same order as `cards`. Once the page is
  * idle, the full screenshots load in the background, so the viewer opens at once.
- * Opening a screenshot is counted (image-open) with the case's view and the card id.
+ * Opening a screenshot is counted (image-open) with the case's view and the card id, and so are moving
+ * to the next or previous one (image-nav) and zooming one in or out (image-zoom) in the viewer.
  * In Dark mode the viewer shows (and preloads) each card's dark version when it has one.
  */
 export function useCaseGallery(
@@ -39,6 +40,9 @@ export function useCaseGallery(
           ...(size && { width: size[0], height: size[1] }),
           onShow: (direction) => {
             track(EVENT.imageNav, { case: caseView, image: card.id, direction });
+          },
+          onZoom: (direction, method) => {
+            track(EVENT.imageZoom, { case: caseView, image: card.id, direction, method });
           },
         };
       }),

@@ -8,11 +8,13 @@ import {
   TEXT,
 } from "./analytics.constants.ts";
 import type { ClickedElement, PageSpot, SpotLabel } from "./analytics.types.ts";
+import { pointerInput } from "./input.utils.ts";
 
 /**
  * Dead clicks: clicks and taps on something that does nothing (an image, a heading, a card's empty
  * space). They show where visitors expect a link or a bigger image. Not counted: clicks on controls
- * and links, drags and swipes, double clicks that select text, and clicks that no pointer made.
+ * and links, mouse clicks on what reacts to a mouse only (the image viewer's image zooms), drags and
+ * swipes, double clicks that select text, and clicks that no pointer made.
  * Quick clicks on one spot form a burst: one dead-click per burst, and one rage-click when it reaches
  * RAGE_CLICKS. Text copies (text-copy) are described the same way, without a label the selection
  * holds. Only the kind of element, the section and a label from the site's own copy are sent, never
@@ -42,6 +44,12 @@ const attributeOf = (value: string | null | undefined): SpotLabel | undefined =>
 /** True when the click reached something that reacts to it. A <dialog> closes on a backdrop click (shared/ui/Dialog). */
 export const isInteractive = (target: Element): boolean =>
   target instanceof HTMLDialogElement || target.closest(INTERACTIVE) !== null;
+
+/**
+ * Reacts to a mouse click but not to a tap: the image viewer's image zooms on a click (useZoom). A tap on it does
+ * nothing, so it still counts: it shows that people expect a tap to zoom.
+ */
+const MOUSE_ONLY = "[data-mouse-click]";
 
 /**
  * A design-system Card (shared/ui/Card), whatever its tag: article, li or figure, or a block marked as one.
@@ -142,11 +150,11 @@ export function watchCopies(report: (spot: PageSpot) => void): () => void {
 
 /** Starts listening; `report` gets each dead click, with rage true for a rage click. Returns the function that stops. */
 export function watchDeadClicks(report: (click: PageSpot, rage: boolean) => void): () => void {
-  let down: { x: number; y: number } | null = null;
+  let down: { x: number; y: number; mouse: boolean } | null = null;
   let burst: { x: number; y: number; at: number; count: number } | null = null;
 
   const onPointerDown = (event: PointerEvent) => {
-    down = { x: event.clientX, y: event.clientY };
+    down = { x: event.clientX, y: event.clientY, mouse: pointerInput(event.pointerType) === "mouse" };
   };
 
   const onClick = (event: MouseEvent) => {
@@ -154,7 +162,8 @@ export function watchDeadClicks(report: (click: PageSpot, rage: boolean) => void
     // detail 0: a click no pointer made (a key on a control, element.click()).
     if (!(target instanceof Element) || event.button !== 0 || event.detail === 0) return;
     const dragged = down !== null && Math.hypot(x - down.x, y - down.y) > DRAG_PX;
-    if (dragged || isInteractive(target)) return;
+    const reacts = isInteractive(target) || (down?.mouse === true && target.closest(MOUSE_ONLY) !== null);
+    if (dragged || reacts) return;
     // A double or triple click on text selects it, which is an action. On an image the selection is a side effect.
     const element = elementKind(target);
     const selecting = (element === "text" || element === "heading") && window.getSelection()?.isCollapsed === false;

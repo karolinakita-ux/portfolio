@@ -92,6 +92,11 @@ export interface EventData {
   /** The next or previous screenshot in the image viewer (arrow, key or swipe); image: the one now shown. */
   [EVENT.imageNav]: { case: View; image: string; direction: "prev" | "next" };
   /**
+   * The visitor zoomed a screenshot in or out in the image viewer, one event per step; image: the one shown.
+   * method: a click on the image, a zoom button, or a key (+, -, 0).
+   */
+  [EVENT.imageZoom]: { case: View; image: string; direction: "in" | "out"; method: "click" | "button" | "key" };
+  /**
    * banner: the Work page's link to the Figma workspace, in Behind the Design. case: the case study whose Figma file
    * link was used, at its top (under the details panel) or in the design files banner at the end. The Work hero's
    * Figma, GitHub and Storybook buttons were removed in 5.14.4: "hero" is earlier data only.

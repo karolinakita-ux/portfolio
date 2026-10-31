@@ -20,6 +20,7 @@ export const EVENT = {
   caseNav: "case-nav",
   imageOpen: "image-open",
   imageNav: "image-nav",
+  imageZoom: "image-zoom",
   figmaClick: "figma-click",
   githubClick: "github-click",
   storybookClick: "storybook-click",

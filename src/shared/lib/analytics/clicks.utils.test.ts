@@ -209,6 +209,17 @@ describe("watchDeadClicks", () => {
     expect(report).toHaveBeenCalledOnce();
   });
 
+  it("ignores a mouse click on what reacts to a mouse only, and still reports a tap on it", () => {
+    $("full").setAttribute("data-mouse-click", ""); // the image viewer's image: a click zooms it
+    fireEvent.pointerDown($("full"), { pointerType: "mouse", clientX: 100, clientY: 100 });
+    fireEvent.click($("full"), { detail: 1, clientX: 100, clientY: 100 });
+    expect(report).not.toHaveBeenCalled();
+
+    fireEvent.pointerDown($("full"), { pointerType: "touch", clientX: 300, clientY: 300 });
+    fireEvent.click($("full"), { detail: 1, clientX: 300, clientY: 300 });
+    expect(report).toHaveBeenCalledExactlyOnceWith({ element: "image", area: "dialog", label: "Full size" }, false);
+  });
+
   it("reports a burst of quick clicks on one spot once, and once more as a rage click at the third", () => {
     for (let i = 0; i < 5; i++) {
       click($("portrait"), 100 + i, 100);

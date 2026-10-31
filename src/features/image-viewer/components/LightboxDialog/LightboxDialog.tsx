@@ -22,7 +22,8 @@ import type { LightboxDialogProps } from "./LightboxDialog.types.ts";
  *
  * Controls: close button, Escape, click on the dimmed backdrop; with more than
  * one image, Previous / Next buttons, the ← / → keys and, on touch screens,
- * a swipe left / right (all wrapping around). Zoom: + / - / 0 and the toolbar (useZoom).
+ * a swipe left / right (all wrapping around). Zoom: + / - / 0, the toolbar and a mouse
+ * click on the image (useZoom); the item's onZoom hears each one.
  *
  * Loading: the neighbouring images load ahead (usePreloadNeighbours). An image
  * that is not in the cache yet shows a skeleton of its own size and shape
@@ -40,13 +41,15 @@ export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps)
   const { status, imageRef, setImage, onLoad, onError } = useRevealedImage(item?.src ?? "");
   const loaded = status === "loaded";
   const failed = item !== undefined && status === "error";
-  const { zoom, zoomStep, zoomLevel, zoomTo, resetZoom, paneHandlers } = useZoom({
+  const { zoom, zoomStep, zoomLevel, dragging, zoomTo, resetZoom, paneHandlers } = useZoom({
     viewportRef,
     imageRef,
     closeRef,
     zoomInRef,
     loaded,
+    onZoom: (direction, method) => item?.onZoom?.(direction, method),
   });
+  const zoomed = zoom !== null;
 
   usePreloadNeighbours(state);
 
@@ -74,7 +77,7 @@ export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps)
     const browse = browseKeys[event.key];
     if (zoomTarget !== undefined) {
       event.preventDefault();
-      zoomTo(zoomTarget);
+      zoomTo(zoomTarget, "key");
     } else if (browse !== undefined && count > 1 && event.target !== viewportRef.current) {
       // In the focused, zoomed pane the arrow keys scroll instead.
       event.preventDefault();
@@ -107,7 +110,7 @@ export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps)
             aria-label={zoom ? "Zoomed image, scroll to pan" : undefined}
             tabIndex={zoom ? 0 : undefined}
             {...paneHandlers}
-            className={styles.pane(zoom !== null)}
+            className={styles.pane(zoomed, dragging)}
           >
             {failed ? (
               <p className={styles.unavailable}>
@@ -128,10 +131,12 @@ export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps)
                   alt={item.alt}
                   decoding="async"
                   draggable={false}
+                  // A mouse click on it zooms (useZoom): the statistics do not count that click as a dead click.
+                  data-mouse-click={loaded ? "" : undefined}
                   onLoad={onLoad}
                   onError={onError}
                   style={zoom ? zoomStyle(zoom, zoomLevel) : undefined}
-                  className={styles.image(state.direction, zoom !== null, loaded)}
+                  className={styles.image(state.direction, zoomed, loaded, dragging)}
                 />
               </>
             )}
@@ -144,7 +149,7 @@ export function LightboxDialog({ state, onClosed, onStep }: LightboxDialogProps)
             loaded={loaded}
             zoomInRef={zoomInRef}
             onStep={step}
-            onZoom={zoomTo}
+            onZoom={(target) => zoomTo(target, "button")}
           />
 
           <p className={styles.announcement} aria-live="polite">

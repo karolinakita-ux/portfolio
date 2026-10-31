@@ -326,6 +326,36 @@ test("measures time on page and clicks on things that do nothing, as a mouse", a
   expect(eventsNamed(sent, EVENT.timeOnPage)[1]).toMatchObject({ url: SITE + "/" });
 });
 
+test("counts zooming a screenshot with how it was done; a click that zooms is not a dead click", async ({
+  page,
+  baseURL,
+}) => {
+  const { sent } = await openAsLiveSite(page, baseURL, "/work/automotive");
+  await allowStatistics(page);
+  await expect.poll(() => pageviews(sent).length).toBe(1);
+
+  await page
+    .getByRole("button", { name: /^View full size/ })
+    .first()
+    .click();
+  await expect.poll(() => eventsNamed(sent, EVENT.imageOpen).length).toBe(1);
+  const opened = eventsNamed(sent, EVENT.imageOpen)[0]?.data;
+  expect(opened).toMatchObject({ case: "case-automotive", input: "mouse" });
+  const shot = { case: opened?.case, image: opened?.image };
+
+  const image = page.getByRole("dialog").locator("img");
+  await expect(image).not.toHaveClass(/opacity-0/);
+  await image.click(); // zooms in
+  await page.keyboard.press("0"); // back to fit
+  await expect
+    .poll(() => eventsNamed(sent, EVENT.imageZoom).map((payload) => payload.data))
+    .toEqual([
+      { ...shot, direction: "in", method: "click", input: "mouse" },
+      { ...shot, direction: "out", method: "key", input: "keyboard" },
+    ]);
+  expect(eventsNamed(sent, EVENT.deadClick)).toEqual([]);
+});
+
 test("tells a tap on a touch screen from a mouse click", async ({ browser, baseURL }) => {
   const context = await browser.newContext({ hasTouch: true, viewport: { width: 390, height: 844 } });
   const page = await context.newPage();

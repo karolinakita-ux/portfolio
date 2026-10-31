@@ -70,7 +70,7 @@ export const PRIVACY: PrivacyContent = {
       points: [
         lead(
           "What I count",
-          "The pages you open, the site that sent you here, how long you spend on each page and how far down you scroll. I also count clicks on case studies, screenshots (and moving between them in the image viewer), FAQ questions, section links, the Light and Dark mode switch, links to my CV and to its PDF, and links to LinkedIn, Figma, GitHub, Storybook, email and other websites.",
+          "The pages you open, the site that sent you here, how long you spend on each page and how far down you scroll. I also count clicks on case studies, screenshots (and moving between them or zooming in and out in the image viewer), FAQ questions, section links, the Light and Dark mode switch, links to my CV and to its PDF, and links to LinkedIn, Figma, GitHub, Storybook, email and other websites.",
         ),
         lead(
           "Clicks that do nothing",

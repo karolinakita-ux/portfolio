@@ -34,7 +34,7 @@ export interface MetaEntry {
 /**
  * Screenshot card in a case study.
  *   id      the image's base name (caseShots in content/content.utils.ts); React key and the `image` value of
- *           the image-open and image-nav statistics events
+ *           the image-open, image-nav and image-zoom statistics events
  *   asset   file name in /assets, shown full size in the image viewer
  *   detail  optional close-up of the same screen; the card shows it and the
  *           viewer still opens `asset`. A missing file falls back to `asset`.

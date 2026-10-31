@@ -6,6 +6,14 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.15.0 - 2026-10-31
+
+#### Changed
+
+- Image viewer: a click on a screenshot zooms it to 200% where you clicked, and another click goes back to fit. The cursor shows what a click will do (zoom in, zoom out, or grab while you drag the zoomed image), and a zoomed image smaller than the viewer stays centred. Dragging to move around the zoomed image is not a click, and on touch screens a tap does nothing, as before. The zoom level, the zoom buttons and the + / - / 0 keys stay in step with clicks. Zooming is instant.
+- Statistics count zooming in the viewer (`image-zoom`: the case, the screenshot, `in` or `out`, and whether a click, a button or a key did it). The privacy policy's list of what is counted now mentions zooming. It is one more click in the image viewer, which the policy and the consent box already cover, so earlier yeses are not asked again. A mouse click on the viewer's image no longer counts as a dead click; a tap on it still does.
+- Tests and docs: the tracking plan lists `image-zoom`; docs/motion.md lists the viewer zoom as instant and says "cursor effects" where it lists what is left out; unit tests cover the click, the cursor, drag versus click, taps and the event; `e2e/image-zoom.e2e.ts` checks zooming, centring, panning, reduced motion and touch in Chromium, Firefox and WebKit, and `e2e/analytics.e2e.ts` checks the event.
+
 ### 5.14.32 - 2026-10-31
 
 #### Changed

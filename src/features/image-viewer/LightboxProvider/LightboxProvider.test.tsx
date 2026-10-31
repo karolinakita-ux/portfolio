@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { preloadImages } from "#shared/media/image-preload/image-preload.utils.ts";
 import { useLightbox } from "#shared/media/lightbox/lightbox.context.ts";
-import type { LightboxItem } from "#shared/media/lightbox/lightbox.types.ts";
+import type { LightboxItem, ZoomDirection, ZoomMethod } from "#shared/media/lightbox/lightbox.types.ts";
 import { mockMatchMedia } from "#test/match-media.ts";
 
 import { LightboxProvider } from "./LightboxProvider.tsx";
@@ -18,20 +18,20 @@ const ITEMS: LightboxItem[] = [
   { src: "/assets/square.png", alt: "Square screen", title: "Square" },
 ];
 
-function Opener() {
+function Opener({ items }: { items: readonly LightboxItem[] }) {
   const open = useLightbox();
   return (
-    <button type="button" onClick={(event) => open(ITEMS, 0, event.currentTarget)}>
+    <button type="button" onClick={(event) => open(items, 0, event.currentTarget)}>
       Open
     </button>
   );
 }
 
-const openViewer = async () => {
+const openViewer = async (items: readonly LightboxItem[] = ITEMS) => {
   const user = userEvent.setup();
   render(
     <LightboxProvider>
-      <Opener />
+      <Opener items={items} />
     </LightboxProvider>,
   );
   await user.click(screen.getByRole("button", { name: "Open" }));
@@ -153,6 +153,12 @@ describe("Lightbox zoom", () => {
     expect(image.style.getPropertyValue("--kb-zoom")).toBe("1.5");
     expect(image.style.getPropertyValue("--kb-aspect")).toBe("4");
     expect(image.style.getPropertyValue("--kb-natural-width")).toBe("4000px");
+    // Centred each way it is still smaller than the pane (auto margins in a flex pane), scrollable to its edges
+    // each way it is larger: centring the pane's content instead would put part of a larger image out of reach.
+    expect(image).toHaveClass("m-auto", "shrink-0");
+    expect(image.parentElement).toHaveClass("flex", "overflow-auto");
+    expect(image.parentElement).not.toHaveClass("items-center");
+    expect(image.parentElement).not.toHaveClass("justify-center");
   });
 
   it("returns to fit when the window narrows below md, and does not zoom there", async () => {
@@ -349,6 +355,140 @@ describe("Lightbox steps", () => {
       ["Tall", "next"],
       ["Square", "next"],
       ["Tall", "prev"],
+    ]);
+  });
+});
+
+describe("Lightbox click to zoom", () => {
+  beforeEach(() => {
+    vi.spyOn(HTMLImageElement.prototype, "naturalWidth", "get").mockReturnValue(4000);
+    vi.spyOn(HTMLImageElement.prototype, "naturalHeight", "get").mockReturnValue(1000);
+    vi.spyOn(HTMLImageElement.prototype, "complete", "get").mockReturnValue(true); // as if cached
+  });
+
+  const image = (dialog: HTMLElement) => within(dialog).getByRole("img", { name: "Wide screen" });
+  const zoomedPane = (dialog: HTMLElement) =>
+    within(dialog).getByRole("region", { name: "Zoomed image, scroll to pan" });
+  /** A mouse press on the image that moves by `path` before its release, then the click the browser sends. */
+  const press = (dialog: HTMLElement, path: Array<[number, number]>, pointerType = "mouse") => {
+    const target = image(dialog);
+    const at = ([clientX, clientY]: [number, number]) => ({ pointerType, pointerId: 1, button: 0, clientX, clientY });
+    const [start = [100, 100] as [number, number]] = path;
+    const end = path.at(-1) ?? start;
+    fireEvent.pointerDown(target, at(start));
+    for (const point of path.slice(1)) fireEvent.pointerMove(target, at(point));
+    fireEvent.pointerUp(target, at(end));
+    fireEvent.click(target, { detail: 1, clientX: end[0], clientY: end[1] });
+  };
+
+  it("zooms in to 200% with a click on the image, and back to fit with another, the cursor saying which", async () => {
+    const { user, dialog, zoomIn, zoomOut, readout } = await openViewer();
+    expect(image(dialog)).toHaveClass("md:cursor-zoom-in", "pointer-fine:cursor-zoom-in");
+
+    await user.click(image(dialog));
+    expect(readout()).toHaveTextContent("200%");
+    expect(readout()).toHaveAttribute("aria-live", "polite"); // announced as with the buttons
+    expect(zoomOut).toHaveAttribute("aria-disabled", "false");
+    expect(zoomedPane(dialog)).toHaveFocus(); // + / - / 0 and the arrow keys work next
+    expect(image(dialog)).toHaveClass("cursor-zoom-out");
+    expect(image(dialog)).not.toHaveClass("md:cursor-zoom-in");
+
+    await user.click(image(dialog));
+    expect(readout()).toHaveTextContent("Fit");
+    expect(zoomOut).toHaveAttribute("aria-disabled", "true");
+    expect(zoomIn).toHaveFocus(); // the pane is no longer focusable (WCAG 2.4.3)
+    expect(image(dialog)).toHaveClass("md:cursor-zoom-in");
+    expect(image(dialog)).not.toHaveClass("cursor-zoom-out");
+  });
+
+  it("goes back to fit with a click from any zoom level", async () => {
+    const { user, dialog, zoomIn, readout } = await openViewer();
+    await user.click(zoomIn);
+    await user.click(zoomIn);
+    await user.click(zoomIn);
+    expect(readout()).toHaveTextContent("300%");
+
+    await user.click(image(dialog));
+    expect(readout()).toHaveTextContent("Fit");
+  });
+
+  it("takes a drag that pans the zoomed image for a drag, not a click, also when it ends where it started", async () => {
+    const { user, dialog, readout } = await openViewer();
+    await user.click(image(dialog));
+
+    const target = image(dialog);
+    fireEvent.pointerDown(target, { pointerType: "mouse", pointerId: 1, button: 0, clientX: 100, clientY: 100 });
+    fireEvent.pointerMove(target, { pointerType: "mouse", pointerId: 1, clientX: 160, clientY: 130 });
+    expect(target).toHaveClass("cursor-grabbing");
+    expect(zoomedPane(dialog)).toHaveClass("cursor-grabbing");
+    fireEvent.pointerUp(target, { pointerType: "mouse", pointerId: 1, clientX: 160, clientY: 130 });
+    fireEvent.click(target, { detail: 1, clientX: 160, clientY: 130 });
+    expect(readout()).toHaveTextContent("200%");
+    expect(target).toHaveClass("cursor-zoom-out");
+    expect(zoomedPane(dialog)).toHaveClass("cursor-grab");
+
+    press(dialog, [
+      [100, 100],
+      [180, 100],
+      [100, 100],
+    ]);
+    expect(readout()).toHaveTextContent("200%");
+
+    press(dialog, [
+      [100, 100],
+      [104, 103],
+    ]); // a hand that shakes a little still clicks
+    expect(readout()).toHaveTextContent("Fit");
+  });
+
+  it("leaves the zoom alone on a tap, a pen, a click beside the image and before the image has loaded", async () => {
+    const { user, dialog, readout } = await openViewer();
+    press(dialog, [[100, 100]], "touch");
+    press(dialog, [[100, 100]], "pen");
+    await user.click(image(dialog).parentElement ?? dialog); // the empty pane around the fitted image
+    expect(readout()).toHaveTextContent("Fit");
+
+    await user.click(within(dialog).getByRole("button", { name: "Next image" }));
+    vi.spyOn(HTMLImageElement.prototype, "complete", "get").mockReturnValue(false);
+    await user.click(within(dialog).getByRole("button", { name: "Previous image" }));
+    expect(image(dialog)).not.toHaveClass("md:cursor-zoom-in");
+    await user.click(image(dialog));
+    expect(readout()).toHaveTextContent("Fit");
+  });
+});
+
+describe("Lightbox zoom statistics", () => {
+  beforeEach(() => {
+    vi.spyOn(HTMLImageElement.prototype, "naturalWidth", "get").mockReturnValue(4000);
+    vi.spyOn(HTMLImageElement.prototype, "naturalHeight", "get").mockReturnValue(1000);
+    vi.spyOn(HTMLImageElement.prototype, "complete", "get").mockReturnValue(true); // as if cached
+  });
+
+  it("tells the image's owner each zoom the visitor makes, its direction and method, not the resets", async () => {
+    const zoomed = vi.fn<(title: string, direction: ZoomDirection, method: ZoomMethod) => void>();
+    const items = ITEMS.map((item) => ({
+      ...item,
+      onZoom: (direction: ZoomDirection, method: ZoomMethod) => {
+        zoomed(item.title, direction, method);
+      },
+    }));
+    const { user, dialog, zoomIn } = await openViewer(items);
+
+    await user.click(within(dialog).getByRole("img", { name: "Wide screen" })); // 200%
+    await user.keyboard("-"); // 150%
+    await user.click(zoomIn); // 200%
+    await user.keyboard("0"); // fit
+    await user.keyboard("0"); // already at fit: nothing to count
+    await user.click(zoomIn);
+    await user.click(within(dialog).getByRole("button", { name: "Next image" })); // back to fit by itself
+    await user.click(within(dialog).getByRole("button", { name: "Close image viewer" }));
+
+    expect(zoomed.mock.calls).toEqual([
+      ["Wide", "in", "click"],
+      ["Wide", "out", "key"],
+      ["Wide", "in", "button"],
+      ["Wide", "out", "key"],
+      ["Wide", "in", "button"],
     ]);
   });
 });
