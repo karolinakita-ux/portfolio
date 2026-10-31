@@ -4,7 +4,15 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v5.17.6 - 2026-10-31
+
+- In the image viewer, a new Go to Description button takes you to the text about the screenshot you are looking at, and closing the viewer now brings you back to that screenshot.
+- On phones, the image viewer has zoom buttons, and a tap on a screenshot zooms in where you tapped. The viewer also fits small screens and large text without scrolling.
+- Case study cards no longer stay hidden beside the statistics box on tablets and computers.
+- The CV gives the earlier GlobalLogic role its own bullets, and the About page, the Project Planning case and the Theme Generator card have clearer wording.
+- Badges, breadcrumbs and card titles now match the design files, the menu's underline slides with its highlight, and the Project Planning calendar screenshot shows all its hour lines.
+
+Versions: 5.15.1 - 5.17.6.
 
 ### 5.17.6 - 2026-10-31
 
