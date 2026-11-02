@@ -4,7 +4,12 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v5.18.0 - 2026-11-02
+
+- When the link from www.kita.company passes on the Light or Dark mode you picked there, the portfolio now opens in that mode and keeps it.
+- The privacy page explains that this choice comes with the link and is kept in your browser like one made here.
+
+Versions: 5.18.0.
 
 ### 5.18.0 - 2026-11-02
 
