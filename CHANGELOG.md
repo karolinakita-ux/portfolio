@@ -4,7 +4,11 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v5.18.1 - 2026-11-02
+
+- The privacy page now says more exactly how a Light or Dark mode picked on www.kita.company reaches this site: in the address of its link.
+
+Versions: 5.18.1.
 
 ### 5.18.1 - 2026-11-02
 
