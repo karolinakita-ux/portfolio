@@ -65,7 +65,7 @@ export interface SessionData {
   pixelRatio: string;
   /** The theme shown when the page loaded. */
   theme: Theme;
-  /** system: it follows the device setting; picked: the visitor chose it with the switch. */
+  /** system: it follows the device setting; picked: the visitor chose it with the switch, here or on www.kita.company. */
   themeSource: "system" | "picked";
   /** The app whose built-in browser shows the site, or none. */
   inApp: InAppBrowser | "none";

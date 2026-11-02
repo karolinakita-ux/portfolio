@@ -4,6 +4,20 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Unreleased
+
+### 5.18.0 - 2026-11-02
+
+#### Added
+
+- Theme: a visitor who picked Light or Dark mode on www.kita.company now sees the portfolio in the same mode. kita.company's link adds `&theme=light` or `&theme=dark` after a pick there (each site keeps its own localStorage); the theme script in `index.html` stores it as the visitor's pick before the first paint and takes it out of the address with `history.replaceState` (no new history entry, Back still returns to kita.company), so no bookmark, section link or shared address carries it on. Any other value is only removed. `useTheme`'s code is unchanged: it starts from the stored pick. The tag `ref=kita-company` stays and the `theme` parameter never reaches the statistics; the session data's `themeSource` counts a pick made on www.kita.company as `picked`.
+- Tests: `theme-script.test.ts` runs the script from `index.html` (stored pick, the address with its other parameters and hash, invalid values, storage blocked, useTheme agreeing). `e2e/theme-system.e2e.ts` follows kita.company's link in Chromium, Firefox and WebKit: the pick from the first paint, pressed in every frame through the app's takeover, kept after a reload and over system changes, one history entry and Back; `e2e/analytics-links.e2e.ts` checks that only `?ref=kita-company` is counted.
+
+#### Changed
+
+- Privacy: the theme line under Cookies and Your Device says that a pick made on www.kita.company comes with its link and is kept the same way (updated 2 November 2026).
+- Docs: `architecture.md` (the theme script) and `analytics.md` (Tagged links, `themeSource`) describe the pick passed from www.kita.company, and so do the comments in `useTheme.ts` and `analytics.types.ts`.
+
 ## Release v5.17.6 - 2026-10-31
 
 - In the image viewer, a new Go to Description button takes you to the text about the screenshot you are looking at, and closing the viewer now brings you back to that screenshot.
