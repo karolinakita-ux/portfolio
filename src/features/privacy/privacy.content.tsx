@@ -29,7 +29,7 @@ export const PRIVACY: PrivacyContent = {
   eyebrow: "Privacy Policy",
   title: "Privacy",
   intro: "How this website handles your data, in plain words.",
-  updated: { iso: "2026-10-31", label: "31 October 2026" },
+  updated: { iso: "2026-11-02", label: "2 November 2026" },
   sections: [
     {
       id: "in-short",
@@ -129,7 +129,10 @@ export const PRIVACY: PrivacyContent = {
       title: "Cookies and Your Device",
       paragraphs: ["This website sets no cookies. It saves something on your device only when you ask for it:"],
       points: [
-        lead("Your theme", "when you pick Light or Dark mode, your browser keeps that choice (kb-theme)."),
+        lead(
+          "Your theme",
+          "when you pick Light or Dark mode, your browser keeps that choice (kb-theme). If you picked one on www.kita.company, its link to this site brings that choice with it, and your browser keeps it here the same way.",
+        ),
         lead(
           "Your statistics choice",
           "when you allow or decline statistics, your browser keeps that choice (kb-statistics), so I do not ask again.",

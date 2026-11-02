@@ -16,6 +16,8 @@ import { changeTheme, readStoredTheme, systemTheme } from "./theme.utils.ts";
  * The inline script in index.html applies the same logic before the first
  * paint, to the page colours and to the prerendered theme switch (it presses the applied
  * theme's button), so neither shows the wrong theme. Keep THEME_STORAGE_KEY (theme.constants.ts) in sync.
+ * The script also stores a pick passed in the address (?theme=, from www.kita.company's link), so it
+ * is already the stored pick when this hook starts.
  *
  * A change cross-fades the page where the browser has view transitions, except in in-app
  * browsers (changeTheme; motion.css times it with the motion tokens), and every colour on the

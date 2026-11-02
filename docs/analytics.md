@@ -84,16 +84,16 @@ The Work hero's Figma, GitHub and Storybook buttons were removed in 5.14.4: they
 
 Sent once per page load with `umami.identify()` (`session.utils.ts`), never with an id. Umami shows it on the Sessions page (Properties: each property with its values), and a Segment (Session data filters) narrows any report to it. Umami keeps one value per session and property: a later page load in the same session replaces it, and a property left out keeps its earlier value.
 
-| Property         | Values                                                                                    | Question it answers                                                                  |
-| ---------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| `viewport`       | browser window width at the site's breakpoints: `under 480px` ... `1280px or wider`       | Which layouts are seen most, and so polished first?                                  |
-| `viewportHeight` | browser window height: `under 500px`, `500 - 699px`, `700 - 899px` ... `1100px or taller` | How much of a page fits on the first screen, and what must sit in it?                |
-| `pixelRatio`     | `1x`, `1.5x`, `2x`, `3x`                                                                  | Which image resolutions are worth producing?                                         |
-| `theme`          | `light`, `dark`: the theme when the page loaded                                           | How many visitors see Dark mode?                                                     |
-| `themeSource`    | `system` (follows the device), `picked` (chosen with the switch)                          | Is Dark mode a device default or a choice?                                           |
-| `inApp`          | `linkedin`, `messenger`, `instagram`, `facebook`, ... or `none`                           | How many visits come through an app's own browser?                                   |
-| `version`        | the site's version the page was loaded with (`package.json`, `5.2.5`), as the tag         | Which release did visitors see?                                                      |
-| `ref`            | the tagged link's tag, as `link-ref` sends it; only when the page was opened from one     | What did the visitors from each application or channel read, and did they come back? |
+| Property         | Values                                                                                        | Question it answers                                                                  |
+| ---------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `viewport`       | browser window width at the site's breakpoints: `under 480px` ... `1280px or wider`           | Which layouts are seen most, and so polished first?                                  |
+| `viewportHeight` | browser window height: `under 500px`, `500 - 699px`, `700 - 899px` ... `1100px or taller`     | How much of a page fits on the first screen, and what must sit in it?                |
+| `pixelRatio`     | `1x`, `1.5x`, `2x`, `3x`                                                                      | Which image resolutions are worth producing?                                         |
+| `theme`          | `light`, `dark`: the theme when the page loaded                                               | How many visitors see Dark mode?                                                     |
+| `themeSource`    | `system` (follows the device), `picked` (chosen with the switch, here or on www.kita.company) | Is Dark mode a device default or a choice?                                           |
+| `inApp`          | `linkedin`, `messenger`, `instagram`, `facebook`, ... or `none`                               | How many visits come through an app's own browser?                                   |
+| `version`        | the site's version the page was loaded with (`package.json`, `5.2.5`), as the tag             | Which release did visitors see?                                                      |
+| `ref`            | the tagged link's tag, as `link-ref` sends it; only when the page was opened from one         | What did the visitors from each application or channel read, and did they come back? |
 
 What is left out on purpose, such as accessibility settings, the browser's exact version or the time zone: [Not collected, on purpose](#not-collected-on-purpose).
 
@@ -105,7 +105,9 @@ A tagged link ends in `?ref=<tag>` (or carries `utm_source`). The first page it 
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------- |
 | `section-link` | a section's address copied with the link button beside its heading: the page's own path, the tag and the anchor (`/about?ref=section-link#career`). A copier who came from a tagged link passes its tag on and `section-link` becomes the `utm_medium` (`/about?ref=acme&utm_medium=section-link#career`); click ids never travel (`sectionLinkQuery`) | Do the section links people share bring visitors, and to which pages? |
 
-Umami keeps one `ref` per session ([Session data](#session-data)), so a later tagged visit replaces it. That is why the CV PDF's portfolio link carries `?utm_medium=cv-pdf` instead of a tag: its visits show in the UTM report (medium `cv-pdf`) without a `link-ref`, and a session that came from `/cv?ref=acme` keeps `acme`.
+Umami keeps one `ref` per session ([Session data](#session-data)), so a later tagged visit replaces it. www.kita.company links here with `?ref=kita-company`, plus `&theme=light` or `&theme=dark` once the visitor has picked a theme there. The theme script in `index.html` makes that the visitor’s pick and takes `theme` out of the address before the app or the tracker runs, so only the tag is counted (`e2e/analytics-links.e2e.ts`).
+
+That is why the CV PDF's portfolio link carries `?utm_medium=cv-pdf` instead of a tag: its visits show in the UTM report (medium `cv-pdf`) without a `link-ref`, and a session that came from `/cv?ref=acme` keeps `acme`.
 
 The tag counts once the visitor allows statistics, on whichever page that happens: the site's own links keep the query, so a visitor who landed on `/cv?ref=acme` and allows on About sends About as the first page, with `?ref=acme`, `link-ref` and the session's `ref`. The pages seen before that are never sent. Each page load sends `link-ref` once, with its first pageview, so a reload sends it again. `e2e/analytics-links.e2e.ts` follows each kind of link above in Chromium, Firefox and WebKit with the real tracker and checks every request it makes: nothing before consent, after a no, or with Do Not Track or Global Privacy Control; after consent, the tag in every address, `link-ref` and the session's `ref` once, click ids and the hash dropped, an external referrer without its query, and every call about the first page, time on it included, with its pageview's referrer (LinkedIn's, or none).
 

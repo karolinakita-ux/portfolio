@@ -115,6 +115,24 @@
     <script>
       (function () {
         var theme = null;
+        // A pick passed in the address (?theme=light or ?theme=dark): www.kita.company adds it to its link here
+        // after the visitor picks a theme there, because each site keeps its own localStorage. It becomes the
+        // stored pick, then leaves the address before the app or the tracker reads it, so no bookmark, section
+        // link or shared address carries it on. replaceState adds no history entry and keeps the entry's state;
+        // the tracker, which counts each replaceState as a page, loads long after this (replaceAddress).
+        try {
+          var url = new URL(window.location.href);
+          var passed = url.searchParams.get("theme");
+          if (passed !== null) {
+            if (passed === "light" || passed === "dark") {
+              try {
+                localStorage.setItem("kb-theme", passed);
+              } catch (e) {}
+            }
+            url.searchParams.delete("theme");
+            history.replaceState(history.state, "", url.pathname + url.search + url.hash);
+          }
+        } catch (e) {}
         try {
           theme = localStorage.getItem("kb-theme");
         } catch (e) {}

@@ -1,7 +1,7 @@
 /**
  * Tagged links in the visitor statistics, in real browsers (docs/analytics.md, Tagged links). A visit opened from a
  * link with ?ref= or UTM parameters (a job application's /cv?ref=acme, a profile's ?ref=linkedin-profile, the CV
- * PDF's ?utm_medium=cv-pdf, a copied section link) reaches Umami with its tag, and only once the visitor allows
+ * PDF's ?utm_medium=cv-pdf, a copied section link, www.kita.company's link with a theme pick) reaches Umami with its tag, and only once the visitor allows
  * statistics, on whichever page that happens. The local build is served as the live site with the real tracker, and
  * every request it makes is caught (helpers/umami.utils.ts): the pageviews' addresses and referrers, link-ref, the
  * session data's ref, and the first page's referrer on every call about that page, time on it included. Before
@@ -177,6 +177,15 @@ const LANDINGS: readonly Landing[] = [
     next: "About",
   },
   { what: "the CV's old address", link: "/resume?ref=acme", counted: "/cv?ref=acme", ref: "acme", next: "About" },
+  {
+    // The theme picked there leaves the address before anything runs (the theme script in index.html).
+    what: "www.kita.company's link after a theme pick there",
+    link: "/?ref=kita-company&theme=dark",
+    counted: "/?ref=kita-company",
+    ref: "kita-company",
+    next: "About",
+    from: { referer: "https://www.kita.company/", referrer: "https://www.kita.company/" },
+  },
 ];
 
 test.describe("before consent", () => {
@@ -220,7 +229,7 @@ test.describe("allowed on the first page", () => {
       });
       expectReferrerOnPage(sent, LIVE_SITE + counted, from?.referrer ?? "");
       expectQueryEverywhere(sent, search);
-      expect(JSON.stringify(sent)).not.toMatch(/fbclid|gclid|#career/);
+      expect(JSON.stringify(sent)).not.toMatch(/fbclid|gclid|#career|theme=/);
     });
   }
 });
