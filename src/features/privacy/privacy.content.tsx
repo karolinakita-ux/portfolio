@@ -131,7 +131,7 @@ export const PRIVACY: PrivacyContent = {
       points: [
         lead(
           "Your theme",
-          "when you pick Light or Dark mode, your browser keeps that choice (kb-theme). If you picked one on www.kita.company, its link to this site brings that choice with it, and your browser keeps it here the same way.",
+          "when you pick Light or Dark mode, your browser keeps that choice (kb-theme). If you picked one on www.kita.company, its link to this site carries that choice in the address, and your browser keeps it here the same way.",
         ),
         lead(
           "Your statistics choice",

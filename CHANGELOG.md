@@ -4,6 +4,14 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Unreleased
+
+### 5.18.1 - 2026-11-02
+
+#### Changed
+
+- Privacy: the theme line now says that kita.company's link carries a theme picked there "in the address" (it said the link "brings that choice with it"), so it no longer seems to contradict "never sent anywhere" below it, which is about the saved choices. The host receiving the address is covered under When You Open a Page. Chosen at Mateusz's request on Karolina's open item; the date stays 2 November 2026.
+
 ## Release v5.18.0 - 2026-11-02
 
 - When the link from www.kita.company passes on the Light or Dark mode you picked there, the portfolio now opens in that mode and keeps it.
