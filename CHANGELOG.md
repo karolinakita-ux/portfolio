@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.19.5 - 2026-11-05
+
+#### Changed
+
+- Docs: the sitemap rule now says that the parts every page shares (the header and the footer, with their links and the version number) never move a page's `<lastmod>`, in CLAUDE.md, CONTRIBUTING.md, the release skill and the docs-seo-reviewer agent; it named only the footer's version number, which left the footer's CV link (5.19.0) open. Suggested by the docs review of 5 November, which found the docs otherwise up to date.
+
 ### 5.19.4 - 2026-11-05
 
 #### Fixed

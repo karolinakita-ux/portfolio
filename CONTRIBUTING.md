@@ -68,7 +68,7 @@ git log --oneline origin/main..develop
 
 Every commit in that log should have its version under `## Unreleased`. If something is missing, add it before going on.
 
-Then date the sitemap: in `public/sitemap.xml`, set `<lastmod>` to the release date (today) for every page whose visible content or structured data changed since `origin/main` (`git diff --stat origin/main..develop` shows what changed; the footer's version number does not count). Commits on `develop` set the day they were made, which is too early once the release comes later, so check every changed page, not only the ones without today's date. The file goes into the release commit with `CHANGELOG.md`.
+Then date the sitemap: in `public/sitemap.xml`, set `<lastmod>` to the release date (today) for every page whose visible content or structured data changed since `origin/main` (`git diff --stat origin/main..develop` shows what changed). The parts every page shares do not count: the header and the footer, with their links and the version number, change on every page at once and say nothing about a page's own content. Commits on `develop` set the day they were made, which is too early once the release comes later, so check every changed page, not only the ones without today's date. The file goes into the release commit with `CHANGELOG.md`.
 
 ### 2. Write the release notes
 
