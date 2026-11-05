@@ -619,7 +619,8 @@ describe("Lightbox closing", () => {
 
   /**
    * Renders the page, gives each row and button a box on the screen (top, height), and opens the viewer at `index`.
-   * `consent`: the height the statistics consent box keeps clear at the bottom (scroll-padding-bottom).
+   * `consent`: the height the statistics consent box keeps clear at the bottom (--kb-consent-h; the bottom scroll
+   * padding adds the back-to-top corner, which the landing ignores).
    */
   const openFromPage = async (items: readonly LightboxItem[], index: number, boxes: Boxes = {}, consent = 0) => {
     const user = userEvent.setup();
@@ -637,7 +638,8 @@ describe("Lightbox closing", () => {
       if (element === document.documentElement)
         return {
           scrollPaddingTop: HEADER + "px",
-          scrollPaddingBottom: consent + "px",
+          scrollPaddingBottom: consent + 72 + "px",
+          getPropertyValue: (name: string) => (name === "--kb-consent-h" && consent ? consent + "px" : ""),
         } as unknown as CSSStyleDeclaration;
       const style = getStyle(element, pseudo);
       // The section heading keeps 24px above it for its eyebrow (scroll-mt-lg), as Section's does. Found by its

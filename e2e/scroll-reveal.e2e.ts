@@ -89,8 +89,13 @@ interface Snapshot {
   viewport: number;
   /** The page's scroll padding under the sticky header (base.css), in px. */
   scrollPaddingTop: number;
-  /** The page's scroll padding above the consent box while it shows (--kb-consent-h, base.css), in px. */
+  /**
+   * The page's bottom scroll padding (base.css), in px: the back-to-top corner, above the consent box while it
+   * shows.
+   */
   scrollPaddingBottom: number;
+  /** The strip the consent box keeps clear while it shows (--kb-consent-h, useConsentSpace), in px; 0 without it. */
+  consentSpace: number;
   cards: CardState[];
 }
 
@@ -166,6 +171,7 @@ function installRevealProbe({ selector, record }: ProbeOptions): void {
       viewport: root.clientHeight,
       scrollPaddingTop: Number.parseFloat(rootStyle.scrollPaddingTop) || 0,
       scrollPaddingBottom: Number.parseFloat(rootStyle.scrollPaddingBottom) || 0,
+      consentSpace: Number.parseFloat(rootStyle.getPropertyValue("--kb-consent-h")) || 0,
       cards: Array.from(document.querySelectorAll(selector), read),
     };
   };
@@ -426,7 +432,7 @@ async function placeMidPage(page: Page): Promise<{ index: number; snap: Snapshot
   const nearestFirst = cards.map((_, index) => index).sort((a, b) => Math.abs(a - middle) - Math.abs(b - middle));
   for (const index of nearestFirst) {
     const snap = await placeCard(page, index, Math.round(viewport / 2));
-    if (snap && snap.scrollY > 0 && snap.scrollY + snap.scrollPaddingBottom < snap.maxScrollY) return { index, snap };
+    if (snap && snap.scrollY > 0 && snap.scrollY + snap.consentSpace < snap.maxScrollY) return { index, snap };
   }
   throw new Error("no card can sit in the middle of the window at a scroll stop mid-page");
 }
@@ -755,7 +761,7 @@ test.describe("with the statistics consent box", () => {
         await expect(consentBox(page)).toBeVisible();
         const reveals = (await supportsScrollTimelines(page)) && viewport.width >= MD_PX;
         await expect
-          .poll(async () => (await snapshot(page)).scrollPaddingBottom, {
+          .poll(async () => (await snapshot(page)).consentSpace, {
             message: "the strip the box keeps clear is deeper than a card just past its reveal",
           })
           .toBeGreaterThan(PAST_REVEAL_PX);
@@ -775,7 +781,7 @@ test.describe("with the statistics consent box", () => {
 
         await test.step("at the bottom, at rest, with the box", async () => {
           const bottom = await scrollToBottom(page);
-          expect(bottom.scrollPaddingBottom, "the box still keeps its strip clear").toBeGreaterThan(PAST_REVEAL_PX);
+          expect(bottom.consentSpace, "the box still keeps its strip clear").toBeGreaterThan(PAST_REVEAL_PX);
           expect(restProblems(bottom), "cards at the bottom with the box").toEqual([]);
         });
 
@@ -787,10 +793,10 @@ test.describe("with the statistics consent box", () => {
           if (!card) throw new Error(`no card ${String(index)} at the mid-page stop`);
           expect(card.top, `"${card.name}" in the window`).toBeGreaterThan(0);
           expect(card.top, `"${card.name}" in the window`).toBeLessThan(before.viewport);
-          expect(before.scrollPaddingBottom, "the box keeps its strip clear before the answer").toBeGreaterThan(0);
+          expect(before.consentSpace, "the box keeps its strip clear before the answer").toBeGreaterThan(0);
           await declineStatistics(page);
           await expect
-            .poll(async () => (await snapshot(page)).scrollPaddingBottom, { message: "the box's strip is gone" })
+            .poll(async () => (await snapshot(page)).consentSpace, { message: "the box's strip is gone" })
             .toBe(0);
           const after = await stableSnapshot(page);
           expect(after.scrollY, `the page's scroll position (was ${String(before.scrollY)})`).toBe(before.scrollY);
@@ -799,7 +805,7 @@ test.describe("with the statistics consent box", () => {
 
         await test.step("at the bottom, at rest, after the answer", async () => {
           const bottom = await scrollToBottom(page);
-          expect(bottom.scrollPaddingBottom, "the box's strip is gone").toBe(0);
+          expect(bottom.consentSpace, "the box's strip is gone").toBe(0);
           expect(restProblems(bottom), "cards at the bottom after the answer").toEqual([]);
         });
       });

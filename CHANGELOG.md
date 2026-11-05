@@ -6,6 +6,14 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.19.3 - 2026-11-05
+
+#### Fixed
+
+- Keyboard focus is no longer hidden behind the Back to top button (WCAG 2.4.11). The page's bottom scroll padding kept only the consent box's strip clear, so Tab could stop on a section's copy-link button at the right edge of a small phone right under the button (`yarn a11y`: Work and Automotive at 320 x 568, 100% covered). It now always keeps the button's corner clear too (`--kb-corner-bottom` + its 48px + 8px, `base.css`, W3C technique C43): the button appears once the page is scrolled, often by that very focus scroll. `bottom-clear-consent` places the button from the same variable, and the header's own links subtract the whole bottom padding, so Tab inside the stuck header still scrolls nothing.
+- The image viewer still lands a closed screenshot above the consent box's own strip (`freeBand` reads `--kb-consent-h`), not the corner: 48px never hides a screenshot, and a full-width band would push the screenshot below the window on a phone with the box showing.
+- Tests: `BackToTop.test.tsx` ties the button's size and corner to the padding; `yarn a11y` reports no Tab problem (it listed 3 hidden copy-link buttons before); a Tab probe over Work and Automotive at 320, 390 and 1280px, with and without the box, found no Tab stop under the button in Chromium and Firefox (WebKit, which tabs to buttons only: 1 - 2% of a screenshot's corner). `e2e/scroll-reveal.e2e.ts` reads the box's strip (`--kb-consent-h`) where it meant the box, and `image-viewer-landing.e2e.ts` the band as `freeBand` does. CLAUDE.md and `docs/architecture.md` describe the corner.
+
 ### 5.19.2 - 2026-11-05
 
 #### Fixed

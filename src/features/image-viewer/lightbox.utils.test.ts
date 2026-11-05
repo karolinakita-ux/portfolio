@@ -138,20 +138,23 @@ describe("descriptionOffset", () => {
 });
 
 describe("freeBand", () => {
-  it("is the window between the page's scroll padding at the top (header) and at the bottom (consent box)", () => {
+  it("is the window between the page's scroll padding at the top (header) and the consent box's strip", () => {
     const getStyle = window.getComputedStyle.bind(window);
+    /** The root's style: the bottom padding is the box's strip plus the back-to-top corner, which a screenshot ignores. */
+    const root = (top: string, consent: string, bottom: string) =>
+      ({
+        scrollPaddingTop: top,
+        scrollPaddingBottom: bottom,
+        getPropertyValue: (name: string) => (name === "--kb-consent-h" ? consent : ""),
+      }) as unknown as CSSStyleDeclaration;
     const style = vi
       .spyOn(window, "getComputedStyle")
       .mockImplementation((element, pseudo) =>
-        element === document.documentElement
-          ? ({ scrollPaddingTop: "123px", scrollPaddingBottom: "514px" } as unknown as CSSStyleDeclaration)
-          : getStyle(element, pseudo),
+        element === document.documentElement ? root("123px", "514px", "570px") : getStyle(element, pseudo),
       );
     expect(freeBand()).toEqual({ top: 123, bottom: window.innerHeight - 514 });
     style.mockImplementation((element, pseudo) =>
-      element === document.documentElement
-        ? ({ scrollPaddingTop: "", scrollPaddingBottom: "auto" } as unknown as CSSStyleDeclaration)
-        : getStyle(element, pseudo),
+      element === document.documentElement ? root("", "", "72px") : getStyle(element, pseudo),
     );
     expect(freeBand()).toEqual({ top: 0, bottom: window.innerHeight });
     style.mockRestore();

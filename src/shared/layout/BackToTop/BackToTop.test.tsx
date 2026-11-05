@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -14,7 +16,21 @@ afterEach(() => {
   scrollWindowTo(0);
 });
 
+const css = (file: string) => readFileSync(join(process.cwd(), "src", "styles", file), "utf8");
+
 describe("BackToTop", () => {
+  it("sits in the corner the page's bottom scroll padding keeps clear for keyboard focus (WCAG 2.4.11)", () => {
+    render(<BackToTop onActivate={() => {}} />);
+    const button = screen.getByTitle("Back to top");
+    // Its size and its corner, as base.css reserves them: change one, change the other.
+    expect(button).toHaveClass("size-2xl", "bottom-clear-consent");
+    expect(css("utilities.css")).toMatch(/@utility bottom-clear-consent \{\s*bottom: var\(--kb-corner-bottom\b/);
+    expect(css("base.css")).toMatch(
+      /--kb-scroll-padding-bottom: calc\(var\(--kb-corner-bottom\) \+ var\(--spacing-2xl\) \+ var\(--spacing-xs\)\);/,
+    );
+    expect(css("base.css")).toMatch(/scroll-padding-bottom: var\(--kb-scroll-padding-bottom\);/);
+  });
+
   it("is hidden from keyboard and assistive tech at the top of the page", () => {
     render(<BackToTop onActivate={() => {}} />);
     expect(screen.queryByRole("button", { name: "Back to top" })).not.toBeInTheDocument();

@@ -57,7 +57,7 @@ async function openViewer(page: Page, shot: Locator) {
   return dialog;
 }
 
-/** Where a screenshot's row sits in the window, with the space the sticky header and the consent box take. */
+/** Where a screenshot's row sits in the window, with the space the sticky header and the consent box take (freeBand). */
 const placeOf = (shot: Locator) =>
   shot.evaluate((button) => {
     const row = button.closest("article");
@@ -68,7 +68,7 @@ const placeOf = (shot: Locator) =>
     const padding = getComputedStyle(document.documentElement);
     return {
       clear: parseFloat(padding.scrollPaddingTop),
-      bottom: window.innerHeight - (parseFloat(padding.scrollPaddingBottom) || 0),
+      bottom: window.innerHeight - (parseFloat(padding.getPropertyValue("--kb-consent-h")) || 0),
       headerBottom: header?.bottom ?? 0,
       row: row.getBoundingClientRect().top,
       heading: heading.getBoundingClientRect().top,
@@ -136,7 +136,7 @@ const focusedPlace = (page: Page) =>
         : box.top - (parseFloat(getComputedStyle(focused).scrollMarginTop) || 0),
       headerBottom: document.querySelector("header")?.getBoundingClientRect().bottom ?? 0,
       clear: parseFloat(padding.scrollPaddingTop),
-      end: window.innerHeight - (parseFloat(padding.scrollPaddingBottom) || 0),
+      end: window.innerHeight - (parseFloat(padding.getPropertyValue("--kb-consent-h")) || 0),
     };
   });
 
