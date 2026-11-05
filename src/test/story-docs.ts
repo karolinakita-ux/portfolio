@@ -33,26 +33,41 @@ const jsDocText = (node: ts.Node): string[] =>
 const isExported = (node: ts.Node): boolean =>
   ts.canHaveModifiers(node) && (ts.getModifiers(node) ?? []).some((m) => m.kind === ts.SyntaxKind.ExportKeyword);
 
+const COMPONENT_NAME = /^[A-Z]/;
+
+/** The members of a props type: an interface, or a type alias of an object type or an intersection of them. */
+const propMembers = (node: ts.Node): readonly ts.TypeElement[] => {
+  if (ts.isInterfaceDeclaration(node)) return node.members;
+  if (!ts.isTypeAliasDeclaration(node)) return [];
+  const parts = ts.isIntersectionTypeNode(node.type) ? node.type.types : [node.type];
+  return parts.flatMap((part) => (ts.isTypeLiteralNode(part) ? [...part.members] : []));
+};
+
 /**
  * The comments Storybook shows on a docs page, from one source file: the one above `meta` (the page's description)
- * and above each story (the story's), above an exported component (its description, where the stories give none),
- * and on each prop of a `...Props` interface (the props table's Description column).
+ * and above each story (the story's: any exported value of a story file), above an exported component (its
+ * description, where the stories give none: a function or a const with a capitalised name), and on each prop of a
+ * `...Props` interface or type (the props table's Description column).
  */
 export function docsComments(path: string): string[] {
   const text = readFileSync(join(process.cwd(), path), "utf8");
   const kind = path.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
   const source = ts.createSourceFile(path, text, ts.ScriptTarget.Latest, true, kind);
+  const storyFile = path.endsWith(".stories.tsx");
   const found: string[] = [];
   const visit = (node: ts.Node): void => {
     if (ts.isVariableStatement(node)) {
       const [declaration] = node.declarationList.declarations;
       const name = declaration && ts.isIdentifier(declaration.name) ? declaration.name.text : "";
-      const story = isExported(node) && declaration?.type?.getText(source).includes("Story") === true;
-      if (name === "meta" || story) found.push(...jsDocText(node));
-    } else if (ts.isFunctionDeclaration(node) && isExported(node) && /^[A-Z]/.test(node.name?.text ?? "")) {
+      const shown = name === "meta" || (isExported(node) && (storyFile || COMPONENT_NAME.test(name)));
+      if (shown) found.push(...jsDocText(node));
+    } else if (ts.isFunctionDeclaration(node) && isExported(node) && COMPONENT_NAME.test(node.name?.text ?? "")) {
       found.push(...jsDocText(node));
-    } else if (ts.isInterfaceDeclaration(node) && node.name.text.endsWith("Props")) {
-      for (const member of node.members) found.push(...jsDocText(member));
+    } else if (
+      (ts.isInterfaceDeclaration(node) || ts.isTypeAliasDeclaration(node)) &&
+      node.name.text.endsWith("Props")
+    ) {
+      for (const member of propMembers(node)) found.push(...jsDocText(member));
     }
     ts.forEachChild(node, visit);
   };
@@ -60,5 +75,6 @@ export function docsComments(path: string): string[] {
   return found;
 }
 
-/** A docs comment without its code spans (`as="p"`, `"light"`): what is left is prose. */
-export const proseOf = (comment: string): string => comment.replace(/`[^`]*`/g, "`…`");
+/** A docs comment without its code (fenced blocks, then spans such as `as="p"`): what is left is prose. */
+export const proseOf = (comment: string): string =>
+  comment.replace(/```[\s\S]*?```/g, "```…```").replace(/`[^`]*`/g, "`…`");

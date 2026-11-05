@@ -6,6 +6,14 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.19.6 - 2026-11-05
+
+#### Fixed
+
+- Storybook, ConsentBanner: on a phone its docs frame showed the box cut off at the top with a focus ring on Privacy details, left by the story's last click, which had also scrolled the frame (the box sits in the page in a narrow frame). The story now ends as a visitor first sees the box.
+- Storybook, Image Viewer: its focus check skips only in a frame inside another page that has not given it focus (the docs page in WebKit), so the Vitest run and a story opened alone can never pass without checking.
+- Tests, from an independent review of 5.19.0 - 5.19.5 (code, accessibility, UI, copy and confidentiality reviewers; no defect in behaviour found): the docs-comment check also reads stories without a type, components exported as a `const` and `type ...Props` aliases, and skips fenced code (the icons' comment now puts its prop names in code); `BackToTop.test.tsx` also ties the 24px corner from md up; `useConsentSpace`'s comment describes the new bottom padding. Two 5.19.x entries below say more plainly what the Back to top button covered and what the only console error was.
+
 ### 5.19.5 - 2026-11-05
 
 #### Changed
@@ -23,13 +31,13 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 #### Added
 
-- Tests: `content-rules.test.ts` checks the comments Storybook shows (`src/test/story-docs.ts`, TypeScript's parser) for curly quotes, short hyphens and British spelling, outside code spans; a probe with a straight apostrophe in a story and straight quotes in a prop failed it. Checked in a real browser on a production build: every one of the 104 entries plays without a failed check in Chromium, Firefox and WebKit (only the missing-image story's intended 404), and the Image Viewer also through Storybook's own UI. CLAUDE.md has the rules (comments as copy, `waitFor`, one focus-moving story per docs page).
+- Tests: `content-rules.test.ts` checks the comments Storybook shows (`src/test/story-docs.ts`, TypeScript's parser) for curly quotes, short hyphens and British spelling, outside code spans; a probe with a straight apostrophe in a story and straight quotes in a prop failed it. Checked in a real browser on a production build: every one of the 104 entries plays without a failed check in Chromium, Firefox and WebKit, and the Image Viewer also through Storybook's own UI; the only console error is the planned 404 of the missing-image story. CLAUDE.md has the rules (comments as copy, `waitFor`, one focus-moving story per docs page).
 
 ### 5.19.3 - 2026-11-05
 
 #### Fixed
 
-- Keyboard focus is no longer hidden behind the Back to top button (WCAG 2.4.11). The page's bottom scroll padding kept only the consent box's strip clear, so Tab could stop on a section's copy-link button at the right edge of a small phone right under the button (`yarn a11y`: Work and Automotive at 320 x 568, 100% covered). It now always keeps the button's corner clear too (`--kb-corner-bottom` + its 48px + 8px, `base.css`, W3C technique C43): the button appears once the page is scrolled, often by that very focus scroll. `bottom-clear-consent` places the button from the same variable, and the header's own links subtract the whole bottom padding, so Tab inside the stuck header still scrolls nothing.
+- Keyboard focus is no longer hidden behind the Back to top button (WCAG 2.4.11). The page's bottom scroll padding kept only the consent box's strip clear, so Tab could stop on a section's copy-link button at the right edge of a small phone right under the button, which covered it completely (`yarn a11y`: Work and Automotive at 320 x 568). It now always keeps the button's corner clear too (`--kb-corner-bottom` + its 48px + 8px, `base.css`, W3C technique C43): the button appears once the page is scrolled, often by that very focus scroll. `bottom-clear-consent` places the button from the same variable, and the header's own links subtract the whole bottom padding, so Tab inside the stuck header still scrolls nothing.
 - The image viewer still lands a closed screenshot above the consent box's own strip (`freeBand` reads `--kb-consent-h`), not the corner: 48px never hides a screenshot, and a full-width band would push the screenshot below the window on a phone with the box showing.
 - Tests: `BackToTop.test.tsx` ties the button's size and corner to the padding; `yarn a11y` reports no Tab problem (it listed 3 hidden copy-link buttons before); a Tab probe over Work and Automotive at 320, 390 and 1280px, with and without the box, found no Tab stop under the button in Chromium and Firefox (WebKit, which tabs to buttons only: 1 - 2% of a screenshot's corner). `e2e/scroll-reveal.e2e.ts` reads the box's strip (`--kb-consent-h`) where it meant the box, and `image-viewer-landing.e2e.ts` the band as `freeBand` does. CLAUDE.md and `docs/architecture.md` describe the corner.
 

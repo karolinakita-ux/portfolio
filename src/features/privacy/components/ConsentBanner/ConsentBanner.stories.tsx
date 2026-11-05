@@ -31,7 +31,12 @@ export const Default: Story = {
     await userEvent.click(canvas.getByRole("button", { name: "Allow statistics" }));
     await expect(args.onAllow).toHaveBeenCalledOnce();
     await expect(canvas.getByRole("link", { name: /^Umami.*opens in a new tab/ })).toHaveAttribute("target", "_blank");
-    await userEvent.click(canvas.getByRole("link", { name: "Privacy details" }));
+    const details = canvas.getByRole("link", { name: "Privacy details" });
+    await userEvent.click(details);
     await expect(args.onNavigate).toHaveBeenCalledWith("privacy", undefined);
+    // Leaves the box as a visitor first sees it: without the click's focus ring, and from its top where a narrow
+    // frame (the docs page on a phone) holds it in the page, which that click had scrolled down.
+    details.blur();
+    window.scrollTo({ top: 0 });
   },
 };

@@ -110,12 +110,12 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * Where focus is, checked once the story's frame has focus. On the docs page the story sits in a frame inside the
- * docs frame, which WebKit (Safari) never focuses, so focus cannot move into it there; the story opened from the
- * sidebar checks it in every browser, as do stories.test.tsx and the viewer's e2e specs.
+ * Where focus is. Skipped only in a frame inside another page that has not given it focus: on the docs page the story
+ * sits in a frame inside the docs frame, which WebKit (Safari) never focuses, so focus cannot move into it there. A
+ * story on its own page (stories.test.tsx in jsdom, a story opened alone) is always checked, as it is in the sidebar.
  */
 const expectFocusOn = async (element: HTMLElement) => {
-  if (!document.hasFocus()) return;
+  if (window.parent !== window && !document.hasFocus()) return;
   await waitFor(() => expect(element).toHaveFocus());
 };
 

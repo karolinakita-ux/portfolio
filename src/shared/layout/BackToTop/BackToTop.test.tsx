@@ -29,6 +29,11 @@ describe("BackToTop", () => {
       /--kb-scroll-padding-bottom: calc\(var\(--kb-corner-bottom\) \+ var\(--spacing-2xl\) \+ var\(--spacing-xs\)\);/,
     );
     expect(css("base.css")).toMatch(/scroll-padding-bottom: var\(--kb-scroll-padding-bottom\);/);
+    // Its distance from the edge: md (16px) on phones, lg (24px) from md up, above the consent box while it shows.
+    expect(css("base.css")).toMatch(/--kb-corner-bottom: max\(var\(--spacing-md\), var\(--kb-consent-h, 0px\)\);/);
+    expect(css("base.css")).toMatch(
+      /@variant md \{\s*--kb-corner-bottom: max\(var\(--spacing-lg\), var\(--kb-consent-h, 0px\)\);\s*\}/,
+    );
   });
 
   it("is hidden from keyboard and assistive tech at the top of the page", () => {
