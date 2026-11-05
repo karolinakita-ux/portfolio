@@ -1,9 +1,9 @@
 import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import { track } from "#shared/lib/analytics/analytics.utils.ts";
 import { CASE_NAMES } from "#shared/lib/routes/routes.content.ts";
-import { hrefForView, isCaseView } from "#shared/lib/routes/routes.utils.ts";
-import { isPlainLeftClick } from "#shared/lib/ui/ui.utils.ts";
+import { isCaseView } from "#shared/lib/routes/routes.utils.ts";
 import { ArrowLeft, ArrowRight } from "#shared/ui/icons/icons.tsx";
+import { ViewLink } from "#shared/ui/ViewLink/ViewLink.tsx";
 import { VisuallyHidden } from "#shared/ui/VisuallyHidden/VisuallyHidden.tsx";
 
 import { CASE_NAV_ACTION } from "./CaseNavLink.constants.ts";
@@ -23,14 +23,11 @@ export function CaseNavLink({ from, target, direction, place, onNavigate }: Case
   const action = (top ? undefined : target.action) ?? CASE_NAV_ACTION[place][direction];
   const label = isCaseView(target.view) ? CASE_NAMES[target.view].title : undefined;
   return (
-    <a
-      href={hrefForView(target.view)}
-      onClick={(event) => {
-        track(EVENT.caseNav, { from, to: target.view, direction, place });
-        if (!isPlainLeftClick(event)) return; // a new tab or window: the browser opens it
-        event.preventDefault();
-        onNavigate(target.view);
-      }}
+    <ViewLink
+      view={target.view}
+      anchor={target.anchor}
+      onNavigate={onNavigate}
+      onClick={() => track(EVENT.caseNav, { from, to: target.view, direction, place })}
       className={caseNavLink({ place, direction })}
     >
       <span className={styles.action}>
@@ -40,6 +37,6 @@ export function CaseNavLink({ from, target, direction, place, onNavigate }: Case
       </span>{" "}
       {label &&
         (top ? <VisuallyHidden>Case Study: {label}</VisuallyHidden> : <span className={styles.label}>{label}</span>)}
-    </a>
+    </ViewLink>
   );
 }

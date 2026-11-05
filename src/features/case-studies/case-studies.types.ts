@@ -75,6 +75,8 @@ export interface DetailItem {
  */
 export interface CaseNavTarget {
   view: View;
+  /** A section of that page (its id, the URL hash): Back to All Work opens the list of case studies. */
+  anchor?: string;
   /** Overrides "Next Case Study" / "Previous Case Study" (Back to All Work). */
   action?: string;
 }

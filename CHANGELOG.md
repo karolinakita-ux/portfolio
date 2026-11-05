@@ -6,6 +6,13 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.19.2 - 2026-11-05
+
+#### Fixed
+
+- Back to All Work, at the end of Smart Ticket and Theme Generator, opens the list of case studies (`/#enterprise-cases`), where the breadcrumb's Work leads, instead of the top of the Work page with its hero, so the reader no longer scrolls down to the list again. One target, `BACK_TO_ALL_WORK` (`features/case-studies/content/content.constants.ts`), for both cases; the case links now render `ViewLink`, which takes the section.
+- Tests: `CaseNav.test.tsx` checks both end links against the breadcrumb; `e2e/section-links.e2e.ts` checks in Chromium, Firefox and WebKit that it lands, focused, on the list's heading at the scroll position the breadcrumb's Work gives; `e2e/new-tab-links.e2e.ts` opens it in a new tab. The copy test's one label per destination keeps Back to All Work among the navigation names, as CLAUDE.md lists it.
+
 ### 5.19.1 - 2026-11-05
 
 #### Fixed

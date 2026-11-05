@@ -38,6 +38,9 @@ test("a case study's previous and next links open in a new tab", async ({ page }
   await opensInNewTab(page, next.last(), "/work/project-planning");
   await opensInNewTab(page, page.getByRole("link", { name: /^Previous Case Study/ }).last(), "/work/smart-ticket");
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Automotive B2B Marketplace");
+
+  await openView(page, "/work/smart-ticket");
+  await opensInNewTab(page, page.getByRole("link", { name: "Back to All Work" }), "/#enterprise-cases");
 });
 
 test("About's Explore Case Studies opens the case list in a new tab", async ({ page }) => {
