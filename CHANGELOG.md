@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.20.0 - 2026-11-05
+
+#### Added
+
+- Storybook's Welcome page starts with a short Start Here for people reviewing Karolina's work: open UI › Button, switch the Theme menu to Dark mode, then a larger piece (SiteHeader, Image Viewer) and the Accessibility panel. Its links follow right under it instead of at the end, and the link to `docs/design.md` reads "Explore the Design Token Workflow", like the other links to Figma and the code. The developer detail (Built from Figma, In the Sidebar, How to Use It) follows as before. The recommended options of the progress page's question a41, chosen by Mateusz; Karolina can still change them.
+
 ### 5.19.6 - 2026-11-05
 
 #### Fixed
