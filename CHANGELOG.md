@@ -4,7 +4,15 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v5.20.0 - 2026-11-05
+
+- The footer now links to the CV on every page, so it is one click away from any case study.
+- Cmd or Ctrl + click now opens a case study or any other page of the site in a new tab, as you would expect.
+- Back to All Work at the end of a case study takes you straight to the list of case studies.
+- When you move through a page with the keyboard, the Back to top button no longer hides the link you are on.
+- The component library in Storybook starts with a short guide, fits on a phone and runs its examples without errors in every browser.
+
+Versions: 5.19.0 - 5.20.0.
 
 ### 5.20.0 - 2026-11-05
 
