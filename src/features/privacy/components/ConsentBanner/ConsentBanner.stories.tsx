@@ -7,7 +7,12 @@ import { ConsentBanner } from "./ConsentBanner.tsx";
 const meta = {
   title: "Patterns/ConsentBanner",
   component: ConsentBanner,
-  parameters: { layout: "fullscreen" },
+  parameters: {
+    layout: "fullscreen",
+    // The box is fixed to the bottom of the window: on the docs page, in a frame of its own (inline it was cut away,
+    // an empty preview). Taller than 480px, or the box would sit in the page as on short screens (cramped).
+    docs: { story: { inline: false, iframeHeight: 520 } },
+  },
   args: { onAllow: fn(), onDecline: fn(), onNavigate: fn() },
 } satisfies Meta<typeof ConsentBanner>;
 

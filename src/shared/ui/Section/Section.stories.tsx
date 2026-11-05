@@ -28,7 +28,7 @@ export const Default: Story = {
   },
 };
 
-/** With an eyebrow: the case-study impact section ("What the Design System Delivers"). */
+/** With an eyebrow: the case-study impact section (“What the Design System Delivers”). */
 export const WithEyebrow: Story = {
   args: {
     id: "planning-outcomes",

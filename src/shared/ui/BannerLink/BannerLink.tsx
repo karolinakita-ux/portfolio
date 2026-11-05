@@ -6,8 +6,8 @@ import { styles } from "./BannerLink.styles.ts";
 import type { BannerLinkProps } from "./BannerLink.types.ts";
 
 /**
- * External text link in a banner: brand icon, label, arrow; opens in a new tab. The Work page's Behind the Design
- * banner and a case study's Figma file links use it; each counts its own click (onClick).
+ * External text link in a banner: brand icon, label, arrow; opens in a new tab. The Work page’s Behind the Design
+ * banner and a case study’s Figma file links use it; each counts its own click (onClick).
  */
 export function BannerLink({ href, icon: Icon, onClick, children }: BannerLinkProps) {
   return (

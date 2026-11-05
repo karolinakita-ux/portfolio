@@ -5,7 +5,7 @@ import { Screenshot } from "./Screenshot.tsx";
 
 /**
  * Case-study screenshot at its own aspect ratio; with onExpand it opens the image viewer.
- * With darkSrc it shows the dark version while the site is in Dark mode (try the toolbar's theme switch).
+ * With darkSrc it shows the dark version while the site is in Dark mode (try the toolbar’s theme switch).
  */
 const meta = {
   title: "Media/Screenshot",
@@ -40,7 +40,10 @@ export const Frameless: Story = {
   },
 };
 
-/** A broken dark version falls back to the default image. */
+/**
+ * A dark version that cannot load (here on purpose): in Dark mode the screenshot shows its Light version instead of a
+ * gap. Switch the toolbar’s Theme to Dark mode to see it.
+ */
 export const MissingDarkVersion: Story = {
   args: { darkSrc: "/assets/cases/missing-dark.webp" },
 };

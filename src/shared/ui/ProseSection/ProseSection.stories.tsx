@@ -34,7 +34,7 @@ export const Default: Story = {
   },
 };
 
-/** With the section's own component (here the privacy page's note) between its text and its closing paragraph. */
+/** With the section’s own component (here the privacy page’s note) between its text and its closing paragraph. */
 export const WithExtra: Story = {
   args: {
     section: {

@@ -7,7 +7,7 @@ import { styles } from "./BackToTop.styles.ts";
 import type { BackToTopProps } from "./BackToTop.types.ts";
 
 /**
- * Floating "back to top" button, shown after the visitor scrolls down.
+ * Floating “back to top” button, shown after the visitor scrolls down.
  * It stays shown while it has focus (e.g. after Home scrolls the page up), so keyboard focus never sits on a hidden button.
  */
 export function BackToTop({ onActivate }: BackToTopProps) {

@@ -48,6 +48,7 @@ import {
   themeWording,
   titleCaseMisses,
 } from "#test/copy-rules.ts";
+import { docsComments, docsSources, proseOf, storyFiles } from "#test/story-docs.ts";
 
 // The rendered pages below: the real preloader's idle timer would outlive this file (see plain-text.test.tsx).
 vi.mock("#shared/media/image-preload/image-preload.utils.ts", () => ({ preloadImages: vi.fn() }));
@@ -319,6 +320,19 @@ describe("one style across the site", () => {
         .filter((text) => /\p{L}'\p{L}|&(?:quot|apos|#39);/u.test(text))
         .map((text) => `${path}: ${text.trim().slice(0, 100)}`),
     );
+    expect(hits).toEqual([]);
+  });
+
+  it("writes curly quotes, short hyphens and British spelling in the comments Storybook's docs pages show", () => {
+    // Above `meta` and each story, a component's own, and its props' (story-docs.ts); code spans stay as written.
+    const comments = storyFiles().flatMap((story) =>
+      docsSources(story).flatMap((path) => docsComments(path).map((comment) => ({ path, prose: proseOf(comment) }))),
+    );
+    expect(comments.length).toBeGreaterThan(100);
+    const hits = comments.flatMap(({ path, prose }) => [
+      ...[...straightQuotes(prose), ...(prose.match(/[–—]/g) ?? [])].map((hit) => `${path}: ${hit} in ${prose}`),
+      ...usSpellings([prose]).map((hit) => `${path}: ${hit}`),
+    ]);
     expect(hits).toEqual([]);
   });
 

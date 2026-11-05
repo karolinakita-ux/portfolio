@@ -6,6 +6,19 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.19.4 - 2026-11-05
+
+#### Fixed
+
+- Storybook, Image Viewer: Go to Description's story failed its focus check in a real browser (Chromium; seen on the live Storybook), where focus moves a moment after the viewer closes: the checks wait for it (`waitFor`). Its docs page ran all 4 stories' play functions at once, and the open viewers took focus from each other (failed checks in all three browsers): only Desktop is on the docs page now, the others open from the sidebar (`!autodocs`), and Desktop browses with the Next image button, which works in WebKit's docs frame, which never gets focus.
+- Storybook, ConsentBanner: its docs page showed an empty preview, because the box is fixed to the bottom of the window; it has a frame of its own there now (taller than the short-screen layout).
+- Storybook on phones: 30 of 34 docs pages scrolled sideways because of the props table's Default and Control columns; below 600px only Name and Description show (the Controls panel keeps the rest). 0 of 34 overflow at 320 and 390px.
+- Storybook copy: the descriptions docs pages show come from comments (above `meta` and each story, a component's own, its props'), which the copy test never read: 61 straight apostrophes and quotes there are curly now, and code (`as="a"`, `<button>`) is in code spans. "Inline text" is "Inline Text"; the missing-image stories say that the missing file is on purpose; the icons are a grid of tiles from the tokens instead of a bare list.
+
+#### Added
+
+- Tests: `content-rules.test.ts` checks the comments Storybook shows (`src/test/story-docs.ts`, TypeScript's parser) for curly quotes, short hyphens and British spelling, outside code spans; a probe with a straight apostrophe in a story and straight quotes in a prop failed it. Checked in a real browser on a production build: every one of the 104 entries plays without a failed check in Chromium, Firefox and WebKit (only the missing-image story's intended 404), and the Image Viewer also through Storybook's own UI. CLAUDE.md has the rules (comments as copy, `waitFor`, one focus-moving story per docs page).
+
 ### 5.19.3 - 2026-11-05
 
 #### Fixed

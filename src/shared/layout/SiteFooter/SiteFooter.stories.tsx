@@ -4,7 +4,7 @@ import { expect, fn, userEvent, within } from "storybook/test";
 import { SiteFooter } from "./SiteFooter.tsx";
 
 /**
- * Figma: Footer. Explore links (the header's pages, then the CV), contact, the legal lines: the site's version
+ * Figma: Footer. Explore links (the header’s pages, then the CV), contact, the legal lines: the site’s version
  * (package.json) linking to the release notes, and the privacy and accessibility links.
  */
 const meta = {

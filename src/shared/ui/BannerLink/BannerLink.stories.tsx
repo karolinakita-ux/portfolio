@@ -7,8 +7,8 @@ import { Figma, Github } from "#shared/ui/icons/icons.tsx";
 import { BannerLink } from "./BannerLink.tsx";
 
 /**
- * An external text link with a brand icon, as tall as a bordered Button: the Work page's Behind the Design banner
- * and a case study's "Explore the Figma File". It opens in a new tab and says so to screen readers.
+ * An external text link with a brand icon, as tall as a bordered Button: the Work page’s Behind the Design banner
+ * and a case study’s “Explore the Figma File”. It opens in a new tab and says so to screen readers.
  */
 const meta = {
   title: "UI/BannerLink",

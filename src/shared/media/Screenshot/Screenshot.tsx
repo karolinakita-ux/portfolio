@@ -14,7 +14,7 @@ import type { ScreenshotProps } from "./Screenshot.types.ts";
 /**
  * Case-study screenshot at its natural aspect ratio (no cropping). In Dark mode it shows `darkSrc` when given;
  * a broken file falls back to the next one (dark version → `src` → `fallbackSrc`). The image carries the shown
- * file's width and height (`assetSize`), so the page holds its height before the file arrives.
+ * file’s width and height (`assetSize`), so the page holds its height before the file arrives.
  */
 export function Screenshot({ src, darkSrc, fallbackSrc, alt, onExpand, imageId, frameless = false }: ScreenshotProps) {
   const theme = useDocumentTheme();

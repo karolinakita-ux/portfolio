@@ -18,4 +18,8 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+/**
+ * When the image cannot load: the drawing of a page the thumbnail shows while it waits stays, still, with “Preview
+ * unavailable” under it. The file here does not exist on purpose.
+ */
 export const Missing: Story = { args: { src: "/assets/cases/missing.webp", alt: "A screenshot that cannot load" } };

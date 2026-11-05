@@ -69,7 +69,7 @@ Built from the Figma components (Karolina Kita Branding, page Components) and th
 | -                                         | `BannerLink`                                   | external link with a brand icon, as tall as a Button (Behind the Design banner, case Figma file links)     |
 | -                                         | `EmailLink`                                    | the email address as an inline mail link, counted as `email-click` with its `place`                        |
 | -                                         | `HeadingAnchor`, `CopyEmail`                   | copy a section's address; copy the email address                                                           |
-| -                                         | `Lang`, `Strong`, `lead`, `Swatch`             | inline text helpers (Storybook: Inline text)                                                               |
+| -                                         | `Lang`, `Strong`, `lead`, `Swatch`             | inline text helpers (Storybook: Inline Text)                                                               |
 | -                                         | `icons`                                        | the icon set (Storybook: Foundations/Icons)                                                                |
 
 Figma's Tabs and Tile have no use on the site yet, so there is no code for them (YAGNI).

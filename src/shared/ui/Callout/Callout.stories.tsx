@@ -4,7 +4,7 @@ import { expect } from "storybook/test";
 import { Callout } from "./Callout.tsx";
 
 /**
- * Figma: Banner, Info | Warning. Plain text, or a titled block. The title is an H3 (under a section's H2); a banner
+ * Figma: Banner, Info | Warning. Plain text, or a titled block. The title is an H3 (under a section’s H2); a banner
  * between sections makes it an H2, one inside a block with its own H3 an H4 (`headingLevel`). The look stays.
  */
 const meta = {

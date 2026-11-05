@@ -25,8 +25,8 @@ import { useHeaderHeight } from "./useHeaderHeight.ts";
  * On short viewports (landscape phones, 200-400% zoom) it stops sticking.
  * Publishes the height it covers as --kb-header-h (useHeaderHeight).
  *
- * The current page's link shows the gold pill with an underline inside it (styles.underline), so
- * the underline slides with the pill (useSlidingPill) from the previous page's link.
+ * The current page’s link shows the gold pill with an underline inside it (styles.underline), so
+ * the underline slides with the pill (useSlidingPill) from the previous page’s link.
  */
 export function SiteHeader({ activeView, onNavigate, onHome, theme, onThemeChange }: SiteHeaderProps) {
   const headerRef = useRef<HTMLElement>(null);

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, userEvent, within } from "storybook/test";
+import { expect, userEvent, waitFor, within } from "storybook/test";
 
 import type { Theme } from "#shared/hooks/theme/theme.types.ts";
 import { useDocumentTheme } from "#shared/hooks/theme/useDocumentTheme.ts";
@@ -83,7 +83,7 @@ function ImageViewer() {
 }
 
 /**
- * The case studies' image viewer (Figma: Image Viewer · Go to Description). The title row holds the counter, the
+ * The case studies’ image viewer (Figma: Image Viewer · Go to Description). The title row holds the counter, the
  * title, Go to Description and Close: one row from md, Go to Description on a row of its own below md. Closing the
  * viewer lands on the screenshot shown, below its description, with focus on it; Go to Description lands on the
  * description itself, from its heading, with focus on the heading.
@@ -93,7 +93,8 @@ const meta = {
   component: ImageViewer,
   parameters: {
     layout: "fullscreen",
-    // Each story in a frame of its own on the docs page: an open modal would cover the whole page.
+    // In a frame of its own on the docs page: an open modal would cover the whole page. Only Desktop is there
+    // (SIDEBAR_ONLY below): several open viewers on one page took focus from each other, and their checks failed.
     docs: { story: { inline: false, iframeHeight: 800 } },
     viewport: {
       options: {
@@ -108,12 +109,25 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** Opens the first screenshot and moves to the second: the title row shows Go to Description beside Close. */
+/**
+ * Where focus is, checked once the story's frame has focus. On the docs page the story sits in a frame inside the
+ * docs frame, which WebKit (Safari) never focuses, so focus cannot move into it there; the story opened from the
+ * sidebar checks it in every browser, as do stories.test.tsx and the viewer's e2e specs.
+ */
+const expectFocusOn = async (element: HTMLElement) => {
+  if (!document.hasFocus()) return;
+  await waitFor(() => expect(element).toHaveFocus());
+};
+
+/**
+ * Opens the first screenshot and moves to the second: the title row shows Go to Description beside Close. With the
+ * Next image button, which works without focus: a key goes where focus is (the docs page in WebKit: outside).
+ */
 const openSecond: NonNullable<Story["play"]> = async ({ canvas }) => {
   await userEvent.click(canvas.getByRole("button", { name: /^View full size: ?Month overview in week view/ }));
   const dialog = canvas.getByRole("dialog", { name: "Month overview - week view" });
-  await expect(within(dialog).getByRole("button", { name: "Close image viewer" })).toHaveFocus();
-  await userEvent.keyboard("{ArrowRight}");
+  await expectFocusOn(within(dialog).getByRole("button", { name: "Close image viewer" }));
+  await userEvent.click(within(dialog).getByRole("button", { name: "Next image" }));
   await expect(within(dialog).getByText("2 / 3")).toBeInTheDocument();
   await expect(within(dialog).getByRole("heading", { name: "Goals & milestones timeline" })).toBeInTheDocument();
   // Named by its visible label, nothing more (WCAG 2.5.3).
@@ -127,37 +141,44 @@ export const Desktop: Story = {
   play: openSecond,
 };
 
+/** Each story but Desktop opens from the sidebar only: on the docs page their open viewers took focus from each other. */
+const SIDEBAR_ONLY = ["!autodocs"];
+
 export const Phone: Story = {
+  tags: SIDEBAR_ONLY,
   globals: { viewport: { value: "phone", isRotated: false } },
   play: openSecond,
 };
 
 /**
- * A phone at 200% page zoom (or with a 200% text size): the counter shares Close's row, the title takes the full width
+ * A phone at 200% page zoom (or with a 200% text size): the counter shares Close’s row, the title takes the full width
  * under them, Go to Description keeps its own row, and the toolbar takes two rows. The image has the height they leave.
  */
 export const PhoneAt200Percent: Story = {
+  tags: SIDEBAR_ONLY,
   globals: { viewport: { value: "zoomed", isRotated: false } },
   play: openSecond,
 };
 
 /**
  * Go to Description closes the viewer onto the description of the screenshot it shows: its section from the top, focus
- * on the section's heading. Closing lands on the screenshot itself, focus on its button.
+ * on the section’s heading. Closing lands on the screenshot itself, focus on its button.
  */
 export const GoToDescription: Story = {
+  tags: SIDEBAR_ONLY,
   play: async (context) => {
     await openSecond(context);
     const { canvas } = context;
     await userEvent.keyboard("{ArrowRight}");
     await userEvent.click(canvas.getByRole("button", { name: "Go to Description" }));
     await expect(canvas.getByRole("dialog", { hidden: true })).not.toHaveAttribute("open");
-    await expect(
-      canvas.getByRole("heading", { level: 2, name: "From One Project’s Budget to the Whole Portfolio" }),
-    ).toHaveFocus();
+    // Focus moves once the viewer has closed and the page has landed: a moment later in a real browser.
+    const heading = canvas.getByRole("heading", { level: 2, name: "From One Project’s Budget to the Whole Portfolio" });
+    await waitFor(() => expect(heading).toHaveFocus());
 
     await userEvent.click(canvas.getByRole("button", { name: /^View full size: ?Cost distribution/ }));
     await userEvent.click(canvas.getByRole("button", { name: "Close image viewer" }));
-    await expect(canvas.getByRole("button", { name: /^View full size: ?Cost distribution/ })).toHaveFocus();
+    const screenshot = canvas.getByRole("button", { name: /^View full size: ?Cost distribution/ });
+    await waitFor(() => expect(screenshot).toHaveFocus());
   },
 };

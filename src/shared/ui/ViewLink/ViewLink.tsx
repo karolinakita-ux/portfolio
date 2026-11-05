@@ -4,9 +4,9 @@ import { isPlainLeftClick } from "#shared/lib/ui/ui.utils.ts";
 import type { ViewLinkProps } from "./ViewLink.types.ts";
 
 /**
- * <a> with a real href (/about, /work#cases) for semantics, middle-click and "open in new
- * tab"; a plain click navigates through app state and browser history. `onClick` runs first,
- * on every click (e.g. to count it).
+ * `<a>` with a real href (/about, /work#cases) for semantics, middle-click, Cmd or Ctrl + click and
+ * “open in new tab”; a plain click navigates through app state and browser history. `onClick` runs
+ * first, on every click (e.g. to count it).
  */
 export function ViewLink({ view, anchor, onNavigate, onClick, className, children, ...props }: ViewLinkProps) {
   return (

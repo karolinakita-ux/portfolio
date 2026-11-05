@@ -11,7 +11,7 @@ import { Strong } from "./Strong.tsx";
 
 /** Small inline pieces of copy: emphasis, language, colour chips, screen reader text. */
 const meta = {
-  title: "UI/Inline text",
+  title: "UI/Inline Text",
   component: Strong,
   args: { children: "High risk of human error" },
 } satisfies Meta<typeof Strong>;
@@ -34,7 +34,7 @@ export const OtherLanguage: Story = {
   ),
 };
 
-/** A whole paragraph in another language (as="p"): Chromium's tagged PDFs carry its language too. */
+/** A whole paragraph in another language (`as="p"`): Chromium’s tagged PDFs carry its language too. */
 export const OtherLanguageParagraph: Story = {
   render: () => (
     <Lang lang="pl" as="p">
