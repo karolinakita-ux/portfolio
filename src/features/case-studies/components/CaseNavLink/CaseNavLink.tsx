@@ -2,6 +2,7 @@ import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import { track } from "#shared/lib/analytics/analytics.utils.ts";
 import { CASE_NAMES } from "#shared/lib/routes/routes.content.ts";
 import { hrefForView, isCaseView } from "#shared/lib/routes/routes.utils.ts";
+import { isPlainLeftClick } from "#shared/lib/ui/ui.utils.ts";
 import { ArrowLeft, ArrowRight } from "#shared/ui/icons/icons.tsx";
 import { VisuallyHidden } from "#shared/ui/VisuallyHidden/VisuallyHidden.tsx";
 
@@ -25,8 +26,9 @@ export function CaseNavLink({ from, target, direction, place, onNavigate }: Case
     <a
       href={hrefForView(target.view)}
       onClick={(event) => {
-        event.preventDefault();
         track(EVENT.caseNav, { from, to: target.view, direction, place });
+        if (!isPlainLeftClick(event)) return; // a new tab or window: the browser opens it
+        event.preventDefault();
         onNavigate(target.view);
       }}
       className={caseNavLink({ place, direction })}

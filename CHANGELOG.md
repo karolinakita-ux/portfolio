@@ -6,6 +6,13 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.19.1 - 2026-11-05
+
+#### Fixed
+
+- Cmd or Ctrl + click opens a new tab on every link to the site's own pages. The Work cards' View Case Study, the previous / next case links, the three Explore Case Studies buttons and the logo opened their page in the same tab instead, so a reviewer opening the 4 case studies side by side lost the Work page. They now leave any click but a plain left click to the browser (`isPlainLeftClick`, as `ViewLink` and the View CV buttons already did), and the click is still counted.
+- Tests: `src/app/new-tab-links.test.tsx` Cmd and Ctrl + clicks every link to a page on every page (it failed on all 10 before the fix); `e2e/new-tab-links.e2e.ts` checks the new tab and the page left behind in Chromium, Firefox and WebKit. CLAUDE.md has the rule.
+
 ### 5.19.0 - 2026-11-05
 
 #### Added

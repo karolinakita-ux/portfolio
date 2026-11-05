@@ -4,6 +4,7 @@ import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import { track } from "#shared/lib/analytics/analytics.utils.ts";
 import { CASE_NAMES } from "#shared/lib/routes/routes.content.ts";
 import { hrefForView } from "#shared/lib/routes/routes.utils.ts";
+import { isPlainLeftClick } from "#shared/lib/ui/ui.utils.ts";
 import { CaseThumbnail } from "#shared/media/CaseThumbnail/CaseThumbnail.tsx";
 import { Button } from "#shared/ui/Button/Button.tsx";
 import { Card } from "#shared/ui/Card/Card.tsx";
@@ -60,8 +61,9 @@ export function CaseCard({ item, resolveAsset, onNavigate }: CaseCardProps) {
           iconRight={ArrowRight}
           className={styles.cta}
           onClick={(event) => {
-            event.preventDefault();
             track(EVENT.caseOpen, { case: item.view, from: "card-link" });
+            if (!isPlainLeftClick(event)) return; // a new tab or window: the browser opens it
+            event.preventDefault();
             onNavigate(item.view);
           }}
         >

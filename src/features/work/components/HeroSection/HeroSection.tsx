@@ -33,6 +33,7 @@ export function HeroSection({ onNavigate }: HeroSectionProps) {
               href={hrefForView(VIEW.work, SECTION.workCases)}
               iconRight={ArrowDown}
               onClick={(event) => {
+                if (!isPlainLeftClick(event)) return; // a new tab or window: the browser opens it
                 event.preventDefault();
                 onNavigate(VIEW.work, SECTION.workCases, { smooth: true });
               }}

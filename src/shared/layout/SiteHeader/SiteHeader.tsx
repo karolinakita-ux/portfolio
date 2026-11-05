@@ -6,6 +6,7 @@ import { Logo } from "#shared/layout/Logo/Logo.tsx";
 import { ThemeToggle } from "#shared/layout/ThemeToggle/ThemeToggle.tsx";
 import { NAV_ITEMS } from "#shared/lib/routes/routes.constants.ts";
 import { navSectionFor } from "#shared/lib/routes/routes.utils.ts";
+import { isPlainLeftClick } from "#shared/lib/ui/ui.utils.ts";
 import { ViewLink } from "#shared/ui/ViewLink/ViewLink.tsx";
 
 import { styles } from "./SiteHeader.styles.ts";
@@ -41,6 +42,7 @@ export function SiteHeader({ activeView, onNavigate, onHome, theme, onThemeChang
         <a
           href="/"
           onClick={(event) => {
+            if (!isPlainLeftClick(event)) return; // a new tab or window: the browser opens it
             event.preventDefault();
             onHome();
           }}

@@ -2,6 +2,7 @@ import { ABOUT_ACTIONS } from "#features/about/about.content.ts";
 import { MilestoneCard } from "#features/about/components/MilestoneCard/MilestoneCard.tsx";
 import { SECTION, VIEW } from "#shared/lib/routes/routes.constants.ts";
 import { hrefForView } from "#shared/lib/routes/routes.utils.ts";
+import { isPlainLeftClick } from "#shared/lib/ui/ui.utils.ts";
 import { Button } from "#shared/ui/Button/Button.tsx";
 import { ArrowRight } from "#shared/ui/icons/icons.tsx";
 import { Section } from "#shared/ui/Section/Section.tsx";
@@ -27,6 +28,7 @@ export function CareerSection({ onNavigate }: CareerSectionProps) {
           href={hrefForView(VIEW.work, SECTION.workCases)}
           iconRight={ArrowRight}
           onClick={(event) => {
+            if (!isPlainLeftClick(event)) return; // a new tab or window: the browser opens it
             event.preventDefault();
             onNavigate(VIEW.work, SECTION.workCases);
           }}
