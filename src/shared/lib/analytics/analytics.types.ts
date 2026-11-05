@@ -121,8 +121,8 @@ export interface EventData {
   };
   /** A link to another website that has no event of its own (TextLink external); host: that website. */
   [EVENT.outboundClick]: { host: string };
-  /** A link to the CV page: the Work page hero, the About page hero or the Contact page. */
-  [EVENT.cvOpen]: { place: "hero" | "about" | "contact" };
+  /** A link to the CV page: the Work page hero, the About page hero, the Contact page or the footer's Explore list. */
+  [EVENT.cvOpen]: { place: "hero" | "about" | "contact" | "footer" };
   /** A link to the CV's PDF (PROFILE.cvPdfUrl): its Download button on the CV page, or the Contact page. */
   [EVENT.cvDownload]: { place: "cv" | "contact" };
   /** question: the FAQ item's id. Sent when it opens, not when it closes. */

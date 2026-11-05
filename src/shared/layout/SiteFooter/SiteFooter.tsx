@@ -32,6 +32,17 @@ export function SiteFooter({ onNavigate }: SiteFooterProps) {
                   </ViewLink>
                 </li>
               ))}
+              {/* The header's pages, then the CV: the only way to it from a case study (the header keeps 3 items). */}
+              <li>
+                <ViewLink
+                  view={VIEW.cv}
+                  onNavigate={onNavigate}
+                  onClick={() => track(EVENT.cvOpen, { place: "footer" })}
+                  className={styles.exploreLink}
+                >
+                  CV
+                </ViewLink>
+              </li>
             </ul>
           </nav>
 

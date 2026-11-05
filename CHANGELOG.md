@@ -4,6 +4,16 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Unreleased
+
+### 5.19.0 - 2026-11-05
+
+#### Added
+
+- Footer: a CV link ends the Explore list (Work, About, Contact, CV) on every page, so a case study, which has no CV link of its own, leads to the CV in one click. It opens the `/cv` page, where the PDF's Download button is. The header keeps its 3 items. Chosen at Mateusz's request; Figma's Footer gets the same link from Karolina.
+- Statistics: the link sends `cv-open` with `place: "footer"` (`docs/analytics.md`). The privacy policy already lists clicks on links to the CV, so the policy and the consent stay as they are.
+- Tests: the footer story checks the Explore list and the CV link, and an analytics test opens the CV from a case study's footer.
+
 ## Release v5.18.1 - 2026-11-02
 
 - The privacy page now says more exactly how a Light or Dark mode picked on www.kita.company reaches this site: in the address of its link.
