@@ -1,7 +1,7 @@
 {
   "name": "portfolio",
   "private": true,
-  "version": "5.20.0",
+  "version": "5.20.1",
   "description": "Karolina Kita - Senior Product Designer portfolio (karolina.kita.company)",
   "author": "Karolina Kita",
   "homepage": "https://karolina.kita.company",
@@ -30,7 +30,7 @@
     "e2e": "playwright test",
     "storybook": "storybook dev -p 6006 --no-open",
     "build-storybook": "storybook build -o dist/storybook --quiet",
-    "verify": "tsc -b && eslint . --max-warnings 0 && prettier --check . && vitest run && vite build && yarn -s prerender",
+    "verify": "tsc -b && eslint . --max-warnings 0 && prettier --check . && vitest run && vite build && yarn -s prerender && yarn -s build-storybook",
     "format:check": "prettier --check .",
     "favicons": "node scripts/favicons.ts",
     "cv-pdf": "node scripts/cv-pdf.ts",

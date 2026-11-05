@@ -15,6 +15,14 @@ const meta = {
     darkSrc: "/assets/cases/project-planning/calendar-week-view-v2-dark.webp",
     alt: "Month overview in week view: a Participant and Organizer switch, a project filter, a mini calendar with meeting counts, the selected day’s meetings and a weekly grid of meetings with a current-time line.",
   },
+  // A column narrower than the docs page, so the page does not repeat the screenshot at its full width.
+  decorators: [
+    (Story) => (
+      <div style={{ maxWidth: "39.5rem" }}>
+        <Story />
+      </div>
+    ),
+  ],
 } satisfies Meta<typeof Screenshot>;
 
 export default meta;
@@ -22,6 +30,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Static: Story = {};
 
+/** Clicking calls `onExpand`; the viewer it opens is shown in Patterns/Image Viewer. */
 export const Expandable: Story = {
   args: { onExpand: fn() },
   play: async ({ canvas, args }) => {

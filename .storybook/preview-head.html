@@ -9,6 +9,17 @@
       display: none;
     }
   }
+  /* Dark mode on a docs page: the page stays Storybook's light one (preview.tsx, withTheme), and each story preview
+     gets the dark canvas, so the component shows as on the site and the descriptions stay readable. */
+  :root.dark:has(.sbdocs-wrapper),
+  :root.dark:has(.sbdocs-wrapper) body {
+    background-color: Canvas;
+  }
+  :root.dark .docs-story {
+    background-color: var(--bg-canvas);
+    color: var(--text-primary);
+    color-scheme: dark;
+  }
 </style>
 <script>
   // A deploy renames the story files and removes the old ones, so a Storybook tab opened before it

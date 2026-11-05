@@ -1,15 +1,17 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 
-import { PROFILE } from "#shared/content/profile.ts";
 import { Lang } from "#shared/ui/Lang/Lang.tsx";
 import { lead } from "#shared/ui/lead/lead.tsx";
-import { NewTabNote } from "#shared/ui/NewTabNote/NewTabNote.tsx";
 import { Swatch } from "#shared/ui/Swatch/Swatch.tsx";
-import { VisuallyHidden } from "#shared/ui/VisuallyHidden/VisuallyHidden.tsx";
+import { TextLink } from "#shared/ui/TextLink/TextLink.tsx";
 
 import { Strong } from "./Strong.tsx";
 
-/** Small inline pieces of copy: emphasis, language, colour chips, screen reader text. */
+/**
+ * Small inline pieces of copy: emphasis, language, colour chips, screen reader text. The props table and controls are
+ * for `Strong`; the other stories show `Lang` (also as `as="p"` for a whole paragraph), `Swatch`, `NewTabNote` and
+ * `VisuallyHidden`.
+ */
 const meta = {
   title: "UI/Inline Text",
   component: Strong,
@@ -23,43 +25,45 @@ export const StrongText: Story = {};
 
 /** Case-study bullets open with a bold lead-in and a colon (lead()). */
 export const LeadIn: Story = {
-  render: () => <p>{lead("High risk of human error", "Admins paired light text with light backgrounds.")}</p>,
+  render: () => (
+    <p>
+      {lead(
+        "High risk of human error",
+        "Untrained admins pairing light text with pastel buttons or dark cards on dark backgrounds.",
+      )}
+    </p>
+  ),
 };
 
+/** A phrase in another language, so screen readers switch pronunciation (WCAG 3.1.2). From the privacy policy. */
 export const OtherLanguage: Story = {
   render: () => (
     <p>
-      The button said “<Lang lang="pl">Zapisz zmiany</Lang>”.
+      You can also complain to the President of the Personal Data Protection Office (
+      <Lang lang="pl">Prezes Urzędu Ochrony Danych Osobowych</Lang>, UODO).
     </p>
   ),
 };
 
-/** A whole paragraph in another language (`as="p"`): Chromium’s tagged PDFs carry its language too. */
-export const OtherLanguageParagraph: Story = {
-  render: () => (
-    <Lang lang="pl" as="p">
-      Zgodę mogę wycofać w każdej chwili, pisząc na adres {PROFILE.email}.
-    </Lang>
-  ),
-};
-
+/** A colour chip beside its value, as in the Project Planning case study. */
 export const ColourSwatch: Story = {
   render: () => (
     <p>
-      <Swatch hex="#f5c84c" />
-      Accent yellow
+      Deep navy (<Swatch hex="#005D8F" />
+      #005D8F, primary/500) is used only for actions and selection.
     </p>
   ),
 };
 
+/** Text only screen readers get: they hear “Umami (opens in a new tab)” (`NewTabNote`, a `VisuallyHidden` span). */
 export const ScreenReaderText: Story = {
   render: () => (
     <p>
-      <a href="https://www.linkedin.com/in/karolinakita" target="_blank" rel="noopener noreferrer">
-        LinkedIn
-        <NewTabNote />
-      </a>{" "}
-      and hidden text: <VisuallyHidden>read out, not shown</VisuallyHidden>
+      I, Karolina Kita, use{" "}
+      <TextLink href="https://umami.is" external>
+        Umami
+      </TextLink>
+      , a visitor statistics tool, to see which pages and links are useful.
     </p>
   ),
 };

@@ -8,12 +8,21 @@ const meta = {
   title: "UI/Section",
   component: Section,
   parameters: { layout: "fullscreen" },
+  // On the site the next section’s top padding gives the last line this space.
+  decorators: [
+    (Story) => (
+      <div style={{ paddingBottom: "var(--spacing-2xl)" }}>
+        <Story />
+      </div>
+    ),
+  ],
   args: {
     id: "career",
     title: "Career Progression",
     description: "2015 - Present",
     children: <p>Roles, newest first.</p>,
   },
+  argTypes: { children: { control: false } },
 } satisfies Meta<typeof Section>;
 
 export default meta;

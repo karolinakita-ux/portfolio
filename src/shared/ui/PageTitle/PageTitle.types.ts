@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 export interface PageTitleProps {
-  /** The section that the title labels points at it (aria-labelledby). */
+  /** Its id: the section it titles points at it with `aria-labelledby`. */
   id: string;
   children: ReactNode;
 }

@@ -83,7 +83,8 @@ function ImageViewer() {
 }
 
 /**
- * The case studies’ image viewer (Figma: Image Viewer · Go to Description). The title row holds the counter, the
+ * Opens when a visitor clicks a case-study screenshot: the picture at full size, with browsing, zoom and a way back to
+ * its description. The case studies’ image viewer (Figma: Image Viewer · Go to Description). The title row holds the counter, the
  * title, Go to Description and Close: one row from md, Go to Description on a row of its own below md. Closing the
  * viewer lands on the screenshot shown, below its description, with focus on it; Go to Description lands on the
  * description itself, from its heading, with focus on the heading.
@@ -137,7 +138,6 @@ const openSecond: NonNullable<Story["play"]> = async ({ canvas }) => {
 };
 
 export const Desktop: Story = {
-  globals: { viewport: { value: "desktop", isRotated: false } },
   play: openSecond,
 };
 
@@ -155,30 +155,34 @@ export const Phone: Story = {
  * under them, Go to Description keeps its own row, and the toolbar takes two rows. The image has the height they leave.
  */
 export const PhoneAt200Percent: Story = {
+  name: "Phone at 200% Zoom",
   tags: SIDEBAR_ONLY,
   globals: { viewport: { value: "zoomed", isRotated: false } },
   play: openSecond,
 };
 
 /**
- * Go to Description closes the viewer onto the description of the screenshot it shows: its section from the top, focus
- * on the section’s heading. Closing lands on the screenshot itself, focus on its button.
+ * Closing lands on the screenshot shown, focus on its button. Go to Description closes the viewer onto the description
+ * of the screenshot it shows: its section from the top, focus on the section’s heading.
  */
 export const GoToDescription: Story = {
+  name: "Go to Description",
   tags: SIDEBAR_ONLY,
   play: async (context) => {
-    await openSecond(context);
     const { canvas } = context;
+    // Close first: the viewer lands on the screenshot shown, focus on its button.
+    await userEvent.click(canvas.getByRole("button", { name: /^View full size: ?Cost distribution/ }));
+    await userEvent.click(canvas.getByRole("button", { name: "Close image viewer" }));
+    const screenshot = canvas.getByRole("button", { name: /^View full size: ?Cost distribution/ });
+    await waitFor(() => expect(screenshot).toHaveFocus());
+
+    // Then Go to Description, where the story ends: the section from its heading, focus on the heading.
+    await openSecond(context);
     await userEvent.keyboard("{ArrowRight}");
     await userEvent.click(canvas.getByRole("button", { name: "Go to Description" }));
     await expect(canvas.getByRole("dialog", { hidden: true })).not.toHaveAttribute("open");
     // Focus moves once the viewer has closed and the page has landed: a moment later in a real browser.
     const heading = canvas.getByRole("heading", { level: 2, name: "From One Project’s Budget to the Whole Portfolio" });
     await waitFor(() => expect(heading).toHaveFocus());
-
-    await userEvent.click(canvas.getByRole("button", { name: /^View full size: ?Cost distribution/ }));
-    await userEvent.click(canvas.getByRole("button", { name: "Close image viewer" }));
-    const screenshot = canvas.getByRole("button", { name: /^View full size: ?Cost distribution/ });
-    await waitFor(() => expect(screenshot).toHaveFocus());
   },
 };
