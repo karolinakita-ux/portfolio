@@ -4,7 +4,12 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v5.20.1 - 2026-11-05
+
+- The component library in Storybook now shows every component as it looks and works on the site, with the site's own text, in Light and Dark mode and on a phone.
+- Its interactive pieces, such as the dialog, the image viewer, the header and the theme switch, can be tried out there, and its pages stay readable in Dark mode.
+
+Versions: 5.20.1.
 
 ### 5.20.1 - 2026-11-05
 
