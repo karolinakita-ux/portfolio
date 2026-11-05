@@ -6,7 +6,7 @@ import { SiteHeader } from "./SiteHeader.tsx";
 /**
  * Figma: Header + Navigation menu. Sticky; the yellow pill marks the current section, with an underline under the
  * label inside it: the pill alone is 1.54:1 on the white header, under the 3:1 a state needs (WCAG 1.4.11). Being
- * part of the pill, the underline slides with it to the next page's link.
+ * part of the pill, the underline slides with it to the next page’s link.
  */
 const meta = {
   title: "Layout/SiteHeader",

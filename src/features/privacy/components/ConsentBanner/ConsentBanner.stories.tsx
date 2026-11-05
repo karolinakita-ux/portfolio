@@ -7,7 +7,12 @@ import { ConsentBanner } from "./ConsentBanner.tsx";
 const meta = {
   title: "Patterns/ConsentBanner",
   component: ConsentBanner,
-  parameters: { layout: "fullscreen" },
+  parameters: {
+    layout: "fullscreen",
+    // The box is fixed to the bottom of the window: on the docs page, in a frame of its own (inline it was cut away,
+    // an empty preview). Taller than 480px, or the box would sit in the page as on short screens (cramped).
+    docs: { story: { inline: false, iframeHeight: 520 } },
+  },
   args: { onAllow: fn(), onDecline: fn(), onNavigate: fn() },
 } satisfies Meta<typeof ConsentBanner>;
 
@@ -26,7 +31,12 @@ export const Default: Story = {
     await userEvent.click(canvas.getByRole("button", { name: "Allow statistics" }));
     await expect(args.onAllow).toHaveBeenCalledOnce();
     await expect(canvas.getByRole("link", { name: /^Umami.*opens in a new tab/ })).toHaveAttribute("target", "_blank");
-    await userEvent.click(canvas.getByRole("link", { name: "Privacy details" }));
+    const details = canvas.getByRole("link", { name: "Privacy details" });
+    await userEvent.click(details);
     await expect(args.onNavigate).toHaveBeenCalledWith("privacy", undefined);
+    // Leaves the box as a visitor first sees it: without the click's focus ring, and from its top where a narrow
+    // frame (the docs page on a phone) holds it in the page, which that click had scrolled down.
+    details.blur();
+    window.scrollTo({ top: 0 });
   },
 };

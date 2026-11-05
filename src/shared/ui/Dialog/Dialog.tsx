@@ -6,7 +6,7 @@ import { unlockScroll } from "./Dialog.utils.ts";
 import { useModalDialog } from "./useModalDialog.ts";
 
 /**
- * Modal dialog on the native <dialog> (showModal): the page behind becomes inert, Escape closes it,
+ * Modal dialog on the native `<dialog>` (showModal): the page behind becomes inert, Escape closes it,
  * focus stays inside, and page scroll is locked while it is open. A click on the dimmed backdrop
  * closes it too. Return focus to the opener in `onClose`.
  */

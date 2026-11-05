@@ -20,7 +20,7 @@ function Paragraphs({ items }: { items: readonly ReactNode[] }) {
 
 /**
  * One part of a text page (privacy policy, accessibility statement): paragraphs and an optional bullet list,
- * then the paragraphs that lead into the section's own component, the component, and closing paragraphs. All at
+ * then the paragraphs that lead into the section’s own component, the component, and closing paragraphs. All at
  * reading width, in a Section with its copy-link heading.
  */
 export function ProseSection({ section, extra }: ProseSectionProps) {

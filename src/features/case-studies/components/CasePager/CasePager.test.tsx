@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import { AUTOMOTIVE_CASE } from "#features/case-studies/content/automotive.content.ts";
+import { BACK_TO_ALL_WORK } from "#features/case-studies/content/content.constants.ts";
 import { DATA_GOVERNANCE_CASE } from "#features/case-studies/content/data-governance.content.ts";
 import { PROJECT_PLANNING_CASE } from "#features/case-studies/content/project-planning.content.tsx";
 import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.ts";
@@ -30,7 +31,7 @@ describe("CasePager", () => {
     expect(next).toHaveAttribute("href", "/work/data-governance");
 
     await user.click(next);
-    expect(onNavigate).toHaveBeenCalledWith(VIEW.caseDataGovernance);
+    expect(onNavigate).toHaveBeenCalledWith(VIEW.caseDataGovernance, undefined);
   });
 
   it("names each case it leads to by that case's title, its H1 (one name for one case, WCAG 3.2.4)", () => {
@@ -82,13 +83,7 @@ describe("CasePager", () => {
   });
 
   it("shows nothing without a case study on either side", () => {
-    render(
-      <CasePager
-        from={VIEW.caseAutomotive}
-        prev={{ view: VIEW.work, action: "Back to All Work" }}
-        onNavigate={vi.fn()}
-      />,
-    );
+    render(<CasePager from={VIEW.caseAutomotive} prev={BACK_TO_ALL_WORK} onNavigate={vi.fn()} />);
     expect(screen.queryByRole("navigation")).not.toBeInTheDocument();
   });
 });

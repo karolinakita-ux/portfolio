@@ -7,7 +7,7 @@ import type { SectionProps } from "./Section.types.ts";
 
 /**
  * Page section: optional eyebrow, Headline Large / Display Small heading with a copy-link anchor, optional lead, content.
- * `id` is the section's URL hash (/about#career); the URL follows it while scrolling (useSectionHash).
+ * `id` is the section’s URL hash (/about#career); the URL follows it while scrolling (useSectionHash).
  */
 export function Section({ id, title, eyebrow, description, children, headingProps, bodyGap }: SectionProps) {
   const titleId = id + "-title";

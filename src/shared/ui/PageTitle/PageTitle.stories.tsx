@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 
 import { PageTitle } from "./PageTitle.tsx";
 
-/** The page's H1: Display Small on phones, Display Medium from md. No trailing period. */
+/** The page’s H1: Display Small on phones, Display Medium from md. No trailing period. */
 const meta = {
   title: "UI/PageTitle",
   component: PageTitle,

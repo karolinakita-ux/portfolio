@@ -16,6 +16,6 @@ export interface ProseSectionContent {
 
 export interface ProseSectionProps {
   section: ProseSectionContent;
-  /** The section's own component, between its points and its closing paragraphs. */
+  /** The section’s own component, between its points and its closing paragraphs. */
   extra?: ReactNode;
 }

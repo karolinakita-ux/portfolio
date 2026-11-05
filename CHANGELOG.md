@@ -4,6 +4,79 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Release v5.20.0 - 2026-11-05
+
+- The footer now links to the CV on every page, so it is one click away from any case study.
+- Cmd or Ctrl + click now opens a case study or any other page of the site in a new tab, as you would expect.
+- Back to All Work at the end of a case study takes you straight to the list of case studies.
+- When you move through a page with the keyboard, the Back to top button no longer hides the link you are on.
+- The component library in Storybook starts with a short guide, fits on a phone and runs its examples without errors in every browser.
+
+Versions: 5.19.0 - 5.20.0.
+
+### 5.20.0 - 2026-11-05
+
+#### Added
+
+- Storybook's Welcome page starts with a short Start Here for people reviewing Karolina's work: open UI › Button, switch the Theme menu to Dark mode, then a larger piece (SiteHeader, Image Viewer) and the Accessibility panel. Its links follow right under it instead of at the end, and the link to `docs/design.md` reads "Explore the Design Token Workflow", like the other links to Figma and the code. The developer detail (Built from Figma, In the Sidebar, How to Use It) follows as before. The recommended options of the progress page's question a41, chosen by Mateusz; Karolina can still change them.
+
+### 5.19.6 - 2026-11-05
+
+#### Fixed
+
+- Storybook, ConsentBanner: on a phone its docs frame showed the box cut off at the top with a focus ring on Privacy details, left by the story's last click, which had also scrolled the frame (the box sits in the page in a narrow frame). The story now ends as a visitor first sees the box.
+- Storybook, Image Viewer: its focus check skips only in a frame inside another page that has not given it focus (the docs page in WebKit), so the Vitest run and a story opened alone can never pass without checking.
+- Tests, from an independent review of 5.19.0 - 5.19.5 (code, accessibility, UI, copy and confidentiality reviewers; no defect in behaviour found): the docs-comment check also reads stories without a type, components exported as a `const` and `type ...Props` aliases, and skips fenced code (the icons' comment now puts its prop names in code); `BackToTop.test.tsx` also ties the 24px corner from md up; `useConsentSpace`'s comment describes the new bottom padding. Two 5.19.x entries below say more plainly what the Back to top button covered and what the only console error was.
+
+### 5.19.5 - 2026-11-05
+
+#### Changed
+
+- Docs: the sitemap rule now says that the parts every page shares (the header and the footer, with their links and the version number) never move a page's `<lastmod>`, in CLAUDE.md, CONTRIBUTING.md, the release skill and the docs-seo-reviewer agent; it named only the footer's version number, which left the footer's CV link (5.19.0) open. Suggested by the docs review of 5 November, which found the docs otherwise up to date.
+
+### 5.19.4 - 2026-11-05
+
+#### Fixed
+
+- Storybook, Image Viewer: Go to Description's story failed its focus check in a real browser (Chromium; seen on the live Storybook), where focus moves a moment after the viewer closes: the checks wait for it (`waitFor`). Its docs page ran all 4 stories' play functions at once, and the open viewers took focus from each other (failed checks in all three browsers): only Desktop is on the docs page now, the others open from the sidebar (`!autodocs`), and Desktop browses with the Next image button, which works in WebKit's docs frame, which never gets focus.
+- Storybook, ConsentBanner: its docs page showed an empty preview, because the box is fixed to the bottom of the window; it has a frame of its own there now (taller than the short-screen layout).
+- Storybook on phones: 30 of 34 docs pages scrolled sideways because of the props table's Default and Control columns; below 600px only Name and Description show (the Controls panel keeps the rest). 0 of 34 overflow at 320 and 390px.
+- Storybook copy: the descriptions docs pages show come from comments (above `meta` and each story, a component's own, its props'), which the copy test never read: 61 straight apostrophes and quotes there are curly now, and code (`as="a"`, `<button>`) is in code spans. "Inline text" is "Inline Text"; the missing-image stories say that the missing file is on purpose; the icons are a grid of tiles from the tokens instead of a bare list.
+
+#### Added
+
+- Tests: `content-rules.test.ts` checks the comments Storybook shows (`src/test/story-docs.ts`, TypeScript's parser) for curly quotes, short hyphens and British spelling, outside code spans; a probe with a straight apostrophe in a story and straight quotes in a prop failed it. Checked in a real browser on a production build: every one of the 104 entries plays without a failed check in Chromium, Firefox and WebKit, and the Image Viewer also through Storybook's own UI; the only console error is the planned 404 of the missing-image story. CLAUDE.md has the rules (comments as copy, `waitFor`, one focus-moving story per docs page).
+
+### 5.19.3 - 2026-11-05
+
+#### Fixed
+
+- Keyboard focus is no longer hidden behind the Back to top button (WCAG 2.4.11). The page's bottom scroll padding kept only the consent box's strip clear, so Tab could stop on a section's copy-link button at the right edge of a small phone right under the button, which covered it completely (`yarn a11y`: Work and Automotive at 320 x 568). It now always keeps the button's corner clear too (`--kb-corner-bottom` + its 48px + 8px, `base.css`, W3C technique C43): the button appears once the page is scrolled, often by that very focus scroll. `bottom-clear-consent` places the button from the same variable, and the header's own links subtract the whole bottom padding, so Tab inside the stuck header still scrolls nothing.
+- The image viewer still lands a closed screenshot above the consent box's own strip (`freeBand` reads `--kb-consent-h`), not the corner: 48px never hides a screenshot, and a full-width band would push the screenshot below the window on a phone with the box showing.
+- Tests: `BackToTop.test.tsx` ties the button's size and corner to the padding; `yarn a11y` reports no Tab problem (it listed 3 hidden copy-link buttons before); a Tab probe over Work and Automotive at 320, 390 and 1280px, with and without the box, found no Tab stop under the button in Chromium and Firefox (WebKit, which tabs to buttons only: 1 - 2% of a screenshot's corner). `e2e/scroll-reveal.e2e.ts` reads the box's strip (`--kb-consent-h`) where it meant the box, and `image-viewer-landing.e2e.ts` the band as `freeBand` does. CLAUDE.md and `docs/architecture.md` describe the corner.
+
+### 5.19.2 - 2026-11-05
+
+#### Fixed
+
+- Back to All Work, at the end of Smart Ticket and Theme Generator, opens the list of case studies (`/#enterprise-cases`), where the breadcrumb's Work leads, instead of the top of the Work page with its hero, so the reader no longer scrolls down to the list again. One target, `BACK_TO_ALL_WORK` (`features/case-studies/content/content.constants.ts`), for both cases; the case links now render `ViewLink`, which takes the section.
+- Tests: `CaseNav.test.tsx` checks both end links against the breadcrumb; `e2e/section-links.e2e.ts` checks in Chromium, Firefox and WebKit that it lands, focused, on the list's heading at the scroll position the breadcrumb's Work gives; `e2e/new-tab-links.e2e.ts` opens it in a new tab. The copy test's one label per destination keeps Back to All Work among the navigation names, as CLAUDE.md lists it.
+
+### 5.19.1 - 2026-11-05
+
+#### Fixed
+
+- Cmd or Ctrl + click opens a new tab on every link to the site's own pages. The Work cards' View Case Study, the previous / next case links, the three Explore Case Studies buttons and the logo opened their page in the same tab instead, so a reviewer opening the 4 case studies side by side lost the Work page. They now leave any click but a plain left click to the browser (`isPlainLeftClick`, as `ViewLink` and the View CV buttons already did), and the click is still counted.
+- Tests: `src/app/new-tab-links.test.tsx` Cmd and Ctrl + clicks every link to a page on every page (it failed on all 10 before the fix); `e2e/new-tab-links.e2e.ts` checks the new tab and the page left behind in Chromium, Firefox and WebKit. CLAUDE.md has the rule.
+
+### 5.19.0 - 2026-11-05
+
+#### Added
+
+- Footer: a CV link ends the Explore list (Work, About, Contact, CV) on every page, so a case study, which has no CV link of its own, leads to the CV in one click. It opens the `/cv` page, where the PDF's Download button is. The header keeps its 3 items. Chosen at Mateusz's request; Figma's Footer gets the same link from Karolina.
+- Statistics: the link sends `cv-open` with `place: "footer"` (`docs/analytics.md`). The privacy policy already lists clicks on links to the CV, so the policy and the consent stay as they are.
+- Tests: the footer story checks the Explore list and the CV link, and an analytics test opens the CV from a case study's footer.
+
 ## Release v5.18.1 - 2026-11-02
 
 - The privacy page now says more exactly how a Light or Dark mode picked on www.kita.company reaches this site: in the address of its link.

@@ -2,7 +2,7 @@ import { createIcon } from "./icons.utils.tsx";
 
 /**
  * Icons - Lucide geometry (ISC; some icons from Feather, MIT: see THIRD-PARTY-NOTICES.md)
- * with the lucide-react prop API (size, strokeWidth, color, className). Drawn locally so
+ * with the lucide-react prop API (`size`, `strokeWidth`, `color`, `className`). Drawn locally so
  * the bundle carries only the icons the site uses. LinkedIn, Figma and GitHub are brand
  * marks of their owners, which newer lucide-react releases no longer ship.
  */

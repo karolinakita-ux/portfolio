@@ -2,6 +2,7 @@ import type { DataGovernanceCaseStudy } from "#features/case-studies/case-studie
 import { VIEW } from "#shared/lib/routes/routes.constants.ts";
 import { lead } from "#shared/ui/lead/lead.tsx";
 
+import { BACK_TO_ALL_WORK } from "./content.constants.ts";
 import { caseShots } from "./content.utils.ts";
 
 /** Every Data Governance screenshot has a Light and a Dark version. */
@@ -300,7 +301,7 @@ export const DATA_GOVERNANCE_CASE: DataGovernanceCaseStudy = {
       body: "When an administrative change affects hundreds of daily users, UX safety is essential. Adding confirmation warnings and locking the default system theme guards against critical mistakes while keeping the configuration workflow straightforward.",
     },
   ],
-  // Last case in the Work order (Automotive → Project Planning → Data Governance).
+  // Last case in the Work order (Smart Ticket → Automotive → Project Planning → Data Governance).
   prev: { view: VIEW.caseProjectPlanning },
-  next: { view: VIEW.work, action: "Back to All Work" },
+  next: BACK_TO_ALL_WORK,
 };

@@ -136,6 +136,35 @@ test.describe("a section link", () => {
   });
 });
 
+test.describe("Back to All Work at the end of the first and the last case study", () => {
+  /**
+   * Follows the link named `name` in a case study's main content; returns the settled scroll position. Not the
+   * heading's own top: the new view is still fading in when the scroll ends.
+   */
+  async function landingFrom(page: Page, path: string, name: string, which: "first" | "last"): Promise<number> {
+    await page.goto(path);
+    await waitForApp(page);
+    const link = page.getByRole("main").getByRole("link", { name, exact: true });
+    await (which === "first" ? link.first() : link.last()).click();
+    await expect(page.locator("#enterprise-cases-title")).toBeFocused();
+    expect(new URL(page.url()).pathname + new URL(page.url()).hash).toBe("/#enterprise-cases");
+    const y = await settledScrollY(page);
+    await expect
+      .poll(async () => {
+        const { top, headerBottom } = await headingPlace(page, "enterprise-cases");
+        return top > headerBottom;
+      }, "the heading sits below the sticky header")
+      .toBe(true);
+    return y;
+  }
+
+  test("lands on the list of case studies, where the breadcrumb's Work lands", async ({ page }) => {
+    const breadcrumb = await landingFrom(page, "/work/smart-ticket", "Work", "first");
+    expect(await landingFrom(page, "/work/smart-ticket", "Back to All Work", "last")).toEqual(breadcrumb);
+    expect(await landingFrom(page, "/work/data-governance", "Back to All Work", "last")).toEqual(breadcrumb);
+  });
+});
+
 test.describe("a link to a section of the page already open", () => {
   test("lands on the heading, focused, after the browser's own jump to the section", async ({ page }) => {
     await page.goto("/about");

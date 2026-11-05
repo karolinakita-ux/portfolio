@@ -13,7 +13,7 @@ import type { CopyEmailProps, CopyStatus } from "./CopyEmail.types.ts";
 /**
  * Email as a mailto: link (textLinkDefault / textLinkHover, denim focus ring),
  * plus a separate copy-to-clipboard button for visitors without a mail app.
- * Copying shows a "Copied to clipboard!" bubble for 2 seconds, which is also
+ * Copying shows a “Copied to clipboard!” bubble for 2 seconds, which is also
  * the polite live region. If the clipboard is blocked, the address is selected
  * so the visitor can copy it with the keyboard; that instruction stays until
  * focus leaves the button, since it tells the visitor what to do next.

@@ -14,9 +14,9 @@ import type { HeadingAnchorProps } from "./HeadingAnchor.types.ts";
 
 /**
  * Link to a section, placed next to its heading (a sibling, so the heading keeps a clean
- * accessible name). A plain click copies the section's full URL with the link tag ?ref=section-link,
- * or with the copier's own tag and utm_medium=section-link (sectionLinkQuery, sharedSectionUrl), puts
- * #id in the address bar and scrolls to the heading; middle-click and "copy link address" work as on any link.
+ * accessible name). A plain click copies the section’s full URL with the link tag ?ref=section-link,
+ * or with the copier’s own tag and utm_medium=section-link (sectionLinkQuery, sharedSectionUrl), puts
+ * #id in the address bar and scrolls to the heading; middle-click and “copy link address” work as on any link.
  * Visible on hover and keyboard focus, always on touch screens, hidden in print.
  */
 export function HeadingAnchor({ id, headingId, label }: HeadingAnchorProps) {

@@ -45,6 +45,7 @@ export function AboutHero({ onNavigate }: AboutHeroProps) {
               as="a"
               href={hrefForView(VIEW.work, SECTION.workCases)}
               onClick={(event) => {
+                if (!isPlainLeftClick(event)) return; // a new tab or window: the browser opens it
                 event.preventDefault();
                 onNavigate(VIEW.work, SECTION.workCases);
               }}

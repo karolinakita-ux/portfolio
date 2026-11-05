@@ -9,9 +9,18 @@
     /* In-page anchors and keyboard focus land below the sticky header (height measured at runtime). */
     --kb-scroll-padding-top: calc(env(safe-area-inset-top, 0px) + var(--kb-header-h, 0px) + var(--spacing-md));
     scroll-padding-top: var(--kb-scroll-padding-top);
-    /* While the statistics consent box shows, keyboard focus scrolls clear of it (WCAG 2.4.11; useConsentSpace).
-       The scroll reveal ignores it (view() with a 0px bottom inset, utilities.css). */
-    scroll-padding-bottom: var(--kb-consent-h, 0px);
+    /* Keyboard focus scrolls clear of what sits fixed at the bottom (WCAG 2.4.11, technique C43): the statistics
+       consent box while it shows (--kb-consent-h, useConsentSpace) and the back-to-top button in the corner above
+       it (bottom-clear-consent, size-2xl). The button appears once the page is scrolled, often by that very focus
+       scroll, so its corner is always kept: until 5.19.3 a section's copy-link button at the right edge of a small
+       phone could land behind it. The scroll reveal ignores this padding (view() with a 0px bottom inset,
+       utilities.css). */
+    --kb-corner-bottom: max(var(--spacing-md), var(--kb-consent-h, 0px));
+    --kb-scroll-padding-bottom: calc(var(--kb-corner-bottom) + var(--spacing-2xl) + var(--spacing-xs));
+    scroll-padding-bottom: var(--kb-scroll-padding-bottom);
+    @variant md {
+      --kb-corner-bottom: max(var(--spacing-lg), var(--kb-consent-h, 0px));
+    }
   }
   body {
     margin: 0;
@@ -30,11 +39,11 @@
   /* The sticky header's own links and buttons always sit inside that padding, so Chromium treated a focused one
      as hidden behind the header and scrolled the page about 400px up on every Tab through it. Their scroll
      area moves down by the padding, into the space the page keeps clear: focusing them scrolls nothing. Its
-     bottom stays above the consent box's padding too, or small phones scrolled down while the box showed.
-     Page content keeps the full padding (WCAG 2.4.11). */
+     bottom stays above the bottom padding too (the consent box, the back-to-top corner), or small phones
+     scrolled down while the box showed. Page content keeps the full padding (WCAG 2.4.11). */
   .kb-site-header :is(a, button) {
     scroll-margin-top: calc(-1 * var(--kb-scroll-padding-top));
-    scroll-margin-bottom: calc(var(--kb-scroll-padding-top) - var(--kb-consent-h, 0px));
+    scroll-margin-bottom: calc(var(--kb-scroll-padding-top) - var(--kb-scroll-padding-bottom));
   }
   /* Tailwind v4 resets buttons to the default cursor; keep the pointer. */
   button:not(:disabled),

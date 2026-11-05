@@ -12,6 +12,7 @@ import { ABOUT_ACTIONS, ABOUT_INTRO, FAQ, MILESTONES, PRINCIPLES } from "#featur
 import { ACCESSIBILITY } from "#features/accessibility/accessibility.content.tsx";
 import type { AnyCase, ShowcaseCard } from "#features/case-studies/case-studies.types.ts";
 import { AUTOMOTIVE_CASE } from "#features/case-studies/content/automotive.content.ts";
+import { BACK_TO_ALL_WORK } from "#features/case-studies/content/content.constants.ts";
 import { DATA_GOVERNANCE_CASE } from "#features/case-studies/content/data-governance.content.ts";
 import { PROJECT_PLANNING_CASE } from "#features/case-studies/content/project-planning.content.tsx";
 import { SMART_TICKET_CASE } from "#features/case-studies/content/smart-ticket.content.ts";
@@ -47,6 +48,7 @@ import {
   themeWording,
   titleCaseMisses,
 } from "#test/copy-rules.ts";
+import { docsComments, docsSources, proseOf, storyFiles } from "#test/story-docs.ts";
 
 // The rendered pages below: the real preloader's idle timer would outlive this file (see plain-text.test.tsx).
 vi.mock("#shared/media/image-preload/image-preload.utils.ts", () => ({ preloadImages: vi.fn() }));
@@ -321,6 +323,19 @@ describe("one style across the site", () => {
     expect(hits).toEqual([]);
   });
 
+  it("writes curly quotes, short hyphens and British spelling in the comments Storybook's docs pages show", () => {
+    // Above `meta` and each story, a component's own, and its props' (story-docs.ts); code spans stay as written.
+    const comments = storyFiles().flatMap((story) =>
+      docsSources(story).flatMap((path) => docsComments(path).map((comment) => ({ path, prose: proseOf(comment) }))),
+    );
+    expect(comments.length).toBeGreaterThan(100);
+    const hits = comments.flatMap(({ path, prose }) => [
+      ...[...straightQuotes(prose), ...(prose.match(/[–—]/g) ?? [])].map((hit) => `${path}: ${hit} in ${prose}`),
+      ...usSpellings([prose]).map((hit) => `${path}: ${hit}`),
+    ]);
+    expect(hits).toEqual([]);
+  });
+
   it("writes frontend, never front-end", () => {
     expect(hitsIn(copy, frontEndSpellings)).toEqual([]);
   });
@@ -501,7 +516,11 @@ describe("rendered pages", () => {
 
   it("gives one destination one label: the case list, and Explore links for Figma, GitHub and Storybook", () => {
     const links = pages.flatMap((page) => page.links);
-    const caseList = links.filter((link) => link.href === hrefForView(VIEW.work, SECTION.workCases));
+    // Navigation keeps its own short names (CLAUDE.md): the breadcrumb's Work (left out in renderPage) and the
+    // case links' Back to All Work, which lead to the case list too.
+    const caseList = links.filter(
+      (link) => link.href === hrefForView(VIEW.work, SECTION.workCases) && link.label !== BACK_TO_ALL_WORK.action,
+    );
     expect(caseList.length).toBeGreaterThanOrEqual(3); // Work hero, About hero, About career
     expect(new Set(caseList.map((link) => link.label))).toEqual(new Set([HERO_ACTIONS.cases]));
     const design = links.filter(

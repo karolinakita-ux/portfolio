@@ -9,7 +9,7 @@ export const LINKS = [
   ...(PROFILE.repositoryUrl
     ? [
         { label: "Explore the Code on GitHub", href: PROFILE.repositoryUrl },
-        { label: "How the tokens get from Figma to code", href: PROFILE.repositoryUrl + "/blob/main/docs/design.md" },
+        { label: "Explore the Design Token Workflow", href: PROFILE.repositoryUrl + "/blob/main/docs/design.md" },
       ]
     : []),
   { label: "The portfolio: karolina.kita.company", href: "https://karolina.kita.company" },
@@ -22,6 +22,29 @@ export const LINKS = [
 # KitaBranding Component Library
 
 The components of [karolina.kita.company](https://karolina.kita.company), the portfolio of Karolina Kita, Senior Product Designer. They come from KitaBranding, Karolina’s design system in Figma. Every story renders the site’s own code, with the same tokens and real copy from the pages.
+
+{/* For people reviewing Karolina's work (recruiters, design leads): where to look first (5.20.0). */}
+
+## Start Here
+
+- **See the basics:** open UI › Button for the button types and their states.
+- **Switch the theme:** the Theme menu in the toolbar shows every component in Light or Dark mode.
+- **See a larger piece:** open Layout › SiteHeader or Patterns › Image Viewer, and the Accessibility panel under a story for its checks.
+
+## Links
+
+{/* JSX links: they open in a new tab (markdown links would replace Storybook itself), and the GitHub ones hide with the repo. */}
+
+<ul>
+  {LINKS.map((link) => (
+    <li key={link.href}>
+      <a href={link.href} {...EXTERNAL_LINK}>
+        {link.label}
+        <NewTabNote />
+      </a>
+    </li>
+  ))}
+</ul>
 
 ## Built from Figma
 
@@ -43,18 +66,3 @@ The components of [karolina.kita.company](https://karolina.kita.company), the po
 - **Theme:** the Theme menu in the toolbar switches between the Light and Dark mode tokens.
 - **Docs:** each component has a Docs page with its props and all its stories.
 - **Accessibility:** the Accessibility panel runs axe on the open story. In the test run every story renders, runs its interaction checks and must pass axe for WCAG 2.2 A and AA. Colour contrast is checked on the real pages, where the layout is complete.
-
-## Links
-
-{/* JSX links: they open in a new tab (markdown links would replace Storybook itself), and the GitHub ones hide with the repo. */}
-
-<ul>
-  {LINKS.map((link) => (
-    <li key={link.href}>
-      <a href={link.href} {...EXTERNAL_LINK}>
-        {link.label}
-        <NewTabNote />
-      </a>
-    </li>
-  ))}
-</ul>

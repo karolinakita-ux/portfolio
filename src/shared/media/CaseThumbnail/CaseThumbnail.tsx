@@ -14,7 +14,7 @@ import type { CaseThumbnailProps } from "./CaseThumbnail.types.ts";
  * Work-page case thumbnail: 16:10 frame filled edge to edge, rounded, no border; scaffold while loading.
  * `darkSrc`: shown in Dark mode; a missing or broken dark version falls back to `src`.
  * `interactive`: hover feedback (slight zoom) when an ancestor with `group/thumb` is hovered.
- * The frame sets the size; the image still carries its file's width and height, as every image does.
+ * The frame sets the size; the image still carries its file’s width and height, as every image does.
  * The first HTML shows the image as it arrives (`shown`); one the app adds later fades in once loaded. The
  * prerendered page is the light page: on a dark page its Light file stays hidden (`lightFile`) until the app
  * picks the Dark one.

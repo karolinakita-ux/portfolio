@@ -2,6 +2,7 @@ import type { SmartTicketCaseStudy } from "#features/case-studies/case-studies.t
 import { VIEW } from "#shared/lib/routes/routes.constants.ts";
 import { lead } from "#shared/ui/lead/lead.tsx";
 
+import { BACK_TO_ALL_WORK } from "./content.constants.ts";
 import { caseShots } from "./content.utils.ts";
 
 /*
@@ -475,6 +476,6 @@ export const SMART_TICKET_CASE: SmartTicketCaseStudy = {
   },
   // First case in the Work order (Smart Ticket → Automotive → Project Planning → Data Governance):
   // the left link returns to the list, the right one continues to Automotive.
-  prev: { view: VIEW.work, action: "Back to All Work" },
+  prev: BACK_TO_ALL_WORK,
   next: { view: VIEW.caseAutomotive },
 };

@@ -1,4 +1,15 @@
 <meta name="robots" content="noindex, nofollow" />
+<style>
+  /* Docs pages on a phone: the props table's Default and Control columns (an input per prop) made 30 of 34 pages
+     wider than the screen, and the page scrolled sideways. Name and Description stay; the same controls, with the
+     default values, are in the Controls panel under each story. */
+  @media (max-width: 37.5rem) {
+    .docblock-argstable th:nth-child(n + 3),
+    .docblock-argstable td:nth-child(n + 3) {
+      display: none;
+    }
+  }
+</style>
 <script>
   // A deploy renames the story files and removes the old ones, so a Storybook tab opened before it
   // fails with "Failed to fetch dynamically imported module". Vite reports that as vite:preloadError:

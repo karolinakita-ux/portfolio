@@ -13,7 +13,7 @@ import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import type * as Analytics from "#shared/lib/analytics/analytics.utils.ts";
 import { track, trackPageview } from "#shared/lib/analytics/analytics.utils.ts";
 import { describeClick } from "#shared/lib/analytics/clicks.utils.ts";
-import { SECTION, VIEW_PATHS, VIEWS } from "#shared/lib/routes/routes.constants.ts";
+import { SECTION, VIEW, VIEW_PATHS, VIEWS } from "#shared/lib/routes/routes.constants.ts";
 import { CASE_NAMES } from "#shared/lib/routes/routes.content.ts";
 
 /**
@@ -345,6 +345,16 @@ describe("events for the CV", () => {
       [EVENT.cvOpen, { place: "about" }],
       [EVENT.cvOpen, { place: "contact" }],
     ]);
+  });
+
+  it("counts the footer's CV link, the only one on a case study", async () => {
+    const { user } = renderApp(VIEW_PATHS[VIEW.caseSmartTicket]);
+    expect(screen.queryByRole("link", { name: "View CV" })).not.toBeInTheDocument();
+    const explore = within(screen.getByRole("navigation", { name: "Explore" }));
+    await user.click(explore.getByRole("link", { name: "CV" }));
+    expect(window.location.pathname).toBe("/cv");
+    expect(h1()).toHaveTextContent("Karolina Kita");
+    expect(events()).toEqual([[EVENT.cvOpen, { place: "footer" }]]);
   });
 
   it("counts a View CV link opened in a new tab too, without leaving the page", () => {

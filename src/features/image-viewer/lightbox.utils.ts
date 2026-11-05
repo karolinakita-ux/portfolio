@@ -101,11 +101,15 @@ export const skeletonStyle = ({ width, height }: LightboxItem): CSSProperties | 
     ? ({ "--kb-aspect": width / height, "--kb-natural-width": width + "px" } as CSSProperties)
     : undefined;
 
-/** The part of the window the sticky header and the consent box leave free: the page's scroll padding (base.css). */
+/**
+ * The part of the window the sticky header and the consent box leave free: the page's top scroll padding (base.css)
+ * and the strip the box keeps while it shows (--kb-consent-h, useConsentSpace). Not the whole bottom scroll padding:
+ * that also keeps the back-to-top corner clear for keyboard focus, and a 48px corner never hides a screenshot.
+ */
 export const freeBand = (): FreeBand => {
   const style = getComputedStyle(document.documentElement);
   const top = parseFloat(style.scrollPaddingTop) || 0;
-  return { top, bottom: window.innerHeight - (parseFloat(style.scrollPaddingBottom) || 0) };
+  return { top, bottom: window.innerHeight - (parseFloat(style.getPropertyValue("--kb-consent-h")) || 0) };
 };
 
 /** A box that shows in the free band, at least in part. */
