@@ -46,4 +46,4 @@ Reviewers that run in their own context and only report:
 
 ## Guard rails
 
-Claude works inside the same quality gate as a person: `yarn verify` (typecheck, zero-warning lint, format check, tests, build and prerender) must pass before every commit, and ESLint enforces the architecture. Releases and anything visible to others happen only when Karolina asks.
+Claude works inside the same quality gate as a person: `yarn verify` (typecheck, zero-warning lint, format check, tests, build and prerender, Storybook build) must pass before every commit, and ESLint enforces the architecture. Releases and anything visible to others happen only when Karolina asks.

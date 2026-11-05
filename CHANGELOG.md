@@ -4,6 +4,24 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Unreleased
+
+### 5.20.1 - 2026-11-05
+
+#### Fixed
+
+- Storybook, every component checked in a real browser: each story was opened in Chromium after its play function, at desktop size in Light and Dark mode and on a phone, and two reviewers looked at every result and clicked through the interactive ones (8 high, 29 medium and 33 low findings, all fixed).
+  - Dialog opened an almost empty panel with only a close button: it now shows a panel like the image viewer's, with the title, Close, a Project Planning screenshot sized to the window and its description, once on its docs page.
+  - Shown as on the site, with the site's copy: ViewLink and HeadingAnchor were unstyled text, BannerLink took the wrong colour outside its banner, the Accordion never showed an answer, BackToTop's docs preview was empty and its canvas could not show it, SiteHeader and ThemeToggle ignored clicks, Card's Media story lacked the case card's layout, Icons had no spacing, and Callout, Card, Inline Text and others used made-up copy (one alt text claimed budget guardrails the case does not show, one story a Polish paragraph the site does not have).
+  - Overviews where single states told little: Button's four types with their disabled states, Badge's tones side by side, Avatar beside a name, IconButton as the viewer's zoom group; and controls for Button's type. Stories that looked the same were merged, and controls that broke a story (a function or icon set to an object) are switched off.
+  - Plays end in a state worth looking at (open, without a leftover focus ring), Image Viewer no longer forces a 1280px frame that a laptop's Storybook cut off, and Dark mode keeps docs pages readable: only the previews turn dark.
+  - The UI components are in alphabetical order in the sidebar, docs descriptions say where the site uses each component, and story names follow Title Case.
+- Checked after the fixes: every story plays without a failed check in Chromium, Firefox and WebKit (100 entries; only the missing-image story's planned 404); no docs page is wider than a phone at 320 or 390px.
+
+#### Changed
+
+- `yarn verify` also builds Storybook, as Netlify's release build does: a `storySort` written with a constant failed `storybook build` while every check in verify passed. CLAUDE.md, CONTRIBUTING.md, README.md, `docs/claude-code.md` and the ship-change skill say so; CLAUDE.md also has the rules this round taught for stories (only classes the site uses, only CSS variables that exist at runtime, plays that end in a state worth looking at).
+
 ## Release v5.20.0 - 2026-11-05
 
 - The footer now links to the CV on every page, so it is one click away from any case study.

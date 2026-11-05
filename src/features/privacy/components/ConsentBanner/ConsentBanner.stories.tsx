@@ -3,7 +3,7 @@ import { expect, fn, userEvent } from "storybook/test";
 
 import { ConsentBanner } from "./ConsentBanner.tsx";
 
-/** Asks before visitor statistics load. Allow and decline look the same; a link explains the details. */
+/** Shows at the bottom of every page until the visitor answers. It asks before visitor statistics load. Allow and decline look the same; a link explains the details. */
 const meta = {
   title: "Patterns/ConsentBanner",
   component: ConsentBanner,
@@ -14,6 +14,8 @@ const meta = {
     docs: { story: { inline: false, iframeHeight: 520 } },
   },
   args: { onAllow: fn(), onDecline: fn(), onNavigate: fn() },
+  // A function: "Set object" would make every link click throw.
+  argTypes: { onNavigate: { control: false } },
 } satisfies Meta<typeof ConsentBanner>;
 
 export default meta;

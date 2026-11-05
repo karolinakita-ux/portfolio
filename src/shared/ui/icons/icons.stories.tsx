@@ -1,37 +1,35 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { clsx } from "clsx";
 import type { CSSProperties } from "react";
 
 import * as icons from "./icons.tsx";
 
 /**
- * Inline styles from the design tokens' variables: Tailwind does not scan story files (app.css), so classes used only
- * here would not exist.
+ * Tailwind does not scan story files (app.css), so a class here works only while the site itself uses it, as these
+ * do. Theme variables such as `--spacing-sm` or `--radius-md` exist at runtime only when some CSS uses them, so
+ * inline styles avoid them.
  */
-const GRID: CSSProperties = {
-  display: "grid",
+const styles = {
+  grid: clsx("grid gap-sm"),
+  tile: clsx(
+    "flex items-center gap-sm rounded-md border border-border-subtle bg-bg-surface-raised px-md py-xs text-text-primary",
+  ),
+};
+
+/** Only the column rule is inline: its arbitrary value is not a class the site uses. */
+const COLUMNS: CSSProperties = {
   gridTemplateColumns: "repeat(auto-fill, minmax(11rem, 1fr))",
-  gap: "var(--spacing-sm)",
   margin: 0,
   padding: 0,
   listStyle: "none",
-};
-const TILE: CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  gap: "var(--spacing-sm)",
-  padding: "var(--spacing-sm) var(--spacing-md)",
-  border: "1px solid var(--border-subtle)",
-  borderRadius: "var(--radius-md)",
-  background: "var(--bg-surface-raised)",
-  color: "var(--text-primary)",
 };
 
 /** Every icon the site uses, by the name the code imports it with. */
 function IconGallery({ size }: { size: number }) {
   return (
-    <ul aria-label="Icons" style={GRID}>
+    <ul aria-label="Icons" className={styles.grid} style={COLUMNS}>
       {Object.entries(icons).map(([name, Icon]) => (
-        <li key={name} style={TILE}>
+        <li key={name} className={styles.tile}>
           <Icon aria-hidden="true" size={size} /> <code>{name}</code>
         </li>
       ))}

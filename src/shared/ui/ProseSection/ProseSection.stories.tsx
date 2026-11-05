@@ -1,7 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { Fragment } from "react";
 import { expect } from "storybook/test";
 
+import { PROFILE } from "#shared/content/profile.ts";
 import { Callout } from "#shared/ui/Callout/Callout.tsx";
+import { EmailLink } from "#shared/ui/EmailLink/EmailLink.tsx";
 import { lead } from "#shared/ui/lead/lead.tsx";
 
 import { ProseSection } from "./ProseSection.tsx";
@@ -11,11 +14,21 @@ const meta = {
   title: "UI/ProseSection",
   component: ProseSection,
   parameters: { layout: "fullscreen" },
+  // On the site the next section’s top padding gives the last line this space.
+  decorators: [
+    (Story) => (
+      <div style={{ paddingBottom: "var(--spacing-2xl)" }}>
+        <Story />
+      </div>
+    ),
+  ],
   args: {
     section: {
       id: "in-short",
       title: "In Short",
-      paragraphs: ["How this website works for people who use it in different ways."],
+      paragraphs: [
+        "How this website works for people who use it in different ways, and what to do if something does not work for you.",
+      ],
       points: [
         lead("Keyboard", "every link and button can be reached with Tab, and the focus is always visible."),
         lead("Zoom and text size", "pages reflow up to 400% zoom and follow a larger text size in your browser."),
@@ -40,12 +53,20 @@ export const WithExtra: Story = {
     section: {
       id: "rights",
       title: "Your Rights",
-      intro: ["Write to karolina.kita.zg@gmail.com. I answer within 1 month."],
+      intro: [
+        <Fragment key="write">
+          Write to <EmailLink email={PROFILE.email} place="privacy" />. I answer within 1 month.
+        </Fragment>,
+      ],
       after: ["You do not have to give me any data: the website works the same with statistics switched off."],
     },
     extra: (
       <Callout tone="info" label="Your Right to Object" title="Your Right to Object">
-        <p>The statistics run only with your consent, which you can withdraw with the switch on this page.</p>
+        <p>
+          You can object at any time to the use of your data based on my legitimate interest: the server logs, and
+          emails that are not about work (GDPR Art. 21). The statistics run only with your consent, which you can
+          withdraw with the switch on this page.
+        </p>
       </Callout>
     ),
   },

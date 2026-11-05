@@ -12,6 +12,8 @@ const meta = {
   component: SiteFooter,
   parameters: { layout: "fullscreen" },
   args: { onNavigate: fn() },
+  // A function: "Set object" would make every link click throw.
+  argTypes: { onNavigate: { control: false } },
 } satisfies Meta<typeof SiteFooter>;
 
 export default meta;
@@ -32,7 +34,10 @@ export const Default: Story = {
     );
     await userEvent.click(canvas.getByRole("link", { name: "Privacy" }));
     await expect(args.onNavigate).toHaveBeenCalledWith("privacy", undefined);
-    await userEvent.click(canvas.getByRole("link", { name: "Accessibility" }));
+    const accessibility = canvas.getByRole("link", { name: "Accessibility" });
+    await userEvent.click(accessibility);
     await expect(args.onNavigate).toHaveBeenCalledWith("accessibility", undefined);
+    // Ends without the click's focus ring, which would look like a current link.
+    accessibility.blur();
   },
 };

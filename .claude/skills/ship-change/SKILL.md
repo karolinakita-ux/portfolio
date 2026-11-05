@@ -7,7 +7,7 @@ description: Commit a finished change on develop the way this repo expects - yar
 
 Every commit is one version. Rules in `CONTRIBUTING.md` ("Every commit"); the short form:
 
-1. **Verify.** `yarn verify` (typecheck, lint with zero warnings, Prettier check, tests, build with prerender). Fix the code, not the rules: a rule exception is a one-line disable with a reason after `--`. After UI, motion or theme changes also run `yarn e2e` (or the specs the change touches), and consider the `ui-reviewer` and `a11y-reviewer` agents; after copy changes, `copy-reviewer`.
+1. **Verify.** `yarn verify` (typecheck, lint with zero warnings, Prettier check, tests, build with prerender, Storybook build). Fix the code, not the rules: a rule exception is a one-line disable with a reason after `--`. After UI, motion or theme changes also run `yarn e2e` (or the specs the change touches), and consider the `ui-reviewer` and `a11y-reviewer` agents; after copy changes, `copy-reviewer`.
 2. **Check the tree.** `git status`. The user may have unfinished edits: list only the files this change touched. Leave everything else unstaged.
 3. **Pick the version right before committing** (read `version` in `package.json` and the top of `CHANGELOG.md` now, not earlier):
    - major: removed or renamed pages, changed URLs, a redesign
