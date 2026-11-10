@@ -32,7 +32,8 @@ export const TESTIMONIALS_SECTION = {
  * Excerpts of LinkedIn recommendations, word for word, in whole sentences (a cut inside a sentence ends in “…”),
  * in the carousel’s order: the two managers first, then teammates, the translated one last. Check each against
  * the current LinkedIn text when it changes; the full texts stay on LinkedIn (one names a client that the site
- * keeps hidden). Each person agreed to be quoted (Karolina, 2026-11-10); the company is where we worked together.
+ * keeps hidden). Each person agreed to be quoted (Karolina, 2026-11-10). Each card shows the person’s current job
+ * title and employer as their LinkedIn profile does, as LinkedIn’s own recommendations list does.
  */
 export const TESTIMONIALS: readonly Testimonial[] = [
   {
@@ -61,8 +62,9 @@ export const TESTIMONIALS: readonly Testimonial[] = [
       "Karolina is an incredibly versatile UX/UI Designer whose background in psychology has always been a tremendous asset when shaping product strategies and understanding user needs. She combines strategic thinking with a keen eye for detail and has a deep understanding of design principles that she applies effortlessly in her work.",
     name: "Weronika Dobrowolska",
     initials: "WD",
+    profileUrl: "https://www.linkedin.com/in/weronika-dobrowolska-49843b146/",
     role: "Senior UX Designer",
-    company: { name: "Digital Technology Poland" },
+    company: { name: "DTP", url: "https://www.linkedin.com/company/dtpoland/" },
   },
   {
     id: "natalia-jeszke",
@@ -70,8 +72,9 @@ export const TESTIMONIALS: readonly Testimonial[] = [
       "What I particularly appreciated was her openness to discussions with developers. She was always willing to explain her thinking, answer questions, and explore different approaches to find the best solution.",
     name: "Natalia Jeszke",
     initials: "NJ",
+    profileUrl: "https://www.linkedin.com/in/natalia-jeszke/",
     role: "Frontend Developer",
-    company: { name: "Raiffeisen Tech Poland" },
+    company: { name: "Raiffeisen Tech Poland", url: "https://www.linkedin.com/company/raiffeisen-tech/" },
   },
   {
     id: "angelika-kuzbit",
@@ -79,8 +82,8 @@ export const TESTIMONIALS: readonly Testimonial[] = [
       "Karolina showed strong skills in design, analysis, and in creating and conducting research. Karolina has broad knowledge and skills that allow a creative, conscientious, precise and high-quality approach to every task she takes on.",
     name: "Angelika Kuźbit",
     initials: "AK",
-    role: "Researcher",
-    company: { name: "Cinkciarz.pl" },
+    profileUrl: "https://www.linkedin.com/in/angelika-ku%C5%BAbit-81616a183/",
+    role: "Psychologist",
     note: "Translated from Polish",
   },
 ];

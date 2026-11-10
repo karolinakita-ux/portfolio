@@ -10,8 +10,7 @@ import type { TestimonialCardProps } from "./TestimonialCard.types.ts";
 
 /**
  * Figma: Tile (Testimonial). An excerpt of a LinkedIn recommendation with its author: name and company link to
- * their LinkedIn pages when the card has those addresses, and are plain text otherwise. It stays still: the
- * carousel row fades up as a whole.
+ * their LinkedIn pages when the card has them. It stays still: the carousel row fades up as a whole.
  */
 export function TestimonialCard({ item }: TestimonialCardProps) {
   return (
@@ -41,16 +40,12 @@ export function TestimonialCard({ item }: TestimonialCardProps) {
               <>
                 <span aria-hidden="true"> | </span>
                 <VisuallyHidden> at </VisuallyHidden>
-                {item.company.url ? (
-                  <LinkedInTextLink
-                    href={item.company.url}
-                    label={item.company.name}
-                    destination="company page on LinkedIn"
-                    target="company"
-                  />
-                ) : (
-                  item.company.name
-                )}
+                <LinkedInTextLink
+                  href={item.company.url}
+                  label={item.company.name}
+                  destination="company page on LinkedIn"
+                  target="company"
+                />
               </>
             ) : null}
           </span>

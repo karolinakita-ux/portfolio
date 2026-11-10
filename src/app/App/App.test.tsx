@@ -99,11 +99,12 @@ describe("App", () => {
     expect(roleLine).toHaveTextContent("UX Director | at Precisely");
     expect(within(roleLine).getByText("|")).toHaveAttribute("aria-hidden", "true");
 
-    // Without a LinkedIn address, a name and a company are plain text, never a link that goes nowhere.
-    const plainRole = section.getByText(/^Frontend Developer/);
-    expect(plainRole).toHaveTextContent("Frontend Developer | at Raiffeisen Tech Poland");
-    expect(within(plainRole).queryByRole("link")).not.toBeInTheDocument();
-    expect(section.queryByRole("link", { name: /^Natalia Jeszke/ })).not.toBeInTheDocument();
+    expectNewTab(
+      /^Angelika Kuźbit, LinkedIn profile \(opens in a new tab\)$/,
+      "https://www.linkedin.com/in/angelika-ku%C5%BAbit-81616a183/",
+    );
+    // A card without a company shows the job title alone, with no bar.
+    expect(section.getByText("Psychologist")).toHaveTextContent(/^Psychologist$/);
   });
 
   it.each([

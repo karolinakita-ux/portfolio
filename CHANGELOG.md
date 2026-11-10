@@ -6,6 +6,12 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.21.2 - 2026-11-10
+
+#### Changed
+
+- Work page recommendations: Weronika Dobrowolska, Natalia Jeszke and Angelika Kuźbit link to their LinkedIn profiles, and their employers to their company pages, as Stewart's and Gavin's do. Every card now shows the person's current job title and employer, as their LinkedIn profile does: Weronika "Senior UX Designer | DTP", Natalia "Frontend Developer | Raiffeisen Tech Poland", Angelika "Psychologist" (no company; her quote stays marked "Translated from Polish"). A company is always a link again, so the plain-text company of 5.21.0 is gone, and a profile address may hold a percent-encoded letter (`content-rules.test.ts`).
+
 ### 5.21.1 - 2026-11-10
 
 #### Changed

@@ -74,7 +74,7 @@ const RECOMMENDATIONS: readonly Recommendation[] = [
       "Karolina showed strong skills in design, analysis, and in creating and conducting research. Karolina has broad knowledge and skills that allow a creative, conscientious, precise and high-quality approach to every task she takes on.",
     name: "Angelika Kuźbit",
     initials: "AK",
-    role: "Researcher",
+    role: "Psychologist",
   },
 ];
 

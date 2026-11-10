@@ -835,8 +835,9 @@ describe("LinkedIn links", () => {
 
   it("links a recommendation’s author and company to their LinkedIn pages, when it names them", () => {
     for (const item of TESTIMONIALS) {
-      if (item.profileUrl) expect(item.profileUrl).toMatch(/^https:\/\/www\.linkedin\.com\/in\/[\w-]+\/$/);
-      if (item.company?.url) expect(item.company.url).toMatch(/^https:\/\/www\.linkedin\.com\/company\/[\w-]+\/$/);
+      // A profile address may hold a percent-encoded letter (ku%C5%BAbit), as LinkedIn writes it.
+      if (item.profileUrl) expect(item.profileUrl).toMatch(/^https:\/\/www\.linkedin\.com\/in\/[\w%-]+\/$/);
+      if (item.company) expect(item.company.url).toMatch(/^https:\/\/www\.linkedin\.com\/company\/[\w-]+\/$/);
       expect(item.role).not.toContain("|"); // the company is its own field
     }
   });
