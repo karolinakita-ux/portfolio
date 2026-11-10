@@ -4,7 +4,15 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v5.21.0 - 2026-11-10
+
+- The Work page now shows 5 LinkedIn recommendations from the managers and teammates Karolina worked with, quoted word for word.
+- They sit in a carousel: 2 at a time on larger screens and 1 on phones, where you can swipe to the next one.
+- It moves only when you press Previous or Next or swipe, never on its own, and works with a keyboard and screen readers. A printed page shows all 5.
+- One recommendation was written in Polish: it is shown in English and marked as translated.
+- The privacy policy now lists the Previous and Next buttons among the clicks counted for visitors who allow statistics.
+
+Versions: 5.21.0.
 
 ### 5.21.0 - 2026-11-10
 
