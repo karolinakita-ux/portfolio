@@ -21,11 +21,24 @@ export const WORK_INTRO =
 /** Link under the quotes: they are excerpts, the full texts are on LinkedIn. */
 export const RECOMMENDATIONS_LINK_LABEL = "Read the full recommendations on LinkedIn";
 
+/** The testimonials section: heading, the carousel list’s name and its Previous / Next buttons. */
+export const TESTIMONIALS_SECTION = {
+  title: "Trusted by the People I Worked With",
+  list: "Recommendations",
+  controls: { previous: "Previous recommendations", next: "Next recommendations" },
+};
+
+/**
+ * Excerpts of LinkedIn recommendations, word for word, in whole sentences (a cut inside a sentence ends in “…”),
+ * in the carousel’s order: the two managers first, then teammates, the translated one last. Check each against
+ * the current LinkedIn text when it changes; the full texts stay on LinkedIn (one names a client that the site
+ * keeps hidden). Each person agreed to be quoted (Karolina, 2026-11-10); the company is where we worked together.
+ */
 export const TESTIMONIALS: readonly Testimonial[] = [
   {
     id: "stewart-wilson",
     quote:
-      "Karolina has a strong, balanced skillset as a UX designer and was able to quickly build an understanding of our complex, enterprise product domain, delivering significant improvements through discovery, design, and design system standards.",
+      "Karolina has a strong, balanced skillset as a UX designer and was able to quickly build an understanding of our complex, enterprise product domain, delivering significant improvements to the user experience through her discovery, design and validation of new features, and her contributions to research, standards and the design system…",
     name: "Stewart Wilson",
     initials: "SW",
     profileUrl: "https://www.linkedin.com/in/stewart-wilson-ba92112a/",
@@ -35,12 +48,40 @@ export const TESTIMONIALS: readonly Testimonial[] = [
   {
     id: "gavin-harvey",
     quote:
-      "One of Karolina’s biggest strengths is her ability to understand complex problems, break them down and develop solutions to a very high standard. Her documentation was consistently outstanding, clearly capturing research findings and design thinking.",
+      "One of Karolina’s biggest strengths is her ability to understand complex problems, break them down and develop solutions to a very high standard. Her documentation was consistently outstanding, clearly capturing research findings, design thinking and the rationale behind decisions.",
     name: "Gavin Harvey",
     initials: "GH",
     profileUrl: "https://www.linkedin.com/in/harveygavin/",
     role: "Lead Product Designer",
     company: { name: "Cox Automotive", url: "https://www.linkedin.com/company/coxautomotiveeurope/" },
+  },
+  {
+    id: "weronika-dobrowolska",
+    quote:
+      "Karolina is an incredibly versatile UX/UI Designer whose background in psychology has always been a tremendous asset when shaping product strategies and understanding user needs. She combines strategic thinking with a keen eye for detail and has a deep understanding of design principles that she applies effortlessly in her work.",
+    name: "Weronika Dobrowolska",
+    initials: "WD",
+    role: "Senior UX Designer",
+    company: { name: "Digital Technology Poland" },
+  },
+  {
+    id: "natalia-jeszke",
+    quote:
+      "What I particularly appreciated was her openness to discussions with developers. She was always willing to explain her thinking, answer questions, and explore different approaches to find the best solution.",
+    name: "Natalia Jeszke",
+    initials: "NJ",
+    role: "Frontend Developer",
+    company: { name: "Raiffeisen Tech Poland" },
+  },
+  {
+    id: "angelika-kuzbit",
+    quote:
+      "Karolina showed strong skills in design, analysis, and in creating and conducting research. Karolina has broad knowledge and skills that allow a creative, conscientious, precise and high-quality approach to every task she takes on.",
+    name: "Angelika Kuźbit",
+    initials: "AK",
+    role: "Researcher",
+    company: { name: "Cinkciarz.pl" },
+    note: "Translated from Polish",
   },
 ];
 

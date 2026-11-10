@@ -100,6 +100,13 @@
 @utility bottom-clear-consent {
   bottom: var(--kb-corner-bottom, var(--spacing-md));
 }
+/* A scroll box without a visible scrollbar (the carousel track: its controls, a swipe or a trackpad move it). */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
 @utility z-header {
   z-index: 50;
 }

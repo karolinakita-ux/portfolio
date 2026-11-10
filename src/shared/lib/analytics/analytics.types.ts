@@ -99,6 +99,11 @@ export interface EventData {
   /** Go to Description in the image viewer: it closes onto the screenshot's description; image: the one shown. */
   [EVENT.imageDescriptionOpen]: { case: View; image: string };
   /**
+   * Previous or Next in a carousel (the Work page's recommendations); swipes are not counted. shown: the items in
+   * view after the move, as the carousel shows them ("3 - 4", or "2" when one item shows).
+   */
+  [EVENT.carouselNav]: { direction: "prev" | "next"; place: "testimonials"; shown: string };
+  /**
    * banner: the Work page's link to the Figma workspace, in Behind the Design. case: the case study whose Figma file
    * link was used, at its top (under the details panel) or in the design files banner at the end. The Work hero's
    * Figma, GitHub and Storybook buttons were removed in 5.14.4: "hero" is earlier data only.

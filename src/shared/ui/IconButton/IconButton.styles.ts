@@ -16,6 +16,8 @@ export const styles = {
       // aria-disabled (not disabled) keeps focus on the button when it hits a limit, e.g. max zoom.
       "aria-disabled:cursor-not-allowed aria-disabled:border-border-interactive-disabled aria-disabled:bg-bg-surface-raised",
       "aria-disabled:text-text-interactive-disabled aria-disabled:shadow-none",
+      // Windows contrast themes replace those colours: GrayText keeps an unavailable button looking unavailable.
+      "forced-colors:aria-disabled:border-[GrayText] forced-colors:aria-disabled:text-[GrayText]",
       FOCUS_RING,
       className,
     ),

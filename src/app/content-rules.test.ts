@@ -833,10 +833,10 @@ describe("LinkedIn links", () => {
     expect(PROFILE.linkedinRecommendationsUrl.startsWith(PROFILE.linkedinUrl + "/")).toBe(true);
   });
 
-  it("links every recommendation to LinkedIn pages of its author and company", () => {
+  it("links a recommendation’s author and company to their LinkedIn pages, when it names them", () => {
     for (const item of TESTIMONIALS) {
-      expect(item.profileUrl).toMatch(/^https:\/\/www\.linkedin\.com\/in\/[\w-]+\/$/);
-      expect(item.company.url).toMatch(/^https:\/\/www\.linkedin\.com\/company\/[\w-]+\/$/);
+      if (item.profileUrl) expect(item.profileUrl).toMatch(/^https:\/\/www\.linkedin\.com\/in\/[\w-]+\/$/);
+      if (item.company?.url) expect(item.company.url).toMatch(/^https:\/\/www\.linkedin\.com\/company\/[\w-]+\/$/);
       expect(item.role).not.toContain("|"); // the company is its own field
     }
   });

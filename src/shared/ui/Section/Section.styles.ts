@@ -11,6 +11,9 @@ export const styles = {
   root: clsx("pt-3xl"),
   header: clsx("flex flex-col gap-xs"),
   titleRow: clsx("group flex items-center gap-xs"),
+  /** The heading row with section controls: they wrap below the heading when both do not fit, still at the end. */
+  titleBar: clsx("flex flex-wrap items-center gap-x-md gap-y-sm"),
+  actions: clsx("ml-auto"),
   // min-w-0: beside its copy-link button the heading may shrink, so a long word breaks instead of pushing the
   // button off a narrow screen at a large browser text size.
   title: clsx(

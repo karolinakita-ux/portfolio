@@ -282,6 +282,32 @@ test("counts zooming a screenshot with how it was done; a click that zooms is no
   expect(eventsNamed(sent, EVENT.deadClick)).toEqual([]);
 });
 
+test("counts Previous and Next in the recommendations with the items then in view, not a scroll of the row", async ({
+  page,
+  baseURL,
+}) => {
+  const { sent } = await openAsLiveSite(page, baseURL, "/");
+  await allowStatistics(page);
+  await expect.poll(() => pageviews(sent).length).toBe(1);
+
+  const section = page.getByRole("region", { name: "Trusted by the People I Worked With" });
+  const next = section.getByRole("button", { name: "Next recommendations" });
+  await next.click();
+  await expect(section.getByText("3 - 4 of 5")).toBeVisible();
+  await next.click();
+  await expect(section.getByText("4 - 5 of 5")).toBeVisible();
+  // A swipe or a trackpad moves the row without a click: not counted.
+  await section.getByRole("list", { name: "Recommendations" }).evaluate((row) => {
+    row.scrollTo({ left: 0, behavior: "instant" });
+  });
+  await expect(section.getByText("1 - 2 of 5")).toBeVisible();
+  await page.waitForTimeout(500);
+  expect(eventsNamed(sent, EVENT.carouselNav).map((payload) => payload.data)).toEqual([
+    { direction: "next", place: "testimonials", shown: "3 - 4", input: "mouse" },
+    { direction: "next", place: "testimonials", shown: "4 - 5", input: "mouse" },
+  ]);
+});
+
 test("tells a tap on a touch screen from a mouse click", async ({ browser, baseURL }) => {
   const context = await browser.newContext({ hasTouch: true, viewport: { width: 390, height: 844 } });
   const page = await context.newPage();

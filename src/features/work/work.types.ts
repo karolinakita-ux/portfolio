@@ -21,10 +21,12 @@ export interface Testimonial {
   quote: string;
   name: string;
   initials: string;
-  /** The person's LinkedIn profile. */
-  profileUrl: string;
+  /** The person's LinkedIn profile; without it the name is plain text. */
+  profileUrl?: string;
   /** Job title, without the company. */
   role: string;
-  /** Company at the time, with its LinkedIn page. */
-  company: { name: string; url: string };
+  /** Company where we worked together, when the card names one; without its LinkedIn page it is plain text. */
+  company?: { name: string; url?: string };
+  /** A line under the role, e.g. "Translated from Polish" when the quote is a translation. */
+  note?: string;
 }
