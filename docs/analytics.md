@@ -132,6 +132,7 @@ The tag counts once the visitor allows statistics, on whichever page that happen
 - **Connection type, memory, battery, exact screen pixels beyond Umami's own `screen`**: more fingerprinting surface, and no decision depends on them.
 - **The browser's exact version, the time zone, the list of languages, fonts or supported features**: classic fingerprinting signals. Umami's browser name, country and language are enough, `js-error` shows where the site breaks, and reading more of the device would need a new consent text.
 - **Text**: what visitors type or copy, and the exact spot of a click.
+- **Netlify Real User Metrics** (project settings → Logs & metrics): it stays off. Netlify adds its script (`/.netlify/scripts/rum`) to every page at the edge, outside the build, and it runs before the visitor answers the consent box: it reads the browser, screen size and page speed and sends them to Netlify. Netlify gives it no consent hook, only on or off. It was on until 10 November 2026. The speed reports above cover the same measures with consent, and Netlify's server logs (no script) cover every visit. The release checks the live page for any `/.netlify/scripts/` (the `release` skill, step 4).
 
 ## Adding or changing an event
 

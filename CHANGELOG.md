@@ -4,6 +4,14 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Unreleased
+
+### 5.21.1 - 2026-11-10
+
+#### Changed
+
+- Docs: Netlify Real User Metrics stays off. Netlify added its script to every page at the edge, outside the build, and it read the browser, screen size and page speed before the visitor answered the consent box, which the privacy policy does not allow. It was switched off in the Netlify project on 10 November; Umami's speed reports cover the same measures with consent. The tracking plan (Not collected, on purpose) and CLAUDE.md say so, and the `release` skill now checks the live page for any `/.netlify/scripts/`.
+
 ## Release v5.21.0 - 2026-11-10
 
 - The Work page now shows 5 LinkedIn recommendations from the managers and teammates Karolina worked with, quoted word for word.
