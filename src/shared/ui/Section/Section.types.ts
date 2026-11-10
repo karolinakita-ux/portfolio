@@ -13,4 +13,9 @@ export interface SectionProps {
   children?: ReactNode;
   headingProps?: HTMLAttributes<HTMLHeadingElement>;
   bodyGap?: SectionBodyGap;
+  /**
+   * Controls for the whole section at the right end of the heading row (a carousel’s Previous and Next); on a
+   * narrow screen they wrap below the heading, still at the right end.
+   */
+  actions?: ReactNode;
 }

@@ -125,7 +125,7 @@ describe("events on the Work page", () => {
 
   it("counts each kind of LinkedIn link in the recommendations", () => {
     renderApp("/");
-    const section = within(screen.getByRole("region", { name: "Trusted by the Leaders I Worked For" }));
+    const section = within(screen.getByRole("region", { name: "Trusted by the People I Worked With" }));
     clickLink(section.getByRole("link", { name: /^Stewart Wilson, LinkedIn profile/ }));
     clickLink(section.getByRole("link", { name: /^Precisely, company page on LinkedIn/ }));
     clickLink(section.getByRole("link", { name: /^Read the full recommendations on LinkedIn/ }));
@@ -134,6 +134,22 @@ describe("events on the Work page", () => {
       [EVENT.linkedinClick, { target: "company", place: "testimonials" }],
       [EVENT.linkedinClick, { target: "recommendations", place: "testimonials" }],
     ]);
+  });
+
+  it("counts Previous and Next in the recommendations, with the items then in view", async () => {
+    const { user } = renderApp("/");
+    const section = within(screen.getByRole("region", { name: "Trusted by the People I Worked With" }));
+    // jsdom has no layout: give the row 5 cards, 2 in view, 316px apart.
+    const row = section.getByRole("list", { name: "Recommendations" });
+    Array.from(row.children).forEach((item, index) => {
+      Object.defineProperty(item, "offsetLeft", { value: index * 316 });
+    });
+    Object.defineProperty(row, "scrollWidth", { value: 5 * 316 - 16 });
+    Object.defineProperty(row, "clientWidth", { value: 2 * 316 - 16 });
+
+    await user.click(section.getByRole("button", { name: "Next recommendations" }));
+    await user.click(section.getByRole("button", { name: "Previous recommendations" })); // unavailable: not counted
+    expect(events()).toEqual([[EVENT.carouselNav, { direction: "next", place: "testimonials", shown: "3 - 4" }]]);
   });
 
   it("counts a theme switch, but not picking the theme already shown", async () => {

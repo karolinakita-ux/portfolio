@@ -4,6 +4,24 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Unreleased
+
+### 5.21.0 - 2026-11-10
+
+#### Added
+
+- Work page: the recommendations are a carousel of 5 LinkedIn excerpts, word for word: Stewart Wilson and Gavin Harvey first, then Weronika Dobrowolska, Natalia Jeszke and Angelika Kuźbit (hers translated from Polish and marked so). All 5 agreed to be quoted, and Karolina approved the excerpts and role lines (10 November). The heading is now "Trusted by the People I Worked With".
+- The carousel shows 2 cards from tablet width up and 1 on phones, with the next one at the edge. Previous and Next at the end of the heading row move it by one view (smoothly, or at once with reduced motion) and keep focus at either end. It never moves on its own. A position text ("1 - 2 of 5") reads as "1 to 2 of 5" to screen readers, which also hear the new position after Previous or Next, never on load or after a swipe. Printed pages show every card.
+- Shared pieces with stories: `Carousel` (a scroll-snap list), `CarouselControls`, the `useCarousel` hook (`shared/hooks/carousel`), an `actions` slot in `Section`'s heading row, the `scrollbar-none` utility, and `TestimonialCard` in the Work slice.
+- Statistics: `carousel-nav` counts Previous and Next presses (`direction`, `place`, `shown`: how far a visitor got), to see whether visitors read past the first 2 recommendations. Swipes are not counted. The privacy policy lists the buttons among the counted clicks (updated 10 November). It is one more click of a kind already listed, so `STORED_CHOICE.on` stays and earlier yeses are not asked again.
+- Tests: `e2e/testimonials-carousel.e2e.ts` (2 whole cards in view, keyboard moves keep focus, reduced motion, never moves in 6 s, print, 320px, a swipe on Android), unit tests for the hook and controls, the real tracker's `carousel-nav` in `e2e/analytics.e2e.ts`.
+
+#### Changed
+
+- Stewart's and Gavin's excerpts match their current LinkedIn text word for word again (one had been reworded, the other shortened). A recommender's name and company link to LinkedIn only when the card has those addresses; otherwise they are plain text.
+- `IconButton` keeps an unavailable button greyed out in Windows contrast themes (`GrayText`).
+- Docs: the carousel in `docs/motion.md` (its move, its reveal, and why it never moves on its own), `docs/architecture.md`, the tracking plan and CLAUDE.md's library-first list.
+
 ## Release v5.20.1 - 2026-11-05
 
 - The component library in Storybook now shows every component as it looks and works on the site, with the site's own text, in Light and Dark mode and on a phone.

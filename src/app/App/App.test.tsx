@@ -68,7 +68,7 @@ describe("App", () => {
 
   it("links each recommendation to its author and company on LinkedIn, and to the full recommendations", () => {
     renderApp();
-    const section = within(screen.getByRole("region", { name: "Trusted by the Leaders I Worked For" }));
+    const section = within(screen.getByRole("region", { name: "Trusted by the People I Worked With" }));
     const expectNewTab = (name: RegExp, href: string) => {
       const link = section.getByRole("link", { name });
       expect(link).toHaveAttribute("href", href);
@@ -98,6 +98,12 @@ describe("App", () => {
     const roleLine = section.getByText(/^UX Director/);
     expect(roleLine).toHaveTextContent("UX Director | at Precisely");
     expect(within(roleLine).getByText("|")).toHaveAttribute("aria-hidden", "true");
+
+    // Without a LinkedIn address, a name and a company are plain text, never a link that goes nowhere.
+    const plainRole = section.getByText(/^Frontend Developer/);
+    expect(plainRole).toHaveTextContent("Frontend Developer | at Raiffeisen Tech Poland");
+    expect(within(plainRole).queryByRole("link")).not.toBeInTheDocument();
+    expect(section.queryByRole("link", { name: /^Natalia Jeszke/ })).not.toBeInTheDocument();
   });
 
   it.each([

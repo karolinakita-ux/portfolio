@@ -1,59 +1,54 @@
-import { LinkedInTextLink } from "#features/work/components/LinkedInTextLink/LinkedInTextLink.tsx";
-import { RECOMMENDATIONS_LINK_LABEL, TESTIMONIALS } from "#features/work/work.content.ts";
+import { TestimonialCard } from "#features/work/components/TestimonialCard/TestimonialCard.tsx";
+import { RECOMMENDATIONS_LINK_LABEL, TESTIMONIALS, TESTIMONIALS_SECTION } from "#features/work/work.content.ts";
 import { PROFILE } from "#shared/content/profile.ts";
+import { carouselRange } from "#shared/hooks/carousel/carousel.utils.ts";
+import { useCarousel } from "#shared/hooks/carousel/useCarousel.ts";
 import { EVENT } from "#shared/lib/analytics/analytics.constants.ts";
 import { track } from "#shared/lib/analytics/analytics.utils.ts";
 import { EXTERNAL_LINK } from "#shared/lib/ui/ui.constants.ts";
-import { Avatar } from "#shared/ui/Avatar/Avatar.tsx";
 import { Button } from "#shared/ui/Button/Button.tsx";
-import { Card } from "#shared/ui/Card/Card.tsx";
-import { ArrowUpRight, Linkedin, Quote } from "#shared/ui/icons/icons.tsx";
+import { Carousel } from "#shared/ui/Carousel/Carousel.tsx";
+import { CarouselControls } from "#shared/ui/CarouselControls/CarouselControls.tsx";
+import { ArrowUpRight, Linkedin } from "#shared/ui/icons/icons.tsx";
 import { NewTabNote } from "#shared/ui/NewTabNote/NewTabNote.tsx";
 import { Section } from "#shared/ui/Section/Section.tsx";
-import { VisuallyHidden } from "#shared/ui/VisuallyHidden/VisuallyHidden.tsx";
 
 import { styles } from "./TestimonialsSection.styles.ts";
 
-/** Quotes are excerpts of LinkedIn recommendations: each names its author and company, with links to both. */
+/**
+ * Excerpts of LinkedIn recommendations in a manual carousel: 2 in view from tablet width up (the managers
+ * first), 1 on phones. Previous and Next sit at the end of the heading row; it never moves on its own.
+ */
 export function TestimonialsSection() {
+  const { trackRef, onScroll, previous, next, scrollable, ...position } = useCarousel(TESTIMONIALS.length);
+  /** Moves, then counts the press with the items now in view (swipes are not counted). */
+  const move = (direction: "prev" | "next") => {
+    const landed = direction === "prev" ? previous() : next();
+    if (landed)
+      track(EVENT.carouselNav, { direction, place: "testimonials", shown: carouselRange(landed.first, landed.last) });
+  };
+  const controls = scrollable ? (
+    <CarouselControls
+      {...position}
+      onPrevious={() => {
+        move("prev");
+      }}
+      onNext={() => {
+        move("next");
+      }}
+      labels={TESTIMONIALS_SECTION.controls}
+    />
+  ) : null;
   return (
-    <Section id="testimonials" title="Trusted by the Leaders I Worked For">
-      <ul className={styles.list}>
-        {TESTIMONIALS.map((item) => (
-          <li key={item.id} className={styles.item}>
-            <Card as="figure" gap="md" className={styles.card}>
-              <Quote aria-hidden="true" size={24} className={styles.quoteMark} />
-              <blockquote cite={PROFILE.linkedinRecommendationsUrl} className={styles.quote}>
-                <p>{item.quote}</p>
-              </blockquote>
-              <figcaption className={styles.caption}>
-                <Avatar initials={item.initials} />{" "}
-                <span className={styles.person}>
-                  <span className={styles.name}>
-                    <LinkedInTextLink
-                      href={item.profileUrl}
-                      label={item.name}
-                      destination="LinkedIn profile"
-                      target="author"
-                    />
-                  </span>{" "}
-                  <span className={styles.role}>
-                    {item.role}
-                    <span aria-hidden="true"> | </span>
-                    <VisuallyHidden> at </VisuallyHidden>
-                    <LinkedInTextLink
-                      href={item.company.url}
-                      label={item.company.name}
-                      destination="company page on LinkedIn"
-                      target="company"
-                    />
-                  </span>
-                </span>
-              </figcaption>
-            </Card>
-          </li>
-        ))}
-      </ul>
+    <Section id="testimonials" title={TESTIMONIALS_SECTION.title} actions={controls}>
+      <Carousel
+        ref={trackRef}
+        onScroll={onScroll}
+        label={TESTIMONIALS_SECTION.list}
+        items={TESTIMONIALS}
+        getKey={(item) => item.id}
+        renderItem={(item) => <TestimonialCard item={item} />}
+      />
       <div className={styles.more}>
         <Button
           as="a"

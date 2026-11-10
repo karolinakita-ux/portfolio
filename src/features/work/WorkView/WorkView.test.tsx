@@ -2,7 +2,7 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-import { TESTIMONIALS, WORK_CASES } from "#features/work/work.content.ts";
+import { TESTIMONIALS, TESTIMONIALS_SECTION, WORK_CASES } from "#features/work/work.content.ts";
 import { VIEW } from "#shared/lib/routes/routes.constants.ts";
 import { CASE_NAMES } from "#shared/lib/routes/routes.content.ts";
 import { REVEAL } from "#test/reveal.ts";
@@ -55,15 +55,16 @@ describe("WorkView", () => {
 });
 
 describe("WorkView scroll reveal", () => {
-  it("fades up each case card and each testimonial, and nothing else", () => {
+  it("fades up each case card and the recommendations row as one card list, and nothing else", () => {
     renderWork();
     const cases = WORK_CASES.map((item) => screen.getByRole("article", { name: CASE_NAMES[item.view].cardTitle }));
-    const testimonials = within(
-      screen.getByRole("region", { name: "Trusted by the Leaders I Worked For" }),
-    ).getAllByRole("figure");
-    expect(testimonials).toHaveLength(TESTIMONIALS.length);
-    for (const card of [...cases, ...testimonials]) expect(card).toHaveClass(REVEAL);
-    expect(Array.from(document.querySelectorAll(`.${REVEAL}`))).toEqual([...cases, ...testimonials]);
+    // Inside the sideways scroller a card's own reveal would follow the row, not the page: the row fades up.
+    const row = within(screen.getByRole("region", { name: TESTIMONIALS_SECTION.title })).getByRole("list", {
+      name: TESTIMONIALS_SECTION.list,
+    });
+    expect(within(row).getAllByRole("figure")).toHaveLength(TESTIMONIALS.length);
+    for (const item of [...cases, row]) expect(item).toHaveClass(REVEAL);
+    expect(Array.from(document.querySelectorAll(`.${REVEAL}`))).toEqual([...cases, row]);
   });
 
   it("keeps the hero, the headings and the callouts still", () => {

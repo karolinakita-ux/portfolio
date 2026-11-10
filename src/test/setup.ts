@@ -12,6 +12,7 @@ import { afterEach } from "vitest";
 // No layout engine: scrolling is a no-op.
 window.scrollTo = () => {};
 Element.prototype.scrollIntoView = () => {};
+Element.prototype.scrollTo = () => {};
 
 // No pointer capture (the image viewer captures the mouse while a drag pans the zoomed image).
 if (typeof Element.prototype.setPointerCapture !== "function") {
