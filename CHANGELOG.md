@@ -6,11 +6,23 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.22.0 - 2026-11-11
+
+#### Added
+
+- Work page recommendations: a card names where we worked together when that is not the person's current employer ("Worked together at Programado", "Worked together at Cinkciarz.pl"), with a link to the company's LinkedIn page, under the quote.
+
+#### Changed
+
+- The recommendations carousel shows a slice of the next card from tablet width up too, as phones already did: 2 whole cards and a 48px slice (`space-2xl`) of the third, enough for its edge and gold quote mark, so it is clear there is more. At the end the last 2 cards show whole.
+- "Translated from Polish" is a neutral Badge under the quote instead of a third line under the job title: it qualifies the quote, not the person, and it stands apart from the job title without a paler colour (the muted text token reaches only 2.07:1, and the site loads no italic). Every author block keeps 2 lines, and a job title without a link is as tall as one with a link (24px), so the lines above the authors stay level across the cards in view.
+- The changelog says what changed and why, never who asked for or approved it, and names recommenders by their role: the earlier entries were rewritten so, CONTRIBUTING.md (Changelog entry) says so, and `content-rules.test.ts` fails when a recommender's name or such a credit appears in `CHANGELOG.md` or `docs/`.
+
 ### 5.21.2 - 2026-11-10
 
 #### Changed
 
-- Work page recommendations: Weronika Dobrowolska, Natalia Jeszke and Angelika Kuźbit link to their LinkedIn profiles, and their employers to their company pages, as Stewart's and Gavin's do. Every card now shows the person's current job title and employer, as their LinkedIn profile does: Weronika "Senior UX Designer | DTP", Natalia "Frontend Developer | Raiffeisen Tech Poland", Angelika "Psychologist" (no company; her quote stays marked "Translated from Polish"). A company is always a link again, so the plain-text company of 5.21.0 is gone, and a profile address may hold a percent-encoded letter (`content-rules.test.ts`).
+- Work page recommendations: the 3 newer recommenders link to their LinkedIn profiles, and their employers to their company pages, as the two managers' do. Every card now shows the person's current job title and employer, as their LinkedIn profile does: "Senior UX Designer | DTP", "Frontend Developer | Raiffeisen Tech Poland" and "Psychologist" (no company; the translated quote stays marked "Translated from Polish"). A company is always a link again, so the plain-text company of 5.21.0 is gone, and a profile address may hold a percent-encoded letter (`content-rules.test.ts`).
 
 ### 5.21.1 - 2026-11-10
 
@@ -32,7 +44,7 @@ Versions: 5.21.0.
 
 #### Added
 
-- Work page: the recommendations are a carousel of 5 LinkedIn excerpts, word for word: Stewart Wilson and Gavin Harvey first, then Weronika Dobrowolska, Natalia Jeszke and Angelika Kuźbit (hers translated from Polish and marked so). All 5 agreed to be quoted, and Karolina approved the excerpts and role lines (10 November). The heading is now "Trusted by the People I Worked With".
+- Work page: the recommendations are a carousel of 5 LinkedIn excerpts, word for word: the two managers first (a UX director and a lead product designer), then a UX designer, a frontend developer and a psychologist (her recommendation translated from Polish and marked so). All 5 agreed to be quoted. The heading is now "Trusted by the People I Worked With".
 - The carousel shows 2 cards from tablet width up and 1 on phones, with the next one at the edge. Previous and Next at the end of the heading row move it by one view (smoothly, or at once with reduced motion) and keep focus at either end. It never moves on its own. A position text ("1 - 2 of 5") reads as "1 to 2 of 5" to screen readers, which also hear the new position after Previous or Next, never on load or after a swipe. Printed pages show every card.
 - Shared pieces with stories: `Carousel` (a scroll-snap list), `CarouselControls`, the `useCarousel` hook (`shared/hooks/carousel`), an `actions` slot in `Section`'s heading row, the `scrollbar-none` utility, and `TestimonialCard` in the Work slice.
 - Statistics: `carousel-nav` counts Previous and Next presses (`direction`, `place`, `shown`: how far a visitor got), to see whether visitors read past the first 2 recommendations. Swipes are not counted. The privacy policy lists the buttons among the counted clicks (updated 10 November). It is one more click of a kind already listed, so `STORED_CHOICE.on` stays and earlier yeses are not asked again.
@@ -40,7 +52,7 @@ Versions: 5.21.0.
 
 #### Changed
 
-- Stewart's and Gavin's excerpts match their current LinkedIn text word for word again (one had been reworded, the other shortened). A recommender's name and company link to LinkedIn only when the card has those addresses; otherwise they are plain text.
+- The two managers' excerpts match their current LinkedIn text word for word again (one had been reworded, the other shortened). A recommender's name and company link to LinkedIn only when the card has those addresses; otherwise they are plain text.
 - `IconButton` keeps an unavailable button greyed out in Windows contrast themes (`GrayText`).
 - Docs: the carousel in `docs/motion.md` (its move, its reveal, and why it never moves on its own), `docs/architecture.md`, the tracking plan and CLAUDE.md's library-first list.
 
@@ -81,7 +93,7 @@ Versions: 5.19.0 - 5.20.0.
 
 #### Added
 
-- Storybook's Welcome page starts with a short Start Here for people reviewing Karolina's work: open UI › Button, switch the Theme menu to Dark mode, then a larger piece (SiteHeader, Image Viewer) and the Accessibility panel. Its links follow right under it instead of at the end, and the link to `docs/design.md` reads "Explore the Design Token Workflow", like the other links to Figma and the code. The developer detail (Built from Figma, In the Sidebar, How to Use It) follows as before. The recommended options of the progress page's question a41, chosen by Mateusz; Karolina can still change them.
+- Storybook's Welcome page starts with a short Start Here for people reviewing Karolina's work: open UI › Button, switch the Theme menu to Dark mode, then a larger piece (SiteHeader, Image Viewer) and the Accessibility panel. Its links follow right under it instead of at the end, and the link to `docs/design.md` reads "Explore the Design Token Workflow", like the other links to Figma and the code. The developer detail (Built from Figma, In the Sidebar, How to Use It) follows as before.
 
 ### 5.19.6 - 2026-11-05
 
@@ -136,7 +148,7 @@ Versions: 5.19.0 - 5.20.0.
 
 #### Added
 
-- Footer: a CV link ends the Explore list (Work, About, Contact, CV) on every page, so a case study, which has no CV link of its own, leads to the CV in one click. It opens the `/cv` page, where the PDF's Download button is. The header keeps its 3 items. Chosen at Mateusz's request; Figma's Footer gets the same link from Karolina.
+- Footer: a CV link ends the Explore list (Work, About, Contact, CV) on every page, so a case study, which has no CV link of its own, leads to the CV in one click. It opens the `/cv` page, where the PDF's Download button is. The header keeps its 3 items. Figma's Footer gets the same link.
 - Statistics: the link sends `cv-open` with `place: "footer"` (`docs/analytics.md`). The privacy policy already lists clicks on links to the CV, so the policy and the consent stay as they are.
 - Tests: the footer story checks the Explore list and the CV link, and an analytics test opens the CV from a case study's footer.
 
@@ -150,7 +162,7 @@ Versions: 5.18.1.
 
 #### Changed
 
-- Privacy: the theme line now says that kita.company's link carries a theme picked there "in the address" (it said the link "brings that choice with it"), so it no longer seems to contradict "never sent anywhere" below it, which is about the saved choices. The host receiving the address is covered under When You Open a Page. Chosen at Mateusz's request on Karolina's open item; the date stays 2 November 2026.
+- Privacy: the theme line now says that kita.company's link carries a theme picked there "in the address" (it said the link "brings that choice with it"), so it no longer seems to contradict "never sent anywhere" below it, which is about the saved choices. The host receiving the address is covered under When You Open a Page. The date stays 2 November 2026.
 
 ## Release v5.18.0 - 2026-11-02
 
@@ -259,7 +271,7 @@ Versions: 5.15.1 - 5.17.6.
 #### Changed
 
 - Tests: `content-rules.test.ts` fails when a CV lead-in holds another one of the same employer whole (`nestedPhrases` in `src/test/copy-rules.ts`; checked with the old lead-ins, which fail, and the new ones). `e2e/image-zoom.e2e.ts` opens the viewer at 195px and, in Chromium, at 390px with a 32px text size: every control inside the panel, the zoom controls on a centred second row, no sideways scroll, and the controls work. `yarn a11y` opens the viewer in its large-text check too (no sideways scroll, every control inside the panel, no text cut off). Both fail on the one-row toolbar of 5.16.0.
-- Automotive: My Role stays "Senior UX Designer", her role on that project (Karolina, 2026-10-31); a code comment now says so.
+- Automotive: My Role stays "Senior UX Designer", her role on that project; a code comment now says so.
 
 ### 5.16.2 - 2026-10-31
 
@@ -289,7 +301,7 @@ Versions: 5.15.1 - 5.17.6.
 
 #### Added
 
-- Image viewer on phones: the zoom buttons and the zoom level now show on every screen, and a tap on the image zooms to 200% where it lands, with another tap going back to fit, as a click does with a mouse (Karolina's answer to a28). Until now a phone showed a wide screenshot no larger than the page does (about 330px wide, its text about 3px tall), so reading it took a 3.5 - 5x pinch. Pinch-zoom, moving the zoomed image with a finger, swiping to the next screenshot and the fling after a swipe work as before, and none of them zooms: a finger that moves, a second finger (a pinch) and the tap that stops a fling are not taps. Zoom stays instant, also with reduced motion, and keyboard and screen reader use is unchanged.
+- Image viewer on phones: the zoom buttons and the zoom level now show on every screen, and a tap on the image zooms to 200% where it lands, with another tap going back to fit, as a click does with a mouse. Until now a phone showed a wide screenshot no larger than the page does (about 330px wide, its text about 3px tall), so reading it took a 3.5 - 5x pinch. Pinch-zoom, moving the zoomed image with a finger, swiping to the next screenshot and the fling after a swipe work as before, and none of them zooms: a finger that moves, a second finger (a pinch) and the tap that stops a fling are not taps. Zoom stays instant, also with reduced motion, and keyboard and screen reader use is unchanged.
 - At 320px the toolbar keeps one row: Previous, Zoom out, the zoom level, Zoom in and Next. The "Swipe to browse" hint shows from 480px up, where it fits beside the zoom controls; on a phone held upright the buttons are there instead. The viewer's icon buttons still look 32px but take taps up to 40px on touch screens. The image pane has `touch-action: manipulation`, so two quick taps zoom in and back out instead of zooming the page. The phone-only limit on zoom (`ZOOM_QUERY`, `canZoom()`, the reset below 768px) is gone.
 - Statistics: a tap that zooms is sent as `image-zoom` with `method: "click"`, like a mouse click on the image, and `input: "touch"` tells them apart (the tracking plan defines `method` as the control and `input` as the device). Not a new kind of data: the privacy policy already covers zooming in the viewer and the input, so it and `STORED_CHOICE` stay as they are. A tap on the viewer's image is no longer a dead click, since it now zooms (`data-clickable`, in `INTERACTIVE`).
 - Tests: `LightboxProvider.test.tsx` (a tap and a pen zoom on a phone-sized screen; a moving finger, a cancelled press, a pinch and a swipe do not; a tap counts as a click), `clicks.utils.test.ts`, `e2e/image-zoom.e2e.ts` (in Chromium, Firefox and WebKit: a tap on a tablet keeps the tapped point under the finger, and at 320px the toolbar is one row inside the panel and works; on an Android phone in Messenger: a 40px touch target on every viewer button, tap to zoom at once with and without reduced motion, and a swipe, a pan, a fling stopped by a tap and a pinch that zoom nothing), `e2e/analytics.e2e.ts` (a tap that zooms is `click` from `touch`, with no dead click). `yarn a11y` now also zooms the viewer at phone width.
@@ -302,7 +314,7 @@ Versions: 5.15.1 - 5.17.6.
 - Badges are now 22px tall in every tone, as in Figma's Badge. The tags on About (career), Smart Ticket (personas) and Theme Generator (bento cards) were 20px; the status badges (Smart Ticket's before and after, Theme Generator's Shipped and Roadmap) were already 22px. Figma's fixed 22px frame holds Label Small's 16px line inside its 4px padding and inside stroke; the site gets the same box and text position from 2px padding and a 1px border, transparent on tags, so in forced colours (Windows contrast themes) tags now show their outline like status badges.
 - Breadcrumbs follow Figma: a 16px chevron (was 14px) with 8px on each side (was 4px), on About, Contact, CV, Privacy, Accessibility and the 4 case studies. Home's house icon is 16px too, like Figma's icon/home, 4px from its label as before. On phones the case pages' previous / next links wrap as before.
 - Bento card titles (Theme Generator's delivery and engineering cards) are Title Medium in its own medium weight, as in Figma, instead of semibold.
-- The menu's current-page underline stays as it is (Karolina, 2026-10-31); Figma's SiteNav shows it too.
+- The menu's current-page underline stays as it is; Figma's SiteNav shows it too.
 - Tests: `e2e/figma-sizes.e2e.ts` measures in Chromium, Firefox and WebKit that every badge tone is 22px tall, that the breadcrumb's chevron and house are 16px with 8px on each side (About and Theme Generator), and that a bento title is 16/24px at weight 500. On the code of 5.15.7 it fails: neutral badge 20px, chevron 14px, title weight 600.
 - Docs: the comments in the Badge, Breadcrumb and BentoCards styles, and the Badge and Breadcrumb stories' descriptions.
 
@@ -395,7 +407,7 @@ Versions: 5.14.17 - 5.15.0.
 
 #### Changed
 
-- CV PDF: its portfolio link goes back to `?utm_medium=cv-pdf` (5.14.23 had made it `?ref=cv`). Mateusz chose the UTM tag once he knew why it was there: a visit from the PDF then shows in the UTM report and does not replace the company tag of a recruiter who first came from `/cv?ref=acme`. The PDF is the one from before 5.14.23. Copied section links keep their `?ref=section-link` tag.
+- CV PDF: its portfolio link goes back to `?utm_medium=cv-pdf` (5.14.23 had made it `?ref=cv`). The UTM tag is the better fit: a visit from the PDF then shows in the UTM report and does not replace the company tag of a recruiter who first came from `/cv?ref=acme`. The PDF is the one from before 5.14.23. Copied section links keep their `?ref=section-link` tag.
 
 ### 5.14.31 - 2026-10-31
 
@@ -531,7 +543,7 @@ Versions: 5.14.17 - 5.15.0.
 #### Fixed
 
 - Header: the current page in the menu is underlined as well as marked by the gold pill. The gold alone is 1.54:1 on the white header in Light mode, under the 3:1 a state needs (WCAG 1.4.11); the accessibility audit before the v5.14.16 release found it.
-- Project Planning: the notice no longer says logos were removed, because the app's wordmark is shown with Karolina's approval since 5.14.15.
+- Project Planning: the notice no longer says logos were removed, because the app's wordmark has been shown since 5.14.15.
 - Docs: CLAUDE.md no longer says llms.txt and the sitemap follow the case order; they do once the engineering branch lands.
 
 ## Release v5.14.16 - 2026-10-30
@@ -559,7 +571,7 @@ Versions: 5.3.4 - 5.14.16.
 
 #### Changed
 
-- Project Planning: the Work thumbnail and the calendar screenshot show the app's wordmark again, and the case links its Figma file again ("Explore the Figma File" at the top and in the closing banner). Karolina approved showing the wordmark in the screens and the file on 30 October; the name itself stays out of the site's text, alt text and file names, and the hidden-name test keeps it that way.
+- Project Planning: the Work thumbnail and the calendar screenshot show the app's wordmark again, and the case links its Figma file again ("Explore the Figma File" at the top and in the closing banner). The name itself stays out of the site's text, alt text and file names, and the hidden-name test keeps it that way.
 
 ### 5.14.14 - 2026-10-30
 
@@ -579,7 +591,7 @@ Versions: 5.3.4 - 5.14.16.
 
 #### Changed
 
-- Docs: Karolina's answers of 30 October are project rules now. Figma is the design source: a design change starts there or is mirrored there the same day, and when Figma and the site differ without a decision, she is asked (CLAUDE.md, docs/design.md, the design-sync skill). Figma uses only the Kita Branding variables. She cleans her screenshots before handing them over, so anything that still looks confidential is a question for her, not an edit (CLAUDE.md, the confidentiality reviewer). The case studies keep one order everywhere: Smart Ticket, Automotive, Project Planning, Theme Generator.
+- Docs: new project rules. Figma is the design source: a design change starts there or is mirrored there the same day, and when Figma and the site differ, neither side wins without a decision (CLAUDE.md, docs/design.md, the design-sync skill). Figma uses only the Kita Branding variables. Screenshots are cleaned before they reach the repo, so anything that still looks confidential is checked, not edited (CLAUDE.md, the confidentiality reviewer). The case studies keep one order everywhere: Smart Ticket, Automotive, Project Planning, Theme Generator.
 
 ### 5.14.11 - 2026-10-30
 
@@ -612,7 +624,7 @@ Versions: 5.3.4 - 5.14.16.
 
 #### Changed
 
-- CV: GlobalLogic Poland is now two entries, UX/UI Designer (Sep 2019 - Dec 2023) and Senior UX/UI Designer (Jan 2024 - Sep 2026); all bullets stay with the Senior entry until Karolina places them. Cinkciarz.pl says Junior UX Researcher & Designer, the degree is MSc in Psychology, at Programado she mentored a UX intern, and the Programado line says the contract ran partly alongside the full-time role. The PDF is remade from the page (still 2 pages).
+- CV: GlobalLogic Poland is now two entries, UX/UI Designer (Sep 2019 - Dec 2023) and Senior UX/UI Designer (Jan 2024 - Sep 2026); all bullets stay with the Senior entry for now. Cinkciarz.pl says Junior UX Researcher & Designer, the degree is MSc in Psychology, at Programado she mentored a UX intern, and the Programado line says the contract ran partly alongside the full-time role. The PDF is remade from the page (still 2 pages).
 - About: the intro and the portrait caption say Senior Product Designer. The career cards name GlobalLogic Poland with both titles and their years, the Programado contract from 2023 to 2026 alongside it, and the MSc in Psychology.
 - Work, CV and search copy: 8+ years, mostly on B2B and enterprise platforms (her first job was consumer FinTech). Contact and its search description say Design Systems Specialist, and the structured data lists the MSc in Psychology and WCAG 2.1 AA, as the CV does.
 - Tests and docs: new profile-fact checks keep these facts in step across the CV, About, Contact, search copy and index.html, About's years included, and the CV page test checks that an entry without bullets shows no empty list. CLAUDE.md records the rule.
@@ -621,7 +633,7 @@ Versions: 5.3.4 - 5.14.16.
 
 #### Changed
 
-- Automotive: one name, Marketplace, as Karolina chose. The page heading is now "Automotive B2B Marketplace: From Dealer Research Across Europe to a Validated Redesign" (also in the previous / next links) and the browser tab "Automotive Marketplace Case Study", like the Work card, the breadcrumb and the search data. "7 European markets" stays.
+- Automotive: one name, Marketplace. The page heading is now "Automotive B2B Marketplace: From Dealer Research Across Europe to a Validated Redesign" (also in the previous / next links) and the browser tab "Automotive Marketplace Case Study", like the Work card, the breadcrumb and the search data. "7 European markets" stays.
 - Theme Generator (the Data Governance case): the breadcrumb and the browser tab say "Theme Generator", the product the Work card, the heading and the search data name. The address `/work/data-governance` stays, so shared links keep working.
 - Tests: a new check keeps each case's browser tab equal to its breadcrumb name and every word of that name in its heading.
 
@@ -629,8 +641,8 @@ Versions: 5.3.4 - 5.14.16.
 
 #### Changed
 
-- Automotive: the research boards show Karolina's originals again (persona, multi-market survey and interview synthesis, both themes). She approved the figures in writing and confirmed that her screenshots hold no confidential data, so nothing on them is blurred or painted over any more. The confidentiality note no longer says that some figures are hidden.
-- Smart Ticket: the legacy My Profile screen shows its sample email address again, as Karolina approved.
+- Automotive: the research boards show the original screenshots again (persona, multi-market survey and interview synthesis, both themes). The figures may be published and the screenshots hold no confidential data, so nothing on them is blurred or painted over any more. The confidentiality note no longer says that some figures are hidden.
+- Smart Ticket: the legacy My Profile screen shows its sample email address again.
 - Search data: the Person block no longer lists the Google UX Design certificate, which no page mentions.
 
 ### 5.14.6 - 2026-10-30
@@ -1007,7 +1019,7 @@ Versions: 5.2.5 - 5.3.3.
 #### Changed
 
 - `a11y-reviewer` follows current practice: it starts from the changed files, also runs the motion e2e spec, rules on every result axe could not decide, walks a checklist of what tools miss on this site (text spacing, hover content, dragging, consistent help, status messages, and more), grades findings by severity with their evidence, and lists the limits of the run and the screen reader checks a person still has to do. Its description says to use it proactively.
-- The `release` skill can be started by Claude when the user asks for a release, not only by typing `/release`. It says what to do when the deploy fails and lists the caches to refresh. `ship-change` points to the e2e run and the reviewers after UI changes.
+- The `release` skill can be started by Claude when a release is asked for, not only by typing `/release`. It says what to do when the deploy fails and lists the caches to refresh. `ship-change` points to the e2e run and the reviewers after UI changes.
 
 ### 5.3.1 - 2026-10-26
 
@@ -1135,7 +1147,7 @@ The rest of the WCAG 2.2 A and AA review (four reviewers, file by file):
 
 #### Fixed
 
-- Words ran together for anything that reads the pages without CSS (search engines, AI assistants, reader modes, plain-text copies): "Back to All WorkNext Case StudyEnterprise", "SWStewart WilsonUX Director", "Based in PolandProduct & UX/UI Designer", the hero and banner link labels, the privacy page's policy links and a heading with a "Roadmap" badge, 21 places in all. The HTML now has a space between them. The layout does not change: every changed element's box matches the live site at 390 and 1280 px.
+- Words ran together for anything that reads the pages without CSS (search engines, AI assistants, reader modes, plain-text copies): "Back to All WorkNext Case StudyEnterprise", a recommendation's initials, name and job title, "Based in PolandProduct & UX/UI Designer", the hero and banner link labels, the privacy page's policy links and a heading with a "Roadmap" badge, 21 places in all. The HTML now has a space between them. The layout does not change: every changed element's box matches the live site at 390 and 1280 px.
 
 #### Added
 
@@ -1335,7 +1347,7 @@ Versions: 3.12.1 - 3.13.4.
 
 #### Changed
 
-- Link buttons ("View Case Study" and the other case-card links) have a transparent 1px border, so their click area is a bordered button's box (38 px tall with the button padding), as Karolina asked; before it was 36 px. A Button test checks it; the rule is in docs/design.md.
+- Link buttons ("View Case Study" and the other case-card links) have a transparent 1px border, so their click area is a bordered button's box (38 px tall with the button padding); before it was 36 px. A Button test checks it; the rule is in docs/design.md.
 
 ### 3.13.1 - 2026-10-20
 
@@ -1343,7 +1355,7 @@ Versions: 3.12.1 - 3.13.4.
 
 - README: the privacy page, the Storybook library and opt-in statistics in "What is inside", 490+ tests (was 270+), `yarn build-storybook`, and an up-to-date folder map (e2e/, theme.css, the lib/ domains).
 - docs/architecture.md: the privacy slice, a Visitor statistics section (consent, `track()`, what counts where), the Storybook Welcome page and banner link, Home and Work breadcrumb roots, `BUTTON_HEIGHT`, and the components the table left out.
-- docs/design.md: `theme.css` (not `app.css`) maps tokens into Tailwind; new sections on components and Storybook, and on Karolina's design rules in code.
+- docs/design.md: `theme.css` (not `app.css`) maps tokens into Tailwind; new sections on components and Storybook, and on the design rules in code.
 
 ### 3.13.0 - 2026-10-20
 
@@ -1359,7 +1371,7 @@ Versions: 3.12.1 - 3.13.4.
 
 #### Changed
 
-- The banner's links are spaced like buttons, as Karolina asked: each link is as tall as a bordered button (`BUTTON_HEIGHT`, a new shared class list) and wrapped rows keep the buttons' gap (`gap-y-sm`, was `gap-y-xs`). The rule is in CLAUDE.md.
+- The banner's links are spaced like buttons: each link is as tall as a bordered button (`BUTTON_HEIGHT`, a new shared class list) and wrapped rows keep the buttons' gap (`gap-y-sm`, was `gap-y-xs`). The rule is in CLAUDE.md.
 
 ### 3.12.2 - 2026-10-20
 
@@ -1786,7 +1798,7 @@ Versions: 1.2.2 - 2.0.1.
 
 #### Added
 
-- Recommendations on the Work page link to LinkedIn: each author's name opens their profile and the company name opens its company page (Stewart Wilson, Precisely; Gavin Harvey, Cox Automotive), with the external-link icon and a 24 px minimum tap height. A secondary button under the quotes, "Read the full recommendations on LinkedIn", opens Karolina's recommendations page. All open in a new tab and say so to screen readers.
+- Recommendations on the Work page link to LinkedIn: each author's name opens their profile and the company name opens its company page (the UX director at Precisely, the lead product designer at Cox Automotive), with the external-link icon and a 24 px minimum tap height. A secondary button under the quotes, "Read the full recommendations on LinkedIn", opens Karolina's recommendations page. All open in a new tab and say so to screen readers.
 
 #### Changed
 

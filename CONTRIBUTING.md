@@ -50,6 +50,8 @@ If a commit mixes changes, use the highest level.
 
 Groups, in this order, only the ones you need: `Added`, `Changed`, `Fixed`, `Removed`. One line per change, past or present tense, plain words. Dates are ISO (`YYYY-MM-DD`). Short hyphens only, never en or em dashes.
 
+The changelog is public and reads as Karolina's own log. It says what changed and why, never who asked for, chose or approved it, and it names no one else: a recommender is their role ("the UX director", "a frontend developer"), and internal question ids stay out. `src/app/content-rules.test.ts` checks the changelog and `docs/` for the recommenders' names.
+
 ## Releases (`develop` to `main`)
 
 A release puts everything waiting on `develop` live. It happens only when Karolina asks for it.

@@ -26,6 +26,8 @@ export const TESTIMONIALS_SECTION = {
   title: "Trusted by the People I Worked With",
   list: "Recommendations",
   controls: { previous: "Previous recommendations", next: "Next recommendations" },
+  /** Before the company where we worked together, when the card names one (“Worked together at Programado”). */
+  workedAt: "Worked together at",
 };
 
 /**
@@ -33,7 +35,8 @@ export const TESTIMONIALS_SECTION = {
  * in the carousel’s order: the two managers first, then teammates, the translated one last. Check each against
  * the current LinkedIn text when it changes; the full texts stay on LinkedIn (one names a client that the site
  * keeps hidden). Each person agreed to be quoted (Karolina, 2026-11-10). Each card shows the person’s current job
- * title and employer as their LinkedIn profile does, as LinkedIn’s own recommendations list does.
+ * title and employer as their LinkedIn profile does, as LinkedIn’s own recommendations list does, and where we
+ * worked together when that was somewhere else.
  */
 export const TESTIMONIALS: readonly Testimonial[] = [
   {
@@ -75,6 +78,7 @@ export const TESTIMONIALS: readonly Testimonial[] = [
     profileUrl: "https://www.linkedin.com/in/natalia-jeszke/",
     role: "Frontend Developer",
     company: { name: "Raiffeisen Tech Poland", url: "https://www.linkedin.com/company/raiffeisen-tech/" },
+    workedAt: { name: "Programado", url: "https://www.linkedin.com/company/programado/" },
   },
   {
     id: "angelika-kuzbit",
@@ -84,6 +88,7 @@ export const TESTIMONIALS: readonly Testimonial[] = [
     initials: "AK",
     profileUrl: "https://www.linkedin.com/in/angelika-ku%C5%BAbit-81616a183/",
     role: "Psychologist",
+    workedAt: { name: "Cinkciarz.pl", url: "https://www.linkedin.com/company/cinkciarz-pl/" },
     note: "Translated from Polish",
   },
 ];

@@ -105,6 +105,18 @@ describe("App", () => {
     );
     // A card without a company shows the job title alone, with no bar.
     expect(section.getByText("Psychologist")).toHaveTextContent(/^Psychologist$/);
+    // Where we worked together, when it was not their current employer, and the translation badge: under the
+    // quote, never in the author block.
+    expectNewTab(
+      /^Programado, company page on LinkedIn \(opens in a new tab\)$/,
+      "https://www.linkedin.com/company/programado/",
+    );
+    const workedAt = section.getAllByText(/^Worked together at/, { selector: "span" });
+    expect(workedAt).toHaveLength(2);
+    expect(workedAt[0]).toHaveTextContent("Worked together at Programado");
+    expect(workedAt[1]).toHaveTextContent("Worked together at Cinkciarz.pl");
+    const translated = section.getByText("Translated from Polish");
+    expect(translated.closest("figcaption")).toBeNull();
   });
 
   it.each([

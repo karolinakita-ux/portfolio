@@ -1,6 +1,6 @@
 /**
  * The Work page's recommendations carousel in real browsers: 2 whole cards in view on a desktop (the managers
- * first), Previous and Next move one view and keep focus, reduced motion makes the move instant, it never moves on
+ * first) with a slice of the next one, Previous and Next move one view and keep focus, reduced motion makes the move instant, it never moves on
  * its own, a phone shows 1 card with the next one at the edge and follows a swipe, and the page never scrolls
  * sideways. Unit tests (useCarousel.test.tsx) cover the counting; jsdom has no layout or scrolling.
  */
@@ -24,6 +24,14 @@ const cardsInView = (list: Locator): Promise<number[]> =>
     });
   });
 
+/** How many px of card `n` (1-based) show inside the track's visible box. */
+const visibleWidth = (list: Locator, n: number): Promise<number> =>
+  list.evaluate((element, index) => {
+    const box = element.getBoundingClientRect();
+    const card = (element.children[index] as HTMLElement).getBoundingClientRect();
+    return Math.max(0, Math.min(card.right, box.right) - Math.max(card.left, box.left));
+  }, n - 1);
+
 /** Opens the Work page and scrolls the recommendations into view. */
 async function openRecommendations(page: Page): Promise<void> {
   await openView(page, "/");
@@ -32,10 +40,16 @@ async function openRecommendations(page: Page): Promise<void> {
 }
 
 test.describe("the recommendations carousel on a desktop", () => {
-  test("shows the two managers first, 2 whole cards in view, with Previous unavailable", async ({ page }) => {
+  test("shows the two managers first, 2 whole cards in view and a slice of the third, with Previous unavailable", async ({
+    page,
+  }) => {
     await openRecommendations(page);
     await expect(section(page).getByText("1 - 2 of 5", { exact: true })).toBeVisible();
     expect(await cardsInView(track(page))).toEqual([1, 2]);
+    // The 48px slice (space-2xl) plus the track's 4px padding: the next card's edge and its quote mark.
+    const slice = await visibleWidth(track(page), 3);
+    expect(slice).toBeGreaterThanOrEqual(44);
+    expect(slice).toBeLessThanOrEqual(56);
     await expect(track(page).getByRole("figure").nth(0)).toContainText("Stewart Wilson");
     await expect(track(page).getByRole("figure").nth(1)).toContainText("Gavin Harvey");
     await expect(page.getByRole("button", { name: "Previous recommendations" })).toHaveAttribute(
