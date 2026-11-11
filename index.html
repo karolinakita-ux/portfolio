@@ -166,6 +166,7 @@
     <script>
       (function () {
         var hash = location.hash.slice(1);
+        if (!hash) return; // no section to hold (and Firefox warns on getElementById(""))
         var id = "";
         var jumpTarget = null; // what the browser itself scrolls to: the element the whole hash names
         try {

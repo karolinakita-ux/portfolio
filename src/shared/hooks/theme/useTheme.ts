@@ -5,7 +5,7 @@ import { track } from "#shared/lib/analytics/analytics.utils.ts";
 
 import { DARK_QUERY, THEME_STORAGE_KEY, THEME_SWITCHING_CLASS } from "./theme.constants.ts";
 import type { Theme, ThemeState } from "./theme.types.ts";
-import { changeTheme, readStoredTheme, systemTheme } from "./theme.utils.ts";
+import { changeTheme, readAppliedTheme, readDocumentTheme, readStoredTheme, systemTheme } from "./theme.utils.ts";
 
 /**
  * Light / dark theme.
@@ -19,6 +19,11 @@ import { changeTheme, readStoredTheme, systemTheme } from "./theme.utils.ts";
  * The script also stores a pick passed in the address (?theme=, from www.kita.company's link), so it
  * is already the stored pick when this hook starts.
  *
+ * The hook starts from the theme the script applied, not from a second reading of the setting: the
+ * setting can change in between (a new private window may report Dark for a moment while the app
+ * loads), and React keeps the switch's pressed button as it finds it, so the switch showed Dark over
+ * a Light page until 5.23.1. Once it listens for changes, it follows the setting as it is by then.
+ *
  * A change cross-fades the page where the browser has view transitions, except in in-app
  * browsers (changeTheme; motion.css times it with the motion tokens), and every colour on the
  * page switches in the same frame.
@@ -26,7 +31,7 @@ import { changeTheme, readStoredTheme, systemTheme } from "./theme.utils.ts";
 export function useTheme(): [Theme, (theme: Theme) => void] {
   const [state, setState] = useState<ThemeState>(() => {
     const stored = readStoredTheme();
-    return { theme: stored ?? systemTheme(), picked: stored !== null };
+    return { theme: readAppliedTheme() ?? stored ?? systemTheme(), picked: stored !== null };
   });
   /** The theme last applied to <html>; null before the first layout effect. */
   const appliedTheme = useRef<Theme | null>(null);
@@ -56,11 +61,15 @@ export function useTheme(): [Theme, (theme: Theme) => void] {
   useEffect(() => {
     if (state.picked || typeof window.matchMedia !== "function") return undefined;
     const query = window.matchMedia(DARK_QUERY);
+    const follow = (dark: boolean) => () =>
+      setState((current) => (current.picked ? current : { ...current, theme: dark ? "dark" : "light" }));
     const onChange = (event: MediaQueryListEvent) => {
-      const theme: Theme = event.matches ? "dark" : "light";
-      changeTheme(() => setState((current) => (current.picked ? current : { ...current, theme })));
+      changeTheme(follow(event.matches));
     };
     query.addEventListener("change", onChange);
+    // A change before this listener existed (since the inline script read the setting) fired no event: catch up
+    // now, in one frame, without the cross-fade, as the page has only just loaded.
+    if (query.matches !== (readDocumentTheme() === "dark")) follow(query.matches)();
     return () => query.removeEventListener("change", onChange);
   }, [state.picked]);
 

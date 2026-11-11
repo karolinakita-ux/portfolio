@@ -9,6 +9,7 @@ import { renderPage } from "#app/prerender.entry.tsx";
 import { PRIVACY } from "#features/privacy/privacy.content.tsx";
 import { THEME_STORAGE_KEY } from "#shared/hooks/theme/theme.constants.ts";
 import type { Theme } from "#shared/hooks/theme/theme.types.ts";
+import { readDocumentTheme } from "#shared/hooks/theme/theme.utils.ts";
 import { STATISTICS_CHOICE_KEY, STORED_CHOICE } from "#shared/lib/analytics/analytics.constants.ts";
 import { initStatistics } from "#shared/lib/analytics/statistics-consent.utils.ts";
 import { VIEW, VIEW_PATHS, VIEWS } from "#shared/lib/routes/routes.constants.ts";
@@ -29,6 +30,8 @@ const offline = { production: false, base: "/", hostname: "localhost", privacy: 
 interface FirstVisit {
   /** The visitor's stored pick; null: none (the page follows the system setting). */
   theme?: Theme | null;
+  /** Runs after the theme script and before the app, as the app's script loads (a system setting changes). */
+  beforeApp?: () => void;
 }
 
 /**
@@ -37,7 +40,7 @@ interface FirstVisit {
  * Returns everything React reports while adopting it (in development it names each mismatch) and the <main> the
  * HTML brought.
  */
-async function hydrate(view: View, { theme = null }: FirstVisit = {}) {
+async function hydrate(view: View, { theme = null, beforeApp }: FirstVisit = {}) {
   window.history.replaceState(null, "", VIEW_PATHS[view]);
   const container = document.createElement("div");
   container.innerHTML = renderPage();
@@ -51,6 +54,7 @@ async function hydrate(view: View, { theme = null }: FirstVisit = {}) {
   // The theme script's MutationObserver presses the theme button in a microtask, as the parser adds it: in the
   // browser that happens long before the app's script runs.
   await new Promise((resolve) => setTimeout(resolve, 0));
+  beforeApp?.();
 
   const reported: unknown[] = [];
   vi.spyOn(console, "error").mockImplementation((...args: unknown[]) => reported.push(args.map(String).join(" ")));
@@ -96,6 +100,23 @@ describe("hydrating the prerendered pages", () => {
     expect(document.documentElement).toHaveClass("dark");
     expect(screen.getByRole("button", { name: "Dark mode" })).toHaveAttribute("aria-pressed", "true");
   });
+
+  it.each([
+    [true, false],
+    [false, true],
+  ])(
+    "adopts it when the system setting changes while the app loads (dark %s -> %s), then shows the new theme with its button pressed",
+    async (before, after) => {
+      const system = mockMatchMedia(before);
+      const { reported } = await hydrate(VIEW.work, { beforeApp: () => system.change(after) });
+      expect(reported).toEqual([]);
+      const [shown, other] = after ? ["Dark mode", "Light mode"] : ["Light mode", "Dark mode"];
+      expect(readDocumentTheme(), "the page").toBe(after ? "dark" : "light");
+      expect(document.documentElement).toHaveStyle({ colorScheme: after ? "dark" : "light" });
+      expect(screen.getByRole("button", { name: shown })).toHaveAttribute("aria-pressed", "true");
+      expect(screen.getByRole("button", { name: other })).toHaveAttribute("aria-pressed", "false");
+    },
+  );
 
   it("shows the Dark thumbnails right after, in place of the prerendered Light files", async () => {
     const { reported, container } = await hydrate(VIEW.work, { theme: "dark" });

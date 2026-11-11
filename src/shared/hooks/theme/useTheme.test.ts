@@ -60,6 +60,76 @@ describe("useTheme", () => {
   });
 });
 
+/** <html> as the inline script in index.html leaves it: the theme it chose, applied before the app starts. */
+function applyBeforeApp(theme: "light" | "dark") {
+  html().classList.toggle("dark", theme === "dark");
+  html().style.colorScheme = theme;
+}
+
+/** Renders the hook and returns every theme it rendered with, in order. */
+function renderThemes() {
+  const seen: string[] = [];
+  const { result } = renderHook(() => {
+    const value = useTheme();
+    seen.push(value[0]);
+    return value;
+  });
+  return { result, seen };
+}
+
+describe("useTheme starts from the theme the page already shows", () => {
+  it("renders first with the applied theme, then follows a system setting that changed since, in one frame", () => {
+    applyBeforeApp("dark"); // the script read Dark...
+    mockMatchMedia(false, { "(prefers-reduced-motion: reduce)": false }); // ...the setting says Light by the time the app runs
+    const start = mockStartViewTransition();
+    const { result, seen } = renderThemes();
+    expect(seen[0], "the first render matches the page and its pressed button").toBe("dark");
+    expect(result.current[0]).toBe("light");
+    expect(html()).not.toHaveClass("dark");
+    expect(html()).toHaveStyle({ colorScheme: "light" });
+    expect(start, "no cross-fade right after the page loads").not.toHaveBeenCalled();
+  });
+
+  it("works the other way too: Light applied, Dark by the time the app runs", () => {
+    applyBeforeApp("light");
+    mockMatchMedia(true);
+    const { result, seen } = renderThemes();
+    expect(seen[0]).toBe("light");
+    expect(result.current[0]).toBe("dark");
+    expect(html()).toHaveClass("dark");
+  });
+
+  it("renders once more only when the setting changed", () => {
+    applyBeforeApp("dark");
+    mockMatchMedia(true);
+    const { result, seen } = renderThemes();
+    expect(result.current[0]).toBe("dark");
+    expect(new Set(seen)).toEqual(new Set(["dark"]));
+  });
+
+  it("keeps a stored pick: the setting does not move it", () => {
+    window.localStorage.setItem(THEME_STORAGE_KEY, "dark");
+    applyBeforeApp("dark");
+    mockMatchMedia(false);
+    const { result, seen } = renderThemes();
+    expect(new Set(seen)).toEqual(new Set(["dark"]));
+    expect(result.current[0]).toBe("dark");
+    expect(html()).toHaveClass("dark");
+  });
+
+  it("still follows later changes live, with the cross-fade", () => {
+    applyBeforeApp("dark");
+    const system = mockMatchMedia(false, { "(prefers-reduced-motion: reduce)": false });
+    const start = mockStartViewTransition();
+    const { result } = renderThemes();
+    expect(result.current[0]).toBe("light");
+
+    act(() => system.change(true));
+    expect(start).toHaveBeenCalledOnce();
+    expect(result.current[0]).toBe("dark");
+  });
+});
+
 /**
  * A stand-in for document.startViewTransition (jsdom has none). Like a browser, it runs the
  * update callback (here at once) and returns a ViewTransition whose `ready` can reject.

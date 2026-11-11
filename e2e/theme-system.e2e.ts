@@ -1,7 +1,7 @@
 /**
  * The site follows the system light / dark setting (prefers-color-scheme) until the visitor picks
  * a theme: at first paint (the inline script in index.html, before the app runs), after React has
- * taken over, and live when the system setting changes. A pick is stored and wins, also over later
+ * taken over, and live when the system setting changes, also while the app loads. A pick is stored and wins, also over later
  * system changes and after a reload. With storage blocked the site falls back to the system setting
  * without page errors. The prerendered theme switch shows (and announces) the applied theme from its
  * first frame, and nothing moves when the app takes over. A pick passed from www.kita.company
@@ -112,6 +112,26 @@ for (const system of THEMES) {
       expect(await documentIsDark(page), "followed within five frames").toBe(system === "dark");
       await expectAppTheme(page, system);
       expect(await storedTheme(page), "stored pick").toBeNull();
+    });
+
+    // The setting changes after the inline script read it and before the app listens (a new private window may
+    // report Dark for a moment): the app starts from the theme on the page, then follows the setting as it is now.
+    // Until 5.23.1 the page took the new setting but the switch kept the script's button pressed.
+    test("a change while the app loads: the page and the pressed button follow it, no errors", async ({ page }) => {
+      test.skip(DEV, "the dev server sends no prerendered HTML");
+      const errors = collectErrors(page);
+      await prepare(page, { theme: null });
+      const release = await holdScriptFiles(page);
+      await page.goto(PATH, { waitUntil: "commit" });
+      await page.locator(SELECTOR.themeGroup).waitFor();
+      await expectSwitchBeforeApp(page, system);
+      await setSystem(page, opposite(system));
+      expect(await appRan(page), "the app bundle is held").toBe(false);
+      release();
+      await waitForApp(page);
+      await expectAppTheme(page, opposite(system));
+      expect(await storedTheme(page), "stored pick").toBeNull();
+      expect(errors).toEqual([]);
     });
 
     test("a pick is stored and wins, over later system changes and after a reload", async ({ page }) => {
