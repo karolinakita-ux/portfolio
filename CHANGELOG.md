@@ -4,7 +4,12 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v5.23.1 - 2026-11-11
+
+- The Light and Dark mode switch always shows the theme the page is in, also when the system setting changes while the page loads, as it can in a new private window.
+- Pages opened in Firefox no longer log a warning in the browser console.
+
+Versions: 5.23.1.
 
 ### 5.23.1 - 2026-11-11
 
