@@ -6,6 +6,20 @@ How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.m
 
 ## Unreleased
 
+### 5.23.0 - 2026-11-11
+
+#### Added
+
+- Work page recommendations: the senior UX designer's card says "Worked together at GlobalLogic Poland", with a link to its LinkedIn page, as the frontend developer's and the psychologist's cards name where they worked together: her job line shows where she works today.
+- Work page recommendations: a mouse can drag the carousel, as a finger swipes it on a phone. The row follows the pointer and, on release, glides to the nearest whole card as Previous and Next do (at once with reduced motion); a drag of 40px or more moves on by at least one card. A drag that ends on a link does not open it, a plain click still does, and touch keeps the browser's own swipe. Drags are not counted in the statistics, like swipes (`useCarouselDrag`, `e2e/testimonials-carousel.e2e.ts`).
+
+#### Changed
+
+- From tablet width up, each edge of the carousel fades while there is more to scroll that way: at the start the right edge (over the slice of the next card), in the middle both, at the end the left edge. It says there is more to see, and that the row can be dragged or moved back, rather than ending in a hard cut. The fade covers the outer 24px (`space-lg`): the slice keeps its solid edge and its quote mark shows, and on a whole card it covers only the border and empty padding, so no text fades. It grows and shrinks over the first and last 24px of the scroll. It is off on phones, in print, in Windows contrast themes, with more contrast, and while a card's link has keyboard focus, so the focus ring always shows in full (`fade-scroll-edges` in `utilities.css`).
+- The carousel's position ("3 - 4 of 5") and the unavailable Previous or Next change as soon as a button is pressed or a mouse drag lets go, not when the row stops moving, and a screen reader hears the new position right after the press. After a swipe or a trackpad the position still follows the row once it stops, since only then is it known where it rests.
+- The recommendation cards share their rows (the quote mark, the quote, the badge and "Worked together at" row, the author): at tablet width, where a job line wraps onto a second line, the line above the authors stayed higher on that card than on the one beside it; now it is level on every card at every width. `Carousel` takes `rows` (each item a subgrid across them) and `Card` a `rows` layout that places its parts in them.
+- Docs: CONTRIBUTING.md (Editor) explains how VS Code finds Node with fnm on Windows (the Vitest extension could not start without it), and that the `url.parse()` deprecation warning before Yarn's scripts comes from Yarn 1 itself and is harmless.
+
 ### 5.22.0 - 2026-11-11
 
 #### Added

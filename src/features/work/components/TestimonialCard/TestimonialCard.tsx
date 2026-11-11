@@ -19,7 +19,7 @@ import type { TestimonialCardProps } from "./TestimonialCard.types.ts";
 export function TestimonialCard({ item }: TestimonialCardProps) {
   const context = item.note !== undefined || item.workedAt !== undefined;
   return (
-    <Card as="figure" gap="md" reveal={false} className={styles.card}>
+    <Card as="figure" layout="rows" gap="md" reveal={false} className={styles.card}>
       <Quote aria-hidden="true" size={24} className={styles.quoteMark} />
       <blockquote cite={PROFILE.linkedinRecommendationsUrl} className={styles.quote}>
         <p>{item.quote}</p>

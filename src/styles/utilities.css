@@ -107,6 +107,30 @@
     display: none;
   }
 }
+/* The carousel track from md (tablet width) up: each edge fades while the row can scroll further that way, so it
+   says "more this way, drag or press": at the start only the end (the 48px slice of the next card), in the middle
+   both, at the end only the start. useCarousel writes how far the row can still scroll each way (--kb-fade-start,
+   --kb-fade-end: scrollRoom in carousel.utils.ts) on every scroll, and the fade covers that much, at most 24px
+   (space-lg): over the first and last 24px of the scroll it grows and shrinks rather than switching. 24px is the
+   outer half of the slice, so the slice keeps its solid edge (over all 48px the next card all but vanished), and
+   it is a whole card's border and empty padding (p-lg), so no text fades. Until the app runs, the first view's:
+   the end fades, the start does not.
+   Not on phones, in print, in forced colours (Windows contrast themes) or with more contrast, and never over a
+   keyboard focus ring: Firefox does not scroll a partly visible focused element further in. */
+@utility fade-scroll-edges {
+  @media screen and (width >= 48rem) and (forced-colors: none) and (prefers-contrast: no-preference) {
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black min(var(--spacing-lg), var(--kb-fade-start, 0px)),
+      black calc(100% - min(var(--spacing-lg), var(--kb-fade-end, var(--spacing-lg)))),
+      transparent
+    );
+    &:has(:focus-visible) {
+      mask-image: none;
+    }
+  }
+}
 @utility z-header {
   z-index: 50;
 }

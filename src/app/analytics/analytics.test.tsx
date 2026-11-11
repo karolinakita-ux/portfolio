@@ -147,9 +147,14 @@ describe("events on the Work page", () => {
     Object.defineProperty(row, "scrollWidth", { value: 5 * 316 - 16 });
     Object.defineProperty(row, "clientWidth", { value: 2 * 316 - 16 });
 
+    const previous = section.getByRole("button", { name: "Previous recommendations" });
+    await user.click(previous); // unavailable at the start: not counted
     await user.click(section.getByRole("button", { name: "Next recommendations" }));
-    await user.click(section.getByRole("button", { name: "Previous recommendations" })); // unavailable: not counted
-    expect(events()).toEqual([[EVENT.carouselNav, { direction: "next", place: "testimonials", shown: "3 - 4" }]]);
+    await user.click(previous); // available as soon as Next is pressed
+    expect(events()).toEqual([
+      [EVENT.carouselNav, { direction: "next", place: "testimonials", shown: "3 - 4" }],
+      [EVENT.carouselNav, { direction: "prev", place: "testimonials", shown: "1 - 2" }],
+    ]);
   });
 
   it("counts a theme switch, but not picking the theme already shown", async () => {

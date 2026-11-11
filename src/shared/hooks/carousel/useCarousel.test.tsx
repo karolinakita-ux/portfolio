@@ -106,17 +106,36 @@ describe("useCarousel", () => {
     expect(screen.getByRole("button", { name: "Previous" })).toHaveAttribute("aria-disabled", "false");
   });
 
-  it("speaks the new position once a move by Next settles", async () => {
+  it("shows and speaks where Next lands as soon as it is pressed, before the row gets there", async () => {
     render(<Example />);
     const list = screen.getByRole("list", { name: "Items" });
     layOut(list);
-    await userEvent.click(screen.getByRole("button", { name: "Next" }));
-    list.scrollLeft = 2 * STEP; // where the smooth scroll ends (jsdom does not scroll)
+    const next = screen.getByRole("button", { name: "Next" });
+    await userEvent.click(next);
+    // jsdom does not scroll: the row is still at the start, and no scroll has settled.
+    expect(screen.getByText("3 - 4 of 5")).toBeInTheDocument();
+    expect(screen.getByText("Showing 3 to 4 of 5")).toHaveAttribute("aria-live", "polite");
+    await userEvent.click(next);
+    expect(screen.getByText("4 - 5 of 5")).toBeInTheDocument();
+    expect(next).toHaveAttribute("aria-disabled", "true");
+
+    // Once the glide settles where it was going, nothing changes.
+    list.scrollLeft = ITEMS.length * STEP - 16 - (2 * STEP - 16);
     fireEvent.scroll(list);
     act(() => {
       vi.advanceTimersByTime(200);
     });
-    expect(screen.getByText("Showing 3 to 4 of 5")).toHaveAttribute("aria-live", "polite");
+    expect(screen.getByText("4 - 5 of 5")).toBeInTheDocument();
+    expect(screen.getByText("Showing 4 to 5 of 5")).toBeInTheDocument();
+  });
+
+  it("shows the start again when Previous turns back before the row has moved", async () => {
+    render(<Example />);
+    layOut(screen.getByRole("list", { name: "Items" }));
+    await userEvent.click(screen.getByRole("button", { name: "Next" }));
+    await userEvent.click(screen.getByRole("button", { name: "Previous" }));
+    expect(screen.getByText("1 - 2 of 5")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Previous" })).toHaveAttribute("aria-disabled", "true");
   });
 
   it("goes on from where a move in flight lands when Next is pressed again before it settles", async () => {

@@ -5,6 +5,7 @@ import type { CardGap, CardLayout } from "./Card.types.ts";
 const LAYOUT: Record<CardLayout, string> = {
   stack: "flex flex-col p-lg",
   media: "grid p-md md:items-center md:p-lg",
+  rows: "row-span-full grid grid-rows-subgrid p-lg",
 };
 
 const GAP: Record<CardGap, string> = { sm: "gap-sm", md: "gap-md", lg: "gap-lg" };

@@ -68,6 +68,7 @@ export const TESTIMONIALS: readonly Testimonial[] = [
     profileUrl: "https://www.linkedin.com/in/weronika-dobrowolska-49843b146/",
     role: "Senior UX Designer",
     company: { name: "DTP", url: "https://www.linkedin.com/company/dtpoland/" },
+    workedAt: { name: "GlobalLogic Poland", url: "https://www.linkedin.com/company/globallogicpoland/" },
   },
   {
     id: "natalia-jeszke",

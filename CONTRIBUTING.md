@@ -143,6 +143,10 @@ Fix on `develop` as usual (patch version), then make a release with just that fi
 
 VS Code with the extensions in `.vscode/extensions.json`. Its ESLint keeps the types of the files it has already read, so after Claude, a workflow or a script changes many files outside the editor it can report errors such as "Unsafe assignment of an error typed value" on imports that are fine. Run **ESLint: Restart ESLint Server** (and **TypeScript: Restart TS Server**) from the Command Palette. `yarn lint` is the check that counts: it reads every file fresh, and `yarn verify` runs it with zero warnings allowed. Do not switch the rule off for such errors; it is what stops untyped values from slipping into the code. The editor does not watch or search Claude's temporary worktrees (`.claude/worktrees/`).
 
+On Windows with fnm, VS Code opened from the Start menu or the taskbar does not run fnm's shell setup, so it has no `node` on its PATH and the Vitest extension stops with "Unable to find 'node' executable". Add fnm's default version to your user PATH once: `%APPDATA%\fnm\aliases\default` (set it with `fnm default <version>`, the one in `.node-version`), then close every VS Code window and open it again. Terminals that run `fnm env` still put the project's version first.
+
+`yarn` prints `[DEP0169] DeprecationWarning: url.parse()` before its scripts on the Node version in `.node-version`. It comes from Yarn 1 itself (its `cli.js`), not from this project's code or packages, and Yarn 1 gets no more updates; it is harmless.
+
 ## Claude Code helpers
 
 Claude Code loads these from `.claude/` ([docs/claude-code.md](docs/claude-code.md) explains the setup). A skill is a routine Claude follows in the conversation; an agent reviews in its own context and only reports. Ask for one by name ("run the ui-reviewer"), or Claude picks it when the task matches.

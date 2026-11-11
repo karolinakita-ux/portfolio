@@ -122,9 +122,10 @@ function Recommendations() {
 
 /**
  * Figma: Carousel. A manual carousel: 2 items in view from tablet width up, 1 on phones with the next one showing
- * at the edge. It never moves on its own: Previous and Next (CarouselControls), a swipe, a trackpad or Tab onto an
- * item’s link move it, and every item stays in the page for keyboards and screen readers. `useCarousel` connects
- * the two; Previous and Next sit in the heading row through Section’s `actions`.
+ * at the edge. It never moves on its own: Previous and Next (CarouselControls), a swipe, a trackpad, a mouse drag
+ * or Tab onto an item’s link move it, and every item stays in the page for keyboards and screen readers. From
+ * tablet width up, the edge that cuts an item off fades. `useCarousel` connects the two; Previous and Next sit in
+ * the heading row through Section’s `actions`.
  */
 const meta = {
   title: "UI/Carousel",

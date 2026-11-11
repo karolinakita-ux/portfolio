@@ -111,10 +111,15 @@ describe("App", () => {
       /^Programado, company page on LinkedIn \(opens in a new tab\)$/,
       "https://www.linkedin.com/company/programado/",
     );
+    expectNewTab(
+      /^GlobalLogic Poland, company page on LinkedIn \(opens in a new tab\)$/,
+      "https://www.linkedin.com/company/globallogicpoland/",
+    );
     const workedAt = section.getAllByText(/^Worked together at/, { selector: "span" });
-    expect(workedAt).toHaveLength(2);
-    expect(workedAt[0]).toHaveTextContent("Worked together at Programado");
-    expect(workedAt[1]).toHaveTextContent("Worked together at Cinkciarz.pl");
+    expect(workedAt).toHaveLength(3);
+    expect(workedAt[0]).toHaveTextContent("Worked together at GlobalLogic Poland");
+    expect(workedAt[1]).toHaveTextContent("Worked together at Programado");
+    expect(workedAt[2]).toHaveTextContent("Worked together at Cinkciarz.pl");
     const translated = section.getByText("Translated from Polish");
     expect(translated.closest("figcaption")).toBeNull();
   });
