@@ -9,7 +9,8 @@ import type { CarouselControlsProps } from "./CarouselControls.types.ts";
 /**
  * Figma: CarouselControls. Where a carousel is (“1 - 2 of 5”) and Previous / Next, which move it by one view.
  * At either end the button stays focusable and says it is unavailable (aria-disabled), so focus never drops to
- * the page. A screen reader hears the position as “1 to 2 of 5”, and the new one once Previous or Next settles
+ * the page. The position changes as soon as Previous or Next is pressed, before the row has moved there. A
+ * screen reader hears the position as “1 to 2 of 5”, and the new one right after Previous or Next
  * (“Showing 3 to 4 of 5”), never on load or after a swipe.
  */
 export function CarouselControls({

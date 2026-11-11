@@ -835,10 +835,32 @@ describe("LinkedIn links", () => {
 
   it("links a recommendation’s author and company to their LinkedIn pages, when it names them", () => {
     for (const item of TESTIMONIALS) {
-      if (item.profileUrl) expect(item.profileUrl).toMatch(/^https:\/\/www\.linkedin\.com\/in\/[\w-]+\/$/);
-      if (item.company?.url) expect(item.company.url).toMatch(/^https:\/\/www\.linkedin\.com\/company\/[\w-]+\/$/);
+      // A profile address may hold a percent-encoded letter (ku%C5%BAbit), as LinkedIn writes it.
+      if (item.profileUrl) expect(item.profileUrl).toMatch(/^https:\/\/www\.linkedin\.com\/in\/[\w%-]+\/$/);
+      if (item.company) expect(item.company.url).toMatch(/^https:\/\/www\.linkedin\.com\/company\/[\w-]+\/$/);
+      if (item.workedAt) expect(item.workedAt.url).toMatch(/^https:\/\/www\.linkedin\.com\/company\/[\w-]+\/$/);
       expect(item.role).not.toContain("|"); // the company is its own field
     }
+  });
+
+  /**
+   * The changelog and the docs are public and read as Karolina's own: they name recommenders by their role and
+   * never say who else asked for, chose or approved a change.
+   */
+  it("keeps people’s names and who decided what out of the changelog and the docs", () => {
+    const docs = readdirSync(join(process.cwd(), "docs"))
+      .filter((file) => file.endsWith(".md") && !file.startsWith("_")) // docs/_* are private, gitignored notes
+      .map((file) => join("docs", file));
+    const names = [...TESTIMONIALS.flatMap((item) => item.name.split(" ")), "Mateusz"];
+    const found = ["CHANGELOG.md", ...docs].flatMap((path) => {
+      const text = readFileSync(join(process.cwd(), path), "utf8");
+      return names.filter((name) => text.includes(name)).map((name) => `${path}: ${name}`);
+    });
+    expect(found).toEqual([]);
+    const changelog = readFileSync(join(process.cwd(), "CHANGELOG.md"), "utf8");
+    expect(changelog).not.toMatch(
+      /Karolina(?:'s)? (?:approv|chose|asked|answer|places)|as Karolina (?:asked|chose|approved)/,
+    );
   });
 });
 

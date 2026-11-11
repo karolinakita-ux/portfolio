@@ -1,3 +1,4 @@
+import { TESTIMONIAL_ROWS } from "#features/work/components/TestimonialCard/TestimonialCard.constants.ts";
 import { TestimonialCard } from "#features/work/components/TestimonialCard/TestimonialCard.tsx";
 import { RECOMMENDATIONS_LINK_LABEL, TESTIMONIALS, TESTIMONIALS_SECTION } from "#features/work/work.content.ts";
 import { PROFILE } from "#shared/content/profile.ts";
@@ -21,7 +22,7 @@ import { styles } from "./TestimonialsSection.styles.ts";
  */
 export function TestimonialsSection() {
   const { trackRef, onScroll, previous, next, scrollable, ...position } = useCarousel(TESTIMONIALS.length);
-  /** Moves, then counts the press with the items now in view (swipes are not counted). */
+  /** Moves, then counts the press with the items now in view (swipes and mouse drags are not counted). */
   const move = (direction: "prev" | "next") => {
     const landed = direction === "prev" ? previous() : next();
     if (landed)
@@ -45,6 +46,7 @@ export function TestimonialsSection() {
         ref={trackRef}
         onScroll={onScroll}
         label={TESTIMONIALS_SECTION.list}
+        rows={TESTIMONIAL_ROWS}
         items={TESTIMONIALS}
         getKey={(item) => item.id}
         renderItem={(item) => <TestimonialCard item={item} />}

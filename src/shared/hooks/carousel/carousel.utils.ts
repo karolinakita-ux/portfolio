@@ -31,7 +31,30 @@ export function itemAt(track: HTMLElement, left: number): number {
  * reached its end (the last items may never reach the start, so the end is read from the scroll position).
  */
 export function measureTrack(track: HTMLElement): CarouselPosition {
-  return { first: itemAt(track, track.scrollLeft), atEnd: track.scrollLeft >= maxScroll(track) - 2 };
+  return positionAt(track, track.scrollLeft);
+}
+
+/** Where the track will rest at scroll position `left`: a move's landing, known before the row gets there. */
+export function positionAt(track: HTMLElement, left: number): CarouselPosition {
+  return { first: itemAt(track, left), atEnd: left >= maxScroll(track) - 2 };
+}
+
+/**
+ * How far the track can still scroll towards each end, in px. The edge fade (`fade-scroll-edges` in
+ * utilities.css) covers that much of each edge, at most 24px, so an edge fades while there is more that way:
+ * at the start only the end, in the middle both, at the end only the start. It grows and shrinks over the first
+ * and last 24px of the scroll instead of switching on and off.
+ */
+export function scrollRoom(track: HTMLElement): { start: number; end: number } {
+  const left = Math.max(0, track.scrollLeft);
+  return { start: left, end: Math.max(0, maxScroll(track) - left) };
+}
+
+/** Hands scrollRoom to the track's edge fade as `--kb-fade-start` and `--kb-fade-end`. */
+export function paintEdgeFades(track: HTMLElement): void {
+  const { start, end } = scrollRoom(track);
+  track.style.setProperty("--kb-fade-start", `${String(start)}px`);
+  track.style.setProperty("--kb-fade-end", `${String(end)}px`);
 }
 
 /** The items in view as the carousel shows them: “3 - 4”, or “2” when one item shows (1-based). */

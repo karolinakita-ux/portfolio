@@ -99,11 +99,29 @@ describe("App", () => {
     expect(roleLine).toHaveTextContent("UX Director | at Precisely");
     expect(within(roleLine).getByText("|")).toHaveAttribute("aria-hidden", "true");
 
-    // Without a LinkedIn address, a name and a company are plain text, never a link that goes nowhere.
-    const plainRole = section.getByText(/^Frontend Developer/);
-    expect(plainRole).toHaveTextContent("Frontend Developer | at Raiffeisen Tech Poland");
-    expect(within(plainRole).queryByRole("link")).not.toBeInTheDocument();
-    expect(section.queryByRole("link", { name: /^Natalia Jeszke/ })).not.toBeInTheDocument();
+    expectNewTab(
+      /^Angelika Kuźbit, LinkedIn profile \(opens in a new tab\)$/,
+      "https://www.linkedin.com/in/angelika-ku%C5%BAbit-81616a183/",
+    );
+    // A card without a company shows the job title alone, with no bar.
+    expect(section.getByText("Psychologist")).toHaveTextContent(/^Psychologist$/);
+    // Where we worked together, when it was not their current employer, and the translation badge: under the
+    // quote, never in the author block.
+    expectNewTab(
+      /^Programado, company page on LinkedIn \(opens in a new tab\)$/,
+      "https://www.linkedin.com/company/programado/",
+    );
+    expectNewTab(
+      /^GlobalLogic Poland, company page on LinkedIn \(opens in a new tab\)$/,
+      "https://www.linkedin.com/company/globallogicpoland/",
+    );
+    const workedAt = section.getAllByText(/^Worked together at/, { selector: "span" });
+    expect(workedAt).toHaveLength(3);
+    expect(workedAt[0]).toHaveTextContent("Worked together at GlobalLogic Poland");
+    expect(workedAt[1]).toHaveTextContent("Worked together at Programado");
+    expect(workedAt[2]).toHaveTextContent("Worked together at Cinkciarz.pl");
+    const translated = section.getByText("Translated from Polish");
+    expect(translated.closest("figcaption")).toBeNull();
   });
 
   it.each([
