@@ -4,6 +4,15 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Unreleased
+
+### 5.23.1 - 2026-11-11
+
+#### Fixed
+
+- Theme switch: when the system's Light or Dark setting changed while the page loaded (a new private window can report Dark for a moment), the page took the new setting but the switch kept the other button pressed, so Dark showed as selected over a Light page until it was pressed again. The app now starts from the theme the page already shows, then follows the setting, and the switch always presses the theme shown.
+- Firefox no longer logs "Empty string passed to getElementById()" on pages opened without a section in the address.
+
 ## Release v5.23.0 - 2026-11-11
 
 - Each recommendation links to its author's LinkedIn profile and shows their current job title and company, and, where that is somewhere else, the company where they worked with Karolina.

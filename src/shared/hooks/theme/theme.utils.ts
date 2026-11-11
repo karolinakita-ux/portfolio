@@ -11,6 +11,16 @@ export const isTheme = (value: unknown): value is Theme => value === "light" || 
 /** The theme the page shows now: the `dark` class on <html>, set by useTheme and the inline script in index.html. */
 export const readDocumentTheme = (): Theme => (document.documentElement.classList.contains("dark") ? "dark" : "light");
 
+/**
+ * The theme already on <html> (its colour-scheme): the one the inline script in index.html chose before the first
+ * paint, and pressed in the theme switch. Null where none is applied yet (the prerender, tests without the script).
+ */
+export const readAppliedTheme = (): Theme | null => {
+  if (typeof document === "undefined") return null;
+  const value = document.documentElement.style.colorScheme;
+  return isTheme(value) ? value : null;
+};
+
 export const readStoredTheme = (): Theme | null => {
   try {
     const value = window.localStorage.getItem(THEME_STORAGE_KEY);
