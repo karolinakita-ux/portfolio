@@ -4,7 +4,14 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v5.23.0 - 2026-11-11
+
+- Each recommendation links to its author's LinkedIn profile and shows their current job title and company, and, where that is somewhere else, the company where they worked with Karolina.
+- On larger screens the recommendations show the edge of the next one, and the edges fade softly where there is more to see.
+- With a mouse you can drag the recommendations, as you swipe them on a phone, and they settle on the nearest one.
+- The position ("3 - 4 of 5") changes as soon as you press Previous or Next, and the lines in the cards stay level on every screen size.
+
+Versions: 5.21.1 - 5.23.0.
 
 ### 5.23.0 - 2026-11-11
 
