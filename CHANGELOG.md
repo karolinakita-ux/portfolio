@@ -4,7 +4,11 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Unreleased
+## Release v5.23.2 - 2026-11-16
+
+- On phones, switching between Light and Dark mode no longer hides the top of the header, with the logo, under the browser's address bar while the page fades from one to the other.
+
+Versions: 5.23.2.
 
 ### 5.23.2 - 2026-11-16
 
