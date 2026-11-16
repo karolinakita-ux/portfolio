@@ -25,8 +25,8 @@ import { changeTheme, readAppliedTheme, readDocumentTheme, readStoredTheme, syst
  * a Light page until 5.23.1. Once it listens for changes, it follows the setting as it is by then.
  *
  * A change cross-fades the page where the browser has view transitions, except in in-app
- * browsers (changeTheme; motion.css times it with the motion tokens), and every colour on the
- * page switches in the same frame.
+ * browsers (changeTheme, which holds the stuck header in place meanwhile; motion.css times it
+ * with the motion tokens), and every colour on the page switches in the same frame.
  */
 export function useTheme(): [Theme, (theme: Theme) => void] {
   const [state, setState] = useState<ThemeState>(() => {

@@ -4,6 +4,14 @@ Newest first. Each `###` entry is one version (one commit on `develop`). Each `#
 
 How versions, entries and releases are written: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+## Unreleased
+
+### 5.23.2 - 2026-11-16
+
+#### Fixed
+
+- Theme switch on phones: on a page scrolled down, with the browser's address bar or toolbar shown again by a short scroll up (in Chrome on Android, and in the Google app, which opens results in a Chrome Custom Tab), the top row of the header, with the logo, slid under the bar for as long as the cross-fade between Light and Dark mode ran, then came back. During a view transition Chromium places sticky elements against its snapshot of the page, which reaches under the bar. The stuck header is now held where it is, placed against the page, until the cross-fade has finished, so the page still cross-fades everywhere it did. Checked on an Android 17 emulator in Chrome 145, in a Chrome tab and in a Custom Tab, before (the logo row hidden) and after (in place). Tests: `holdStickyHeader` and `changeTheme` in Vitest, `e2e/header-motion.e2e.ts` in three browsers.
+
 ## Release v5.23.1 - 2026-11-11
 
 - The Light and Dark mode switch always shows the theme the page is in, also when the system setting changes while the page loads, as it can in a new private window.

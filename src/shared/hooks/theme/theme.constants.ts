@@ -3,3 +3,5 @@ export const THEME_STORAGE_KEY = "kb-theme";
 /** On <html> for two frames after a theme change: motion.css turns every CSS transition off. */
 export const THEME_SWITCHING_CLASS = "kb-theme-switching";
 export const DARK_QUERY = "(prefers-color-scheme: dark)";
+/** The sticky site header (its class in SiteHeader.styles.ts), held in place during a cross-fade (holdStickyHeader). */
+export const STICKY_HEADER_SELECTOR = ".kb-site-header";
