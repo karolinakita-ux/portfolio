@@ -8,6 +8,7 @@
  * - Theme switch: its pill travels the same way. Where document.startViewTransition exists the
  *   page cross-fades through it (the toggle keeps its own live layer), except in in-app browsers
  *   (Messenger); elsewhere the theme switches in one frame, with CSS transitions off while it does.
+ *   During the cross-fade a stuck header is held in place (position relative), then sticks again.
  *   On the first load with Dark stored, the Dark pill shows and nothing moves either.
  * - Underline: the current page's label is underlined by a 2px bar inside its pill (the gold pill alone is
  *   1.54:1 on white, WCAG 1.4.11), so it travels, fades and jumps with the pill. At rest it sits under the
@@ -402,6 +403,52 @@ test.describe("theme switch in an in-app browser (Messenger on Android)", () => 
       `header background per frame after the click = dark canvas ${CANVAS.dark}`,
     ).toEqual(run.frames.map(() => run.canvas));
     expectTravel(frames, { from: THEME_LABEL.light, to: THEME_LABEL.dark, motion });
+  });
+});
+
+test.describe("theme switch with the header stuck (phone)", () => {
+  test.use({ viewport: VIEWPORTS.phone });
+
+  // Chromium on Android places sticky elements against the transition's snapshot, which reaches under the browser's
+  // bar while it shows: the stuck header moved up under the bar for the whole cross-fade (holdStickyHeader). No
+  // browser here has such a bar, so this checks the hold itself: in place, then sticky again with React's own top.
+  test("the stuck header is held in place through the cross-fade, then sticks again as before", async ({ page }) => {
+    await openView(page, VIEW_PATHS[VIEW.work]);
+    const supported = await page.evaluate(() => "startViewTransition" in document);
+    test.skip(!supported, "no document.startViewTransition in this browser");
+    await page.evaluate(() => {
+      window.scrollTo(0, 1400);
+    });
+    await expect.poll(() => page.evaluate(() => window.scrollY), "scrolled down").toBeGreaterThan(1000);
+
+    const button = `${SELECTOR.themeGroup} button[aria-label="${THEME_LABEL.dark}"]`;
+    const run = await page.evaluate(async (selector) => {
+      const header = document.querySelector<HTMLElement>(".kb-site-header");
+      const target = document.querySelector<HTMLButtonElement>(selector);
+      if (!header || !target) throw new Error("header or theme button missing");
+      const state = () => ({
+        position: getComputedStyle(header).position,
+        top: Math.round(header.getBoundingClientRect().top),
+        inline: { position: header.style.position, top: header.style.top },
+      });
+      const before = state();
+      target.click();
+      const transition = window.__kb?.lastViewTransition;
+      await transition?.ready;
+      const during = state();
+      await transition?.finished;
+      await new Promise((resolve) => requestAnimationFrame(resolve)); // the release runs just after `finished`
+      return { before, during, after: state(), transition: transition !== null };
+    }, button);
+
+    expect(run.transition, "a view transition ran").toBe(true);
+    expect(run.before.position, "stuck before the switch").toBe("sticky");
+    expect(run.before.top, "at the top of the window").toBe(0);
+    expect(run.during.position, "held during the cross-fade").toBe("relative");
+    expect(run.during.top, "in the same place during the cross-fade").toBe(run.before.top);
+    expect(run.before.inline.top, "React's own inline top (the safe area)").toContain("safe-area-inset-top");
+    expect(run.after, "sticky again, in place, with its own inline position and top").toEqual(run.before);
+    await expect(page.locator("html")).toHaveClass(/\bdark\b/);
   });
 });
 

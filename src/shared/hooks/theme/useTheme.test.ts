@@ -259,7 +259,7 @@ describe("useTheme cross-fade", () => {
     const updates: Array<() => void> = [];
     const start = vi.fn((update: () => void) => {
       updates.push(update);
-      return { ready: Promise.resolve() } as unknown as ViewTransition;
+      return { ready: Promise.resolve(), finished: Promise.resolve() } as unknown as ViewTransition;
     });
     Object.defineProperty(document, "startViewTransition", { configurable: true, writable: true, value: start });
     onTestFinished(() => {
